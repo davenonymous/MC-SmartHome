@@ -1,0 +1,97 @@
+package com.davenonymous.smarthome.data;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class HomeCore {
+	String name;
+	List<HomeZone> zones;
+
+	// internal values, not serialized
+	AABB bounds;
+	VoxelShape shape;
+
+	public HomeCore(String name) {
+		this(name, new ArrayList<>());
+	}
+
+	public HomeCore(String name, List<HomeZone> zones) {
+		this.name = name;
+		this.zones = zones;
+		updateBounds();
+	}
+
+	private void updateBounds() {
+		bounds = new AABB(0,0,0,0,0,0);
+		shape = Shapes.empty();
+		if(zones.isEmpty()) {
+			return;
+		}
+
+		bounds = zones.getFirst().shape;
+		for(int zoneIndex = 1; zoneIndex < zones.size(); zoneIndex++) {
+			AABB zoneBounds = zones.get(zoneIndex).shape;
+			bounds = bounds.minmax(zoneBounds);
+			shape = Shapes.join(shape, Shapes.create(zoneBounds), BooleanOp.OR);
+		}
+	}
+
+	public HomeCore(CompoundTag nbt) {
+		Optional<HomeCore> decoded = CODEC.codec().parse(NbtOps.INSTANCE, nbt.get("home")).result();
+		if(decoded.isPresent()) {
+			HomeCore core = decoded.get();
+			this.name = core.name;
+			this.zones = core.zones;
+		} else {
+			this.name = "invalid";
+			this.zones = new ArrayList<>();
+		}
+		updateBounds();
+	}
+
+	public CompoundTag writeToNBT(CompoundTag nbt) {
+		Optional<Tag> encoded = CODEC.codec().encodeStart(NbtOps.INSTANCE, this).result();
+		encoded.ifPresent(tag -> nbt.put("home", tag));
+		return nbt;
+	}
+
+	public Optional<HomeZone> getZone(String zoneName) {
+		return zones.stream().filter(z -> z.name().equals(zoneName)).findFirst();
+	}
+
+	public HomeCore addZone(HomeZone zone) {
+		zones.removeIf(z -> z.name().equals(zone.name()));
+		zones.add(zone);
+		updateBounds();
+		return this;
+	}
+
+	public AABB bounds() {
+		return bounds;
+	}
+
+	public String name() {
+		return name;
+	}
+
+	public List<HomeZone> zones() {
+		return zones;
+	}
+
+	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
+			HomeZone.CODEC.codec().listOf().optionalFieldOf("zones", new ArrayList<>()).forGetter(HomeCore::zones)
+	).apply(instance, HomeCore::new));
+}
