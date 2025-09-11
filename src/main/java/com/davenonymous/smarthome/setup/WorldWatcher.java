@@ -1,19 +1,24 @@
 package com.davenonymous.smarthome.setup;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
+import com.davenonymous.smarthome.setup.content.ModSensors;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.AABB;
+import org.duckdb.DuckDBConnection;
 import org.slf4j.Logger;
 
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.LinkedList;
-import java.util.UUID;
 
 public class WorldWatcher implements Runnable {
+	public static DuckDBConnection connection;
 
 	private MinecraftServer server;
 	private ServerLevel overworld;
@@ -44,25 +49,38 @@ public class WorldWatcher implements Runnable {
 		return positions;
 	}
 
-	private void processHome(UUID player, HomeCore home) {
+	private void processHome(HomeCore home) throws SQLException{
+		ModSensors.callVisitHome(connection, server, home);
 		for(var zone : home.zones()) {
-			var entities = overworld.getEntitiesOfClass(LivingEntity.class, zone.shape());
+			ModSensors.callVisitZone(connection, server, zone);
+
+			var entities = overworld.getEntitiesOfClass(Entity.class, zone.shape());
 			for(var entity : entities) {
-				if(entity.getUUID().equals(player)) {
-					LOGGER.info("Player {} is in home {} zone {}", player, home.name(), zone.name());
-				}
+				ModSensors.callVisitHomeEntity(connection, server, home, entity);
+				ModSensors.callVisitZoneEntity(connection, server, zone, entity);
 			}
+
 			for(var pos : getBlocksInAABBStream(zone.shape())) {
 				var blockState = overworld.getBlockState(pos);
-				// Do something with the block state, e.g. check if it's a specific type
-				//LOGGER.info("Block at {}: {}", pos, blockState.getBlock().getName().getString());
+				var blockEntity = overworld.getBlockEntity(pos);
+				ModSensors.callVisitHomeBlock(connection, server, home, pos, blockState, blockEntity);
+				ModSensors.callVisitZoneBlock(connection, server, zone, pos, blockState, blockEntity);
 			}
 		}
 	}
 
 	@Override
 	public void run() {
-		LOGGER.info("Starting world watcher thread");
+		LOGGER.info("Establishing DuckDB connection");
+		try {
+			connection = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:persistent.duckdb");
+			ModSensors.createTables(connection);
+		} catch (SQLException e) {
+			SmartHome.LOGGER.error("Error initializing DuckDB", e);
+			throw new RuntimeException(e);
+		}
+
+		LOGGER.info("Entering world watcher loop");
 		while(true) {
 			try {
 				Thread.sleep(500L);
@@ -75,17 +93,27 @@ public class WorldWatcher implements Runnable {
 			}
 
 			lastTick = server.getTickCount();
-			//LOGGER.info("Tick: {}", lastTick);
 
 			var homes = WorldSavedHomes.get(overworld);
 			for(var owner : homes.playerHomes().keySet()) {
-				//LOGGER.info("Player {} has {} homes", owner, homes.playerHomes().get(owner).size());
 				var homeList = homes.playerHomes().get(owner);
 				for(var home : homeList) {
-					processHome(owner, home);
+					try {
+						processHome(home);
+					} catch (SQLException e) {
+						SmartHome.LOGGER.error("Error processing home for player='{}' home='{}'", owner, home.name(), e);
+					}
 				}
 			}
 		}
+
+		LOGGER.info("Exiting world watcher loop, closing DuckDB connection");
+		try {
+			connection.close();
+		} catch (SQLException e) {
+			SmartHome.LOGGER.error("Error closing DuckDB connection", e);
+		}
+
 		LOGGER.info("Stopping world watcher thread");
 	}
 }

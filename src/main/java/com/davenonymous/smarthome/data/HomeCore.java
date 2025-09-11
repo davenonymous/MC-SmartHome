@@ -14,12 +14,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class HomeCore {
 	String name;
 	List<HomeZone> zones;
 
 	// internal values, not serialized
+	UUID owner;
 	AABB bounds;
 	VoxelShape shape;
 
@@ -30,8 +32,39 @@ public class HomeCore {
 	public HomeCore(String name, List<HomeZone> zones) {
 		this.name = name;
 		this.zones = zones;
+		this.zones.forEach(z -> z.setHome(this));
 		updateBounds();
 	}
+
+	public HomeCore(CompoundTag nbt) {
+		Optional<HomeCore> decoded = CODEC.codec().parse(NbtOps.INSTANCE, nbt.get("home")).result();
+		if(decoded.isPresent()) {
+			HomeCore core = decoded.get();
+			this.name = core.name;
+			this.zones = core.zones;
+			this.zones.forEach(z -> z.setHome(this));
+		} else {
+			this.name = "invalid";
+			this.zones = new ArrayList<>();
+		}
+		updateBounds();
+	}
+
+	public UUID owner() {
+		return owner;
+	}
+
+	public HomeCore setOwner(UUID owner) {
+		this.owner = owner;
+		return this;
+	}
+
+	public CompoundTag writeToNBT(CompoundTag nbt) {
+		Optional<Tag> encoded = CODEC.codec().encodeStart(NbtOps.INSTANCE, this).result();
+		encoded.ifPresent(tag -> nbt.put("home", tag));
+		return nbt;
+	}
+
 
 	private void updateBounds() {
 		bounds = new AABB(0,0,0,0,0,0);
@@ -48,31 +81,13 @@ public class HomeCore {
 		}
 	}
 
-	public HomeCore(CompoundTag nbt) {
-		Optional<HomeCore> decoded = CODEC.codec().parse(NbtOps.INSTANCE, nbt.get("home")).result();
-		if(decoded.isPresent()) {
-			HomeCore core = decoded.get();
-			this.name = core.name;
-			this.zones = core.zones;
-		} else {
-			this.name = "invalid";
-			this.zones = new ArrayList<>();
-		}
-		updateBounds();
-	}
-
-	public CompoundTag writeToNBT(CompoundTag nbt) {
-		Optional<Tag> encoded = CODEC.codec().encodeStart(NbtOps.INSTANCE, this).result();
-		encoded.ifPresent(tag -> nbt.put("home", tag));
-		return nbt;
-	}
-
 	public Optional<HomeZone> getZone(String zoneName) {
 		return zones.stream().filter(z -> z.name().equals(zoneName)).findFirst();
 	}
 
 	public HomeCore addZone(HomeZone zone) {
 		zones.removeIf(z -> z.name().equals(zone.name()));
+		zone.setHome(this);
 		zones.add(zone);
 		updateBounds();
 		return this;
@@ -92,7 +107,7 @@ public class HomeCore {
 
 	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
-			HomeZone.CODEC.codec().listOf().optionalFieldOf("zones", new ArrayList<>()).forGetter(HomeCore::zones)
+			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones)
 	).apply(instance, HomeCore::new));
 
 	public HomeCore deleteZone(String zoneName) {

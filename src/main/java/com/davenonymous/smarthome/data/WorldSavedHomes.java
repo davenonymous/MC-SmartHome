@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class WorldSavedHomes extends SavedData {
-	Map<UUID, List<HomeCore>> playerHomes = new HashMap<>();
+	Map<UUID, List<HomeCore>> playerHomes;
 
 	public static WorldSavedHomes get(ServerLevel level) {
 		return level.getDataStorage().computeIfAbsent(
@@ -37,6 +37,7 @@ public class WorldSavedHomes extends SavedData {
 				this.playerHomes.putAll(decoded.get().playerHomes);
 			}
 		}
+		this.setHomeOwners();
 	}
 
 	public WorldSavedHomes(Map<UUID, List<HomeCore>> playerHomes) {
@@ -44,10 +45,21 @@ public class WorldSavedHomes extends SavedData {
 		if(playerHomes != null) {
 			this.playerHomes.putAll(playerHomes);
 		}
+		this.setHomeOwners();
+	}
+
+	private void setHomeOwners() {
+		for(var entry : playerHomes.entrySet()) {
+			UUID playerId = entry.getKey();
+			for(var home : entry.getValue()) {
+				home.setOwner(playerId);
+			}
+		}
 	}
 
 	public WorldSavedHomes addHome(Player player, HomeCore home) {
 		UUID playerId = player.getUUID();
+		home.setOwner(playerId);
 		List<HomeCore> homes = playerHomes.computeIfAbsent(playerId, key -> new ArrayList<>());
 		homes.removeIf(h -> h.name().equals(home.name()));
 		homes.add(home);

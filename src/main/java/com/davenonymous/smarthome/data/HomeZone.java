@@ -9,6 +9,8 @@ public class HomeZone {
 	AABB shape;
 	String name;
 
+	HomeCore home;
+
 	public String name() {
 		return name;
 	}
@@ -20,6 +22,15 @@ public class HomeZone {
 	public HomeZone(String name, AABB shape) {
 		this.name = name;
 		this.shape = shape;
+	}
+
+	public HomeCore home() {
+		return home;
+	}
+
+	public HomeZone setHome(HomeCore home) {
+		this.home = home;
+		return this;
 	}
 
 	public static final MapCodec<AABB> AABB_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

@@ -2,10 +2,10 @@
 
 ## Home Configuration
 
-- [ ] Save and load in JSON format
+- [ ] Save and load in JSON/NBT format via Codecs
 - [ ] Responsible for zones, names, and other home settings
 - [ ] Zone management (add, remove, rename, scale, translate etc)
-- [ ] 
+- [ ] Homes need to know their dimension/world
 
 ## Home Database
 
@@ -20,3 +20,9 @@ Input:
 
 Output:
 - [ ] Actuators (everything you can directly write to a block)
+
+
+## Testing
+
+- [ ] Create an elaborate, command place-able test home
+- [ ] Test multi-threading issues
