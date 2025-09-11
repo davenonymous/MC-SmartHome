@@ -13,6 +13,7 @@ public class SmartHomeCommand {
 		return Commands.literal(SmartHome.MODID).then(
 			Commands.literal("home")
 				.then(ListHomesCommand.registerCommand(dispatcher))
+				.then(ShowHomeCommand.registerCommand(dispatcher))
 				.then(CreateHomeCommand.registerCommand(dispatcher))
 				.then(DeleteHomeCommand.registerCommand(dispatcher))
 				.then(Commands.literal("zone").then(Commands.argument("home", StringArgumentType.string())
