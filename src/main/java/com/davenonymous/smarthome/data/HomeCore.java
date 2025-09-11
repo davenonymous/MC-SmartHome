@@ -94,4 +94,9 @@ public class HomeCore {
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().optionalFieldOf("zones", new ArrayList<>()).forGetter(HomeCore::zones)
 	).apply(instance, HomeCore::new));
+
+	public HomeCore deleteZone(String zoneName) {
+		zones.removeIf(z -> z.name().equals(zoneName));
+		return this;
+	}
 }

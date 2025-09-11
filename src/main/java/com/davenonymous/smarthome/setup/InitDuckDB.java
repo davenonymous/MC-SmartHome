@@ -12,9 +12,15 @@ import java.sql.*;
 @EventBusSubscriber(modid = SmartHome.MODID)
 public class InitDuckDB {
 	public static DuckDBConnection connection;
+	public static Thread workerThread;
+
 
 	@SubscribeEvent
 	public static void onServerStart(ServerStartingEvent event) {
+		workerThread = new Thread(new WorldWatcher(event.getServer()));
+		workerThread.setName("SmartHome-WorldWatcher");
+		workerThread.start();
+
 		try {
 			connection = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:");
 
@@ -37,6 +43,9 @@ public class InitDuckDB {
 
 	@SubscribeEvent
 	public static void onServerStop(ServerStoppingEvent event) {
+		workerThread.interrupt();
+		workerThread = null;
+
 		try {
 			connection.close();
 		} catch (SQLException e) {

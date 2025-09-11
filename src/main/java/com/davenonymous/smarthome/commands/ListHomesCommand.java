@@ -40,6 +40,9 @@ public class ListHomesCommand implements Command<CommandSourceStack> {
 
 		String playerName = player.getName().getString();
 		context.getSource().sendSuccess(() -> Component.literal("Homes for " + playerName + ": " + homes.size()), false);
+		for(var home : homes) {
+			context.getSource().sendSuccess(() -> Component.literal(" - " + home.name()), false);
+		}
 		return 0;
 	}
 }

@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.commands;
 
-import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
@@ -11,6 +10,8 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.AABB;
@@ -24,7 +25,9 @@ public class CreateZoneCommand implements Command<CommandSourceStack> {
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
 		return Commands.literal("create")
 			.then(
-				Commands.argument("name", StringArgumentType.string()).executes(instance)
+				Commands.argument("name", StringArgumentType.string()).then(
+					Commands.argument("cornerA", BlockPosArgument.blockPos())
+				.then(Commands.argument("cornerB", BlockPosArgument.blockPos()).executes(instance)))
 			);
 	}
 
@@ -33,6 +36,8 @@ public class CreateZoneCommand implements Command<CommandSourceStack> {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		String homeName = StringArgumentType.getString(context, "home");
 		String zoneName = StringArgumentType.getString(context, "name");
+		BlockPos cornerA = BlockPosArgument.getBlockPos(context, "cornerA");
+		BlockPos cornerB = BlockPosArgument.getBlockPos(context, "cornerB");
 
 		var level = context.getSource().getServer().overworld();
 		WorldSavedHomes worldSavedHomes = WorldSavedHomes.get(level);
@@ -47,7 +52,19 @@ public class CreateZoneCommand implements Command<CommandSourceStack> {
 			return 1;
 		}
 
-		HomeZone newZone = new HomeZone(zoneName, new AABB(0,0,0,0,0,0));
+		if(cornerA.equals(cornerB)) {
+			context.getSource().sendFailure(Component.literal("Zone corners cannot be the same"));
+			return 1;
+		}
+
+		double cornerAX = cornerA.getX();
+		double cornerAY = cornerA.getY();
+		double cornerAZ = cornerA.getZ();
+		double cornerBX = cornerB.getX();
+		double cornerBY = cornerB.getY();
+		double cornerBZ = cornerB.getZ();
+
+		HomeZone newZone = new HomeZone(zoneName, new AABB(cornerAX, cornerAY, cornerAZ, cornerBX, cornerBY, cornerBZ));
 		home.get().addZone(newZone);
 		worldSavedHomes.setDirty();
 

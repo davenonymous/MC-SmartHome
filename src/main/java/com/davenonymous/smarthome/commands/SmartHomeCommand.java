@@ -14,9 +14,11 @@ public class SmartHomeCommand {
 			Commands.literal("home")
 				.then(ListHomesCommand.registerCommand(dispatcher))
 				.then(CreateHomeCommand.registerCommand(dispatcher))
+				.then(DeleteHomeCommand.registerCommand(dispatcher))
 				.then(Commands.literal("zone").then(Commands.argument("home", StringArgumentType.string())
 					.then(CreateZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
 					.then(ListZonesCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
+					.then(DeleteZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
 				))
 		);
 	}
