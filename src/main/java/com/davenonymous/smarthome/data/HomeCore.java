@@ -21,7 +21,7 @@ public class HomeCore {
 	List<HomeZone> zones;
 
 	// internal values, not serialized
-	UUID owner;
+	UUID owner; // TODO: Owners! Plural.
 	AABB bounds;
 	VoxelShape shape;
 
@@ -103,6 +103,10 @@ public class HomeCore {
 
 	public List<HomeZone> zones() {
 		return zones;
+	}
+
+	public VoxelShape shape() {
+		return shape;
 	}
 
 	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

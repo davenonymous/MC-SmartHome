@@ -3,7 +3,7 @@ package com.davenonymous.smarthome.commands;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.particles.ModelParticleOptions;
-import com.davenonymous.smarthome.setup.event.RegisterModelsHandler;
+import com.davenonymous.smarthome.setup.content.ModParticleModels;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -46,7 +46,7 @@ public class ShowHomeCommand implements Command<CommandSourceStack> {
 
 		context.getSource().getLevel().sendParticles(
 			player,
-			new ModelParticleOptions(RegisterModelsHandler.BLOCK_MARKER_LINE.id(), RegisterModelsHandler.BLOCK_MARKER_LINE.getVariant(), List.of(), Vec3.ZERO, 200, 1.0f),
+			new ModelParticleOptions(ModParticleModels.BLOCK_MARKER_LINE.id(), ModParticleModels.BLOCK_MARKER_LINE.getVariant(), List.of(), ModParticleModels.BLOCK_MARKER_LINE_AABB.getMaxPosition(), 200, 0.5f),
 			false, center.x, center.y, center.z, 1, 0, 0, 0, 0f);
 
 		context.getSource().sendSuccess(() -> Component.literal(String.format("Showing home: %s", homeName)), false);

@@ -2,7 +2,6 @@ package com.davenonymous.smarthome.particles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,8 +16,7 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Quaternionf;
-
-import java.util.List;
+import org.lwjgl.opengl.GL33;
 
 public class ModelParticle extends Particle {
 	BakedModel model;
@@ -35,6 +33,7 @@ public class ModelParticle extends Particle {
 		this.alpha = 1.0f;
 	}
 
+	@SuppressWarnings("ConstantValue")
 	@Override
 	public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
 		var mc = Minecraft.getInstance();
@@ -53,14 +52,29 @@ public class ModelParticle extends Particle {
 			quatty.mul(axis.rotationDegrees(90));
 		}
 		poseStack.mulPose(quatty);
+
+		// move to block center, i.e. our model is now exactly in the 16x16x16 cube of a block
 		poseStack.translate(-0.5f, -0.5f, -0.5f);
-		poseStack.translate(5.5f/16, 7.5f/16, 6.5f/16);
+
+		// Actually center the model:
+		var offset = new Vec3(16, 16, 16).subtract(options.rotationOrigin()).scale(0.5f / 16f);
+		poseStack.translate(offset.x, offset.y, offset.z);
 
 		// options.rotationOrigin()
 		//poseStack.translate(-rotationOrigin.x, -rotationOrigin.y, -rotationOrigin.z);
 
-		mc.getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), buffer, null, model, 1.0f, 1.0f, 1.0f, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.SOLID);
+		boolean renderThroughWalls = true;
+		if(renderThroughWalls) {
+			RenderSystem.enableDepthTest();
+			RenderSystem.depthFunc(GL33.GL_LEQUAL);
+		}
+		RenderSystem.enableBlend();
+		mc.getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), buffer, null, model, 1.0f, 1.0f, 1.0f, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.TRIPWIRE);
 
+		RenderSystem.disableBlend();
+		if(renderThroughWalls) {
+			RenderSystem.disableDepthTest();
+		}
 		poseStack.popPose();
 	}
 
