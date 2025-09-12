@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.setup;
+package com.davenonymous.smarthome.setup.event;
 
 
 import com.davenonymous.smarthome.SmartHome;

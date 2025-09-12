@@ -19,15 +19,19 @@ import java.util.List;
 
 public class ModelParticleOptions implements ParticleOptions {
 	ResourceLocation model;
+	String variant;
 	List<Axis> rotationAxis;
 	Vec3 rotationOrigin;
 	int lifetime;
+	float alpha;
 
-	public ModelParticleOptions(ResourceLocation modelLocation, List<Axis> rotationAxis, Vec3 rotationOrigin, int lifetime) {
+	public ModelParticleOptions(ResourceLocation modelLocation, String variant, List<Axis> rotationAxis, Vec3 rotationOrigin, int lifetime, float alpha) {
 		this.model = modelLocation;
+		this.variant = variant;
 		this.rotationAxis = rotationAxis;
 		this.rotationOrigin = rotationOrigin;
 		this.lifetime = lifetime;
+		this.alpha = alpha;
 	}
 
 	public int lifetime() {
@@ -44,6 +48,14 @@ public class ModelParticleOptions implements ParticleOptions {
 
 	public Vec3 rotationOrigin() {
 		return rotationOrigin;
+	}
+
+	public float alpha() {
+		return alpha;
+	}
+
+	public String variant() {
+		return variant;
 	}
 
 	public static final Codec<Axis> AXIS_CODEC = Codec.BYTE.xmap(b -> switch(b) {
@@ -95,16 +107,20 @@ public class ModelParticleOptions implements ParticleOptions {
 
 	public static final MapCodec<ModelParticleOptions> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		ResourceLocation.CODEC.fieldOf("model").forGetter(ModelParticleOptions::modelLocation),
+		Codec.STRING.optionalFieldOf("variant", "standalone").forGetter(ModelParticleOptions::variant),
 		AXIS_CODEC.listOf().fieldOf("rotationAxis").forGetter(ModelParticleOptions::rotationAxis),
 		Vec3.CODEC.fieldOf("rotationOrigin").forGetter(ModelParticleOptions::rotationOrigin),
-		Codec.INT.fieldOf("lifetime").forGetter(ModelParticleOptions::lifetime)
+		Codec.INT.fieldOf("lifetime").forGetter(ModelParticleOptions::lifetime),
+		Codec.FLOAT.fieldOf("alpha").forGetter(ModelParticleOptions::alpha)
 	).apply(instance, ModelParticleOptions::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ModelParticleOptions> STREAM_CODEC = StreamCodec.composite(
 		ResourceLocation.STREAM_CODEC, ModelParticleOptions::modelLocation,
+		ByteBufCodecs.STRING_UTF8, ModelParticleOptions::variant,
 		AXIS_STREAM_CODEC.apply(ByteBufCodecs.list()), ModelParticleOptions::rotationAxis,
 		VEC3_STREAM_CODEC, ModelParticleOptions::rotationOrigin,
 		ByteBufCodecs.INT, ModelParticleOptions::lifetime,
+		ByteBufCodecs.FLOAT, ModelParticleOptions::alpha,
 		ModelParticleOptions::new
 	);
 

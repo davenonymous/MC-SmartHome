@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.commands;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.particles.ModelParticleOptions;
+import com.davenonymous.smarthome.setup.event.RegisterModelsHandler;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,7 +13,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
 
@@ -46,7 +46,7 @@ public class ShowHomeCommand implements Command<CommandSourceStack> {
 
 		context.getSource().getLevel().sendParticles(
 			player,
-			new ModelParticleOptions(ResourceLocation.withDefaultNamespace("block/diamond_block"), List.of(), Vec3.ZERO, 200),
+			new ModelParticleOptions(RegisterModelsHandler.BLOCK_MARKER_LINE.id(), RegisterModelsHandler.BLOCK_MARKER_LINE.getVariant(), List.of(), Vec3.ZERO, 200, 1.0f),
 			false, center.x, center.y, center.z, 1, 0, 0, 0, 0f);
 
 		context.getSource().sendSuccess(() -> Component.literal(String.format("Showing home: %s", homeName)), false);

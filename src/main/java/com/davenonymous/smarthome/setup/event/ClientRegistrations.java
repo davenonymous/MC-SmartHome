@@ -1,7 +1,8 @@
-package com.davenonymous.smarthome.setup;
+package com.davenonymous.smarthome.setup.event;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.particles.ModelParticleProvider;
+import com.davenonymous.smarthome.setup.DeferredRegistries;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;

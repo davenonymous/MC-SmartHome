@@ -22,16 +22,17 @@ import java.util.List;
 
 public class ModelParticle extends Particle {
 	BakedModel model;
-	List<Axis> rotationAxis;
-	Vec3 rotationOrigin;
+	ModelParticleOptions options;
+	Vec3 position;
 
-	public ModelParticle(ClientLevel level, BakedModel model, Vec3 position, Vec3 rotOrigin, List<Axis> rotationAxis, int lifetime) {
+	public ModelParticle(ClientLevel level, BakedModel model, Vec3 position, ModelParticleOptions options) {
 		super(level, position.x, position.y, position.z);
 		this.model = model;
-		this.lifetime = lifetime;
+		this.options = options;
+		this.position = position;
+
+		this.lifetime = options.lifetime();
 		this.alpha = 1.0f;
-		this.rotationAxis = rotationAxis;
-		this.rotationOrigin = rotOrigin;
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class ModelParticle extends Particle {
 
 		Quaternionf quatty = new Quaternionf();
 		poseStack.translate(this.x, this.y, this.z);
-		for(var axis : this.rotationAxis) {
+		for(var axis : this.options.rotationAxis()) {
 			if(axis == null) {
 				continue;
 			}
@@ -55,6 +56,7 @@ public class ModelParticle extends Particle {
 		poseStack.translate(-0.5f, -0.5f, -0.5f);
 		poseStack.translate(5.5f/16, 7.5f/16, 6.5f/16);
 
+		// options.rotationOrigin()
 		//poseStack.translate(-rotationOrigin.x, -rotationOrigin.y, -rotationOrigin.z);
 
 		mc.getBlockRenderer().getModelRenderer().renderModel(poseStack.last(), buffer, null, model, 1.0f, 1.0f, 1.0f, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.SOLID);

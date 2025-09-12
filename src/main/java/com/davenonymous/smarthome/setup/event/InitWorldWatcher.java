@@ -1,6 +1,7 @@
-package com.davenonymous.smarthome.setup;
+package com.davenonymous.smarthome.setup.event;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.setup.WorldWatcher;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;

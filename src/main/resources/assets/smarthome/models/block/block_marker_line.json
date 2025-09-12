@@ -1,0 +1,22 @@
+{
+	"format_version": "1.9.0",
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "smarthome:block/workinprogress_marker",
+		"particle": "smarthome:block/workinprogress_marker"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [16, 3, 3],
+			"faces": {
+				"north": {"uv": [0, 0, 16, 3], "texture": "#0"},
+				"east": {"uv": [0, 12, 3, 15], "texture": "#0"},
+				"south": {"uv": [0, 3, 16, 6], "texture": "#0"},
+				"west": {"uv": [3, 12, 6, 15], "texture": "#0"},
+				"up": {"uv": [16, 9, 0, 6], "texture": "#0"},
+				"down": {"uv": [16, 9, 0, 12], "texture": "#0"}
+			}
+		}
+	]
+}

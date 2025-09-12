@@ -18,6 +18,6 @@ public class ModelParticleProvider implements ParticleProvider<ModelParticleOpti
 	public @Nullable Particle createParticle(@NotNull ModelParticleOptions options, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 		var bakedModel = Minecraft.getInstance().getModelManager().getModel(ModelResourceLocation.standalone(options.modelLocation()));
 
-		return new ModelParticle(level, bakedModel, new Vec3(x, y, z), options.rotationOrigin, options.rotationAxis(), options.lifetime());
+		return new ModelParticle(level, bakedModel, new Vec3(x, y, z), options);
 	}
 }
