@@ -54,13 +54,13 @@ public class WorldWatcher implements Runnable {
 		for(var zone : home.zones()) {
 			ModSensors.callVisitZone(connection, server, zone);
 
-			var entities = overworld.getEntitiesOfClass(Entity.class, zone.shape());
+			var entities = overworld.getEntitiesOfClass(Entity.class, zone.bounds());
 			for(var entity : entities) {
 				ModSensors.callVisitHomeEntity(connection, server, home, entity);
 				ModSensors.callVisitZoneEntity(connection, server, zone, entity);
 			}
 
-			for(var pos : getBlocksInAABBStream(zone.shape())) {
+			for(var pos : getBlocksInAABBStream(zone.bounds())) {
 				var blockState = overworld.getBlockState(pos);
 				var blockEntity = overworld.getBlockEntity(pos);
 				ModSensors.callVisitHomeBlock(connection, server, home, pos, blockState, blockEntity);

@@ -31,7 +31,7 @@ public class HomeCore {
 
 	public HomeCore(String name, List<HomeZone> zones) {
 		this.name = name;
-		this.zones = zones;
+		this.zones = new ArrayList<>(zones);
 		this.zones.forEach(z -> z.setHome(this));
 		updateBounds();
 	}
@@ -41,7 +41,7 @@ public class HomeCore {
 		if(decoded.isPresent()) {
 			HomeCore core = decoded.get();
 			this.name = core.name;
-			this.zones = core.zones;
+			this.zones = new ArrayList<>(core.zones);
 			this.zones.forEach(z -> z.setHome(this));
 		} else {
 			this.name = "invalid";
@@ -66,16 +66,15 @@ public class HomeCore {
 	}
 
 
-	private void updateBounds() {
+	public void updateBounds() {
 		bounds = new AABB(0,0,0,0,0,0);
 		shape = Shapes.empty();
 		if(zones.isEmpty()) {
 			return;
 		}
 
-		bounds = zones.getFirst().shape;
-		for(int zoneIndex = 1; zoneIndex < zones.size(); zoneIndex++) {
-			AABB zoneBounds = zones.get(zoneIndex).shape;
+		for(int zoneIndex = 0; zoneIndex < zones.size(); zoneIndex++) {
+			AABB zoneBounds = zones.get(zoneIndex).bounds;
 			bounds = bounds.minmax(zoneBounds);
 			shape = Shapes.join(shape, Shapes.create(zoneBounds), BooleanOp.OR);
 		}

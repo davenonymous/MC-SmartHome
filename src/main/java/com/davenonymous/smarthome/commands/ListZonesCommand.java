@@ -38,7 +38,8 @@ public class ListZonesCommand implements Command<CommandSourceStack> {
 		String playerName = player.getName().getString();
 		context.getSource().sendSuccess(() -> Component.literal(String.format("Zones in home %s for %s: %d", homeName, playerName, zones.size())), false);
 		for(var zone : zones) {
-			context.getSource().sendSuccess(() -> Component.literal(String.format(" - %s", zone.name())), false);
+			var text = String.format(" - %s: %s", zone.name(), zone.bounds());
+			context.getSource().sendSuccess(() -> Component.literal(text), false);
 		}
 
 		return 0;

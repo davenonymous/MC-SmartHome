@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.phys.AABB;
 
 public class HomeZone {
-	AABB shape;
+	AABB bounds;
 	String name;
 
 	HomeCore home;
@@ -15,13 +15,13 @@ public class HomeZone {
 		return name;
 	}
 
-	public AABB shape() {
-		return shape;
+	public AABB bounds() {
+		return bounds;
 	}
 
-	public HomeZone(String name, AABB shape) {
+	public HomeZone(String name, AABB bounds) {
 		this.name = name;
-		this.shape = shape;
+		this.bounds = bounds;
 	}
 
 	public HomeCore home() {
@@ -44,6 +44,6 @@ public class HomeZone {
 
 	public static final MapCodec<HomeZone> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Codec.STRING.fieldOf("name").forGetter(HomeZone::name),
-		AABB_CODEC.fieldOf("shape").forGetter(HomeZone::shape)
+		AABB_CODEC.fieldOf("bounds").forGetter(HomeZone::bounds)
 	).apply(instance, HomeZone::new));
 }

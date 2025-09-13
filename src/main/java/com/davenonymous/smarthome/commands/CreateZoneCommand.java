@@ -64,7 +64,11 @@ public class CreateZoneCommand implements Command<CommandSourceStack> {
 		double cornerBY = cornerB.getY();
 		double cornerBZ = cornerB.getZ();
 
-		HomeZone newZone = new HomeZone(zoneName, new AABB(cornerAX, cornerAY, cornerAZ, cornerBX, cornerBY, cornerBZ));
+		AABB zoneBounds = new AABB(
+			Math.min(cornerAX, cornerBX), Math.min(cornerAY, cornerBY), Math.min(cornerAZ, cornerBZ),
+			Math.max(cornerAX, cornerBX) + 1, Math.max(cornerAY, cornerBY) + 1, Math.max(cornerAZ, cornerBZ) + 1
+		);
+		HomeZone newZone = new HomeZone(zoneName, zoneBounds);
 		home.get().addZone(newZone);
 		worldSavedHomes.setDirty();
 

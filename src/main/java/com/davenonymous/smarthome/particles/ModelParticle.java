@@ -63,7 +63,7 @@ public class ModelParticle extends Particle {
 		// options.rotationOrigin()
 		//poseStack.translate(-rotationOrigin.x, -rotationOrigin.y, -rotationOrigin.z);
 
-		boolean renderThroughWalls = true;
+		boolean renderThroughWalls = false;
 		if(renderThroughWalls) {
 			RenderSystem.enableDepthTest();
 			RenderSystem.depthFunc(GL33.GL_LEQUAL);
