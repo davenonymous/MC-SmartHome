@@ -21,6 +21,9 @@ public class SmartHomeCommand {
 					.then(ListZonesCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
 					.then(DeleteZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
 				))
+		).then(Commands.literal("db").requires(commandSourceStack -> commandSourceStack.hasPermission(4))
+			.then(RunQueryCommand.registerCommand(dispatcher))
+			.then(ExecuteStatementCommand.registerCommand(dispatcher))
 		);
 	}
 }

@@ -26,7 +26,7 @@ public class Occupancy implements ISensor {
 	@Override
 	public void createTables(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
-		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home VARCHAR, owner UUID, zone VARCHAR, visitor VARCHAR)");
+		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home VARCHAR, owner UUID, zone VARCHAR, visitor VARCHAR, pos STRUCT(x DOUBLE, y DOUBLE, z DOUBLE))");
 		stmt.close();
 	}
 
@@ -36,12 +36,15 @@ public class Occupancy implements ISensor {
 			return;
 		}
 
-		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, ?)");
+		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, row(?, ?, ?))");
 		prepped.setLong(1, server.getTickCount());
 		prepped.setString(2, zone.home().name());
 		prepped.setString(3, zone.home().owner().toString());
 		prepped.setString(4, zone.name());
 		prepped.setString(5, livingEntity.getName().getString());
+		prepped.setDouble(6, livingEntity.getX());
+		prepped.setDouble(7, livingEntity.getY());
+		prepped.setDouble(8, livingEntity.getZ());
 		prepped.execute();
 		prepped.close();
 	}
