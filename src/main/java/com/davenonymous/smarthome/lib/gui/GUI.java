@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.lib.gui;
 
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
 import com.davenonymous.smarthome.lib.gui.widgets.IValueProvider;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -30,6 +31,8 @@ public class GUI extends WidgetPanel {
 	public static ResourceLocation windowBackground = SmartHome.resource("textures/gui/window.png");
 	public static ResourceLocation defaultButtonTexture = SmartHome.resource("textures/gui/button_background.png");
 
+	protected GuiTheme theme = new Vanilla();
+
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public boolean drawBackground = true;
@@ -46,6 +49,13 @@ public class GUI extends WidgetPanel {
 		this.setHeight(height);
 	}
 
+	public GuiTheme theme() {
+		return theme;
+	}
+
+	public ResourceLocation sprite(GuiTheme.SpriteComponent component) {
+		return theme.getSprite(component);
+	}
 
 	public void findValueWidgets() {
 		this.findValueWidgets(this);
@@ -80,7 +90,8 @@ public class GUI extends WidgetPanel {
 	@Override
 	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		if(drawBackground) {
-			GUIHelper.drawWindow(pGuiGraphics, this.width, this.height, this.hasTabs);
+			pGuiGraphics.blitSprite(sprite(GuiTheme.SpriteComponent.WINDOW_BACKGROUND), 0, 0, this.width, this.height);
+			//GUIHelper.drawWindow(pGuiGraphics, this.width, this.height, this.hasTabs);
 		}
 		super.draw(pGuiGraphics, screen);
 	}

@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.lib.gui;
 
 
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,6 +36,14 @@ public abstract class WidgetScreen extends Screen {
 			this.gui.setVisible(true);
 		}
 		return gui;
+	}
+
+	public GuiTheme theme() {
+		return getOrCreateGui().theme;
+	}
+
+	public ResourceLocation sprite(GuiTheme.SpriteComponent component) {
+		return getOrCreateGui().theme.getSprite(component);
 	}
 
 	public int mouseX() {

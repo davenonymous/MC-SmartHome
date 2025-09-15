@@ -1,16 +1,26 @@
 package com.davenonymous.smarthome.blocks;
 
+import com.davenonymous.smarthome.data.HomeCore;
+import com.davenonymous.smarthome.data.WorldSavedHomes;
+import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -30,6 +40,28 @@ public class WallDashboardBlock extends Block {
 		this.registerDefaultState(
 			this.stateDefinition.any()
 				.setValue(BlockStateProperties.FACING, Direction.NORTH));
+	}
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		if(level.isClientSide()) {
+			return InteractionResult.SUCCESS;
+		}
+
+		if(!(player instanceof ServerPlayer serverPlayer)) {
+			return InteractionResult.PASS;
+		}
+
+		WorldSavedHomes data = WorldSavedHomes.get((ServerLevel) level);
+		var optZone = data.getHome(pos);
+		if(optZone.isPresent()) {
+			PacketDistributor.sendToPlayer(serverPlayer, new HomeInfoPayload(optZone.get().home()));
+			return InteractionResult.CONSUME;
+		}
+
+		var dummy = new HomeCore("dummy");
+		PacketDistributor.sendToPlayer(serverPlayer, new HomeInfoPayload(dummy));
+		return InteractionResult.CONSUME;
 	}
 
 	@Override

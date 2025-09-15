@@ -41,6 +41,7 @@ public class Widget implements ISelectable {
 	boolean renderDebugOutlines = false;
 	Widget parent;
 
+
 	int actualTooltipWidth = 0;
 
 	List<Either<Component, TooltipComponent>> tooltipElements = new ArrayList<>();
@@ -137,6 +138,8 @@ public class Widget implements ISelectable {
 		}
 		return id == widget.id;
 	}
+
+
 
 	@Override
 	public int hashCode() {

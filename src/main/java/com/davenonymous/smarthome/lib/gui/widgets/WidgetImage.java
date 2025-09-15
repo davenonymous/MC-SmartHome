@@ -17,6 +17,9 @@ public class WidgetImage extends Widget {
 	float scale = 1.0f;
 	Size2i offset = new Size2i(0, 0);
 
+	public WidgetImage() {
+	}
+
 	public WidgetImage(ResourceLocation image) {
 		this.image = image;
 	}

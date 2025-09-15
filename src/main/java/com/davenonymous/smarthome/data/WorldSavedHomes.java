@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +24,20 @@ public class WorldSavedHomes extends SavedData {
 			new Factory<WorldSavedHomes>(WorldSavedHomes::new, WorldSavedHomes::new),
 			"smarthome_homes"
 		);
+	}
+
+	public Optional<HomeZone> getHome(BlockPos pos) {
+		for(var homeList : playerHomes.values()) {
+			for(var home : homeList) {
+				if(home.contains(pos)) {
+					var zone = home.getZoneContaining(pos);
+					if(zone != null) {
+						return Optional.of(zone);
+					}
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	public WorldSavedHomes() {

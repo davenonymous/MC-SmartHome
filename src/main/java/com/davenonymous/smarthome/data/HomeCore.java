@@ -3,10 +3,15 @@ package com.davenonymous.smarthome.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -48,6 +53,30 @@ public class HomeCore {
 			this.zones = new ArrayList<>();
 		}
 		updateBounds();
+	}
+
+	public boolean contains(BlockPos pos) {
+		return contains(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	public boolean contains(Vec3 vec) {
+		return contains(vec.x, vec.y, vec.z);
+	}
+
+	public boolean contains(double x, double y, double z) {
+		return bounds.contains(x, y, z);
+	}
+
+	public HomeZone getZoneContaining(BlockPos pos) {
+		return getZoneContaining(pos.getX(), pos.getY(), pos.getZ());
+	}
+
+	public HomeZone getZoneContaining(Vec3 vec) {
+		return getZoneContaining(vec.x, vec.y, vec.z);
+	}
+
+	public HomeZone getZoneContaining(double x, double y, double z) {
+		return zones.stream().filter(zone -> zone.bounds.contains(x, y, z)).findFirst().orElse(null);
 	}
 
 	public UUID owner() {
@@ -112,6 +141,12 @@ public class HomeCore {
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones)
 	).apply(instance, HomeCore::new));
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = StreamCodec.composite(
+		ByteBufCodecs.STRING_UTF8, HomeCore::name,
+		HomeZone.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::zones,
+		HomeCore::new
+	);
 
 	public HomeCore deleteZone(String zoneName) {
 		zones.removeIf(z -> z.name().equals(zoneName));
