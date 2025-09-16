@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
@@ -28,15 +29,17 @@ public class DGBlockStates extends BlockStateProvider {
 
 	public void ownDirectionalBlock(Block block, ModelFile model) {
 		this.getVariantBuilder(block).forAllStates((state) -> {
-			Direction dir = state.getValue(BlockStateProperties.FACING);
+			Direction dir = state.getValue(BlockStateProperties.HORIZONTAL_FACING);
+			AttachFace face = state.getValue(BlockStateProperties.ATTACH_FACE);
+
 			var builder = ConfiguredModel.builder().modelFile(model);
-			if(dir == Direction.DOWN) {
-				builder = builder.rotationX(90);
-			} else if(dir == Direction.UP) {
+			if(face == AttachFace.FLOOR) {
 				builder = builder.rotationX(270);
-			} else {
-				builder = builder.rotationY(((int)dir.toYRot() + 180) % 360);
+			} else if(face == AttachFace.CEILING) {
+				builder = builder.rotationX(90);
 			}
+
+			builder = builder.rotationY(((int)dir.toYRot() + 180) % 360);
 			return builder.build();
 		});
 	}

@@ -15,7 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -35,11 +35,15 @@ public class WallDashboardBlock extends Block {
 		Direction.DOWN,  Shapes.box(0.1875, 0, 0.1875, 0.8125, 0.3125, 0.8125)
 	);
 
+	public static final DirectionProperty HORIZONTAL_FACING = BlockStateProperties.HORIZONTAL_FACING;
+	public static final EnumProperty<AttachFace> ATTACH_FACE = BlockStateProperties.ATTACH_FACE;
+
 	public WallDashboardBlock(Properties properties) {
 		super(properties);
 		this.registerDefaultState(
 			this.stateDefinition.any()
-				.setValue(BlockStateProperties.FACING, Direction.NORTH));
+				.setValue(HORIZONTAL_FACING, Direction.NORTH)
+				.setValue(ATTACH_FACE, AttachFace.WALL));
 	}
 
 	@Override
@@ -66,26 +70,36 @@ public class WallDashboardBlock extends Block {
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(BlockStateProperties.FACING);
+		builder.add(HORIZONTAL_FACING);
+		builder.add(ATTACH_FACE);
 	}
 
 	@Override
 	public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
 		var forward = context.getHorizontalDirection();
 		var player = context.getPlayer();
+		var attachFace = AttachFace.WALL;
+
 		if (player != null) {
-			if (player.getXRot() > 65) {
-				forward = Direction.UP;
-			} else if (player.getXRot() < -65) {
-				forward = Direction.DOWN;
+			if (player.getXRot() > 60) {
+				attachFace = AttachFace.CEILING;
+			} else if (player.getXRot() < -60) {
+				attachFace = AttachFace.FLOOR;
 			}
 		}
 
-		return this.defaultBlockState().setValue(BlockStateProperties.FACING, forward);
+		return this.defaultBlockState()
+			.setValue(HORIZONTAL_FACING, forward)
+			.setValue(ATTACH_FACE, attachFace);
 	}
 
 	private VoxelShape getShape(BlockState state) {
-		var direction = state.getValue(BlockStateProperties.FACING);
+		var direction = state.getValue(HORIZONTAL_FACING);
+		if(state.getValue(ATTACH_FACE) == AttachFace.CEILING) {
+			direction = Direction.DOWN;
+		} else if(state.getValue(ATTACH_FACE) == AttachFace.FLOOR) {
+			direction = Direction.UP;
+		}
 		return SHAPES.get(direction);
 	}
 

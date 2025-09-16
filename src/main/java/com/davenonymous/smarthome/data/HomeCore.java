@@ -10,6 +10,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -26,7 +27,7 @@ public class HomeCore {
 	List<HomeZone> zones;
 
 	// internal values, not serialized
-	UUID owner; // TODO: Owners! Plural.
+	UUID owner;
 	AABB bounds;
 	VoxelShape shape;
 
