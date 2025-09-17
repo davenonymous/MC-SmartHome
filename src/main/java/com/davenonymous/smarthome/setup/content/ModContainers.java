@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.MiniRackContainer;
+import com.davenonymous.smarthome.blocks.minirack.MiniRackContainer;
 import com.davenonymous.smarthome.gui.MiniRackScreen;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;

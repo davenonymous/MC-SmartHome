@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.blocks;
+package com.davenonymous.smarthome.blocks.minirack;
 
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.world.item.BlockItem;

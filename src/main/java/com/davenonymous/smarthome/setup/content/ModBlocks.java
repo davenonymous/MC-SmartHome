@@ -1,10 +1,10 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.MiniRackBlock;
-import com.davenonymous.smarthome.blocks.MiniRackBlockEntity;
-import com.davenonymous.smarthome.blocks.WallDashboardBlock;
-import com.davenonymous.smarthome.blocks.WallDashboardBlockEntity;
+import com.davenonymous.smarthome.blocks.minirack.MiniRackBlock;
+import com.davenonymous.smarthome.blocks.minirack.MiniRackBlockEntity;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardBlock;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -25,15 +25,15 @@ public class ModBlocks {
 	public static final DeferredRegister<MapCodec<? extends Block>> BLOCK_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_TYPE, SmartHome.MODID);
 
 
-	public static final String WALL_DASHBOARD_ID = "wall_dashboard";
-	public static final DeferredBlock<Block> WALL_DASHBOARD = BLOCKS.register(
-		WALL_DASHBOARD_ID, () -> new WallDashboardBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+	public static final String DASHBOARD_ID = "dashboard";
+	public static final DeferredBlock<Block> DASHBOARD = BLOCKS.register(
+		DASHBOARD_ID, () -> new DashboardBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
 
-	public static final Supplier<BlockEntityType<WallDashboardBlockEntity>> DASHBOARD_ENTITY = BLOCK_ENTITIES.register(
-		WALL_DASHBOARD_ID, () -> BlockEntityType.Builder.of(WallDashboardBlockEntity::new, WALL_DASHBOARD.get()).build(null));
+	public static final Supplier<BlockEntityType<DashboardBlockEntity>> DASHBOARD_ENTITY = BLOCK_ENTITIES.register(
+		DASHBOARD_ID, () -> BlockEntityType.Builder.of(DashboardBlockEntity::new, DASHBOARD.get()).build(null));
 
-	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<WallDashboardBlock>> DASHBOARD_BLOCK_TYPE = BLOCK_TYPES.register(
-		WALL_DASHBOARD_ID, () -> BlockBehaviour.simpleCodec(WallDashboardBlock::new));
+	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<DashboardBlock>> DASHBOARD_BLOCK_TYPE = BLOCK_TYPES.register(
+		DASHBOARD_ID, () -> BlockBehaviour.simpleCodec(DashboardBlock::new));
 
 
 	public static final String MINI_RACK_ID = "mini_rack";

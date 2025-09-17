@@ -1,5 +1,6 @@
 {
   "values": [
-    "smarthome:wall_dashboard"
+    "smarthome:dashboard",
+    "smarthome:mini_rack"
   ]
 }

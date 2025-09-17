@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.blocks;
+package com.davenonymous.smarthome.blocks.dashboard;
 
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
@@ -7,9 +7,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class WallDashboardBlockEntity extends HomeBlockEntity {
+public class DashboardBlockEntity extends HomeBlockEntity {
 
-	public WallDashboardBlockEntity(BlockPos pos, BlockState blockState) {
+	public DashboardBlockEntity(BlockPos pos, BlockState blockState) {
 		super(ModBlocks.DASHBOARD_ENTITY.get(), pos, blockState);
 	}
 

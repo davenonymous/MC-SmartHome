@@ -28,7 +28,7 @@ public class DGBlockLoot extends BlockLootSubProvider {
 
 	@Override
 	protected void generate() {
-		createCopyComponentsBlockEntityTable(ModBlocks.WALL_DASHBOARD.get());
+		createCopyComponentsBlockEntityTable(ModBlocks.DASHBOARD.get());
 		createCopyComponentsBlockEntityTable(ModBlocks.MINI_RACK.get());
 	}
 

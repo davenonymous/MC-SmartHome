@@ -19,7 +19,7 @@ public class DGBlockTags extends BlockTagsProvider {
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
 		tag(net.minecraft.tags.BlockTags.MINEABLE_WITH_AXE).add(
-			ModBlocks.WALL_DASHBOARD.get(), ModBlocks.MINI_RACK.get()
+			ModBlocks.DASHBOARD.get(), ModBlocks.MINI_RACK.get()
 		);
 	}
 }

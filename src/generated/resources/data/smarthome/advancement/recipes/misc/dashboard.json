@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "smarthome:wall_dashboard"
+        "recipe": "smarthome:dashboard"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "smarthome:wall_dashboard"
+      "smarthome:dashboard"
     ]
   }
 }

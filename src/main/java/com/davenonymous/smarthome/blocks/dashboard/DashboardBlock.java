@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.blocks;
+package com.davenonymous.smarthome.blocks.dashboard;
 
 import com.davenonymous.smarthome.blocks.base.FacingBaseBlock;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 import java.util.UUID;
 
-public class WallDashboardBlock extends FacingBaseBlock implements EntityBlock {
+public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 	private static Map<Direction, VoxelShape> SHAPES = Map.of(
 		Direction.NORTH, Shapes.box(0.1875, 0.0625, 0, 0.8125, 0.6875, 0.3125),
 		Direction.SOUTH, Shapes.box(0.1875, 0.0625, 1-0.3125, 0.8125, 0.6875, 1),
@@ -36,7 +36,7 @@ public class WallDashboardBlock extends FacingBaseBlock implements EntityBlock {
 		Direction.DOWN,  Shapes.box(0.1875, 0, 0.1875, 0.8125, 0.3125, 0.8125)
 	);
 
-	public WallDashboardBlock(Properties properties) {
+	public DashboardBlock(Properties properties) {
 		super(properties);
 	}
 
@@ -44,7 +44,7 @@ public class WallDashboardBlock extends FacingBaseBlock implements EntityBlock {
 	public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
 		super.setPlacedBy(level, pos, state, placer, stack);
 
-		WallDashboardBlockEntity entity = (WallDashboardBlockEntity) level.getBlockEntity(pos);
+		DashboardBlockEntity entity = (DashboardBlockEntity) level.getBlockEntity(pos);
 		if(entity != null && placer != null) {
 			entity.setOwnerUUID(placer.getUUID());
 			entity.setChanged();
@@ -63,7 +63,7 @@ public class WallDashboardBlock extends FacingBaseBlock implements EntityBlock {
 
 		WorldSavedHomes data = WorldSavedHomes.get((ServerLevel) level);
 
-		WallDashboardBlockEntity entity = (WallDashboardBlockEntity) level.getBlockEntity(pos);
+		DashboardBlockEntity entity = (DashboardBlockEntity) level.getBlockEntity(pos);
 		if(entity == null) {
 			return InteractionResult.PASS;
 		}
@@ -90,6 +90,6 @@ public class WallDashboardBlock extends FacingBaseBlock implements EntityBlock {
 
 	@Override
 	public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return new WallDashboardBlockEntity(blockPos, blockState);
+		return new DashboardBlockEntity(blockPos, blockState);
 	}
 }

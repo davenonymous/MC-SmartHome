@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.blocks;
+package com.davenonymous.smarthome.blocks.minirack;
 
 import com.davenonymous.smarthome.api.IRackable;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;

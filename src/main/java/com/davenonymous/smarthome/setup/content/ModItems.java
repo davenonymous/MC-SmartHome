@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.MiniRackitem;
-import com.davenonymous.smarthome.blocks.WallDashboardItem;
+import com.davenonymous.smarthome.blocks.minirack.MiniRackitem;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardItem;
 import net.minecraft.world.item.BlockItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -10,7 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class ModItems {
 
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(SmartHome.MODID);
-	public static final DeferredItem<BlockItem> WALL_DASHBOARD_ITEM = ITEMS.register(ModBlocks.WALL_DASHBOARD_ID, WallDashboardItem::new);
+	public static final DeferredItem<BlockItem> WALL_DASHBOARD_ITEM = ITEMS.register(ModBlocks.DASHBOARD_ID, DashboardItem::new);
 	public static final DeferredItem<BlockItem> MINI_RACK_ITEM = ITEMS.register(ModBlocks.MINI_RACK_ID, MiniRackitem::new);
 
 }

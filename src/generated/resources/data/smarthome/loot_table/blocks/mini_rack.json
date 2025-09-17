@@ -20,7 +20,7 @@
               "source": "block_entity"
             }
           ],
-          "name": "minecraft:air"
+          "name": "smarthome:mini_rack"
         }
       ],
       "rolls": 1.0

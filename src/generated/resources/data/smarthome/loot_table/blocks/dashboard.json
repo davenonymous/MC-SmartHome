@@ -20,11 +20,11 @@
               "source": "block_entity"
             }
           ],
-          "name": "smarthome:wall_dashboard"
+          "name": "smarthome:dashboard"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "smarthome:blocks/wall_dashboard"
+  "random_sequence": "smarthome:blocks/dashboard"
 }

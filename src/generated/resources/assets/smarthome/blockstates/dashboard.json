@@ -1,56 +1,56 @@
 {
   "variants": {
     "face=ceiling,facing=east": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 90,
       "y": 90
     },
     "face=ceiling,facing=north": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 90
     },
     "face=ceiling,facing=south": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 90,
       "y": 180
     },
     "face=ceiling,facing=west": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 90,
       "y": 270
     },
     "face=floor,facing=east": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 270,
       "y": 90
     },
     "face=floor,facing=north": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 270
     },
     "face=floor,facing=south": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 270,
       "y": 180
     },
     "face=floor,facing=west": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "x": 270,
       "y": 270
     },
     "face=wall,facing=east": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "y": 90
     },
     "face=wall,facing=north": {
-      "model": "smarthome:block/wall_dashboard"
+      "model": "smarthome:block/dashboard"
     },
     "face=wall,facing=south": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "y": 180
     },
     "face=wall,facing=west": {
-      "model": "smarthome:block/wall_dashboard",
+      "model": "smarthome:block/dashboard",
       "y": 270
     }
   }

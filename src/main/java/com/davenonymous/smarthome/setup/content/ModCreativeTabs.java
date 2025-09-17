@@ -20,7 +20,7 @@ public class ModCreativeTabs {
 		() -> CreativeModeTab.builder()
 			.title(Component.translatable("smarthome.gui.home.title"))
 			.withTabsBefore(CreativeModeTabs.COMBAT)
-			.icon(() -> new ItemStack(ModBlocks.WALL_DASHBOARD.get()))
+			.icon(() -> new ItemStack(ModBlocks.DASHBOARD.get()))
 			.displayItems((parameters, output) -> {
 				output.accept(ModItems.WALL_DASHBOARD_ITEM.get());
 				output.accept(ModItems.MINI_RACK_ITEM.get());
