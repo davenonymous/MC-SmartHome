@@ -36,7 +36,7 @@ public class Occupancy implements ISensor {
 			return;
 		}
 
-		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, row(?, ?, ?))");
+		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?))");
 		int paramIndex = 1;
 		prepped.setLong(paramIndex++, server.getTickCount());
 		prepped.setObject(paramIndex++, zone.home().id());

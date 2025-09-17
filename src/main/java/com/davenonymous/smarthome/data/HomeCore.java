@@ -11,7 +11,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -33,12 +32,14 @@ public class HomeCore {
 	AABB bounds;
 	VoxelShape shape;
 
-	public HomeCore(String name) {
-		this(UUID.randomUUID(), name, new ArrayList<>());
+	public HomeCore(String name, UUID owner) {
+		this(UUID.randomUUID(), owner, name, new ArrayList<>());
 	}
 
-	public HomeCore(UUID id, String name, List<HomeZone> zones) {
+	public HomeCore(UUID id, UUID owner, String name, List<HomeZone> zones) {
 		this.name = name;
+		this.id = id;
+		this.owner = owner;
 		this.zones = new ArrayList<>(zones);
 		this.zones.forEach(z -> z.setHome(this));
 		updateBounds();
@@ -147,12 +148,14 @@ public class HomeCore {
 
 	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeCore::id),
+			UUIDUtil.STRING_CODEC.fieldOf("owner").forGetter(HomeCore::owner),
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones)
 	).apply(instance, HomeCore::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, HomeCore::id,
+		UUIDUtil.STREAM_CODEC, HomeCore::owner,
 		ByteBufCodecs.STRING_UTF8, HomeCore::name,
 		HomeZone.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::zones,
 		HomeCore::new

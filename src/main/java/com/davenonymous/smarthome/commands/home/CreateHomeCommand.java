@@ -31,8 +31,7 @@ public class CreateHomeCommand implements Command<CommandSourceStack> {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		String homeName = StringArgumentType.getString(context, "name");
 
-		HomeCore newHome = new HomeCore(homeName);
-		newHome.setOwner(player.getUUID());
+		HomeCore newHome = new HomeCore(homeName, player.getUUID());
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
 		if(data.getHome(player.getUUID(), homeName).isPresent()) {

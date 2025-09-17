@@ -52,7 +52,7 @@ public class WorldSavedHomes extends SavedData {
 				this.homeByUUID.putAll(decoded.get().homeByUUID);
 			}
 		}
-		this.updateHomeCaches();
+
 	}
 
 	public WorldSavedHomes(Map<UUID, HomeCore> homes) {
@@ -61,15 +61,7 @@ public class WorldSavedHomes extends SavedData {
 		if(homes != null) {
 			this.homeByUUID.putAll(homes);
 		}
-		this.updateHomeCaches();
-	}
 
-	private void updateHomeCaches() {
-		for(var entry : homeByUUID.entrySet()) {
-			UUID playerId = entry.getKey();
-			HomeCore home = entry.getValue();
-			home.setOwner(playerId);
-		}
 	}
 
 	public WorldSavedHomes addHome(HomeCore home) {
