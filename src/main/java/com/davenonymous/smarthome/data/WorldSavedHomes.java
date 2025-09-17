@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class WorldSavedHomes extends SavedData {
-	Map<UUID, List<HomeCore>> playerHomes;
+	Map<UUID, HomeCore> homeByUUID;
 
 	public static WorldSavedHomes get(ServerLevel level) {
 		return level.getDataStorage().computeIfAbsent(
@@ -27,94 +27,88 @@ public class WorldSavedHomes extends SavedData {
 	}
 
 	public Optional<HomeZone> getHome(BlockPos pos) {
-		for(var homeList : playerHomes.values()) {
-			for(var home : homeList) {
-				if(home.contains(pos)) {
-					var zone = home.getZoneContaining(pos);
-					if(zone != null) {
-						return Optional.of(zone);
-					}
+		for(var home : homeByUUID.values()) {
+			if(home.contains(pos)) {
+				var zone = home.getZoneContaining(pos);
+				if(zone != null) {
+					return Optional.of(zone);
 				}
 			}
 		}
+
 		return Optional.empty();
 	}
 
 	public WorldSavedHomes() {
-		this.playerHomes = new HashMap<>();
+		this.homeByUUID = new HashMap<>();
 	}
 
 	public WorldSavedHomes(CompoundTag nbt, HolderLookup.Provider provider) {
-		this.playerHomes = new HashMap<>();
+		this();
+
 		if(nbt.contains("homes")) {
 			Optional<WorldSavedHomes> decoded = CODEC.codec().parse(NbtOps.INSTANCE, nbt.get("homes")).result();
 			if(decoded.isPresent()) {
-				this.playerHomes.putAll(decoded.get().playerHomes);
+				this.homeByUUID.putAll(decoded.get().homeByUUID);
 			}
 		}
-		this.setHomeOwners();
+		this.updateHomeCaches();
 	}
 
-	public WorldSavedHomes(Map<UUID, List<HomeCore>> playerHomes) {
-		this.playerHomes = new HashMap<>();
-		if(playerHomes != null) {
-			this.playerHomes.putAll(playerHomes);
+	public WorldSavedHomes(Map<UUID, HomeCore> homes) {
+		this();
+
+		if(homes != null) {
+			this.homeByUUID.putAll(homes);
 		}
-		this.setHomeOwners();
+		this.updateHomeCaches();
 	}
 
-	private void setHomeOwners() {
-		for(var entry : playerHomes.entrySet()) {
+	private void updateHomeCaches() {
+		for(var entry : homeByUUID.entrySet()) {
 			UUID playerId = entry.getKey();
-			for(var home : entry.getValue()) {
-				home.setOwner(playerId);
-			}
+			HomeCore home = entry.getValue();
+			home.setOwner(playerId);
 		}
 	}
 
-	public WorldSavedHomes addHome(Player player, HomeCore home) {
-		UUID playerId = player.getUUID();
-		home.setOwner(playerId);
-		List<HomeCore> homes = playerHomes.computeIfAbsent(playerId, key -> new ArrayList<>());
-		homes.removeIf(h -> h.name().equals(home.name()));
-		homes.add(home);
+	public WorldSavedHomes addHome(HomeCore home) {
+		homeByUUID.put(home.id(), home);
 		this.setDirty();
 		return this;
 	}
 
-	public WorldSavedHomes removeHome(Player player, String homeName) {
-		UUID playerId = player.getUUID();
-		List<HomeCore> homes = playerHomes.get(playerId);
-		if(homes != null) {
-			homes.removeIf(h -> h.name().equals(homeName));
-			if(homes.isEmpty()) {
-				playerHomes.remove(playerId);
-			}
+	public WorldSavedHomes removeHome(UUID playerId, String homeName) {
+		var home = this.getHome(playerId, homeName);
+		if(home.isPresent()) {
+			homeByUUID.remove(home.get().id());
 			this.setDirty();
 		}
 		return this;
 	}
 
 	public Optional<HomeCore> getHome(Player player, String homeName) {
-		UUID playerId = player.getUUID();
-		List<HomeCore> homes = playerHomes.get(playerId);
-		if(homes != null) {
-			return homes.stream().filter(h -> h.name().equals(homeName)).findFirst();
-		}
-		return Optional.empty();
+		return getHome(player.getUUID(), homeName);
 	}
 
-	public List<HomeCore> getHomes(Player player) {
-		UUID playerId = player.getUUID();
-		return playerHomes.getOrDefault(playerId, Collections.emptyList());
+	public Optional<HomeCore> getHome(UUID playerId, String homeName) {
+		return homeByUUID.values().stream()
+			.filter(h -> h.owner() != null && h.owner().equals(playerId) && h.name().equals(homeName))
+			.findFirst();
 	}
 
-	public Map<UUID, List<HomeCore>> playerHomes() {
-		return playerHomes;
+	public List<HomeCore> getHomes(UUID playerId) {
+		return homeByUUID.values().stream()
+			.filter(h -> h.owner() != null && h.owner().equals(playerId))
+			.toList();
+	}
+
+	public Map<UUID, HomeCore> homes() {
+		return homeByUUID;
 	}
 
 	public static final MapCodec<WorldSavedHomes> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-		Codec.unboundedMap(UUIDUtil.STRING_CODEC, HomeCore.CODEC.codec().listOf()).fieldOf("playerHomes").forGetter(WorldSavedHomes::playerHomes)
+		Codec.unboundedMap(UUIDUtil.STRING_CODEC, HomeCore.CODEC.codec()).fieldOf("homes").forGetter(WorldSavedHomes::homes)
 	).apply(instance, WorldSavedHomes::new));
 
 	@Override
@@ -123,4 +117,5 @@ public class WorldSavedHomes extends SavedData {
 		encoded.ifPresent(tag -> compoundTag.put("homes", tag));
 		return compoundTag;
 	}
+
 }

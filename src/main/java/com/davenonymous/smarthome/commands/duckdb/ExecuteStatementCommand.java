@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.commands;
+package com.davenonymous.smarthome.commands.duckdb;
 
 import com.davenonymous.smarthome.setup.WorldWatcher;
 import com.mojang.brigadier.Command;
@@ -13,14 +13,14 @@ import net.minecraft.network.chat.Component;
 
 import java.sql.SQLException;
 
-public class RunQueryCommand implements Command<CommandSourceStack> {
-	public static RunQueryCommand instance = new RunQueryCommand();
+public class ExecuteStatementCommand implements Command<CommandSourceStack> {
+	public static ExecuteStatementCommand instance = new ExecuteStatementCommand();
 
-	private RunQueryCommand() {
+	private ExecuteStatementCommand() {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("query")
+		return Commands.literal("exec")
 			.then(Commands.argument("statement", StringArgumentType.greedyString()).executes(instance));
 	}
 
@@ -33,18 +33,9 @@ public class RunQueryCommand implements Command<CommandSourceStack> {
 
 		String statement = StringArgumentType.getString(context, "statement");
 
-		if(!statement.startsWith("select") && !statement.startsWith("SELECT")) {
-			context.getSource().sendFailure(Component.literal("Only SELECT queries are allowed"));
+		if(statement.startsWith("select") && statement.startsWith("SELECT")) {
+			context.getSource().sendFailure(Component.literal("Use /smarthome db query for SELECT statements"));
 			return 0;
-		}
-
-		if(!statement.contains("limit") && !statement.contains("LIMIT")) {
-			context.getSource().sendFailure(Component.literal("Queries without LIMIT are not allowed. Querying with default limit 10."));
-			statement = statement.trim();
-			if(statement.endsWith(";")) {
-				statement = statement.substring(0, statement.length() - 1);
-			}
-			statement += " LIMIT 10;";
 		}
 
 		String text = "Executing query: " + statement;
@@ -52,19 +43,13 @@ public class RunQueryCommand implements Command<CommandSourceStack> {
 
 		try {
 			var stmt = WorldWatcher.connection.createStatement();
-			var result = stmt.executeQuery(statement);
-			int columnCount = result.getMetaData().getColumnCount();
-			while(result.next()) {
-				StringBuilder row = new StringBuilder();
-				for(int i = 1; i <= columnCount; i++) {
-					row.append(result.getString(i));
-					if(i < columnCount) {
-						row.append(", ");
-					}
-				}
-				context.getSource().sendSuccess(() -> Component.literal(row.toString()), false);
+			boolean success = stmt.execute(statement);
+			if(success) {
+				context.getSource().sendSuccess(() -> Component.literal("Statement executed successfully, result is a ResultSet"), true);
+			} else {
+				int updateCount = stmt.getUpdateCount();
+				context.getSource().sendSuccess(() -> Component.literal("Statement executed successfully, " + updateCount + " rows affected"), true);
 			}
-			result.close();
 			stmt.close();
 		} catch (SQLException e) {
 			context.getSource().sendFailure(Component.literal("SQL Error: " + e.getMessage()));

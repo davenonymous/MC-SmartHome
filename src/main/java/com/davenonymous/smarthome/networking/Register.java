@@ -17,5 +17,17 @@ public class Register {
 			HomeInfoPayload.CODEC,
 			HomeInfoPayload::handleOnClient
 		);
+
+		registrar.playToClient(
+			HomeInfoListPayload.TYPE,
+			HomeInfoListPayload.CODEC,
+			HomeInfoListPayload::handleOnClient
+		);
+
+		registrar.playToClient(
+			OpenHomeScreenPayload.TYPE,
+			OpenHomeScreenPayload.CODEC,
+			OpenHomeScreenPayload::handleOnClient
+		);
 	}
 }

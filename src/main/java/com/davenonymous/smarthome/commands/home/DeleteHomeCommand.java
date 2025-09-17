@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.commands;
+package com.davenonymous.smarthome.commands.home;
 
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
@@ -12,36 +12,32 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-public class ListZonesCommand implements Command<CommandSourceStack> {
-	public static ListZonesCommand instance = new ListZonesCommand();
+public class DeleteHomeCommand implements Command<CommandSourceStack> {
+	public static DeleteHomeCommand instance = new DeleteHomeCommand();
 
-	private ListZonesCommand() {
+	private DeleteHomeCommand() {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("list").executes(instance);
+		return Commands.literal("delete").requires(CommandSourceStack::isPlayer).requires(commandSourceStack -> commandSourceStack.hasPermission(4))
+			.then(
+				Commands.argument("name", StringArgumentType.string()).executes(instance)
+			);
 	}
 
 	@Override
 	public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
 		ServerPlayer player = context.getSource().getPlayerOrException();
-		String homeName = StringArgumentType.getString(context, "home");
+		String homeName = StringArgumentType.getString(context, "name");
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		var home = data.getHome(player, homeName);
-		if(home.isEmpty()) {
+		if(data.getHome(player.getUUID(), homeName).isEmpty()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s does not exist", homeName)));
-			return 1;
+			return 0;
 		}
+		data.removeHome(player.getUUID(), homeName);
 
-		var zones = home.get().zones();
-		String playerName = player.getName().getString();
-		context.getSource().sendSuccess(() -> Component.literal(String.format("Zones in home %s for %s: %d", homeName, playerName, zones.size())), false);
-		for(var zone : zones) {
-			var text = String.format(" - %s: %s", zone.name(), zone.bounds());
-			context.getSource().sendSuccess(() -> Component.literal(text), false);
-		}
-
+		context.getSource().sendSuccess(() -> Component.literal(String.format("Deleted home: %s", homeName)), true);
 		return 0;
 	}
 }

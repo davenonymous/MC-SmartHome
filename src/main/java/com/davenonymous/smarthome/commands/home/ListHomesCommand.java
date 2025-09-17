@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.commands;
+package com.davenonymous.smarthome.commands.home;
 
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
@@ -36,7 +36,7 @@ public class ListHomesCommand implements Command<CommandSourceStack> {
 		}
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		var homes = data.getHomes(player);
+		var homes = data.getHomes(player.getUUID());
 
 		String playerName = player.getName().getString();
 		context.getSource().sendSuccess(() -> Component.literal("Homes for " + playerName + ": " + homes.size()), false);

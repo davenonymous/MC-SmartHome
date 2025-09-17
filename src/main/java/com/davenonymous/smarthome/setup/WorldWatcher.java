@@ -95,16 +95,14 @@ public class WorldWatcher implements Runnable {
 			lastTick = server.getTickCount();
 
 			var homes = WorldSavedHomes.get(overworld);
-			for(var owner : homes.playerHomes().keySet()) {
-				var homeList = homes.playerHomes().get(owner);
-				for(var home : homeList) {
-					try {
-						processHome(home);
-					} catch (SQLException e) {
-						SmartHome.LOGGER.error("Error processing home for player='{}' home='{}'", owner, home.name(), e);
-					}
+			for(var home : homes.homes().values()) {
+				try {
+					processHome(home);
+				} catch (SQLException e) {
+					SmartHome.LOGGER.error("Error processing home for player='{}' home='{}'", home.owner(), home.name(), e);
 				}
 			}
+
 		}
 
 		LOGGER.info("Exiting world watcher loop, closing DuckDB connection");

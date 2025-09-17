@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.commands;
+package com.davenonymous.smarthome.commands.home;
 
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
@@ -32,13 +32,14 @@ public class CreateHomeCommand implements Command<CommandSourceStack> {
 		String homeName = StringArgumentType.getString(context, "name");
 
 		HomeCore newHome = new HomeCore(homeName);
+		newHome.setOwner(player.getUUID());
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		if(data.getHome(player, homeName).isPresent()) {
+		if(data.getHome(player.getUUID(), homeName).isPresent()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s already exists", homeName)));
 			return 0;
 		}
-		data.addHome(player, newHome);
+		data.addHome(newHome);
 
 		context.getSource().sendSuccess(() -> Component.literal(String.format("Created home: %s", homeName)), true);
 		return 0;

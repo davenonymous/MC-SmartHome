@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.commands;
+package com.davenonymous.smarthome.commands.zone;
 
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;

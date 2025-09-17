@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -23,19 +24,20 @@ import java.util.Optional;
 import java.util.UUID;
 
 public class HomeCore {
+	UUID id;
+	UUID owner;
 	String name;
 	List<HomeZone> zones;
 
 	// internal values, not serialized
-	UUID owner;
 	AABB bounds;
 	VoxelShape shape;
 
 	public HomeCore(String name) {
-		this(name, new ArrayList<>());
+		this(UUID.randomUUID(), name, new ArrayList<>());
 	}
 
-	public HomeCore(String name, List<HomeZone> zones) {
+	public HomeCore(UUID id, String name, List<HomeZone> zones) {
 		this.name = name;
 		this.zones = new ArrayList<>(zones);
 		this.zones.forEach(z -> z.setHome(this));
@@ -46,6 +48,7 @@ public class HomeCore {
 		Optional<HomeCore> decoded = CODEC.codec().parse(NbtOps.INSTANCE, nbt.get("home")).result();
 		if(decoded.isPresent()) {
 			HomeCore core = decoded.get();
+			this.id = core.id;
 			this.name = core.name;
 			this.zones = new ArrayList<>(core.zones);
 			this.zones.forEach(z -> z.setHome(this));
@@ -122,6 +125,10 @@ public class HomeCore {
 		return this;
 	}
 
+	public UUID id() {
+		return id;
+	}
+
 	public AABB bounds() {
 		return bounds;
 	}
@@ -139,11 +146,13 @@ public class HomeCore {
 	}
 
 	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+			UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeCore::id),
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones)
 	).apply(instance, HomeCore::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, HomeCore::id,
 		ByteBufCodecs.STRING_UTF8, HomeCore::name,
 		HomeZone.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::zones,
 		HomeCore::new
