@@ -28,10 +28,11 @@ public class DGBlockLoot extends BlockLootSubProvider {
 
 	@Override
 	protected void generate() {
-		createBonsaiPotBlockEntityTable(ModBlocks.WALL_DASHBOARD.get());
+		createCopyComponentsBlockEntityTable(ModBlocks.WALL_DASHBOARD.get());
+		createCopyComponentsBlockEntityTable(ModBlocks.MINI_RACK.get());
 	}
 
-	protected void createBonsaiPotBlockEntityTable(Block block) {
+	protected void createCopyComponentsBlockEntityTable(Block block) {
 		var table = LootTable.lootTable()
 			.withPool(this.applyExplosionCondition(
 					block,

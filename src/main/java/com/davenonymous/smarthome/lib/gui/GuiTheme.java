@@ -11,6 +11,8 @@ public abstract class GuiTheme {
 		WIDGET_TOGGLE_ON,
 		WIDGET_TOGGLE_OFF,
 		WIDGET_TOGGLE_AUTO,
+
+		SLOT,
 	}
 
 	public abstract ResourceLocation getSprite(SpriteComponent component);

@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.particles;
 
-import com.davenonymous.smarthome.setup.DeferredRegistries;
+import com.davenonymous.smarthome.setup.content.ModParticles;
 import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
@@ -80,6 +80,6 @@ public class ModelParticleOptions implements ParticleOptions {
 
 	@Override
 	public @NotNull ParticleType<?> getType() {
-		return DeferredRegistries.MODEL_PARTICLE.get();
+		return ModParticles.MODEL_PARTICLE.get();
 	}
 }

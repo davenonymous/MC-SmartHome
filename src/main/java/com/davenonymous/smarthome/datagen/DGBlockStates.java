@@ -25,6 +25,13 @@ public class DGBlockStates extends BlockStateProvider {
 		var wallMountedDashboardModel = new ModelFile.ExistingModelFile(SmartHome.resource("block/wall_dashboard"), this.exFileHelper);
 		ownDirectionalBlock(ModBlocks.WALL_DASHBOARD.get(), wallMountedDashboardModel);
 		simpleBlockItem(ModBlocks.WALL_DASHBOARD.get(), wallMountedDashboardModel);
+
+		simpleBlockWithItem(ModBlocks.MINI_RACK.get());
+	}
+
+	public void simpleBlockWithItem(Block block) {
+		var model = cubeAll(block);
+		this.simpleBlockWithItem(block, model);
 	}
 
 	public void ownDirectionalBlock(Block block, ModelFile model) {

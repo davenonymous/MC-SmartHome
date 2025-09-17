@@ -14,6 +14,8 @@ public class Vanilla extends GuiTheme {
 	public static ResourceLocation window = SmartHome.resource("vanilla/window");
 	public static ResourceLocation windowPushed = SmartHome.resource("vanilla/window_pushed");
 
+	public static ResourceLocation slot = SmartHome.resource("vanilla/slot");
+
 	@Override
 	public ResourceLocation getSprite(SpriteComponent component) {
 		return switch(component) {
@@ -23,6 +25,7 @@ public class Vanilla extends GuiTheme {
 			case WIDGET_TOGGLE_AUTO -> toggleAuto;
 			case WINDOW_BACKGROUND -> window;
 			case WINDOW_PUSHED_BACKGROUND -> windowPushed;
+			case SLOT -> slot;
 		};
 	}
 }

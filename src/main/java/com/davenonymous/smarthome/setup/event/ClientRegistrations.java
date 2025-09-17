@@ -1,9 +1,8 @@
 package com.davenonymous.smarthome.setup.event;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.particles.ModelParticleProvider;
-import com.davenonymous.smarthome.setup.DeferredRegistries;
+import com.davenonymous.smarthome.setup.content.ModParticles;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,6 +20,6 @@ public class ClientRegistrations {
 
 	@SubscribeEvent
 	public static void registerParticleProviders(RegisterParticleProvidersEvent event) {
-		event.registerSpecial(DeferredRegistries.MODEL_PARTICLE.get(), new ModelParticleProvider());
+		event.registerSpecial(ModParticles.MODEL_PARTICLE.get(), new ModelParticleProvider());
 	}
 }

@@ -140,14 +140,9 @@ public class GUI extends WidgetPanel {
 
 		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().translate(offsetX, offsetY, 0.0f);
-		int texOffsetY = 84;
-		int texOffsetX = 84;
 
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, GUIHelper.tabIcons);
-		pGuiGraphics.blit(GUIHelper.tabIcons, slot.x, slot.y, texOffsetX, texOffsetY, 18, 18);
+		pGuiGraphics.blitSprite(sprite(GuiTheme.SpriteComponent.SLOT), slot.x, slot.y, 18, 18);
 
-		//RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 		pGuiGraphics.pose().popPose();
 	}
 

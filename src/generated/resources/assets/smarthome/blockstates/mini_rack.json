@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "smarthome:block/mini_rack"
+    }
+  }
+}

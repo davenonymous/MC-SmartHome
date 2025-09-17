@@ -1,6 +1,8 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.blocks.MiniRackBlock;
+import com.davenonymous.smarthome.blocks.MiniRackBlockEntity;
 import com.davenonymous.smarthome.blocks.WallDashboardBlock;
 import com.davenonymous.smarthome.blocks.WallDashboardBlockEntity;
 import com.mojang.serialization.MapCodec;
@@ -23,18 +25,24 @@ public class ModBlocks {
 	public static final DeferredRegister<MapCodec<? extends Block>> BLOCK_TYPES = DeferredRegister.create(BuiltInRegistries.BLOCK_TYPE, SmartHome.MODID);
 
 
+	public static final String WALL_DASHBOARD_ID = "wall_dashboard";
 	public static final DeferredBlock<Block> WALL_DASHBOARD = BLOCKS.register(
-		"wall_dashboard",
-		() -> new WallDashboardBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+		WALL_DASHBOARD_ID, () -> new WallDashboardBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
 
 	public static final Supplier<BlockEntityType<WallDashboardBlockEntity>> DASHBOARD_ENTITY = BLOCK_ENTITIES.register(
-		"wall_dashboard",
-		() -> BlockEntityType.Builder.of(WallDashboardBlockEntity::new, WALL_DASHBOARD.get())
-			.build(null)
-	);
+		WALL_DASHBOARD_ID, () -> BlockEntityType.Builder.of(WallDashboardBlockEntity::new, WALL_DASHBOARD.get()).build(null));
 
 	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<WallDashboardBlock>> DASHBOARD_BLOCK_TYPE = BLOCK_TYPES.register(
-		"wall_dashboard",
-		() -> BlockBehaviour.simpleCodec(WallDashboardBlock::new)
-	);
+		WALL_DASHBOARD_ID, () -> BlockBehaviour.simpleCodec(WallDashboardBlock::new));
+
+
+	public static final String MINI_RACK_ID = "mini_rack";
+	public static final DeferredBlock<Block> MINI_RACK = BLOCKS.register(
+		MINI_RACK_ID, () -> new MiniRackBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+
+	public static final Supplier<BlockEntityType<MiniRackBlockEntity>> MINI_RACK_ENTITY = BLOCK_ENTITIES.register(
+		MINI_RACK_ID, () -> BlockEntityType.Builder.of(MiniRackBlockEntity::new, MINI_RACK.get()).build(null));
+
+	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<MiniRackBlock>> MINI_RACK_BLOCK_TYPE = BLOCK_TYPES.register(
+		MINI_RACK_ID, () -> BlockBehaviour.simpleCodec(MiniRackBlock::new));
 }

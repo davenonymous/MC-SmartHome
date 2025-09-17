@@ -24,6 +24,7 @@ public class DGTranslations extends LanguageProvider {
 	@Override
 	protected void addTranslations() {
 		add(ModBlocks.WALL_DASHBOARD.get(), "Dashboard");
+		add(ModBlocks.MINI_RACK.get(), "Mini Rack");
 
 		add("smarthome.gui.home.title", "Smart Home");
 	}

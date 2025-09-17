@@ -1,3 +1,6 @@
-// 1.21.1	2025-09-16T14:06:43.297601	Block States: smarthome
+// 1.21.1	2025-09-17T17:12:59.7022854	Block States: smarthome
+d34cf8f43eab8ab311a441a952e53daeb7f83069 assets/smarthome/blockstates/mini_rack.json
 05365cda8ef3e703272e424f2388192a138f88dd assets/smarthome/blockstates/wall_dashboard.json
+03bef8854ec4e8e40974d950bf8dae7b1e4a4bb5 assets/smarthome/models/block/mini_rack.json
+e29f788313c50294f5d5ab48fb29985b87ba9339 assets/smarthome/models/item/mini_rack.json
 2b3124687393c48e04128b298b44d625133b3d1f assets/smarthome/models/item/wall_dashboard.json

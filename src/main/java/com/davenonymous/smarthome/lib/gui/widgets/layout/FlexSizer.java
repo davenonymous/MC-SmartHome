@@ -39,8 +39,8 @@ public abstract class FlexSizer extends WidgetPanel {
 	Map<Integer, Integer> realBoxSize;
 
 	FlexDirection flexDirection = FlexDirection.X;
-	int padding = 0;
-	int spacing = 4;
+	public int padding = 0;
+	public int spacing = 4;
 
 	public FlexSizer() {
 		super();
@@ -240,8 +240,8 @@ public abstract class FlexSizer extends WidgetPanel {
 				if(flexDirection == FlexDirection.X) {
 					box.setX(realBoxOffsets.get(columnIndex));
 					box.setWidth(realBoxSize.get(columnIndex));
-					if(box.height > this.height) {
-						box.setHeight(this.height);
+					if(box.height > this.height - padding*2) {
+						box.setHeight(this.height - padding*2);
 					}
 
 					switch(flexAlign) {
@@ -249,11 +249,13 @@ public abstract class FlexSizer extends WidgetPanel {
 							box.setY(padding);
 							break;
 						case CENTER:
-							box.setY(Math.round((this.height - box.height) / 2f));
+							var availableHeight = this.height - box.height - padding*2;
+							box.setY(padding + Math.round(availableHeight / 2f));
 							break;
 						case FILL:
 							box.setY(padding);
 							box.setHeight(this.height);
+							break;
 						case END:
 							box.setY(padding + this.height - box.height);
 							break;
@@ -261,19 +263,21 @@ public abstract class FlexSizer extends WidgetPanel {
 				} else {
 					box.setY(realBoxOffsets.get(columnIndex));
 					box.setHeight(realBoxSize.get(columnIndex));
-					if(box.width > this.width) {
-						box.setWidth(this.width);
+					if(box.width > this.width - padding*2) {
+						box.setWidth(this.width - padding*2);
 					}
 					switch(flexAlign) {
 						case START:
 							box.setX(padding);
 							break;
 						case CENTER:
-							box.setX(Math.round((this.width - box.width) / 2f));
+							var availableWidth = this.width - box.width - padding*2;
+							box.setX(padding + Math.round(availableWidth / 2f));
 							break;
 						case FILL:
 							box.setX(padding);
 							box.setWidth(this.width);
+							break;
 						case END:
 							box.setX(padding + this.width - box.width);
 							break;

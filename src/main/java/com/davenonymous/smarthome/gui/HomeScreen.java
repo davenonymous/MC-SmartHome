@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.gui;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.HomeCore;
+import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetFullScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 public class HomeScreen extends WidgetFullScreen {
 	WidgetVBox mainLayout;
-	WidgetHBox headerLayout;
+	HeaderWidget headerLayout;
 	WidgetHBox contentLayout;
 	WidgetVBox footerLayout;
 
@@ -48,7 +49,7 @@ public class HomeScreen extends WidgetFullScreen {
 		mainLayout.setSpacing(2);
 		mainLayout.setPadding(4);
 
-		headerLayout = new WidgetHBox();
+		headerLayout = new HeaderWidget();
 		headerLayout.setSpacing(2);
 		headerLayout.setPadding(0);
 
@@ -61,8 +62,10 @@ public class HomeScreen extends WidgetFullScreen {
 		footerLayout.setPadding(0);
 
 		mainLayout.addContentBox(headerLayout);
-		mainLayout.addContentBox(contentLayout, WidgetVBox.FlexAlign.FILL);
+		mainLayout.addContentBox(contentLayout);
 		mainLayout.addContentBox(footerLayout);
+
+		gui.add(mainLayout);
 
 		updateWidgetSizes();
 		return gui;
@@ -76,11 +79,13 @@ public class HomeScreen extends WidgetFullScreen {
 
 		headerLayout.setWidth(mainLayout.width);
 		headerLayout.setHeight(40);
+		headerLayout.updateWidgetSizes();
 
 		footerLayout.setWidth(mainLayout.width);
 		footerLayout.setHeight(40);
 
-		contentLayout.setWidth(mainLayout.width);
-		contentLayout.setHeight(mainLayout.height - headerLayout.height - footerLayout.height);
+		contentLayout.setWidth(mainLayout.width - mainLayout.padding*2);
+		contentLayout.setX(mainLayout.padding);
+		contentLayout.setHeight(mainLayout.height - headerLayout.height - footerLayout.height - mainLayout.padding*2 - mainLayout.spacing*2);
 	}
 }
