@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.gui.home.NoHomesWidget;
+import com.davenonymous.smarthome.gui.home.SidebarWidget;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetFullScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
@@ -24,6 +25,7 @@ public class HomeScreen extends WidgetFullScreen {
 	WidgetHBox contentLayout;
 	WidgetVBox footerLayout;
 	NoHomesWidget noHomesWidget;
+	SidebarWidget sidebarWidget;
 
 	public HomeCore selectedHome;
 	public HomeBlockEntity blockEntity;
@@ -78,6 +80,7 @@ public class HomeScreen extends WidgetFullScreen {
 		mainLayout.addContentBox(footerLayout);
 
 		noHomesWidget = new NoHomesWidget(this);
+		sidebarWidget = new SidebarWidget(this);
 
 		gui.add(mainLayout);
 
@@ -88,6 +91,8 @@ public class HomeScreen extends WidgetFullScreen {
 			contentLayout.addFlexBox(noHomesWidget, FlexSizer.FlexAlign.CENTER, 2);
 			contentLayout.addFlexBox(new Widget(), 1);
 			noHomesWidget.updateWidgetSizes();
+		} else {
+			contentLayout.addContentBox(sidebarWidget, FlexSizer.FlexAlign.FILL);
 		}
 
 		return gui;

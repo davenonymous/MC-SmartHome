@@ -95,7 +95,10 @@ public class MiniRackBlockEntity extends HomeBlockEntity {
 	@Override
 	protected void applyImplicitComponents(DataComponentInput componentInput) {
 		super.applyImplicitComponents(componentInput);
-		rackInventory.applyImplicitComponents(componentInput.get(DataComponents.CONTAINER));
+		var containerInput = componentInput.get(DataComponents.CONTAINER);
+		if(containerInput != null) {
+			rackInventory.applyImplicitComponents(containerInput);
+		}
 	}
 
 	@Override
