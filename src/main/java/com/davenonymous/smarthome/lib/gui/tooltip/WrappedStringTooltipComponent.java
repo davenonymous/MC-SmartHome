@@ -97,7 +97,7 @@ public final class WrappedStringTooltipComponent implements SerializableTooltipC
 		if(this.font != null) {
 			lineHeight = this.font.lineHeight();
 		}
-		return GUIHelper.wordWrapHeight(Minecraft.getInstance().font, FormattedText.of(message, style()), maxWidth, lineHeight) + 1;
+		return GUIHelper.wordWrapHeight(Minecraft.getInstance().font, message(), style(), maxWidth, lineHeight) + 1;
 	}
 
 	@Override

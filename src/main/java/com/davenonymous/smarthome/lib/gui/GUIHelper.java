@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.*;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
@@ -321,8 +322,8 @@ public class GUIHelper {
 		}
 	}
 
-	public static int wordWrapHeight(Font font, FormattedText text, int maxWidth, int lineHeight) {
-		return (lineHeight+1) * font.split(text, maxWidth).size();
+	public static int wordWrapHeight(Font font, String text, Style style, int maxWidth, int lineHeight) {
+		return (lineHeight+1) * Language.getInstance().getVisualOrder(font.getSplitter().splitLines(text, maxWidth, style)).size();
 	}
 
 	public static void drawStringCentered(GuiGraphics pGuiGraphics, String str, Screen screen, float x, float y, int color) {

@@ -4,16 +4,18 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.gui.home.HeaderWidget;
+import com.davenonymous.smarthome.gui.home.NoHomesWidget;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetFullScreen;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
-import com.davenonymous.smarthome.networking.ClientCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 public class HomeScreen extends WidgetFullScreen {
@@ -21,22 +23,29 @@ public class HomeScreen extends WidgetFullScreen {
 	HeaderWidget headerLayout;
 	WidgetHBox contentLayout;
 	WidgetVBox footerLayout;
+	NoHomesWidget noHomesWidget;
 
-	HomeCore selectedHome;
-	HomeBlockEntity blockEntity;
+	public HomeCore selectedHome;
+	public HomeBlockEntity blockEntity;
+	public List<HomeCore> ownedHomes;
 
-	public HomeScreen(BlockPos pos, UUID selectedHomeId) {
+	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes) {
 		super(Component.translatable("smarthome.gui.home.title"));
+		this.ownedHomes = ownedHomes;
 
 		if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof HomeBlockEntity hbe) {
 			this.blockEntity = hbe;
 		}
 
-		for(var home : ClientCache.getOwnedHomes()) {
+		for(var home : ownedHomes) {
 			if(home.id().equals(selectedHomeId)) {
 				this.selectedHome = home;
 				break;
 			}
+		}
+
+		if(this.selectedHome == null && !ownedHomes.isEmpty()) {
+			this.selectedHome = ownedHomes.getFirst();
 		}
 
 		SmartHome.LOGGER.debug("Opening home screen for home {} from {}", selectedHome, blockEntity);
@@ -48,9 +57,9 @@ public class HomeScreen extends WidgetFullScreen {
 
 		mainLayout = new WidgetVBox();
 		mainLayout.setSpacing(2);
-		mainLayout.setPadding(4);
+		mainLayout.setPadding(6);
 
-		headerLayout = new HeaderWidget();
+		headerLayout = new HeaderWidget(this);
 		headerLayout.setSpacing(2);
 		headerLayout.setPadding(0);
 
@@ -58,7 +67,7 @@ public class HomeScreen extends WidgetFullScreen {
 		contentLayout.setSpacing(2);
 		contentLayout.setPadding(0);
 
-		// contentLayout.addContentBox(new FontTestWidget(), FlexSizer.FlexAlign.START);
+		//contentLayout.addContentBox(new FontTestWidget(), FlexSizer.FlexAlign.START);
 
 		footerLayout = new WidgetVBox();
 		footerLayout.setSpacing(2);
@@ -68,9 +77,19 @@ public class HomeScreen extends WidgetFullScreen {
 		mainLayout.addContentBox(contentLayout);
 		mainLayout.addContentBox(footerLayout);
 
+		noHomesWidget = new NoHomesWidget(this);
+
 		gui.add(mainLayout);
 
 		updateWidgetSizes();
+
+		if(this.ownedHomes.isEmpty()) {
+			contentLayout.addFlexBox(new Widget(), 1);
+			contentLayout.addFlexBox(noHomesWidget, FlexSizer.FlexAlign.CENTER, 2);
+			contentLayout.addFlexBox(new Widget(), 1);
+			noHomesWidget.updateWidgetSizes();
+		}
+
 		return gui;
 	}
 
@@ -81,14 +100,17 @@ public class HomeScreen extends WidgetFullScreen {
 		mainLayout.setPosition(0, 0);
 
 		headerLayout.setWidth(mainLayout.width);
-		headerLayout.setHeight(40);
+		headerLayout.setHeight(20);
 		headerLayout.updateWidgetSizes();
 
 		footerLayout.setWidth(mainLayout.width);
-		footerLayout.setHeight(40);
+		footerLayout.setHeight(20);
 
 		contentLayout.setWidth(mainLayout.width - mainLayout.padding*2);
 		contentLayout.setX(mainLayout.padding);
 		contentLayout.setHeight(mainLayout.height - headerLayout.height - footerLayout.height - mainLayout.padding*2 - mainLayout.spacing*2);
+
+		contentLayout.update(null);
+		noHomesWidget.updateWidgetSizes();
 	}
 }

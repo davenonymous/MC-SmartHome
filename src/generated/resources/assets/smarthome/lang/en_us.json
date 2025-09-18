@@ -2,6 +2,8 @@
   "block.smarthome.dashboard": "Dashboard",
   "block.smarthome.mini_rack": "Mini Rack",
   "item.smarthome.server": "Smart Home Server",
+  "smarthome.gui.home.no_homes": "No Homes Found",
+  "smarthome.gui.home.no_homes.hint": "Build a mini rack and place a Smart Home server in it to get started.",
   "smarthome.gui.home.title": "Smart Home",
   "smarthome.gui.server.name_label": "Name your smart home:"
 }

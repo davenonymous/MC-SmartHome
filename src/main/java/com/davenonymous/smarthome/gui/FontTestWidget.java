@@ -1,11 +1,9 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.lib.gui.CircularPointedArrayList;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
@@ -13,16 +11,15 @@ public class FontTestWidget extends WidgetVBox {
 
 	public FontTestWidget() {
 		var fonts = List.of(
-			SmartHome.resource("basel-ascii"),
-			SmartHome.resource("nano-ascii"),
-			SmartHome.resource("pixel-ascii"),
-			SmartHome.resource("tiny-ascii"),
-			SmartHome.resource("wendy-ascii"),
-			SmartHome.resource("dos-ascii"),
-			SmartHome.resource("nokia-ascii"),
-			SmartHome.resource("monkey-ascii"),
-			SmartHome.resource("monkey_outline-ascii")
-
+			ModFonts.BASEL,
+			ModFonts.DOS,
+			ModFonts.MONKEY_FILLED,
+			ModFonts.MONKEY_OUTLINE,
+			ModFonts.NANO,
+			ModFonts.NOKIA,
+			ModFonts.PIXEL,
+			ModFonts.TINY,
+			ModFonts.WENDY
 		);
 
 		this.setSpacing(2);
@@ -41,15 +38,13 @@ public class FontTestWidget extends WidgetVBox {
 		this.addContentBox(vanillaBox, FlexAlign.START);
 
 		for(var font : fonts) {
-			var textBox = new WidgetTextBox(font.getPath().replaceAll("-.*$", "") + ": The quick brown fox jumps over the lazy dog");
+			var textBox = new WidgetTextBox(font.id().getPath().replaceAll("-.*$", "") + ": The quick brown fox jumps over the lazy dog 01234567890 3.14 A, B, C");
 			textBox.setTextColor(ChatFormatting.DARK_GRAY.getColor());
+			textBox.setWidth(this.width);
 			textBox.setWordWrap(true);
-			textBox.setStyle(style -> style
-				.withFont(font)
-				.withColor(ChatFormatting.DARK_GRAY)
-			);
+			textBox.setFont(font);
 			textBox.autoWidth();
-			textBox.setHeight(24);
+			textBox.autoHeight();
 			this.addContentBox(textBox, FlexAlign.START);
 		}
 

@@ -29,6 +29,8 @@ public class DGTranslations extends LanguageProvider {
 
 		add("smarthome.gui.home.title", "Smart Home");
 		add("smarthome.gui.server.name_label", "Name your smart home:");
+		add("smarthome.gui.home.no_homes", "No Homes Found");
+		add("smarthome.gui.home.no_homes.hint", "Build a mini rack and place a Smart Home server in it to get started.");
 	}
 
 	public void add(ResourceLocation id, String translation) {

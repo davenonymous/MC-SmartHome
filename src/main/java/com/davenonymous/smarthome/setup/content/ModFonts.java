@@ -13,7 +13,7 @@ public class ModFonts {
 
 	public static final FontSpec PIXEL = new FontSpec(SmartHome.resource("pixel-ascii"), 8, 5);
 	public static final FontSpec WENDY = new ModFonts.FontSpec(SmartHome.resource("wendy-ascii"), 7, 5);
-	public static final FontSpec DOS = new ModFonts.FontSpec(SmartHome.resource("dos-ascii"), 6, 12);
+	public static final FontSpec DOS = new ModFonts.FontSpec(SmartHome.resource("dos-ascii"), 6, 13);
 	public static final FontSpec BASEL = new ModFonts.FontSpec(SmartHome.resource("basel-ascii"), 8, 12);
 	public static final FontSpec MONKEY_OUTLINE = new ModFonts.FontSpec(SmartHome.resource("monkey_outline-ascii"), 9, 10);
 	public static final FontSpec MONKEY_FILLED = new ModFonts.FontSpec(SmartHome.resource("monkey-ascii"), 9, 10);

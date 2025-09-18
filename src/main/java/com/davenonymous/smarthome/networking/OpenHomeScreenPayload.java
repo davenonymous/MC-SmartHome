@@ -41,6 +41,6 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 			return;
 		}
 
-		Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome()));
+		Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome(), payload.homes()));
 	}
 }
