@@ -58,7 +58,7 @@ public class HomeScreen extends WidgetFullScreen {
 		contentLayout.setSpacing(2);
 		contentLayout.setPadding(0);
 
-		contentLayout.addContentBox(new FontTestWidget(), FlexSizer.FlexAlign.START);
+		// contentLayout.addContentBox(new FontTestWidget(), FlexSizer.FlexAlign.START);
 
 		footerLayout = new WidgetVBox();
 		footerLayout.setSpacing(2);

@@ -2,12 +2,14 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -17,6 +19,7 @@ public class WidgetTextBox extends Widget {
 	private boolean dropShadow = false;
 	private boolean wordWrap = false;
 	protected Style style = Style.EMPTY;
+	private ModFonts.FontSpec font;
 
 	public WidgetTextBox(String text) {
 		this.text = text;
@@ -41,6 +44,12 @@ public class WidgetTextBox extends Widget {
 
 	public WidgetTextBox setStyle(Function<Style, Style> style) {
 		this.style = style.apply(this.style);
+		return this;
+	}
+
+	public WidgetTextBox setFont(ModFonts.FontSpec font) {
+		this.font = font;
+		this.setStyle(style -> style.withFont(font.id()));
 		return this;
 	}
 
@@ -93,12 +102,16 @@ public class WidgetTextBox extends Widget {
 			heightTmp = 0;
 		}
 
-		RenderSystem.enableScissor(getActualX() * scale - 3, bottomOffset + 2, width * scale, heightTmp);
-		if(wordWrap) {
-			GUIHelper.drawWordWrap(pGuiGraphics, screen.getMinecraft().font, FormattedText.of(text, style), 0, 0, width, textColor);
-		} else {
-			GUIHelper.drawWordWrap(pGuiGraphics, screen.getMinecraft().font, FormattedText.of(text, style), 0, 0, Integer.MAX_VALUE, textColor);
+		int lineHeight = 9;
+		int yOffset = 0;
+		if(font != null) {
+			lineHeight = font.lineHeight();
+			yOffset = font.yOffset();
 		}
+
+		int lineWidth = wordWrap ? width : Integer.MAX_VALUE;
+		RenderSystem.enableScissor(getActualX() * scale - 3, bottomOffset + 2, width * scale, heightTmp);
+		GUIHelper.drawWordWrap(pGuiGraphics, screen.getMinecraft().font, FormattedText.of(text, style), 0, -yOffset, lineWidth, lineHeight, textColor);
 		RenderSystem.disableScissor();
 
 		RenderSystem.disableBlend();

@@ -314,15 +314,15 @@ public class GUIHelper {
 		return longest;
 	}
 
-	public static void drawWordWrap(GuiGraphics pGuiGraphics, Font font, FormattedText text, int x, int y, int lineWidth, int color) {
+	public static void drawWordWrap(GuiGraphics pGuiGraphics, Font font, FormattedText text, int x, int y, int lineWidth, int lineHeight, int color) {
 		for(FormattedCharSequence formattedcharsequence : font.split(text, lineWidth)) {
 			pGuiGraphics.drawString(font, formattedcharsequence, x, y, color, false);
-			y += 10;
+			y += lineHeight + 1;
 		}
 	}
 
-	public static int wordWrapHeight(Font font, FormattedText text, int maxWidth) {
-		return 10 * font.split(text, maxWidth).size();
+	public static int wordWrapHeight(Font font, FormattedText text, int maxWidth, int lineHeight) {
+		return (lineHeight+1) * font.split(text, maxWidth).size();
 	}
 
 	public static void drawStringCentered(GuiGraphics pGuiGraphics, String str, Screen screen, float x, float y, int color) {

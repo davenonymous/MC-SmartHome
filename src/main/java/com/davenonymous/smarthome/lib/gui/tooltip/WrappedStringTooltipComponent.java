@@ -2,12 +2,14 @@ package com.davenonymous.smarthome.lib.gui.tooltip;
 
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
@@ -24,11 +26,17 @@ public final class WrappedStringTooltipComponent implements SerializableTooltipC
 	public String message;
 	public int color;
 	public int maxWidth;
+	private ModFonts.FontSpec font;
 
 	public WrappedStringTooltipComponent(String message, int color, int maxWidth) {
 		this.message = message;
 		this.color = color;
 		this.maxWidth = maxWidth;
+	}
+
+	public WrappedStringTooltipComponent setFont(ModFonts.FontSpec font) {
+		this.font = font;
+		return this;
 	}
 
 	private static int defaultMaxWidth() {
@@ -75,20 +83,38 @@ public final class WrappedStringTooltipComponent implements SerializableTooltipC
 		return new WrappedStringTooltipComponent(message, ChatFormatting.RED.getColor(), defaultMaxWidth());
 	}
 
+	private Style style() {
+		Style style = Style.EMPTY;
+		if(this.font != null) {
+			style = style.withFont(this.font.id());
+		}
+		return style;
+	}
+
 	@Override
 	public int getHeight() {
-		return GUIHelper.wordWrapHeight(Minecraft.getInstance().font, FormattedText.of(message), maxWidth);
+		int lineHeight = 9;
+		if(this.font != null) {
+			lineHeight = this.font.lineHeight();
+		}
+		return GUIHelper.wordWrapHeight(Minecraft.getInstance().font, FormattedText.of(message, style()), maxWidth, lineHeight) + 1;
 	}
 
 	@Override
 	public int getWidth(Font font) {
-		return GUIHelper.longestWrappedLine(font, FormattedText.of(message), maxWidth);
+		return GUIHelper.longestWrappedLine(font, FormattedText.of(message, style()), maxWidth);
 	}
 
 	@Override
 	public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
+		int lineHeight = 9;
+		int yOffset = 0;
+		if(this.font != null) {
+			lineHeight = this.font.lineHeight();
+			yOffset = this.font.yOffset();
+		}
 
-		GUIHelper.drawWordWrap(guiGraphics, font, FormattedText.of(message), x, y, maxWidth, color);
+		GUIHelper.drawWordWrap(guiGraphics, font, FormattedText.of(message, style()), x, y-yOffset, maxWidth, lineHeight, color);
 	}
 
 	@Override

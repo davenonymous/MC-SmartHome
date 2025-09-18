@@ -2,9 +2,11 @@ package com.davenonymous.smarthome.items;
 
 import com.davenonymous.smarthome.api.IServer;
 import com.davenonymous.smarthome.lib.gui.tooltip.HBoxTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.tooltip.TableTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.tooltip.VBoxTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -70,14 +72,20 @@ public class ServerItem extends Item implements IServer {
 			ServerDataComponent data = stack.get(ModDataComponents.SERVER_DATA_COMPONENT);
 			result.add(WrappedStringTooltipComponent.cyan(data.name()));
 			if(Minecraft.getInstance().options.advancedItemTooltips) {
-				result.add(new HBoxTooltipComponent(
-					WrappedStringTooltipComponent.white("Home: "),
-					WrappedStringTooltipComponent.gray(data.id().toString())
-				));
-				result.add(new HBoxTooltipComponent(
-					WrappedStringTooltipComponent.white("Owner: "),
-					WrappedStringTooltipComponent.gray(data.owner().toString())
-				));
+				var table = new TableTooltipComponent();
+				table.addRow(
+					WrappedStringTooltipComponent.white("Name: ").setFont(ModFonts.TINY),
+					WrappedStringTooltipComponent.gray(data.name()).setFont(ModFonts.TINY)
+				);
+				table.addRow(
+					WrappedStringTooltipComponent.white("Home: ").setFont(ModFonts.TINY),
+					WrappedStringTooltipComponent.gray(data.id().toString()).setFont(ModFonts.TINY)
+				);
+				table.addRow(
+					WrappedStringTooltipComponent.white("Owner: ").setFont(ModFonts.TINY),
+					WrappedStringTooltipComponent.gray(data.owner().toString()).setFont(ModFonts.TINY)
+				);
+				result.add(table);
 			}
 		}
 
