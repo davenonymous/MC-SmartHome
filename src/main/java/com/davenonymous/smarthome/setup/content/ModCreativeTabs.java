@@ -24,6 +24,7 @@ public class ModCreativeTabs {
 			.displayItems((parameters, output) -> {
 				output.accept(ModItems.WALL_DASHBOARD_ITEM.get());
 				output.accept(ModItems.MINI_RACK_ITEM.get());
+				output.accept(ModItems.SERVER_ITEM.get());
 			})
 			.build()
 	);

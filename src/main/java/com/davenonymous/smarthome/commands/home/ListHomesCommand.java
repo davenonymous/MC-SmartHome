@@ -36,7 +36,7 @@ public class ListHomesCommand implements Command<CommandSourceStack> {
 		}
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		var homes = data.getHomes(player.getUUID());
+		var homes = data.getPlayerHomes(player.getUUID());
 
 		String playerName = player.getName().getString();
 		context.getSource().sendSuccess(() -> Component.literal("Homes for " + playerName + ": " + homes.size()), false);

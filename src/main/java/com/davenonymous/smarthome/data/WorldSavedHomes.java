@@ -20,13 +20,13 @@ public class WorldSavedHomes extends SavedData {
 	Map<UUID, HomeCore> homeByUUID;
 
 	public static WorldSavedHomes get(ServerLevel level) {
-		return level.getDataStorage().computeIfAbsent(
+		return level.getServer().overworld().getDataStorage().computeIfAbsent(
 			new Factory<WorldSavedHomes>(WorldSavedHomes::new, WorldSavedHomes::new),
 			"smarthome_homes"
 		);
 	}
 
-	public Optional<HomeZone> getHome(BlockPos pos) {
+	public Optional<HomeZone> getPlayerHome(BlockPos pos) {
 		for(var home : homeByUUID.values()) {
 			if(home.contains(pos)) {
 				var zone = home.getZoneContaining(pos);
@@ -71,7 +71,7 @@ public class WorldSavedHomes extends SavedData {
 	}
 
 	public WorldSavedHomes removeHome(UUID playerId, String homeName) {
-		var home = this.getHome(playerId, homeName);
+		var home = this.getPlayerHome(playerId, homeName);
 		if(home.isPresent()) {
 			homeByUUID.remove(home.get().id());
 			this.setDirty();
@@ -79,17 +79,17 @@ public class WorldSavedHomes extends SavedData {
 		return this;
 	}
 
-	public Optional<HomeCore> getHome(Player player, String homeName) {
-		return getHome(player.getUUID(), homeName);
+	public Optional<HomeCore> getPlayerHome(Player player, String homeName) {
+		return getPlayerHome(player.getUUID(), homeName);
 	}
 
-	public Optional<HomeCore> getHome(UUID playerId, String homeName) {
+	public Optional<HomeCore> getPlayerHome(UUID playerId, String homeName) {
 		return homeByUUID.values().stream()
 			.filter(h -> h.owner() != null && h.owner().equals(playerId) && h.name().equals(homeName))
 			.findFirst();
 	}
 
-	public List<HomeCore> getHomes(UUID playerId) {
+	public List<HomeCore> getPlayerHomes(UUID playerId) {
 		return homeByUUID.values().stream()
 			.filter(h -> h.owner() != null && h.owner().equals(playerId))
 			.toList();

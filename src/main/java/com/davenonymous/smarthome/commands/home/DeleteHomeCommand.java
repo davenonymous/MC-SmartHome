@@ -31,7 +31,7 @@ public class DeleteHomeCommand implements Command<CommandSourceStack> {
 		String homeName = StringArgumentType.getString(context, "name");
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		if(data.getHome(player.getUUID(), homeName).isEmpty()) {
+		if(data.getPlayerHome(player.getUUID(), homeName).isEmpty()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s does not exist", homeName)));
 			return 0;
 		}

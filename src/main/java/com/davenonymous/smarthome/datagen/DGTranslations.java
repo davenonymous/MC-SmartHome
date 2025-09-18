@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.datagen;
 
 import com.davenonymous.smarthome.setup.content.ModBlocks;
+import com.davenonymous.smarthome.setup.content.ModItems;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -24,8 +25,10 @@ public class DGTranslations extends LanguageProvider {
 	protected void addTranslations() {
 		add(ModBlocks.DASHBOARD.get(), "Dashboard");
 		add(ModBlocks.MINI_RACK.get(), "Mini Rack");
+		add(ModItems.SERVER_ITEM.get(), "Smart Home Server");
 
 		add("smarthome.gui.home.title", "Smart Home");
+		add("smarthome.gui.server.name_label", "Name your smart home:");
 	}
 
 	public void add(ResourceLocation id, String translation) {

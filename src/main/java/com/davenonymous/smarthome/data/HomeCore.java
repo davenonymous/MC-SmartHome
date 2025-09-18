@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.data;
 
+import com.davenonymous.smarthome.lib.DimPos;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -27,19 +28,21 @@ public class HomeCore {
 	UUID owner;
 	String name;
 	List<HomeZone> zones;
+	DimPos serverLocation;
 
 	// internal values, not serialized
 	AABB bounds;
 	VoxelShape shape;
 
-	public HomeCore(String name, UUID owner) {
-		this(UUID.randomUUID(), owner, name, new ArrayList<>());
+	public HomeCore(String name, UUID owner, DimPos serverLocation) {
+		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>());
 	}
 
-	public HomeCore(UUID id, UUID owner, String name, List<HomeZone> zones) {
+	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones) {
 		this.name = name;
 		this.id = id;
 		this.owner = owner;
+		this.serverLocation = serverLocation;
 		this.zones = new ArrayList<>(zones);
 		this.zones.forEach(z -> z.setHome(this));
 		updateBounds();
@@ -51,6 +54,7 @@ public class HomeCore {
 			HomeCore core = decoded.get();
 			this.id = core.id;
 			this.name = core.name;
+			this.serverLocation = core.serverLocation;
 			this.zones = new ArrayList<>(core.zones);
 			this.zones.forEach(z -> z.setHome(this));
 		} else {
@@ -90,6 +94,16 @@ public class HomeCore {
 
 	public HomeCore setOwner(UUID owner) {
 		this.owner = owner;
+		return this;
+	}
+
+	public HomeCore setServerLocation(DimPos serverLocation) {
+		this.serverLocation = serverLocation;
+		return this;
+	}
+
+	public HomeCore setName(String name) {
+		this.name = name;
 		return this;
 	}
 
@@ -146,9 +160,14 @@ public class HomeCore {
 		return shape;
 	}
 
+	public DimPos serverLocation() {
+		return serverLocation;
+	}
+
 	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeCore::id),
 			UUIDUtil.STRING_CODEC.fieldOf("owner").forGetter(HomeCore::owner),
+			DimPos.CODEC.fieldOf("location").forGetter(HomeCore::serverLocation),
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones)
 	).apply(instance, HomeCore::new));
@@ -156,6 +175,7 @@ public class HomeCore {
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, HomeCore::id,
 		UUIDUtil.STREAM_CODEC, HomeCore::owner,
+		DimPos.STREAM_CODEC, HomeCore::serverLocation,
 		ByteBufCodecs.STRING_UTF8, HomeCore::name,
 		HomeZone.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::zones,
 		HomeCore::new

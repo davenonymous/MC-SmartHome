@@ -41,7 +41,7 @@ public class CreateZoneCommand implements Command<CommandSourceStack> {
 
 		var level = context.getSource().getServer().overworld();
 		WorldSavedHomes worldSavedHomes = WorldSavedHomes.get(level);
-		var home = worldSavedHomes.getHome(player, homeName);
+		var home = worldSavedHomes.getPlayerHome(player, homeName);
 		if(home.isEmpty()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s does not exist", homeName)));
 			return 1;

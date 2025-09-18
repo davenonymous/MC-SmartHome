@@ -29,5 +29,11 @@ public class Register {
 			OpenHomeScreenPayload.CODEC,
 			OpenHomeScreenPayload::handleOnClient
 		);
+
+		registrar.playToServer(
+			SetServerItemHomeNamePayload.TYPE,
+			SetServerItemHomeNamePayload.CODEC,
+			SetServerItemHomeNamePayload::handleOnServer
+		);
 	}
 }

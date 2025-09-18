@@ -40,12 +40,12 @@ public class ShowHomeCommand implements Command<CommandSourceStack> {
 		String homeName = StringArgumentType.getString(context, "name");
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		if(data.getHome(player, homeName).isEmpty()) {
+		if(data.getPlayerHome(player, homeName).isEmpty()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s does not exist", homeName)));
 			return 0;
 		}
 
-		HomeCore home = data.getHome(player, homeName).get();
+		HomeCore home = data.getPlayerHome(player, homeName).get();
 		home.updateBounds(); // just to be sure
 
 		var model = ModParticleModels.BLOCK_MARKER_LINE;

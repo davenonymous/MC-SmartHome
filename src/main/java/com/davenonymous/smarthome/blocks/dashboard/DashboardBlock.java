@@ -73,7 +73,7 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 			homeId = HomeBlockEntity.emptyUUID;
 		}
 
-		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getHomes(entity.ownerUUID())));
+		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID())));
 		return InteractionResult.SUCCESS_NO_ITEM_USED;
 	}
 

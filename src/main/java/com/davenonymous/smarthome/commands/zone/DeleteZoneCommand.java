@@ -34,7 +34,7 @@ public class DeleteZoneCommand implements Command<CommandSourceStack> {
 		String zoneName = StringArgumentType.getString(context, "name");
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		var optHome = data.getHome(player, homeName);
+		var optHome = data.getPlayerHome(player, homeName);
 		if(optHome.isEmpty()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s does not exist", homeName)));
 			return 1;

@@ -28,7 +28,7 @@ public class ListZonesCommand implements Command<CommandSourceStack> {
 		String homeName = StringArgumentType.getString(context, "home");
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
-		var home = data.getHome(player, homeName);
+		var home = data.getPlayerHome(player, homeName);
 		if(home.isEmpty()) {
 			context.getSource().sendFailure(Component.literal(String.format("Home with name %s does not exist", homeName)));
 			return 1;

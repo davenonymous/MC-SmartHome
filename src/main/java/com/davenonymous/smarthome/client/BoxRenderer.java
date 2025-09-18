@@ -5,16 +5,12 @@ package com.davenonymous.smarthome.client;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
-import com.davenonymous.smarthome.particles.util.ParticleShapeHelper;
-import com.davenonymous.smarthome.setup.content.ModParticleModels;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
@@ -90,10 +86,10 @@ public class BoxRenderer {
 		// TODO: Nonononono. This is just for testing, remove it later.
 		var overworld = Minecraft.getInstance().getSingleplayerServer().overworld();
 		WorldSavedHomes data = WorldSavedHomes.get(overworld);
-		if(data.getHome(player, "F").isEmpty()) {
+		if(data.getPlayerHome(player, "F").isEmpty()) {
 			return;
 		}
-		HomeCore home = data.getHome(player, "F").get();
+		HomeCore home = data.getPlayerHome(player, "F").get();
 		home.updateBounds(); // just to be sure
 //		var model = ModParticleModels.BLOCK_MARKER_LINE;
 //		var modelAABB = ModParticleModels.BLOCK_MARKER_LINE_AABB;

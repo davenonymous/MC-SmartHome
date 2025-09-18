@@ -4,7 +4,6 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.commands.debug.WindowCommand;
 import com.davenonymous.smarthome.commands.duckdb.ExecuteStatementCommand;
 import com.davenonymous.smarthome.commands.duckdb.RunQueryCommand;
-import com.davenonymous.smarthome.commands.home.CreateHomeCommand;
 import com.davenonymous.smarthome.commands.home.DeleteHomeCommand;
 import com.davenonymous.smarthome.commands.home.ListHomesCommand;
 import com.davenonymous.smarthome.commands.home.ShowHomeCommand;
@@ -24,7 +23,6 @@ public class SmartHomeCommand {
 			Commands.literal("home")
 				.then(ListHomesCommand.registerCommand(dispatcher))
 				.then(ShowHomeCommand.registerCommand(dispatcher))
-				.then(CreateHomeCommand.registerCommand(dispatcher))
 				.then(DeleteHomeCommand.registerCommand(dispatcher))
 				.then(Commands.literal("zone").then(Commands.argument("home", StringArgumentType.string())
 					.then(CreateZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
