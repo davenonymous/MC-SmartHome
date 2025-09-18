@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.AABB;
 import org.duckdb.DuckDBConnection;
 import org.slf4j.Logger;
@@ -73,7 +74,7 @@ public class WorldWatcher implements Runnable {
 	public void run() {
 		LOGGER.info("Establishing DuckDB connection");
 		try {
-			connection = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:persistent.duckdb");
+			connection = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:" + server.getWorldPath(LevelResource.ROOT).resolve("smarthome.duckdb"));
 			ModSensors.createTables(connection);
 		} catch (SQLException e) {
 			SmartHome.LOGGER.error("Error initializing DuckDB", e);
