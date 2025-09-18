@@ -3,6 +3,8 @@ package com.davenonymous.smarthome.setup.event;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.setup.content.ModParticleModels;
+import net.minecraft.client.gui.font.providers.GlyphProviderType;
+import net.minecraft.util.StringRepresentable;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ModelEvent;

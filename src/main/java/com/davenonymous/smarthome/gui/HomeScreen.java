@@ -6,6 +6,7 @@ import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetFullScreen;
+import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.networking.ClientCache;
@@ -56,6 +57,8 @@ public class HomeScreen extends WidgetFullScreen {
 		contentLayout = new WidgetHBox();
 		contentLayout.setSpacing(2);
 		contentLayout.setPadding(0);
+
+		contentLayout.addContentBox(new FontTestWidget(), FlexSizer.FlexAlign.START);
 
 		footerLayout = new WidgetVBox();
 		footerLayout.setSpacing(2);

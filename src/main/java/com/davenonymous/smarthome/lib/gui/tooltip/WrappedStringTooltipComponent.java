@@ -87,6 +87,7 @@ public final class WrappedStringTooltipComponent implements SerializableTooltipC
 
 	@Override
 	public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
+
 		GUIHelper.drawWordWrap(guiGraphics, font, FormattedText.of(message), x, y, maxWidth, color);
 	}
 

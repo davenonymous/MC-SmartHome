@@ -1,0 +1,13 @@
+{
+	"entries": [
+		{
+			"enum": "net/minecraft/client/gui/font/providers/GlyphProviderType",
+			"name": "SMARTHOME_SPACED_BITMAP",
+			"constructor": "(Ljava/lang/String;Lcom/mojang/serialization/MapCodec;)V",
+			"parameters": {
+				"class": "com/davenonymous/smarthome/setup/content/ModFonts",
+				"field": "SPACED_BITMAP"
+			}
+		}
+	]
+}

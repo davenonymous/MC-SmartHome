@@ -3,5 +3,5 @@
   "block.smarthome.mini_rack": "Mini Rack",
   "item.smarthome.server": "Smart Home Server",
   "smarthome.gui.home.title": "Smart Home",
-  "smarthome.gui.server.name_label": "Set the name of your smart home"
+  "smarthome.gui.server.name_label": "Name your smart home:"
 }

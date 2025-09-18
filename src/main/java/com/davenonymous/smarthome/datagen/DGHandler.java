@@ -32,6 +32,7 @@ public class DGHandler {
 		generator.addProvider(event.includeServer(), new DGBlockStates(output, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DGRecipes(output, lookupProvider));
 		generator.addProvider(event.includeClient(), new DGTranslations(output, SmartHome.MODID, "en_us"));
+		generator.addProvider(event.includeClient(), new DGFonts(SmartHome.MODID, output, existingFileHelper));
 
 		// Block-Loot
 		List<LootTableProvider.SubProviderEntry> lootTableSources = new ArrayList<>();
