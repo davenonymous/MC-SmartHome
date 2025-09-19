@@ -1,7 +1,12 @@
 package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
+import com.davenonymous.smarthome.lib.gui.event.ListSelectionEvent;
+import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
@@ -19,6 +24,8 @@ public class SidebarButton extends WidgetPanel {
 	WidgetSprite iconWidget;
 	WidgetTextBox labelWidget;
 	WidgetTextBox labelBackdropWidget;
+
+	ResourceLocation contentId;
 
 	public SidebarButton(ResourceLocation icon, String label) {
 		this.setSize(120, 20);
@@ -42,7 +49,29 @@ public class SidebarButton extends WidgetPanel {
 		this.labelBackdropWidget.setVisible(false);
 		this.add(this.labelBackdropWidget);
 
+		this.addListener(MouseClickEvent.class, (event, widget) -> {
+			if(event.button != 0) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
+			if(this.contentId != null) {
+				getGUI().fireEvent(new ContentSelectionEvent(this.contentId));
+				return WidgetEventResult.HANDLED;
+			}
+
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+
 		updateWidgetSizes();
+	}
+
+	public ResourceLocation contentId() {
+		return contentId;
+	}
+
+	public SidebarButton setContentId(ResourceLocation contentId) {
+		this.contentId = contentId;
+		return this;
 	}
 
 	public void updateWidgetSizes() {
@@ -72,6 +101,8 @@ public class SidebarButton extends WidgetPanel {
 	public void draw(GuiGraphics guiGraphics, Screen screen) {
 		if(isHovered()) {
 			guiGraphics.fill(0, 0, this.width(), this.height(), 0x404420F0);
+		} else {
+			guiGraphics.fill(0, 0, this.width(), this.height(), 0x50808080);
 		}
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.BUTTON_BORDER), 0, 0, this.width, this.height);

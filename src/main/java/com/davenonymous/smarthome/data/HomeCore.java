@@ -160,6 +160,13 @@ public class HomeCore {
 		return shape;
 	}
 
+	public VoxelShape normalizedShape() {
+		if(shape.isEmpty()) {
+			return shape;
+		}
+		return shape.move(-shape.bounds().minX, -shape.bounds().minY, -shape.bounds().minZ);
+	}
+
 	public DimPos serverLocation() {
 		return serverLocation;
 	}

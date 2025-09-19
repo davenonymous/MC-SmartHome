@@ -17,7 +17,7 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import java.util.Collection;
 
 public class BoxRenderer {
-    private static void renderBlockOutline(PoseStack poseStack, Collection<BoxLineCache.Line> lines, int color, int lineWidth) {
+    public static void renderBlockOutline(PoseStack poseStack, Collection<BoxLineCache.Line> lines, int color, int lineWidth) {
 
 
 		var bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -44,7 +44,7 @@ public class BoxRenderer {
 		RenderSystem.enableCull();
     }
 
-	private static void renderLine(PoseStack.Pose pose, VertexConsumer consumer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red,
+	public static void renderLine(PoseStack.Pose pose, VertexConsumer consumer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red,
 		float green, float blue, float alpha, float red2, float green2, float blue2) {
 		float f = (float)minX;
 		float f1 = (float)minY;
@@ -64,7 +64,7 @@ public class BoxRenderer {
 		consumer.addVertex(pose, f, f4, f5).setColor(red, green, blue, alpha).setNormal(pose, 0.0F, 0.0F, 1.0F);
 	}
 
-    private static void renderLines(PoseStack poseStack, DyeColor color, Collection<BoxLineCache.Line> lines, int alpha, int lineWidth) {
+    public static void renderLines(PoseStack poseStack, DyeColor color, Collection<BoxLineCache.Line> lines, int alpha, int lineWidth) {
 		Vec3 projection = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 		var xOffset = -projection.x;
 		var yOffset = -projection.y;

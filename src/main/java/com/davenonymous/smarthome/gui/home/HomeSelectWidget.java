@@ -46,7 +46,7 @@ public class HomeSelectWidget extends WidgetHBox {
 
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
 			updateWidgetContent();
-			return WidgetEventResult.HANDLED;
+			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
 		updateWidgetContent();
 		updateWidgetSizes();
