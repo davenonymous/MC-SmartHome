@@ -7,6 +7,9 @@ public abstract class GuiTheme {
 		WINDOW_BACKGROUND,
 		WINDOW_PUSHED_BACKGROUND,
 
+		WIDGET_PREV,
+		WIDGET_NEXT,
+
 		WIDGET_DOT,
 		WIDGET_TOGGLE_ON,
 		WIDGET_TOGGLE_OFF,
@@ -16,4 +19,6 @@ public abstract class GuiTheme {
 	}
 
 	public abstract ResourceLocation getSprite(SpriteComponent component);
+
+
 }

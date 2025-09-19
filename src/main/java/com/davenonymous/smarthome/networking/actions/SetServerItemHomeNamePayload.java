@@ -1,13 +1,9 @@
-package com.davenonymous.smarthome.networking;
+package com.davenonymous.smarthome.networking.actions;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.data.HomeCore;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.items.ServerDataComponent;
 import com.davenonymous.smarthome.items.ServerItem;
-import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

@@ -100,6 +100,9 @@ public class Widget implements ISelectable {
 		return runInBackground(self, runnable);
 	}
 
+	public void onAdd(GUI gui, Widget parent) {
+
+	}
 
 	public <T extends Widget> CompletableFuture<?> runInBackground(Class<T> aClass, Consumer<T> runnable) {
 		return CompletableFuture.runAsync(() -> runnable.accept((T) this), Util.backgroundExecutor());

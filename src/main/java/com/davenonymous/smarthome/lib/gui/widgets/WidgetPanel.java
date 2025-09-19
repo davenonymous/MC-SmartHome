@@ -162,6 +162,7 @@ public class WidgetPanel extends Widget {
 	public void add(Widget widget) {
 		children.add(widget);
 		widget.setParent(this);
+		widget.onAdd(this.getGUI(), this);
 	}
 
 	public void remove(Widget widget) {

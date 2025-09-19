@@ -53,6 +53,15 @@ public class HomeScreen extends WidgetFullScreen {
 		SmartHome.LOGGER.debug("Opening home screen for home {} from {}", selectedHome, blockEntity);
 	}
 
+	public static HomeScreen get() {
+		var mc = Minecraft.getInstance();
+		if(mc.screen instanceof HomeScreen homeScreen) {
+			return homeScreen;
+		}
+
+		return null;
+	}
+
 	@Override
 	protected GUI createGUI() {
 		var gui = super.createGUI();

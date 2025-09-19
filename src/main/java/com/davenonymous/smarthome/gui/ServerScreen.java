@@ -9,7 +9,7 @@ import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.networking.SetServerItemHomeNamePayload;
+import com.davenonymous.smarthome.networking.actions.SetServerItemHomeNamePayload;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

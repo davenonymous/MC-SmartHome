@@ -38,14 +38,6 @@ public abstract class WidgetScreen extends Screen {
 		return gui;
 	}
 
-	public GuiTheme theme() {
-		return getOrCreateGui().theme;
-	}
-
-	public ResourceLocation sprite(GuiTheme.SpriteComponent component) {
-		return getOrCreateGui().theme.getSprite(component);
-	}
-
 	public int mouseX() {
 		return this.previousMouseX;
 	}

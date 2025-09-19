@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.blocks.base;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -53,5 +54,9 @@ public abstract class HomeBlockEntity extends BaseBlockEntity {
 		if(home != null) {
 			tag.putUUID("home", home);
 		}
+	}
+
+	public boolean isOwner(Player player) {
+		return player != null && ownerUUID != null && ownerUUID.equals(player.getUUID());
 	}
 }

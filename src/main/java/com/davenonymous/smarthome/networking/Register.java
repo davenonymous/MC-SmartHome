@@ -1,6 +1,8 @@
 package com.davenonymous.smarthome.networking;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.networking.actions.SetSelectedHomePayload;
+import com.davenonymous.smarthome.networking.actions.SetServerItemHomeNamePayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -34,6 +36,12 @@ public class Register {
 			SetServerItemHomeNamePayload.TYPE,
 			SetServerItemHomeNamePayload.CODEC,
 			SetServerItemHomeNamePayload::handleOnServer
+		);
+
+		registrar.playToServer(
+			SetSelectedHomePayload.TYPE,
+			SetSelectedHomePayload.CODEC,
+			SetSelectedHomePayload::handleOnServer
 		);
 	}
 }

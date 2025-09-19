@@ -31,8 +31,6 @@ public class GUI extends WidgetPanel {
 	public static ResourceLocation windowBackground = SmartHome.resource("textures/gui/window.png");
 	public static ResourceLocation defaultButtonTexture = SmartHome.resource("textures/gui/button_background.png");
 
-	protected GuiTheme theme = new Vanilla();
-
 	public static final Logger LOGGER = LogUtils.getLogger();
 
 	public boolean drawBackground = true;
@@ -49,13 +47,12 @@ public class GUI extends WidgetPanel {
 		this.setHeight(height);
 	}
 
-	public GuiTheme theme() {
-		return theme;
+	@Override
+	public GUI getGUI() {
+		return this;
 	}
 
-	public ResourceLocation sprite(GuiTheme.SpriteComponent component) {
-		return theme.getSprite(component);
-	}
+
 
 	public void findValueWidgets() {
 		this.findValueWidgets(this);
@@ -90,7 +87,7 @@ public class GUI extends WidgetPanel {
 	@Override
 	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
 		if(drawBackground) {
-			pGuiGraphics.blitSprite(sprite(GuiTheme.SpriteComponent.WINDOW_BACKGROUND), 0, 0, this.width, this.height);
+			pGuiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_BACKGROUND), 0, 0, this.width, this.height);
 			//GUIHelper.drawWindow(pGuiGraphics, this.width, this.height, this.hasTabs);
 		}
 		super.draw(pGuiGraphics, screen);
@@ -141,7 +138,7 @@ public class GUI extends WidgetPanel {
 		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().translate(offsetX, offsetY, 0.0f);
 
-		pGuiGraphics.blitSprite(sprite(GuiTheme.SpriteComponent.SLOT), slot.x, slot.y, 18, 18);
+		pGuiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.SLOT), slot.x, slot.y, 18, 18);
 
 		pGuiGraphics.pose().popPose();
 	}

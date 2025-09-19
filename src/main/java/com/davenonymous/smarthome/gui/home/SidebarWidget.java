@@ -14,7 +14,7 @@ public class SidebarWidget extends WidgetVBox {
 
 	@Override
 	public void draw(GuiGraphics guiGraphics, Screen screen) {
-		super.draw(guiGraphics, screen);
 		guiGraphics.fill(0, 0, this.width(), this.height(), 0xFF4420F0);
+		super.draw(guiGraphics, screen);
 	}
 }
