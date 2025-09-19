@@ -7,6 +7,8 @@ public abstract class GuiTheme {
 		WINDOW_BACKGROUND,
 		WINDOW_PUSHED_BACKGROUND,
 
+		BUTTON_BORDER,
+
 		WIDGET_PREV,
 		WIDGET_NEXT,
 

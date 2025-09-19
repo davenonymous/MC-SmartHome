@@ -1,20 +1,28 @@
 package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 public class SidebarWidget extends WidgetVBox {
+	SidebarButton zonesButton;
+	SidebarButton devicesButton;
+	SidebarButton settingsButton;
+
 	public SidebarWidget(HomeScreen screen) {
 		this.setWidth(120);
-		this.setPadding(10);
-		this.setSpacing(10);
+		this.setPadding(1);
+		this.setSpacing(4);
+
+		this.zonesButton = new SidebarButton(HackerNoon.Solid.home, "Zones");
+		this.addContentBox(zonesButton);
+
+		this.devicesButton = new SidebarButton(HackerNoon.Solid.retroCamera, "Devices");
+		this.addContentBox(devicesButton);
+
+		this.settingsButton = new SidebarButton(HackerNoon.Solid.cog, "Settings");
+		this.addContentBox(settingsButton);
+
 	}
 
-	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
-		guiGraphics.fill(0, 0, this.width(), this.height(), 0xFF4420F0);
-		super.draw(guiGraphics, screen);
-	}
 }
