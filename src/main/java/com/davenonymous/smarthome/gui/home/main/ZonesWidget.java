@@ -3,6 +3,8 @@ package com.davenonymous.smarthome.gui.home.main;
 import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
+import com.davenonymous.smarthome.lib.gui.event.MouseClickMoveEvent;
+import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
@@ -22,11 +24,25 @@ public class ZonesWidget extends WidgetPanel {
 	BoxLineCache boundBoxLines;
 	List<BoxLineCache> zoneBoxes;
 
+	float rotX = -30;
+	float rotY = -35;
 
 	public ZonesWidget() {
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
 			refreshZoneList();
 			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+
+		// TODO: this wants to be mouse drag instead of scrolling
+		this.addListener(MouseScrollEvent.class, (event, widget) -> {
+			if(getGUI().isShiftDown()) {
+				rotX += (float) (event.rawScrollValue * 4d);
+				rotX = Math.max(-90, Math.min(90, rotX));
+			} else {
+				rotY += (float) (event.rawScrollValue * 4d);
+				rotY = rotY % 360;
+			}
+			return WidgetEventResult.HANDLED;
 		});
 
 		refreshZoneList();
@@ -48,7 +64,8 @@ public class ZonesWidget extends WidgetPanel {
 		boxLines.addShape(homeShape);
 
 		var bounds = homeShape.bounds();
-		var boundShape = Shapes.create(bounds.inflate(4/16d).inflate(4/16d, 0, 4/16d));
+		var outerBounds = bounds.inflate(4/16d).inflate(4/16d, 0, 4/16d);
+		var boundShape = Shapes.create(outerBounds);
 		boundBoxLines = new BoxLineCache();
 		boundBoxLines.addShape(boundShape);
 
@@ -73,14 +90,20 @@ public class ZonesWidget extends WidgetPanel {
 		if(homeShape.isEmpty()) {
 			return;
 		}
-
+		var bounds = homeShape.bounds();
+		var outerBounds = bounds.inflate(4/16d).inflate(4/16d, 0, 4/16d);
+		double longestSide = Math.max(outerBounds.getXsize(), outerBounds.getZsize());
+		double longestHeight = outerBounds.getYsize() * Math.sqrt(2);
+		double expectedMaxRadius = longestSide * Math.sqrt(2);
+		int zoneRenderWidth = (int) expectedMaxRadius * 16;
+		int fooX = (width()) / 2;
+		int fooY = (height()) / 2;
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(this.width() / 2f, this.height() / 2f, 0f);
-		guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(-30), 0, 0, 0);
-		guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(-35), 0, 0, 0);
+		guiGraphics.pose().translate(fooX - zoneRenderWidth / 4f, fooY + longestHeight / 4f, 100);
+		float shift = (float)expectedMaxRadius * 5f;
+		guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(rotX), 0, 0, 0);
+		guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(rotY), shift, 0, shift);
 		guiGraphics.pose().scale(16f, -16f, 16f);
-
-
 
 		int boundColor = ChatFormatting.DARK_GRAY.getColor() | 0x40000000;
 		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boundBoxLines.lines, boundColor, 2);
