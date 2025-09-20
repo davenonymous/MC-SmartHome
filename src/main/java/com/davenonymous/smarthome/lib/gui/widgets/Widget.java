@@ -511,6 +511,10 @@ public class Widget implements ISelectable {
 		return Mth.floor(minecraft.mouseHandler.ypos() * (double) window.getGuiScaledHeight() / (double) window.getScreenHeight()) - this.getActualY();
 	}
 
+	public void updateWidgetSizes() {
+
+	}
+
 	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Screen screen) {
 	}
 

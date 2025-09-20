@@ -2,8 +2,6 @@ package com.davenonymous.smarthome.gui.home.main;
 
 import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.gui.HomeScreen;
-import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
-import com.davenonymous.smarthome.lib.gui.event.MouseClickMoveEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -15,26 +13,26 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ZonesWidget extends WidgetPanel {
 	VoxelShape homeShape;
 	BoxLineCache boxLines;
 	BoxLineCache boundBoxLines;
-	List<BoxLineCache> zoneBoxes;
+	Map<String, BoxLineCache> zoneBoxes;
+	public String selectedZone = null;
 
 	float rotX = -30;
 	float rotY = -35;
 
 	public ZonesWidget() {
-		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
-			refreshZoneList();
-			return WidgetEventResult.CONTINUE_PROCESSING;
-		});
-
 		// TODO: this wants to be mouse drag instead of scrolling
 		this.addListener(MouseScrollEvent.class, (event, widget) -> {
+			if(!this.isHovered()) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
 			if(getGUI().isShiftDown()) {
 				rotX += (float) (event.rawScrollValue * 4d);
 				rotX = Math.max(-90, Math.min(90, rotX));
@@ -44,8 +42,6 @@ public class ZonesWidget extends WidgetPanel {
 			}
 			return WidgetEventResult.HANDLED;
 		});
-
-		refreshZoneList();
 	}
 
 	public void refreshZoneList() {
@@ -69,12 +65,12 @@ public class ZonesWidget extends WidgetPanel {
 		boundBoxLines = new BoxLineCache();
 		boundBoxLines.addShape(boundShape);
 
-		zoneBoxes = new ArrayList<>();
+		zoneBoxes = new HashMap<>();
 		for(var zone : selectedHome.zones()) {
 			var shape = Shapes.create(zone.bounds().move(-selectedHome.shape().bounds().minX, -selectedHome.shape().bounds().minY, -selectedHome.shape().bounds().minZ).deflate(1/16d));
 			var boxLineCache = new BoxLineCache();
 			boxLineCache.addShape(shape);
-			zoneBoxes.add(boxLineCache);
+			zoneBoxes.put(zone.name(), boxLineCache);
 		}
 	}
 
@@ -90,6 +86,7 @@ public class ZonesWidget extends WidgetPanel {
 		if(homeShape.isEmpty()) {
 			return;
 		}
+
 		var bounds = homeShape.bounds();
 		var outerBounds = bounds.inflate(4/16d).inflate(4/16d, 0, 4/16d);
 		double longestSide = Math.max(outerBounds.getXsize(), outerBounds.getZsize());
@@ -111,14 +108,13 @@ public class ZonesWidget extends WidgetPanel {
 		int color = ChatFormatting.YELLOW.getColor() | 0xFF000000;
 		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boxLines.lines, color, 2);
 
-		var selectedHome = HomeScreen.get().selectedHome;
-		if (selectedHome != null) {
-			for (int i = 0; i < selectedHome.zones().size(); i++) {
-				var zone = selectedHome.zones().get(i);
-				var zoneBox = zoneBoxes.get(i);
+		for(var zoneEntry : zoneBoxes.entrySet()) {
+			var zoneName = zoneEntry.getKey();
+			var zoneBox = zoneEntry.getValue();
 
-				int zoneColor = ChatFormatting.GREEN.getColor() | 0x80000000;
-				//BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, zoneColor, 1);
+			if(zoneName.equals(selectedZone)) {
+				int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
+				BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
 			}
 		}
 

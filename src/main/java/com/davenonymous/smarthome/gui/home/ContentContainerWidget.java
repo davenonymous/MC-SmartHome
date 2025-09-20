@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.gui.home;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.DevicesWidget;
+import com.davenonymous.smarthome.gui.home.main.ZonesContainer;
 import com.davenonymous.smarthome.gui.home.main.ZonesWidget;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -24,7 +25,7 @@ public class ContentContainerWidget extends WidgetPanel {
 	public ContentContainerWidget() {
 		registeredContentWidgets = new HashMap<>();
 
-		registerContentWidget(ContentIDs.ZONES, new ZonesWidget());
+		registerContentWidget(ContentIDs.ZONES, new ZonesContainer());
 		registerContentWidget(ContentIDs.DEVICES, new DevicesWidget());
 
 		this.addListener(ContentSelectionEvent.class, (event, widget) -> {
@@ -67,6 +68,7 @@ public class ContentContainerWidget extends WidgetPanel {
 		registeredContentWidgets.values().forEach(widget -> {
 			widget.setSize(this.width-10, this.height-10);
 			widget.setPosition(5, 5);
+			widget.updateWidgetSizes();
 		});
 	}
 
