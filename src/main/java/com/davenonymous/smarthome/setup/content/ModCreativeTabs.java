@@ -26,6 +26,7 @@ public class ModCreativeTabs {
 				output.accept(ModItems.MINI_RACK_ITEM.get());
 				output.accept(ModItems.SERVER_ITEM.get());
 				output.accept(ModItems.IRDA_ITEM.get());
+				output.accept(ModItems.RANGE_FINDER_ITEM.get());
 			})
 			.build()
 	);

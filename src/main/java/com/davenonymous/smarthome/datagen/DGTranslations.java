@@ -27,6 +27,7 @@ public class DGTranslations extends LanguageProvider {
 		add(ModBlocks.MINI_RACK.get(), "Mini Rack");
 		add(ModItems.SERVER_ITEM.get(), "Smart Home Server");
 		add(ModItems.IRDA_ITEM.get(), "IrDA Transceiver");
+		add(ModItems.RANGE_FINDER_ITEM.get(), "Laser Range Finder");
 
 		add("smarthome.gui.home.title", "Smart Home");
 		add("smarthome.gui.server.name_label", "Name your smart home:");
