@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.setup.content;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.minirack.MiniRackitem;
 import com.davenonymous.smarthome.blocks.dashboard.DashboardItem;
+import com.davenonymous.smarthome.items.IrdaTransceiverItem;
 import com.davenonymous.smarthome.items.ServerItem;
 import net.minecraft.world.item.BlockItem;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -15,4 +16,5 @@ public class ModItems {
 	public static final DeferredItem<BlockItem> MINI_RACK_ITEM = ITEMS.register(ModBlocks.MINI_RACK_ID, MiniRackitem::new);
 
 	public static final DeferredItem<ServerItem> SERVER_ITEM = ITEMS.register("server", ServerItem::new);
+	public static final DeferredItem<IrdaTransceiverItem> IRDA_ITEM = ITEMS.register("irda_transceiver", IrdaTransceiverItem::new);
 }

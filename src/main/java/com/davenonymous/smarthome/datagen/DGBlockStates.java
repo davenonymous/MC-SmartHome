@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.datagen;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.minirack.MiniRackBlock;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
+import com.davenonymous.smarthome.setup.content.ModItems;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
@@ -30,6 +31,9 @@ public class DGBlockStates extends BlockStateProvider {
 		simpleBlockItem(ModBlocks.DASHBOARD.get(), dashboardModel);
 
 		miniRackBlock();
+
+		itemModels().basicItem(ModItems.IRDA_ITEM.get());
+		itemModels().basicItem(ModItems.SERVER_ITEM.get());
 	}
 
 	public void simpleBlockWithItem(Block block) {
