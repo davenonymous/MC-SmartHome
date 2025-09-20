@@ -24,13 +24,15 @@ public record HomeInfoPayload(HomeCore home) implements CustomPacketPayload {
 	}
 
 	public static void handleOnClient(HomeInfoPayload payload, IPayloadContext context) {
-		SmartHome.LOGGER.debug("Received home info packet for home {}", payload.home.name());
-		var home = payload.home();
-		ClientCache.INSTANCE.ownedHomes.removeIf(h -> h.id().equals(home.id()));
-		ClientCache.INSTANCE.ownedHomes.add(home);
-
 		var mc = Minecraft.getInstance();
 		if(mc.screen instanceof HomeScreen homeScreen) {
+			var home = payload.home();
+			homeScreen.ownedHomes.removeIf(h -> h.id().equals(home.id()));
+			homeScreen.ownedHomes.add(home);
+
+			if(homeScreen.selectedHome != null && homeScreen.selectedHome.id().equals(home.id())) {
+				homeScreen.selectedHome = home;
+			}
 			homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
 		}
 	}

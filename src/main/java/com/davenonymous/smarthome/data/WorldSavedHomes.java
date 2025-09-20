@@ -61,7 +61,6 @@ public class WorldSavedHomes extends SavedData {
 		if(homes != null) {
 			this.homeByUUID.putAll(homes);
 		}
-
 	}
 
 	public WorldSavedHomes addHome(HomeCore home) {
@@ -77,6 +76,10 @@ public class WorldSavedHomes extends SavedData {
 			this.setDirty();
 		}
 		return this;
+	}
+
+	public Optional<HomeCore> getHome(UUID homeId) {
+		return Optional.ofNullable(homeByUUID.get(homeId));
 	}
 
 	public Optional<HomeCore> getPlayerHome(Player player, String homeName) {

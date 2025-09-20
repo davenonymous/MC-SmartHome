@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.lib.gui.configurable;
 
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +18,12 @@ public class StringInputWidget extends EditBoxWidget<String> {
 		if(this.filterRegex != null) {
 			this.nativeWidget.setFilter(input -> input.matches(this.filterRegex));
 		}
+	}
+
+	public StringInputWidget autoWidth() {
+		int textWidth = Minecraft.getInstance().font.width(getValue());
+		this.setWidth(textWidth + 6);
+		return this;
 	}
 
 	public StringInputWidget(String value) {

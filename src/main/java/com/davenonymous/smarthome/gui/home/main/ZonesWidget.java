@@ -51,6 +51,10 @@ public class ZonesWidget extends WidgetPanel {
 
 
 		var selectedHome = HomeScreen.get().selectedHome;
+		if(selectedHome == null) {
+			return;
+		}
+
 		homeShape = selectedHome.normalizedShape();
 		if(homeShape.isEmpty()) {
 			return;

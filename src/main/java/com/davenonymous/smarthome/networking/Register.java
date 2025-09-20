@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.networking;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.networking.actions.SetSelectedHomePayload;
 import com.davenonymous.smarthome.networking.actions.SetServerItemHomeNamePayload;
+import com.davenonymous.smarthome.networking.actions.SetZoneNamePayload;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -32,6 +33,8 @@ public class Register {
 			OpenHomeScreenPayload::handleOnClient
 		);
 
+
+
 		registrar.playToServer(
 			SetServerItemHomeNamePayload.TYPE,
 			SetServerItemHomeNamePayload.CODEC,
@@ -42,6 +45,12 @@ public class Register {
 			SetSelectedHomePayload.TYPE,
 			SetSelectedHomePayload.CODEC,
 			SetSelectedHomePayload::handleOnServer
+		);
+
+		registrar.playToServer(
+			SetZoneNamePayload.TYPE,
+			SetZoneNamePayload.CODEC,
+			SetZoneNamePayload::handleOnServer
 		);
 	}
 }

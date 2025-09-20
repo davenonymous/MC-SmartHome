@@ -1,10 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main;
 
 import com.davenonymous.smarthome.gui.HomeScreen;
-import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
-import com.davenonymous.smarthome.lib.gui.event.MouseEnterEvent;
-import com.davenonymous.smarthome.lib.gui.event.MouseExitEvent;
-import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
@@ -14,6 +11,7 @@ import net.minecraft.ChatFormatting;
 
 public class ZonesContainer extends WidgetPanel {
 	private ZonesWidget zoneDisplay;
+	private ZoneDetailWidget zoneDetail;
 
 	private WidgetVBox zoneButtons;
 
@@ -21,9 +19,11 @@ public class ZonesContainer extends WidgetPanel {
 		zoneButtons = new WidgetVBox();
 		this.add(zoneButtons);
 
+		zoneDetail = new ZoneDetailWidget();
+		this.add(zoneDetail);
+
 		zoneDisplay = new ZonesWidget();
 		this.add(zoneDisplay);
-
 
 		this.addListener(
 			GuiDataUpdatedEvent.class, (event, widget) -> {
@@ -65,6 +65,14 @@ public class ZonesContainer extends WidgetPanel {
 				zoneDisplay.selectedZone = null;
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
+			button.addListener(MouseClickEvent.class, (event, widget) -> {
+				if(zoneDetail.selectedZone() == zone) {
+					zoneDetail.setSelectedZone(null);
+					return WidgetEventResult.HANDLED;
+				}
+				zoneDetail.setSelectedZone(zone);
+				return WidgetEventResult.HANDLED;
+			});
 
 			zoneButtons.addContentBox(button, FlexSizer.FlexAlign.START);
 		}
@@ -75,7 +83,13 @@ public class ZonesContainer extends WidgetPanel {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		zoneDisplay.setDimensions(5, 5, this.width() - 10, this.height - 10);
-		zoneButtons.setDimensions(5, 5, 100, this.height - 20);
+		int displayWidth = (int)(this.width() * 2 / 3f);
+		int detailWidth = this.width() - displayWidth - 15;
+		int displayX = 5;
+		int detailX = displayX + displayWidth + 10;
+
+		zoneDisplay.setDimensions(displayX, 5, displayWidth, this.height - 10);
+		zoneButtons.setDimensions(displayX, 5, 100, this.height - 20);
+		zoneDetail.setDimensions(detailX, 5, detailWidth, this.height - 10);
 	}
 }

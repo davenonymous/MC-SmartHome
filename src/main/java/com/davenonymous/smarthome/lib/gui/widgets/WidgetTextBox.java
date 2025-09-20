@@ -41,7 +41,11 @@ public class WidgetTextBox extends Widget {
 		}
 
 		int lineWidth = wordWrap ? width : Integer.MAX_VALUE;
-		this.setHeight(GUIHelper.wordWrapHeight(Minecraft.getInstance().font, text, style, lineWidth, lineHeight));
+		int guessedHeight = GUIHelper.wordWrapHeight(Minecraft.getInstance().font, text, style, lineWidth, lineHeight);
+		if(guessedHeight < 1) {
+			guessedHeight = lineHeight;
+		}
+		this.setHeight(guessedHeight);
 	}
 
 	public void autoWidth() {
@@ -49,8 +53,11 @@ public class WidgetTextBox extends Widget {
 	}
 
 	public void autoWidth(int maxWidth) {
-		var guessedWidth = GUIHelper.longestWrappedLine(Minecraft.getInstance().font, FormattedText.of(text, style), maxWidth);
-		this.setWidth(guessedWidth + 2);
+		var guessedWidth = GUIHelper.longestWrappedLine(Minecraft.getInstance().font, FormattedText.of(text, style), maxWidth) + 2;
+		if(guessedWidth < 1) {
+			guessedWidth = 2;
+		}
+		this.setWidth(guessedWidth );
 	}
 
 	public WidgetTextBox setStyle(Function<Style, Style> style) {

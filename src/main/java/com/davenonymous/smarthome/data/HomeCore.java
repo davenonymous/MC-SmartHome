@@ -132,6 +132,10 @@ public class HomeCore {
 		return zones.stream().filter(z -> z.name().equals(zoneName)).findFirst();
 	}
 
+	public Optional<HomeZone> getZone(UUID zoneId) {
+		return zones.stream().filter(z -> z.id().equals(zoneId)).findFirst();
+	}
+
 	public HomeCore addZone(HomeZone zone) {
 		zones.removeIf(z -> z.name().equals(zone.name()));
 		zone.setHome(this);
