@@ -1,7 +1,677 @@
 {
-  "variants": {
-    "": {
-      "model": "smarthome:block/mini_rack"
+  "multipart": [
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "north",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d"
+      },
+      "when": {
+        "face": "wall",
+        "facing": "north",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "north",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "face": "floor",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 270,
+        "y": 180
+      },
+      "when": {
+        "face": "floor",
+        "facing": "south",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "y": 180
+      },
+      "when": {
+        "face": "wall",
+        "facing": "south",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "south",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 270,
+        "y": 270
+      },
+      "when": {
+        "face": "floor",
+        "facing": "west",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "y": 270
+      },
+      "when": {
+        "face": "wall",
+        "facing": "west",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "west",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "face": "floor",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 270,
+        "y": 90
+      },
+      "when": {
+        "face": "floor",
+        "facing": "east",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "y": 90
+      },
+      "when": {
+        "face": "wall",
+        "facing": "east",
+        "slot4": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_a",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "slot1": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_b",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "slot2": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_c",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "slot3": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "smarthome:block/mini_rack_disk_d",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "face": "ceiling",
+        "facing": "east",
+        "slot4": "true"
+      }
     }
-  }
+  ]
 }

@@ -1,0 +1,24 @@
+{
+	"credit": "Made with Blockbench",
+	"texture_size": [64, 64],
+	"textures": {
+		"0": "smarthome:block/mini_rack",
+		"particle": "smarthome:block/mini_rack"
+	},
+	"elements": [
+		{
+			"name": "disk_4",
+			"from": [9, 5, 8],
+			"to": [14, 8, 15],
+			"rotation": {"angle": 0, "axis": "y", "origin": [9, 5, 13]},
+			"faces": {
+				"north": {"uv": [12, 13.75, 13.25, 14.5], "texture": "#0"},
+				"east": {"uv": [0, 12.75, 1.75, 13.5], "texture": "#0"},
+				"south": {"uv": [14, 0, 15.25, 0.75], "texture": "#0"},
+				"west": {"uv": [1.75, 12.75, 3.5, 13.5], "texture": "#0"},
+				"up": {"uv": [5.25, 13, 4, 11.25], "texture": "#0"},
+				"down": {"uv": [12.5, 5.25, 11.25, 7], "texture": "#0"}
+			}
+		}
+	]
+}
