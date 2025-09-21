@@ -15,6 +15,10 @@ public class Vanilla extends GuiTheme {
 	public static ResourceLocation windowPushed = SmartHome.resource("vanilla/window_pushed");
 
 	public static ResourceLocation buttonBorder = SmartHome.resource("vanilla/button_border");
+	public static ResourceLocation buttonR1 = SmartHome.resource("vanilla/button_r1");
+	public static ResourceLocation buttonR2 = SmartHome.resource("vanilla/button_r2");
+	public static ResourceLocation buttonR3 = SmartHome.resource("vanilla/button_r3");
+	public static ResourceLocation buttonR4 = SmartHome.resource("vanilla/button_r4");
 
 	public static ResourceLocation slot = SmartHome.resource("vanilla/slot");
 
@@ -38,6 +42,10 @@ public class Vanilla extends GuiTheme {
 			case WIDGET_PREV -> prev;
 			case WIDGET_NEXT -> next;
 			case BUTTON_BORDER -> buttonBorder;
+			case BUTTON_R1 -> buttonR1;
+			case BUTTON_R2 -> buttonR2;
+			case BUTTON_R3 -> buttonR3;
+			case BUTTON_R4 -> buttonR4;
 		};
 	}
 }

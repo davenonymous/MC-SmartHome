@@ -88,6 +88,10 @@ public class HomeCore {
 		return zones.stream().filter(zone -> zone.bounds.contains(x, y, z)).findFirst().orElse(null);
 	}
 
+	public HomeZone getZoneCrossing(AABB box) {
+		return zones.stream().filter(zone -> zone.bounds.intersects(box)).findFirst().orElse(null);
+	}
+
 	public UUID owner() {
 		return owner;
 	}

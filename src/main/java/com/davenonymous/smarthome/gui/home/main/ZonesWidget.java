@@ -2,26 +2,41 @@ package com.davenonymous.smarthome.gui.home.main;
 
 import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.items.RangeFinderItem;
+import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
+import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ZonesWidget extends WidgetPanel {
 	VoxelShape homeShape;
 	BoxLineCache boxLines;
 	BoxLineCache boundBoxLines;
+
 	Map<String, BoxLineCache> zoneBoxes;
+
 	public String selectedZone = null;
+	public RangerFinderDataComponent selectedRangeFinder;
+
+	Map<RangerFinderDataComponent, BoxLineCache> rangeFinderBoxes;
 
 	float rotX = -30;
 	float rotY = -35;
@@ -76,6 +91,29 @@ public class ZonesWidget extends WidgetPanel {
 			boxLineCache.addShape(shape);
 			zoneBoxes.put(zone.name(), boxLineCache);
 		}
+
+
+		rangeFinderBoxes = new HashMap<>();
+		var rangerFinderDataComponents = Minecraft.getInstance().player.inventoryMenu.getItems().stream()
+			.filter(stack -> !stack.isEmpty() && stack.has(ModDataComponents.RANGER_FINDER_DATA_COMPONENT))
+			.map(stack -> stack.get(ModDataComponents.RANGER_FINDER_DATA_COMPONENT))
+			.filter(data -> data.toAABB() != null && selectedHome.getZoneCrossing(data.toAABB()) == null)
+			.toList();
+
+		for(var rangeFinderData : rangerFinderDataComponents) {
+			BlockPos posA = rangeFinderData.A().offset((int) -selectedHome.shape().bounds().minX, (int) -selectedHome.shape().bounds().minY, (int) -selectedHome.shape().bounds().minZ);
+			BlockPos posB = rangeFinderData.B().offset((int) -selectedHome.shape().bounds().minX, (int) -selectedHome.shape().bounds().minY, (int) -selectedHome.shape().bounds().minZ);
+			Vector3f vecA = new Vector3f(posA.getX(), posA.getY(), posA.getZ());
+			Vector3f vecB = new Vector3f(posB.getX(), posB.getY(), posB.getZ());
+			Vector3f max = new Vector3f(vecA).max(vecB).add(1, 1, 1);
+			Vector3f min = new Vector3f(vecA).min(vecB);
+
+			var shape = Shapes.create(min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
+			var boxLineCache = new BoxLineCache();
+			boxLineCache.addShape(shape);
+
+			rangeFinderBoxes.put(rangeFinderData, boxLineCache);
+		}
 	}
 
 
@@ -120,6 +158,18 @@ public class ZonesWidget extends WidgetPanel {
 				int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
 				BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
 			}
+		}
+
+		for(var zoneEntry : rangeFinderBoxes.entrySet()) {
+			var rangeFinderData = zoneEntry.getKey();
+			var zoneBox = zoneEntry.getValue();
+
+			int selectedColor = ChatFormatting.GOLD.getColor() | 0x20000000;
+			if(this.selectedRangeFinder != null && this.selectedRangeFinder.equals(rangeFinderData)) {
+				selectedColor = ChatFormatting.GOLD.getColor() | 0xFF000000;
+			}
+
+			BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
 		}
 
 		guiGraphics.pose().popPose();

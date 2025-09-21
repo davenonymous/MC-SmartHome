@@ -40,13 +40,7 @@ public class RangeFinderHud extends WidgetPanel {
 			}
 
 			if(rangeFinderData.A() != null || rangeFinderData.B() != null) {
-				String sizeText = String.format(
-					"%dx%dx%d",
-					Math.abs(rangeFinderData.A().getX() - rangeFinderData.B().getX()) + 1,
-					Math.abs(rangeFinderData.A().getY() - rangeFinderData.B().getY()) + 1,
-					Math.abs(rangeFinderData.A().getZ() - rangeFinderData.B().getZ()) + 1
-				);
-				WidgetTextBox sizeBox = new WidgetTextBox(sizeText);
+				WidgetTextBox sizeBox = new WidgetTextBox(rangeFinderData.sizeText());
 				sizeBox.autoWidth();
 				sizeBox.setPosition((screenWidth - sizeBox.width()) / 2 + 3, (screenHeight - sizeBox.height()) / 2 + yPadding + 40);
 				sizeBox.setTextColor(0xFFFFFF | alphaInt);

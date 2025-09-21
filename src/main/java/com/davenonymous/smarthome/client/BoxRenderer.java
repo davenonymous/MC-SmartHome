@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.Collection;
@@ -42,6 +43,7 @@ public class BoxRenderer {
         }
 		RenderSystem.disableBlend();
 		RenderSystem.enableCull();
+		bufferSource.endBatch();
     }
 
 	public static void renderLine(PoseStack.Pose pose, VertexConsumer consumer, double minX, double minY, double minZ, double maxX, double maxY, double maxZ, float red,

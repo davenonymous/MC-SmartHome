@@ -5,15 +5,19 @@ import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
+import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 
 public class ZonesContainer extends WidgetPanel {
 	private ZonesWidget zoneDisplay;
 	private ZoneDetailWidget zoneDetail;
 
 	private WidgetVBox zoneButtons;
+	private WidgetHBox newZoneButtons;
 
 	public ZonesContainer() {
 		zoneButtons = new WidgetVBox();
@@ -24,6 +28,9 @@ public class ZonesContainer extends WidgetPanel {
 
 		zoneDisplay = new ZonesWidget();
 		this.add(zoneDisplay);
+
+		newZoneButtons = new WidgetHBox();
+		this.add(newZoneButtons);
 
 		this.addListener(
 			GuiDataUpdatedEvent.class, (event, widget) -> {
@@ -66,7 +73,7 @@ public class ZonesContainer extends WidgetPanel {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
 			button.addListener(MouseClickEvent.class, (event, widget) -> {
-				if(zoneDetail.selectedZone() == zone) {
+				if(zoneDetail.selectedZone() != null && zoneDetail.selectedZone().id().equals(zone.id())) {
 					zoneDetail.setSelectedZone(null);
 					return WidgetEventResult.HANDLED;
 				}
@@ -77,6 +84,28 @@ public class ZonesContainer extends WidgetPanel {
 			zoneButtons.addContentBox(button, FlexSizer.FlexAlign.START);
 		}
 
+		newZoneButtons.clear();
+		var rangerFinderDataComponents = Minecraft.getInstance().player.inventoryMenu.getItems().stream()
+			.filter(stack -> !stack.isEmpty() && stack.has(ModDataComponents.RANGER_FINDER_DATA_COMPONENT))
+			.map(stack -> stack.get(ModDataComponents.RANGER_FINDER_DATA_COMPONENT))
+			.filter(data -> data.toAABB() != null && selectedHome.getZoneCrossing(data.toAABB()) == null)
+			.distinct()
+			.toList();
+
+		for(var rangeFinderData : rangerFinderDataComponents) {
+			var button = new AddZoneButtonWidget(this, rangeFinderData);
+
+			button.addListener(MouseEnterEvent.class, (event, widget) -> {
+				zoneDisplay.selectedRangeFinder = rangeFinderData;
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			});
+			button.addListener(MouseExitEvent.class, (event, widget) -> {
+				zoneDisplay.selectedRangeFinder = null;
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			});
+
+			newZoneButtons.addContentBox(button, FlexSizer.FlexAlign.START);
+		}
 	}
 
 	@Override
@@ -91,5 +120,10 @@ public class ZonesContainer extends WidgetPanel {
 		zoneDisplay.setDimensions(displayX, 5, displayWidth, this.height - 10);
 		zoneButtons.setDimensions(displayX, 5, 100, this.height - 20);
 		zoneDetail.setDimensions(detailX, 5, detailWidth, this.height - 10);
+
+		int newZoneButtonsWidth = Math.max(newZoneButtons.width(), displayWidth);
+		newZoneButtons.setPosition(displayX, this.height - 42);
+		newZoneButtons.setWidth(newZoneButtonsWidth);
+		newZoneButtons.setHeight(32);
 	}
 }
