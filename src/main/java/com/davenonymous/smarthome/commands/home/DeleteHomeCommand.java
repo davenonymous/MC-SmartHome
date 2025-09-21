@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.commands.home;
 
+import com.davenonymous.smarthome.commands.PermissionLevel;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -19,7 +20,7 @@ public class DeleteHomeCommand implements Command<CommandSourceStack> {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("delete").requires(CommandSourceStack::isPlayer).requires(commandSourceStack -> commandSourceStack.hasPermission(4))
+		return Commands.literal("delete").requires(PermissionLevel.isAdmin())
 			.then(
 				Commands.argument("name", StringArgumentType.string()).executes(instance)
 			);

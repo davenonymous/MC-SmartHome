@@ -16,6 +16,7 @@ public class HomeZone {
 	UUID id;
 	AABB bounds;
 	String name;
+	boolean deleted;
 
 	HomeCore home;
 
@@ -42,13 +43,14 @@ public class HomeZone {
 	}
 
 	public HomeZone(String name, AABB bounds) {
-		this(UUID.randomUUID(), name, bounds);
+		this(UUID.randomUUID(), name, bounds, false);
 	}
 
-	public HomeZone(UUID id, String name, AABB bounds) {
+	public HomeZone(UUID id, String name, AABB bounds, boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.bounds = bounds;
+		this.deleted = deleted;
 	}
 
 	public HomeCore home() {
@@ -60,16 +62,27 @@ public class HomeZone {
 		return this;
 	}
 
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public HomeZone setDeleted(boolean deleted) {
+		this.deleted = deleted;
+		return this;
+	}
+
 	public static final MapCodec<HomeZone> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeZone::id),
 		Codec.STRING.fieldOf("name").forGetter(HomeZone::name),
-		MoreCodecs.AABB_CODEC.fieldOf("bounds").forGetter(HomeZone::bounds)
+		MoreCodecs.AABB_CODEC.fieldOf("bounds").forGetter(HomeZone::bounds),
+		Codec.BOOL.optionalFieldOf("deleted", false).forGetter(HomeZone::isDeleted)
 	).apply(instance, HomeZone::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeZone> STREAM_CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, HomeZone::id,
 		ByteBufCodecs.STRING_UTF8, HomeZone::name,
 		MoreCodecs.AABB_STREAM_CODEC, HomeZone::bounds,
+		ByteBufCodecs.BOOL, HomeZone::isDeleted,
 		HomeZone::new
 	);
 

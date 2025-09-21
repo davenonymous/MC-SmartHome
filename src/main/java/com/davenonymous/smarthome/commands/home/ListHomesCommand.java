@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.commands.home;
 
+import com.davenonymous.smarthome.commands.PermissionLevel;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -19,9 +20,9 @@ public class ListHomesCommand implements Command<CommandSourceStack> {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("list")
+		return Commands.literal("list").requires(PermissionLevel.isModerator())
 			.then(
-				Commands.argument("player", EntityArgument.player()).executes(instance)
+				Commands.argument("player", EntityArgument.player()).requires(PermissionLevel.isAdmin()).executes(instance)
 			)
 			.executes(instance);
 	}

@@ -13,19 +13,20 @@ import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-public class DeleteZoneCommand implements Command<CommandSourceStack> {
-	public static DeleteZoneCommand instance = new DeleteZoneCommand();
+import java.util.UUID;
 
-	private DeleteZoneCommand() {
+public class RecoverDeletedZoneCommand implements Command<CommandSourceStack> {
+	public static RecoverDeletedZoneCommand instance = new RecoverDeletedZoneCommand();
+
+	private RecoverDeletedZoneCommand() {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("delete").requires(PermissionLevel.isAdmin())
+		return Commands.literal("recover")
+			.requires(PermissionLevel.isAdmin())
 			.then(
-				Commands.argument("home", StringArgumentType.string()).then(
-					Commands.argument("name", StringArgumentType.string())
-						.executes(instance)
-					)
+				Commands.argument("name|uuid", StringArgumentType.string())
+					.executes(instance)
 			);
 	}
 
@@ -34,6 +35,11 @@ public class DeleteZoneCommand implements Command<CommandSourceStack> {
 		ServerPlayer player = context.getSource().getPlayerOrException();
 		String homeName = StringArgumentType.getString(context, "home");
 		String zoneName = StringArgumentType.getString(context, "name");
+		UUID zoneUUID = null;
+		try {
+			zoneUUID = UUID.fromString(zoneName);
+		} catch(IllegalArgumentException ex) {
+		}
 
 		WorldSavedHomes data = WorldSavedHomes.get(context.getSource().getLevel());
 		var optHome = data.getPlayerHome(player, homeName);
@@ -43,16 +49,21 @@ public class DeleteZoneCommand implements Command<CommandSourceStack> {
 		}
 
 		var home = optHome.get();
-		var optZone = home.getZone(zoneName);
+		var optZone = zoneUUID == null ? home.getZone(zoneName) : home.getZone(zoneUUID);
 		if(optZone.isEmpty()) {
-			context.getSource().sendFailure(Component.literal(String.format("Zone with name %s does not exist in home %s", zoneName, homeName)));
+			context.getSource().sendFailure(Component.literal(String.format("Zone with %s %s does not exist in home %s", zoneUUID == null ? "name" : "UUID", zoneName, homeName)));
 			return 1;
 		}
 
 		var zone = optZone.get();
-		zone.setDeleted(true);
+		if(!zone.isDeleted()) {
+			context.getSource().sendFailure(Component.literal(String.format("Zone %s is not deleted in home %s", zone.name(), homeName)));
+			return 1;
+		}
+
+		zone.setDeleted(false);
 		data.setDirty();
-		context.getSource().sendSuccess(() -> Component.literal(String.format("Deleted zone %s from home %s", zoneName, homeName)), true);
+		context.getSource().sendSuccess(() -> Component.literal(String.format("Recovered zone %s from home %s", zone.name(), homeName)), true);
 		return 0;
 	}
 }

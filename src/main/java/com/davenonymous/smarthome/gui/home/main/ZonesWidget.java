@@ -86,6 +86,9 @@ public class ZonesWidget extends WidgetPanel {
 
 		zoneBoxes = new HashMap<>();
 		for(var zone : selectedHome.zones()) {
+			if(zone.isDeleted()) {
+				continue;
+			}
 			var shape = Shapes.create(zone.bounds().move(-selectedHome.shape().bounds().minX, -selectedHome.shape().bounds().minY, -selectedHome.shape().bounds().minZ).deflate(1/16d));
 			var boxLineCache = new BoxLineCache();
 			boxLineCache.addShape(shape);

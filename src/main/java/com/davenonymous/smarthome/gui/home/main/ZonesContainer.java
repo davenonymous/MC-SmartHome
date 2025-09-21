@@ -61,16 +61,21 @@ public class ZonesContainer extends WidgetPanel {
 
 		zoneButtons.clear();
 		for(var zone : selectedHome.zones()) {
+			if(zone.isDeleted()) {
+				continue;
+			}
 			var button = new WidgetTextBox(zone.name(), ChatFormatting.WHITE.getColor());
 			button.setFont(ModFonts.BASEL);
 			button.autoWidth();
 			button.autoHeight();
 			button.addListener(MouseEnterEvent.class, (event, widget) -> {
 				zoneDisplay.selectedZone = zone.name();
+				button.setTextColor(ChatFormatting.YELLOW.getColor());
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
 			button.addListener(MouseExitEvent.class, (event, widget) -> {
 				zoneDisplay.selectedZone = null;
+				button.setTextColor(ChatFormatting.WHITE.getColor());
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
 			button.addListener(MouseClickEvent.class, (event, widget) -> {

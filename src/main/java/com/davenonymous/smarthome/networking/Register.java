@@ -62,5 +62,11 @@ public class Register {
 			AddNewZonePayload.CODEC,
 			AddNewZonePayload::handleOnServer
 		);
+
+		registrar.playToServer(
+			MarkZoneAsDeletedPayload.TYPE,
+			MarkZoneAsDeletedPayload.CODEC,
+			MarkZoneAsDeletedPayload::handleOnServer
+		);
 	}
 }

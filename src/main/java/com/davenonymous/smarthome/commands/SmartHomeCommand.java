@@ -29,10 +29,10 @@ public class SmartHomeCommand {
 					.then(ListZonesCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
 					.then(DeleteZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
 				))
-		).then(Commands.literal("duckdb").requires(commandSourceStack -> commandSourceStack.hasPermission(4))
+		).then(Commands.literal("duckdb").requires(PermissionLevel.isAdmin())
 			.then(RunQueryCommand.registerCommand(dispatcher))
 			.then(ExecuteStatementCommand.registerCommand(dispatcher))
-		).then(Commands.literal("debug").requires(commandSourceStack -> commandSourceStack.hasPermission(4))
+		).then(Commands.literal("debug").requires(PermissionLevel.isGameMaster())
 			.then(WindowCommand.registerCommand(dispatcher)));
 	}
 }

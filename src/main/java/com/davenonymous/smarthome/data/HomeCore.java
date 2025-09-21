@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class HomeCore {
 	UUID id;
@@ -85,11 +86,19 @@ public class HomeCore {
 	}
 
 	public HomeZone getZoneContaining(double x, double y, double z) {
-		return zones.stream().filter(zone -> zone.bounds.contains(x, y, z)).findFirst().orElse(null);
+		return zoneStream().filter(zone -> zone.bounds.contains(x, y, z)).findFirst().orElse(null);
 	}
 
 	public HomeZone getZoneCrossing(AABB box) {
-		return zones.stream().filter(zone -> zone.bounds.intersects(box)).findFirst().orElse(null);
+		return zoneStream().filter(zone -> zone.bounds.intersects(box)).findFirst().orElse(null);
+	}
+
+	private Stream<HomeZone> zoneStream() {
+		return this.zoneStream(false);
+	}
+
+	private Stream<HomeZone> zoneStream(boolean includeDeleted) {
+		return zones.stream().filter(zone -> includeDeleted || !zone.isDeleted());
 	}
 
 	public UUID owner() {
@@ -125,23 +134,27 @@ public class HomeCore {
 			return;
 		}
 
-		for(int zoneIndex = 0; zoneIndex < zones.size(); zoneIndex++) {
-			AABB zoneBounds = zones.get(zoneIndex).bounds;
+		for(HomeZone zone : zones) {
+			if(zone.isDeleted()) {
+				continue;
+			}
+
+			AABB zoneBounds = zone.bounds;
 			bounds = bounds.minmax(zoneBounds);
 			shape = Shapes.join(shape, Shapes.create(zoneBounds), BooleanOp.OR);
 		}
 	}
 
 	public Optional<HomeZone> getZone(String zoneName) {
-		return zones.stream().filter(z -> z.name().equals(zoneName)).findFirst();
+		return zoneStream().filter(z -> z.name().equals(zoneName)).findFirst();
 	}
 
 	public Optional<HomeZone> getZone(UUID zoneId) {
-		return zones.stream().filter(z -> z.id().equals(zoneId)).findFirst();
+		return zoneStream().filter(z -> z.id().equals(zoneId)).findFirst();
 	}
 
 	public HomeCore addZone(HomeZone zone) {
-		zones.removeIf(z -> z.name().equals(zone.name()));
+		zones.removeIf(z -> z.id().equals(zone.id()));
 		zone.setHome(this);
 		zones.add(zone);
 		updateBounds();

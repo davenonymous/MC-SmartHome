@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.commands.zone;
 
+import com.davenonymous.smarthome.commands.PermissionLevel;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -19,7 +20,7 @@ public class ListZonesCommand implements Command<CommandSourceStack> {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("list").executes(instance);
+		return Commands.literal("list").requires(PermissionLevel.isModerator()).executes(instance);
 	}
 
 	@Override
@@ -38,7 +39,7 @@ public class ListZonesCommand implements Command<CommandSourceStack> {
 		String playerName = player.getName().getString();
 		context.getSource().sendSuccess(() -> Component.literal(String.format("Zones in home %s for %s: %d", homeName, playerName, zones.size())), false);
 		for(var zone : zones) {
-			var text = String.format(" - %s -> %s: %s", zone.id(), zone.name(), zone.bounds());
+			var text = String.format(" - %s -> %s%s: %s", zone.id(), zone.name(), zone.isDeleted() ? " [DELETED]" : "", zone.bounds());
 			context.getSource().sendSuccess(() -> Component.literal(text), false);
 		}
 

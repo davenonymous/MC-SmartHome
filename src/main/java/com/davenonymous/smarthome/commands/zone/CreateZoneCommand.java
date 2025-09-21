@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.commands.zone;
 
+import com.davenonymous.smarthome.commands.PermissionLevel;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.mojang.brigadier.Command;
@@ -23,7 +24,7 @@ public class CreateZoneCommand implements Command<CommandSourceStack> {
 	}
 
 	public static ArgumentBuilder<CommandSourceStack, ?> registerCommand(CommandDispatcher<CommandSourceStack> dispatcher) {
-		return Commands.literal("create")
+		return Commands.literal("create").requires(PermissionLevel.isModerator())
 			.then(
 				Commands.argument("name", StringArgumentType.string()).then(
 					Commands.argument("cornerA", BlockPosArgument.blockPos())

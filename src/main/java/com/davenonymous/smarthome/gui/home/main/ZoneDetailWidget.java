@@ -2,17 +2,21 @@ package com.davenonymous.smarthome.gui.home.main;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
-import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
-import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.event.*;
+import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.networking.actions.MarkZoneAsDeletedPayload;
 import com.davenonymous.smarthome.networking.actions.SetZoneNamePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ZoneDetailWidget extends WidgetVBox {
@@ -21,6 +25,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 	private StringInputWidget zoneRenameInput;
 	private WidgetTextBox zoneSize;
 	private WidgetTextBox zoneDevices;
+	private WidgetSprite deleteIcon;
 
 	public ZoneDetailWidget() {
 		this.setPadding(8);
@@ -41,6 +46,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 			PacketDistributor.sendToServer(new SetZoneNamePayload(selectedZone.home().serverLocation(), selectedZone.home().id(), selectedZone.id(), zoneRenameInput.getValue()));
 			return WidgetEventResult.HANDLED;
 		});
+		zoneRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange("Click to rename zone"));
 		this.addContentBox(zoneRenameInput, FlexAlign.CENTER);
 
 		zoneSize = new WidgetTextBox("", ChatFormatting.GRAY.getColor());
@@ -49,6 +55,35 @@ public class ZoneDetailWidget extends WidgetVBox {
 
 		zoneDevices = new WidgetTextBox("Devices", ChatFormatting.WHITE.getColor());
 		this.addContentBox(zoneDevices, FlexAlign.START);
+
+		deleteIcon = new WidgetSprite(HackerNoon.Solid.trash);
+		deleteIcon.setPosition(this.width() - 10, this.height() - 10);
+		deleteIcon.setColor(0xFFAAAAAA);
+		deleteIcon.scale = 0.5f;
+		deleteIcon.addListener(MouseEnterEvent.class, (event, widget) -> {
+			deleteIcon.setColor(0xFF904444);
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+		deleteIcon.addListener(MouseExitEvent.class, (event, widget) -> {
+			deleteIcon.setColor(0xFFAAAAAA);
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+		deleteIcon.addListener(MouseClickEvent.class, (event, widget) -> {
+			if(selectedZone == null) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+			if(!getGUI().isCtrlDown() || !getGUI().isShiftDown()) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
+			var homeId = selectedZone.home().id();
+			var zoneId = selectedZone.id();
+			setSelectedZone(null);
+			PacketDistributor.sendToServer(new MarkZoneAsDeletedPayload(homeId, zoneId, false));
+			return WidgetEventResult.HANDLED;
+		});
+		deleteIcon.setTooltipElements(WrappedStringTooltipComponent.orange("Ctrl+Shift+Click to delete zone"));
+		this.add(deleteIcon);
 	}
 
 	public ZoneDetailWidget setSelectedZone(HomeZone selectedZone) {
@@ -79,6 +114,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 		zoneSize.autoHeight();
 		zoneDevices.autoWidth();
 		zoneDevices.autoHeight();
+		deleteIcon.setPosition(this.width() - 18, this.height() - 18);
 		this.update(null);
 	}
 
