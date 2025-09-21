@@ -3,10 +3,11 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.WidgetScreen;
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.screens.Screen;
 
 
 public class WidgetNativeWidget<T extends AbstractWidget> extends Widget {
@@ -127,11 +128,11 @@ public class WidgetNativeWidget<T extends AbstractWidget> extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		int mouseX = 0;
 		int mouseY = 0;
 		float partialTicks = 0;
-		if(screen instanceof WidgetScreen ws) {
+		if(Minecraft.getInstance().screen instanceof WidgetScreen ws) {
 			mouseX = ws.mouseX();
 			mouseY = ws.mouseY();
 			partialTicks = ws.partialTicks();

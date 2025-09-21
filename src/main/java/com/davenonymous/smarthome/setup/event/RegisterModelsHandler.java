@@ -15,5 +15,7 @@ public class RegisterModelsHandler {
 	@SubscribeEvent // on the mod event bus only on the physical client
 	public static void registerAdditional(ModelEvent.RegisterAdditional event) {
 		event.register(ModParticleModels.BLOCK_MARKER_LINE);
+		event.register(ModParticleModels.CORNER_MARKER);
+		event.register(ModParticleModels.CORNER_MARKER_ORANGE);
 	}
 }

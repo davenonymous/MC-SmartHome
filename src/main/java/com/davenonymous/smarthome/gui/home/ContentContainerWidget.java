@@ -4,13 +4,12 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.DevicesWidget;
 import com.davenonymous.smarthome.gui.home.main.ZonesContainer;
-import com.davenonymous.smarthome.gui.home.main.ZonesWidget;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
@@ -73,8 +72,8 @@ public class ContentContainerWidget extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 	}
 }

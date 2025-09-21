@@ -1,20 +1,18 @@
 package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
-import com.davenonymous.smarthome.lib.gui.event.ListSelectionEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
 public class SidebarButton extends WidgetPanel {
@@ -98,7 +96,7 @@ public class SidebarButton extends WidgetPanel {
 
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		if(isHovered()) {
 			guiGraphics.fill(0, 0, this.width(), this.height(), 0x404420F0);
 		} else {
@@ -107,7 +105,7 @@ public class SidebarButton extends WidgetPanel {
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.BUTTON_BORDER), 0, 0, this.width, this.height);
 		RenderSystem.disableBlend();
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 	}
 
 }

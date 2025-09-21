@@ -6,6 +6,7 @@ import com.davenonymous.smarthome.lib.gui.event.KeyPressedEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.google.common.base.Predicates;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -86,8 +87,8 @@ public class WidgetInputField extends WidgetWithValue<String> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
-		super.draw(pGuiGraphics, screen);
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
+		super.draw(pGuiGraphics, window);
 
 		int renderX = 0;
 		int renderY = 0;

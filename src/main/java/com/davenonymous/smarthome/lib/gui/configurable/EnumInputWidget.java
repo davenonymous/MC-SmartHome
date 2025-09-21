@@ -2,9 +2,9 @@ package com.davenonymous.smarthome.lib.gui.configurable;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetWithChoiceValue;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 
 import java.util.Locale;
@@ -23,7 +23,7 @@ public class EnumInputWidget<T extends Enum<?>> extends WidgetWithChoiceValue<T>
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		String translationKey = SmartHome.MODID + ".enum." + enumClass.getSimpleName().toLowerCase(Locale.ROOT) + "." + getValue().name().toLowerCase(Locale.ROOT);
 		if(I18n.exists(translationKey)) {
 			pGuiGraphics.drawString(Minecraft.getInstance().font, I18n.get(translationKey), 0, 0, textColor, false);

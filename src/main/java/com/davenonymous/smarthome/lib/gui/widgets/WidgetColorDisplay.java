@@ -1,9 +1,9 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 import java.awt.*;
 
@@ -43,7 +43,7 @@ public class WidgetColorDisplay extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		pGuiGraphics.fill(0, 0, width, height, colorA);
 	}
 

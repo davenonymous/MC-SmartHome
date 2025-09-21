@@ -6,10 +6,10 @@ import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -80,8 +80,8 @@ public class ZonesWidget extends WidgetPanel {
 
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
-		super.draw(guiGraphics, screen);
+	public void draw(GuiGraphics guiGraphics, Window window) {
+		super.draw(guiGraphics, window);
 
 		if(boxLines == null || boxLines.lines.isEmpty()) {
 			return;

@@ -3,13 +3,12 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
@@ -105,16 +104,20 @@ public class WidgetTextBox extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		if(text == null) {
 			return;
+		}
+
+		if(window == null) {
+			window = Minecraft.getInstance().getWindow();
 		}
 
 		pGuiGraphics.pose().pushPose();
 		RenderSystem.enableBlend();
 
-		int scale = (int)screen.getMinecraft().getWindow().getGuiScale();
-		int bottomOffset = (int) (((double) (screen.getMinecraft().getWindow().getHeight() / scale) - (getActualY() + height)) * scale);
+		int scale = (int) window.getGuiScale();
+		int bottomOffset = (int) (((double) (window.getHeight() / scale) - (getActualY() + height)) * scale);
 		int heightTmp = (height * scale) - 1;
 		if(heightTmp < 0) {
 			heightTmp = 0;
@@ -129,7 +132,7 @@ public class WidgetTextBox extends Widget {
 
 		int lineWidth = wordWrap ? width : Integer.MAX_VALUE;
 		RenderSystem.enableScissor(getActualX() * scale - 3, bottomOffset + 2, width * scale, heightTmp);
-		GUIHelper.drawWordWrap(pGuiGraphics, screen.getMinecraft().font, FormattedText.of(text, style), 0, -yOffset, lineWidth, lineHeight, textColor);
+		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), 0, -yOffset, lineWidth, lineHeight, textColor);
 		RenderSystem.disableScissor();
 
 		RenderSystem.disableBlend();

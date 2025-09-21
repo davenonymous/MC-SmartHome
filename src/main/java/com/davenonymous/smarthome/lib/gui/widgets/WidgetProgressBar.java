@@ -1,9 +1,10 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.SmartNumberFormatter;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 
 public class WidgetProgressBar extends WidgetWithRangeValue<Double> {
@@ -65,7 +66,7 @@ public class WidgetProgressBar extends WidgetWithRangeValue<Double> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		int x = 0;
 		int y = 0;
 		int width = this.width;
@@ -81,7 +82,7 @@ public class WidgetProgressBar extends WidgetWithRangeValue<Double> {
 		pGuiGraphics.fillGradient(x + 1, y + 1, x + 1 + progressWidth, y + height - 1, foregroundColor, foregroundColor);
 
 		if(displayMode != EnumDisplayMode.NOTHING && displayMode != EnumDisplayMode.CUSTOM) {
-			Font fr = screen.getMinecraft().font;
+			Font fr = Minecraft.getInstance().font;
 			String content = "";
 
 			if(displayMode == EnumDisplayMode.PERCENTAGE) {

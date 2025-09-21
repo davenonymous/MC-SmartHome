@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
@@ -30,7 +30,7 @@ public class WidgetSpriteSelect<T> extends WidgetWithChoiceValue<T> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		var sprite = spriteMap.get(this.getValue());
 		if(sprite == null) {
 			return;

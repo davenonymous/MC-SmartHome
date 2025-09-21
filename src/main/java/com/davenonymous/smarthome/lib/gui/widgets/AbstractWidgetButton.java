@@ -2,10 +2,10 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -74,12 +74,12 @@ public abstract class AbstractWidgetButton<T extends Widget> extends WidgetPanel
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		pGuiGraphics.blitSprite(SPRITES.get(this.enabled, this.isHovered()), 0, 0, this.width, this.height);
 
 		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().translate(0f, 0f, 10f);
-		super.draw(pGuiGraphics, screen);
+		super.draw(pGuiGraphics, window);
 		pGuiGraphics.pose().popPose();
 	}
 }

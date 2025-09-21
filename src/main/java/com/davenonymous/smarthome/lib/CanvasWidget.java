@@ -3,9 +3,9 @@ package com.davenonymous.smarthome.lib;
 import com.davenonymous.smarthome.lib.gui.DynamicImageResources;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 public class CanvasWidget extends Widget {
 	private int[][] canvas;
@@ -56,7 +56,7 @@ public class CanvasWidget extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		if(needsRedraw) {
 			updateImage();
 		}

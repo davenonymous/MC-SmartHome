@@ -10,9 +10,9 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.networking.actions.SetZoneNamePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ZoneDetailWidget extends WidgetVBox {
@@ -87,7 +87,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		if(selectedZone == null) {
 			return;
 		}
@@ -95,6 +95,6 @@ public class ZoneDetailWidget extends WidgetVBox {
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
 		guiGraphics.fill(3, 3, width()-3, height()-3, 0x88000000);
 
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 	}
 }

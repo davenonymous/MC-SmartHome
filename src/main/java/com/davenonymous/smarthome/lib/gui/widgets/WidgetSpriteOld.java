@@ -1,9 +1,9 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
@@ -36,7 +36,7 @@ public class WidgetSpriteOld extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, spriteSheet);
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);

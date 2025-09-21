@@ -4,6 +4,8 @@ import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.lib.gui.event.MouseDraggedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.event.WidgetSizeChangeEvent;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import org.joml.Vector2f;
@@ -128,29 +130,29 @@ public class WidgetPanningPanel extends WidgetPanel {
 	}
 
 	@Override
-	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Screen screen) {
+	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Window window) {
 		String visibleWidth = "Canvas Width: " + this.canvasWidth;
 		String visibleHeight = "Canvas Height: " + this.canvasHeight;
 		String panPosition = "Pan: x=" + this.panX + ", y=" + this.panY;
 
-		pGuiGraphics.drawString(screen.getMinecraft().font, visibleWidth, 0, 30, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, visibleHeight, 0, 40, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, panPosition, 0, 50, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, visibleWidth, 0, 30, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, visibleHeight, 0, 40, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, panPosition, 0, 50, 0xFF8000);
 	}
 
-	public void drawOnCanvas(GuiGraphics guiGraphics, Screen screen) {
+	public void drawOnCanvas(GuiGraphics guiGraphics, Window window) {
 
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		guiGraphics.enableScissor(this.x, this.y, this.x + width, this.y + height);
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, -5);
 		GUIHelper.drawColoredCanvas(guiGraphics, this.width, this.height, 0xFF222222);
-		drawOnCanvas(guiGraphics, screen);
+		drawOnCanvas(guiGraphics, window);
 		guiGraphics.pose().popPose();
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 		guiGraphics.disableScissor();
 	}
 }

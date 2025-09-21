@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.networking;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.networking.actions.SetRangeFinderPosition;
 import com.davenonymous.smarthome.networking.actions.SetSelectedHomePayload;
 import com.davenonymous.smarthome.networking.actions.SetServerItemHomeNamePayload;
 import com.davenonymous.smarthome.networking.actions.SetZoneNamePayload;
@@ -51,6 +52,12 @@ public class Register {
 			SetZoneNamePayload.TYPE,
 			SetZoneNamePayload.CODEC,
 			SetZoneNamePayload::handleOnServer
+		);
+
+		registrar.playToServer(
+			SetRangeFinderPosition.TYPE,
+			SetRangeFinderPosition.CODEC,
+			SetRangeFinderPosition::handleOnServer
 		);
 	}
 }

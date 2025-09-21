@@ -2,10 +2,10 @@ package com.davenonymous.smarthome.lib.gui;
 
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
 import com.davenonymous.smarthome.lib.gui.widgets.IValueProvider;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
@@ -13,7 +13,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
@@ -70,27 +69,28 @@ public class GUI extends WidgetPanel {
 		return valueMap.get(id).getValue();
 	}
 
-	public void drawGUI(GuiGraphics pGuiGraphics, Screen screen) {
-		this.setX((screen.width - this.width) / 2);
-		this.setY((screen.height - this.height) / 2);
+	public void drawGUI(GuiGraphics pGuiGraphics, Window window) {
+		// TODO: MAybe this ported wrong? It used to be screen.width and screen.height
+		this.setX((window.getGuiScaledWidth() - this.width) / 2);
+		this.setY((window.getGuiScaledHeight() - this.height) / 2);
 
-		this.shiftAndDraw(pGuiGraphics, screen);
+		this.shiftAndDraw(pGuiGraphics, window);
 	}
 
 	@Override
-	public void drawBeforeShift(GuiGraphics pGuiGraphics, Screen screen) {
+	public void drawBeforeShift(GuiGraphics pGuiGraphics, Window window) {
 		//screen.drawDefaultBackground();
 
-		super.drawBeforeShift(pGuiGraphics, screen);
+		super.drawBeforeShift(pGuiGraphics, window);
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		if(drawBackground) {
 			pGuiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_BACKGROUND), 0, 0, this.width, this.height);
 			//GUIHelper.drawWindow(pGuiGraphics, this.width, this.height, this.hasTabs);
 		}
-		super.draw(pGuiGraphics, screen);
+		super.draw(pGuiGraphics, window);
 	}
 
 	public void drawTooltips(GuiGraphics pGuiGraphics, Screen screen, int mouseX, int mouseY) {

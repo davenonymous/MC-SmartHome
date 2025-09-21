@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetZoomPanel extends WidgetPanelWithValue<Widget> {
 	public float zoomFactor = 1.0f;
@@ -18,10 +18,10 @@ public class WidgetZoomPanel extends WidgetPanelWithValue<Widget> {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().scale(zoomFactor, zoomFactor, 1.0f);
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 		guiGraphics.pose().popPose();
 	}
 

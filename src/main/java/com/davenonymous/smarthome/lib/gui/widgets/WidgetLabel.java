@@ -2,10 +2,10 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 
@@ -75,7 +75,7 @@ public class WidgetLabel extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		if(text == null) {
 			return;
 		}
@@ -83,15 +83,15 @@ public class WidgetLabel extends Widget {
 		pGuiGraphics.pose().pushPose();
 		RenderSystem.enableBlend();
 
-		int scale = computeGuiScale(screen.getMinecraft());
-		int bottomOffset = (int) (((double) (screen.getMinecraft().getWindow().getHeight() / scale) - (getActualY() + height)) * scale);
+		int scale = computeGuiScale(Minecraft.getInstance());
+		int bottomOffset = (int) (((double) (window.getHeight() / scale) - (getActualY() + height)) * scale);
 		int heightTmp = (height * scale) - 1;
 		if(heightTmp < 0) {
 			heightTmp = 0;
 		}
 
 		RenderSystem.enableScissor(getActualX() * scale - 3, bottomOffset + 2, width * scale, heightTmp);
-		GUIHelper.drawWordWrap(pGuiGraphics, screen.getMinecraft().font, text, 0, 0, Integer.MAX_VALUE, 9, textColor);
+		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, text, 0, 0, Integer.MAX_VALUE, 9, textColor);
 		RenderSystem.disableScissor();
 
 		RenderSystem.disableBlend();

@@ -21,6 +21,9 @@ public class Vanilla extends GuiTheme {
 	public static ResourceLocation prev = SmartHome.resource("vanilla/prev");
 	public static ResourceLocation next = SmartHome.resource("vanilla/next");
 
+	public static ResourceLocation leftClick = SmartHome.resource("vanilla/mouse_buttons_left");
+	public static ResourceLocation rightClick = SmartHome.resource("vanilla/mouse_buttons_right");
+	public static ResourceLocation noClick = SmartHome.resource("vanilla/mouse_buttons");
 
 	@Override
 	public ResourceLocation getSprite(SpriteComponent component) {

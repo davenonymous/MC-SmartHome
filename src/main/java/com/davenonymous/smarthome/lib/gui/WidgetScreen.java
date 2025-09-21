@@ -135,7 +135,7 @@ public abstract class WidgetScreen extends Screen {
 		this.partialTicks = partialTicks;
 		long worldTicks = Minecraft.getInstance().level == null ? 0 : Minecraft.getInstance().level.getGameTime();
 		getOrCreateGui().fireEvent(new WidgetDrawEvent(WidgetDrawEvent.Type.PRE, pGuiGraphics, worldTicks + partialTicks));
-		getOrCreateGui().drawGUI(pGuiGraphics, this);
+		getOrCreateGui().drawGUI(pGuiGraphics, this.window);
 		getOrCreateGui().drawTooltips(pGuiGraphics, this, mouseX, mouseY);
 		//renderHoveredToolTip(mouseX, mouseY);
 

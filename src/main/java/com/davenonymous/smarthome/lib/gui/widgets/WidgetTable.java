@@ -4,8 +4,9 @@ import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.phys.Vec2;
 
 import java.util.Map;
@@ -213,7 +214,7 @@ public class WidgetTable extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		if(needsVerticalScrollbar()) {
 			int skipY = this.alwaysShowFirstRow ? getRowHeight(0) : 0;
 			int scrollBarX = width - scrollBarDimension - 1;
@@ -258,7 +259,7 @@ public class WidgetTable extends WidgetPanel {
 
 		}
 
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 	}
 
 	public void repositionCells() {
@@ -332,19 +333,19 @@ public class WidgetTable extends WidgetPanel {
 	}
 
 	@Override
-	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Screen screen) {
+	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Window window) {
 		String visibleWidth = "Visible Width: " + this.visibleWidth;
 		String visibleHeight = "Visible Height: " + this.visibleHeight;
 		String visibleColumns = "Visible Columns: " + this.visibleColumns;
 		String visibleRows = "Visible Rows: " + this.visibleRows;
 		String colOffset = "Col Offset: " + this.colOffset;
 		String rowOffset = "Row Offset: " + this.rowOffset;
-		pGuiGraphics.drawString(screen.getMinecraft().font, visibleWidth, 0, 30, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, visibleHeight, 0, 40, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, visibleColumns, 0, 50, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, visibleRows, 0, 60, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, colOffset, 0, 70, 0xFF8000);
-		pGuiGraphics.drawString(screen.getMinecraft().font, rowOffset, 0, 80, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, visibleWidth, 0, 30, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, visibleHeight, 0, 40, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, visibleColumns, 0, 50, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, visibleRows, 0, 60, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, colOffset, 0, 70, 0xFF8000);
+		pGuiGraphics.drawString(Minecraft.getInstance().font, rowOffset, 0, 80, 0xFF8000);
 	}
 
 	public void scrollToTop() {

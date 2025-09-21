@@ -4,9 +4,9 @@ import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.TabChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 
 
@@ -60,7 +60,7 @@ public class WidgetTabsButton extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		pGuiGraphics.pose().pushPose();
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -107,7 +107,7 @@ public class WidgetTabsButton extends WidgetPanel {
 		pGuiGraphics.blit(GUIHelper.tabIcons, x, y, textureX, textureY, buttonWidth, buttonHeight);
 
 		buttonImage.setPosition(iconX, iconY);
-		buttonImage.shiftAndDraw(pGuiGraphics, screen);
+		buttonImage.shiftAndDraw(pGuiGraphics, window);
 
 		//		if(pageStack != null) {
 		//			pGuiGraphics.renderItem(pageStack, iconX, iconY);

@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 public class WidgetProgressArrow extends WidgetWithRangeValue<Double> {
 	public WidgetProgressArrow() {
@@ -13,7 +13,7 @@ public class WidgetProgressArrow extends WidgetWithRangeValue<Double> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		int spriteWidth = 22;
 		int spriteHeight = 15;
 		int spriteY = 84;

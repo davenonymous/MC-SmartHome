@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -69,11 +70,11 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
-		super.draw(pGuiGraphics, screen);
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
+		super.draw(pGuiGraphics, window);
 
 		if(drawSlot) {
-			this.drawSlot(pGuiGraphics, screen);
+			this.drawSlot(pGuiGraphics, window);
 		}
 
 		if(this.value == null || this.value.isEmpty()) {
@@ -107,7 +108,7 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 		}
 	}
 
-	protected void drawSlot(GuiGraphics pGuiGraphics, Screen screen) {
+	protected void drawSlot(GuiGraphics pGuiGraphics, Window window) {
 		RenderSystem.setShaderTexture(0, GUIHelper.tabIcons);
 
 		int texOffsetY = 84;
@@ -115,7 +116,7 @@ public class WidgetItemStack extends WidgetWithValue<ItemStack> {
 		pGuiGraphics.blit(GUIHelper.tabIcons, -1, -1, texOffsetX, texOffsetY, 18, 18);
 	}
 
-	protected void drawOverlay(GuiGraphics pGuiGraphics, Screen screen) {
+	protected void drawOverlay(GuiGraphics pGuiGraphics, Window window) {
 		RenderSystem.setShaderTexture(0, GUIHelper.tabIcons);
 
 		int texOffsetY = 85;

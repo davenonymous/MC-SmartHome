@@ -172,7 +172,7 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 	@Override
 	protected void renderBg(GuiGraphics pGuiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
 		//this.renderBackground(pGuiGraphics, pMouseX, pMouseY, pPartialTick);
-		gui.drawGUI(pGuiGraphics, this);
+		gui.drawGUI(pGuiGraphics, this.minecraft.getWindow());
 
 		if(this.menu != null && this.menu.slots != null) {
 			for(Slot slot : this.menu.slots) {

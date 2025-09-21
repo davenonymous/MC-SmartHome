@@ -4,8 +4,8 @@ import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.lib.gui.event.TabChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.event.WidgetSizeChangeEvent;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
@@ -136,9 +136,9 @@ public class WidgetTabsPanel extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		GUIHelper.drawWindow(guiGraphics, this.width, this.height - 28, false, this.x - 9, this.y + 19);
-		super.draw(guiGraphics, screen);
+		super.draw(guiGraphics, window);
 	}
 
 	public enum TabDockEdge {

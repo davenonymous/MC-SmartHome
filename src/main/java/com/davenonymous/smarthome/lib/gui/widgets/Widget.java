@@ -3,11 +3,11 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.ISelectable;
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
@@ -466,10 +466,10 @@ public class Widget implements ISelectable {
 	 * Do not override this. Override the draw() method instead.
 	 *
 	 * @param pGuiGraphics
-	 * @param screen
+	 * @param window
 	 */
-	public void shiftAndDraw(GuiGraphics pGuiGraphics, Screen screen) {
-		this.drawBeforeShift(pGuiGraphics, screen);
+	public void shiftAndDraw(GuiGraphics pGuiGraphics, Window window) {
+		this.drawBeforeShift(pGuiGraphics, window);
 
 		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().translate(this.x, this.y, this.zLevel);
@@ -478,9 +478,10 @@ public class Widget implements ISelectable {
 			pGuiGraphics.blitSprite(this.backgroundSprite, 0, 0, this.width, this.height);
 		}
 
-		this.draw(pGuiGraphics, screen);
+		this.draw(pGuiGraphics, Minecraft.getInstance().getWindow());
 
 		if(renderDebugOutlines) {
+			var font = Minecraft.getInstance().font;
 			pGuiGraphics.renderOutline(-1, -1, this.width + 1, this.height + 1, 0xFF000000 + (this.getClass().getSimpleName().hashCode() & 0xFFFFFF));
 
 			if(isHovered()) {
@@ -488,11 +489,11 @@ public class Widget implements ISelectable {
 					String what = String.format("%s", this.getClass().getSimpleName());
 					String pos = String.format("x=%d y=%d", this.x, this.y);
 					String size = String.format("w=%d h=%d", this.width, this.height);
-					pGuiGraphics.drawString(screen.getMinecraft().font, what, 0, 0, 0xFF8000);
-					pGuiGraphics.drawString(screen.getMinecraft().font, pos, 0, 10, 0xFF8000);
-					pGuiGraphics.drawString(screen.getMinecraft().font, size, 0, 20, 0xFF8000);
+					pGuiGraphics.drawString(font, what, 0, 0, 0xFF8000);
+					pGuiGraphics.drawString(font, pos, 0, 10, 0xFF8000);
+					pGuiGraphics.drawString(font, size, 0, 20, 0xFF8000);
 
-					this.renderExtraDebugInfo(pGuiGraphics, screen);
+					this.renderExtraDebugInfo(pGuiGraphics, window);
 				}
 			}
 		}
@@ -515,7 +516,7 @@ public class Widget implements ISelectable {
 
 	}
 
-	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Screen screen) {
+	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Window window) {
 	}
 
 	/**
@@ -524,9 +525,9 @@ public class Widget implements ISelectable {
 	 * The GLState is not shifted to this widgets x and y coordinates when
 	 * overriding this method.
 	 *
-	 * @param screen
+	 * @param window
 	 */
-	public void drawBeforeShift(GuiGraphics pGuiGraphics, Screen screen) {
+	public void drawBeforeShift(GuiGraphics pGuiGraphics, Window window) {
 
 	}
 
@@ -536,9 +537,9 @@ public class Widget implements ISelectable {
 	 * The GLState is already positioned at the correct coordinates, i.e. your
 	 * x and y coordinates start at 0.
 	 *
-	 * @param screen
+	 * @param window
 	 */
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		//Logz.debug("Drawing widget: %s, x=%d, y=%d, width=%d, height=%d", this, layoutResult.getX(), layoutResult.getY(), layoutResult.getWidth(), layoutResult.getHeight());
 	}
 

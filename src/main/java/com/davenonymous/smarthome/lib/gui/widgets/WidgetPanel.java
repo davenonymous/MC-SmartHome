@@ -3,9 +3,9 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.google.common.collect.Sets;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -209,14 +209,14 @@ public class WidgetPanel extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Screen screen) {
+	public void draw(GuiGraphics guiGraphics, Window window) {
 		List<Widget> children = this.children.stream().filter(Widget::isVisible).toList();
 		for(Widget child : children) {
 			if(!child.visible) {
 				continue;
 			}
 
-			child.shiftAndDraw(guiGraphics, screen);
+			child.shiftAndDraw(guiGraphics, window);
 		}
 	}
 

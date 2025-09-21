@@ -4,8 +4,8 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.ISelectable;
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.phys.Vec2;
 
 
@@ -232,7 +232,7 @@ public class WidgetList extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		int backgroundColor = 0xFF333333;
 		int borderColor = 0xFF000000;
 		int selectedBackgroundColor = 0xFF225522;
@@ -286,7 +286,7 @@ public class WidgetList extends WidgetPanel {
 			pGuiGraphics.fill(scrollBarX + 1, topOffset, scrollBarX + scrollbarWidth - 1, maxPaddleHeight, scrollColor);
 		}
 
-		super.draw(pGuiGraphics, screen);
+		super.draw(pGuiGraphics, window);
 	}
 
 	public <T extends Widget & ISelectable> void addListEntry(T widget) {

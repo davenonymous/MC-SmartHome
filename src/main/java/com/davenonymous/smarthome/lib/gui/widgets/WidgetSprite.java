@@ -3,11 +3,10 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.SpriteSizeCache;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.Size2i;
 
 public class WidgetSprite extends Widget {
 	ResourceLocation sprite;
@@ -68,7 +67,7 @@ public class WidgetSprite extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		RenderSystem.enableBlend();
 		float alpha = (color >> 24 & 0xFF) / 255.0F;
 		float r = (color >> 16 & 0xFF) / 255.0F;

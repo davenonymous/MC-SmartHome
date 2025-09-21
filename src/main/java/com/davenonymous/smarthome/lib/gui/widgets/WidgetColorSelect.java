@@ -5,8 +5,8 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.event.MouseEnterEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseExitEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -37,7 +37,7 @@ public class WidgetColorSelect extends WidgetWithChoiceValue<Color> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
         /*
         screen.getMinecraft().getTextureManager().bindTexture(BUTTON_TEXTURES);
 

@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseEnterEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseExitEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -90,24 +91,23 @@ public class WidgetButton extends Widget {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		pGuiGraphics.blitSprite(SPRITES.get(this.enabled, this.isHovered()), 0, 0, this.width, this.height);
 
 		pGuiGraphics.pose().pushPose();
-		Font fontrenderer = screen.getMinecraft().font;
 		pGuiGraphics.pose().translate(0f, 0f, 10f);
-		drawButtonContent(pGuiGraphics, screen, fontrenderer);
+		drawButtonContent(pGuiGraphics, window);
 		pGuiGraphics.pose().translate(0f, 0f, -10f);
 		pGuiGraphics.pose().popPose();
 	}
 
-	protected void drawButtonContent(GuiGraphics pGuiGraphics, Screen screen, Font renderer) {
-		drawString(pGuiGraphics, screen, renderer);
+	protected void drawButtonContent(GuiGraphics pGuiGraphics, Window window) {
+		drawString(pGuiGraphics);
 	}
 
-	protected void drawString(GuiGraphics pGuiGraphics, Screen screen, Font renderer) {
+	protected void drawString(GuiGraphics pGuiGraphics) {
 		int color = 0xFFFFFF;
 		String toDraw = fixedLabel != null ? fixedLabel : I18n.get(label.getString());
-		pGuiGraphics.drawCenteredString(screen.getMinecraft().font, toDraw, (int) (width / 2.0f), (int) ((height - 8) / 2.0f), color);
+		pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, toDraw, (int) (width / 2.0f), (int) ((height - 8) / 2.0f), color);
 	}
 }

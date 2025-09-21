@@ -1,0 +1,7 @@
+{
+	"parent": "smarthome:block/corner_marker",
+	"textures": {
+		"0": "smarthome:block/corner_marker_orange",
+		"particle": "smarthome:block/corner_marker_orange"
+	}
+}

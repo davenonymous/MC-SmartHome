@@ -75,29 +75,4 @@ public class BoxRenderer {
 		poseStack.popPose();
 
     }
-
-
-	public static void onRenderLast(RenderLevelStageEvent event) {
-		Player player = Minecraft.getInstance().player;
-		if (player == null) {
-			return;
-		}
-
-		// TODO: Nonononono. This is just for testing, remove it later.
-		var overworld = Minecraft.getInstance().getSingleplayerServer().overworld();
-		WorldSavedHomes data = WorldSavedHomes.get(overworld);
-		if(data.getPlayerHome(player, "F").isEmpty()) {
-			return;
-		}
-		HomeCore home = data.getPlayerHome(player, "F").get();
-		home.updateBounds(); // just to be sure
-//		var model = ModParticleModels.BLOCK_MARKER_LINE;
-//		var modelAABB = ModParticleModels.BLOCK_MARKER_LINE_AABB;
-//		var particleShaper = new ParticleShapeHelper(modelAABB);
-//		var particlePositions = particleShaper.shape(home.shape());
-
-		BoxLineCache boxLines = new BoxLineCache();
-		boxLines.addShape(home.shape());
-		BoxRenderer.renderLines(event.getPoseStack(), DyeColor.BLUE, boxLines.lines, 0xAA, 2);
-	}
 }

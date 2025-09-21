@@ -7,6 +7,7 @@ import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseEnterEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseExitEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -75,7 +76,7 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		//Logz.info("Width: %d, height: %d", width, height);
 
 		pGuiGraphics.pose().pushPose();
@@ -122,7 +123,7 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 		GUIHelper.drawStretchedTabIconsTexture(pGuiGraphics, 0 + width - 4, 4, 4, this.height - 8, texOffsetX + overlayWidth - 4, texOffsetY + 3, 4, 12);
 
 		pGuiGraphics.pose().translate(0f, 0f, 10f);
-		drawButtonContent(pGuiGraphics, screen);
+		drawButtonContent(pGuiGraphics);
 		pGuiGraphics.pose().translate(0f, 0f, -10f);
 
 		if(!enabled) {
@@ -134,12 +135,12 @@ public class WidgetSelectButton<T> extends WidgetWithChoiceValue<T> {
 		pGuiGraphics.pose().popPose();
 	}
 
-	protected void drawButtonContent(GuiGraphics pGuiGraphics, Screen screen) {
-		drawString(pGuiGraphics, screen, I18n.get(getValue().toString()));
+	protected void drawButtonContent(GuiGraphics pGuiGraphics) {
+		drawString(pGuiGraphics, I18n.get(getValue().toString()));
 	}
 
-	protected void drawString(GuiGraphics pGuiGraphics, Screen screen, String label) {
+	protected void drawString(GuiGraphics pGuiGraphics, String label) {
 		int color = 0xFFFFFF;
-		pGuiGraphics.drawCenteredString(screen.getMinecraft().font, label, (int) (width / 2.0f), (int) ((float) (height - 8) / 2.0f), color);
+		pGuiGraphics.drawCenteredString(Minecraft.getInstance().font, label, (int) (width / 2.0f), (int) ((float) (height - 8) / 2.0f), color);
 	}
 }

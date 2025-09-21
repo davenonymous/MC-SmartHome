@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -62,7 +63,7 @@ public class WidgetBlockInClientLevel extends WidgetWithValue<BlockPos> {
 
 	}
 
-	private void drawSlot(GuiGraphics pGuiGraphics, Screen screen) {
+	private void drawSlot(GuiGraphics pGuiGraphics, Window window) {
 		RenderSystem.setShaderTexture(0, GUIHelper.tabIcons);
 
 		int texOffsetY = 84;
@@ -71,13 +72,13 @@ public class WidgetBlockInClientLevel extends WidgetWithValue<BlockPos> {
 	}
 
 	@Override
-	public void draw(GuiGraphics pGuiGraphics, Screen screen) {
-		super.draw(pGuiGraphics, screen);
+	public void draw(GuiGraphics pGuiGraphics, Window window) {
+		super.draw(pGuiGraphics, window);
 
 		if(drawSlot) {
 			pGuiGraphics.pose().pushPose();
 			pGuiGraphics.pose().translate(0f, 0f, 50.0f); // Position the slot
-			this.drawSlot(pGuiGraphics, screen);
+			this.drawSlot(pGuiGraphics, window);
 			pGuiGraphics.pose().popPose();
 		}
 
