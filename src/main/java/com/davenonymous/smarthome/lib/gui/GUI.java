@@ -88,7 +88,6 @@ public class GUI extends WidgetPanel {
 	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		if(drawBackground) {
 			pGuiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_BACKGROUND), 0, 0, this.width, this.height);
-			//GUIHelper.drawWindow(pGuiGraphics, this.width, this.height, this.hasTabs);
 		}
 		super.draw(pGuiGraphics, window);
 	}

@@ -93,11 +93,13 @@ public class ZonesWidget extends WidgetPanel {
 		}
 
 
+		var player = Minecraft.getInstance().player;
+		var itemStream = player.getInventory().items.stream().limit(9);
+
 		rangeFinderBoxes = new HashMap<>();
-		var rangerFinderDataComponents = Minecraft.getInstance().player.inventoryMenu.getItems().stream()
+		var rangerFinderDataComponents = itemStream
 			.filter(stack -> !stack.isEmpty() && stack.has(ModDataComponents.RANGER_FINDER_DATA_COMPONENT))
 			.map(stack -> stack.get(ModDataComponents.RANGER_FINDER_DATA_COMPONENT))
-			.filter(data -> data.toAABB() != null && selectedHome.getZoneCrossing(data.toAABB()) == null)
 			.toList();
 
 		for(var rangeFinderData : rangerFinderDataComponents) {
@@ -129,6 +131,7 @@ public class ZonesWidget extends WidgetPanel {
 			return;
 		}
 
+		float scaleFactor = 8f;
 		var bounds = homeShape.bounds();
 		var outerBounds = bounds.inflate(4/16d).inflate(4/16d, 0, 4/16d);
 		double longestSide = Math.max(outerBounds.getXsize(), outerBounds.getZsize());
@@ -138,11 +141,11 @@ public class ZonesWidget extends WidgetPanel {
 		int fooX = (width()) / 2;
 		int fooY = (height()) / 2;
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(fooX - zoneRenderWidth / 4f, fooY + longestHeight / 4f, 100);
+		guiGraphics.pose().translate(fooX - zoneRenderWidth / 4f, fooY + longestHeight / 4f, 20);
 		float shift = (float)expectedMaxRadius * 5f;
 		guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(rotX), 0, 0, 0);
 		guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(rotY), shift, 0, shift);
-		guiGraphics.pose().scale(16f, -16f, 16f);
+		guiGraphics.pose().scale(scaleFactor, -scaleFactor, scaleFactor);
 
 		int boundColor = ChatFormatting.DARK_GRAY.getColor() | 0x40000000;
 		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boundBoxLines.lines, boundColor, 2);
@@ -161,12 +164,16 @@ public class ZonesWidget extends WidgetPanel {
 		}
 
 		for(var zoneEntry : rangeFinderBoxes.entrySet()) {
-			var rangeFinderData = zoneEntry.getKey();
+			var data = zoneEntry.getKey();
 			var zoneBox = zoneEntry.getValue();
 
 			int selectedColor = ChatFormatting.GOLD.getColor() | 0x20000000;
-			if(this.selectedRangeFinder != null && this.selectedRangeFinder.equals(rangeFinderData)) {
+			if(this.selectedRangeFinder != null && this.selectedRangeFinder.equals(data)) {
 				selectedColor = ChatFormatting.GOLD.getColor() | 0xFF000000;
+			}
+
+			if(data.toAABB() != null && HomeScreen.get().selectedHome.getZoneCrossing(data.toAABB()) != null) {
+				selectedColor = ChatFormatting.RED.getColor() | 0x80000000;
 			}
 
 			BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);

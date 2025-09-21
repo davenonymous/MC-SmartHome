@@ -20,8 +20,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 public class AddZoneButtonWidget extends WidgetPanel {
 	public StringInputWidget newZoneNameInput;
-	private WidgetSprite plusIcon;
-	private WidgetTextBox dimensionsText;
+	public WidgetSprite plusIcon;
+	public WidgetTextBox dimensionsText;
 
 	public AddZoneButtonWidget(ZonesContainer parent, RangerFinderDataComponent rangeFinderData) {
 		this.setWidth(100);
@@ -85,7 +85,6 @@ public class AddZoneButtonWidget extends WidgetPanel {
 
 		plusIcon.setPosition(newZoneNameInput.width + 4, (24 - (int)(0.5f * plusIcon.height())) / 2);
 		dimensionsText.setPosition(2, 26);
-
 	}
 
 	@Override

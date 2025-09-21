@@ -38,7 +38,7 @@ public class Widget implements ISelectable {
 	boolean visible = true;
 	boolean hovered = false;
 	boolean shouldShowTooltip = true;
-	boolean renderDebugOutlines = false;
+	public boolean renderDebugOutlines = false;
 	Widget parent;
 
 
