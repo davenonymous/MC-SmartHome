@@ -49,11 +49,10 @@ public class ClientRegistrations {
 			return;
 		}
 
-		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_WEATHER) {
-			return;
-		}
-
 		if(heldItem.getItem() instanceof IWorldRenderer renderer) {
+			if (event.getStage() != renderer.renderStage()) {
+				return;
+			}
 			renderer.renderWorld(event, heldItem);
 		}
 

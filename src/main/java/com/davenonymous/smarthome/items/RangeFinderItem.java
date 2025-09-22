@@ -263,7 +263,7 @@ public class RangeFinderItem extends Item implements IHudRenderer, IWorldRendere
 	public static BlockHitResult getPlayerPOVHitResult(Level level, Player player, ClipContext.Fluid fluidMode, float range) {
 		Vec3 vec3 = player.getEyePosition();
 		Vec3 vec31 = vec3.add(player.calculateViewVector(player.getXRot(), player.getYRot()).scale(range));
-		return level.clip(new ClipContext(vec3, vec31, net.minecraft.world.level.ClipContext.Block.OUTLINE, fluidMode, player));
+		return level.clip(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, fluidMode, player));
 	}
 
 	@Override

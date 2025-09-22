@@ -50,7 +50,7 @@ public class WorldWatcher implements Runnable {
 		return positions;
 	}
 
-	private void processHome(HomeCore home) throws SQLException{
+	private void processHome(HomeCore home) throws SQLException {
 		ModSensors.callVisitHome(connection, server, home);
 		for(var zone : home.zones()) {
 			ModSensors.callVisitZone(connection, server, zone);
@@ -61,6 +61,7 @@ public class WorldWatcher implements Runnable {
 				ModSensors.callVisitZoneEntity(connection, server, zone, entity);
 			}
 
+			// TODO: We might not need to scan every block if no sensors are interested in blocks (i.e. add a needsBlockScan() method to ISensor?)
 			for(var pos : getBlocksInAABBStream(zone.bounds())) {
 				var blockState = overworld.getBlockState(pos);
 				var blockEntity = overworld.getBlockEntity(pos);

@@ -35,6 +35,7 @@ public class DGBlockStates extends BlockStateProvider {
 		itemModels().basicItem(ModItems.IRDA_ITEM.get());
 		itemModels().basicItem(ModItems.SERVER_ITEM.get());
 		itemModels().basicItem(ModItems.RANGE_FINDER_ITEM.get());
+		itemModels().basicItem(ModItems.PROJECT_BOX_ITEM.get());
 	}
 
 	public void simpleBlockWithItem(Block block) {

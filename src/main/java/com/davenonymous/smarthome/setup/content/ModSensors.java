@@ -5,8 +5,11 @@ import com.davenonymous.smarthome.api.ISensor;
 import com.davenonymous.smarthome.api.SmartHomeSensor;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.duckdb.DuckDBConnection;
@@ -65,7 +68,7 @@ public class ModSensors {
 		}
 	}
 
-	public static void callVisitHomeBlock(DuckDBConnection connection, MinecraftServer server, HomeCore home, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity) throws SQLException {
+	public static void callVisitHomeBlock(DuckDBConnection connection, MinecraftServer server, HomeCore home, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
 		for(var sensor : SENSORS) {
 			sensor.visitHomeBlock(connection, server, home, pos, state, blockEntity);
 		}
@@ -83,7 +86,7 @@ public class ModSensors {
 		}
 	}
 
-	public static void callVisitZoneBlock(DuckDBConnection connection, MinecraftServer server, HomeZone zone, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity) throws SQLException {
+	public static void callVisitZoneBlock(DuckDBConnection connection, MinecraftServer server, HomeZone zone, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
 		for(var sensor : SENSORS) {
 			sensor.visitZoneBlock(connection, server, zone, pos, state, blockEntity);
 		}
