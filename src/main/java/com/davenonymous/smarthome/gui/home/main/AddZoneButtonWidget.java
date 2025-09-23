@@ -15,6 +15,7 @@ import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -29,7 +30,7 @@ public class AddZoneButtonWidget extends WidgetPanel {
 
 		newZoneNameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
 		newZoneNameInput.setDrawBackground(false);
-		newZoneNameInput.nativeWidget().setHint(Component.literal("Enter name"));
+		newZoneNameInput.nativeWidget().setHint(Component.literal(I18n.get("smarthome.gui.home.zones.add_zones.hint")));
 		newZoneNameInput.nativeWidget().setBordered(false);
 		newZoneNameInput.nativeWidget().setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		newZoneNameInput.addListener(

@@ -6,6 +6,7 @@ import com.davenonymous.smarthome.api.SmartHomeSensor;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
@@ -53,39 +54,27 @@ public class ModSensors {
 		}
 	}
 
-	public static void callVisitHome(DuckDBConnection connection, MinecraftServer server, HomeCore home) throws SQLException {
+	public static void callVisitHome(DuckDBConnection connection, ServerLevel level, HomeCore home) throws SQLException {
 		for(var sensor : SENSORS) {
-			sensor.visitHome(connection, server, home);
+			sensor.visitHome(connection, level, home);
 		}
 	}
 
-	public static void callVisitHomeEntity(DuckDBConnection connection, MinecraftServer server, HomeCore home, Entity entity) throws SQLException {
+	public static void callVisitZone(DuckDBConnection connection, ServerLevel level, HomeZone zone) throws SQLException {
 		for(var sensor : SENSORS) {
-			sensor.visitHomeEntity(connection, server, home, entity);
+			sensor.visitZone(connection, level, zone);
 		}
 	}
 
-	public static void callVisitHomeBlock(DuckDBConnection connection, MinecraftServer server, HomeCore home, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity) throws SQLException {
+	public static void callVisitZoneEntity(DuckDBConnection connection, ServerLevel level, HomeZone zone, Entity entity) throws SQLException {
 		for(var sensor : SENSORS) {
-			sensor.visitHomeBlock(connection, server, home, pos, state, blockEntity);
+			sensor.visitZoneEntity(connection, level, zone, entity);
 		}
 	}
 
-	public static void callVisitZone(DuckDBConnection connection, MinecraftServer server, HomeZone zone) throws SQLException {
+	public static void callVisitZoneBlock(DuckDBConnection connection, ServerLevel level, HomeZone zone, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity) throws SQLException {
 		for(var sensor : SENSORS) {
-			sensor.visitZone(connection, server, zone);
-		}
-	}
-
-	public static void callVisitZoneEntity(DuckDBConnection connection, MinecraftServer server, HomeZone zone, Entity entity) throws SQLException {
-		for(var sensor : SENSORS) {
-			sensor.visitZoneEntity(connection, server, zone, entity);
-		}
-	}
-
-	public static void callVisitZoneBlock(DuckDBConnection connection, MinecraftServer server, HomeZone zone, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity) throws SQLException {
-		for(var sensor : SENSORS) {
-			sensor.visitZoneBlock(connection, server, zone, pos, state, blockEntity);
+			sensor.visitZoneBlock(connection, level, zone, pos, state, blockEntity);
 		}
 	}
 

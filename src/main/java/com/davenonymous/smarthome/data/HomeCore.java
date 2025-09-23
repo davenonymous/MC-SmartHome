@@ -12,6 +12,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -63,6 +65,10 @@ public class HomeCore {
 			this.zones = new ArrayList<>();
 		}
 		updateBounds();
+	}
+
+	public ServerLevel getHomeLevel(MinecraftServer server) {
+		return serverLocation().getServerLevel(server);
 	}
 
 	public boolean contains(BlockPos pos) {

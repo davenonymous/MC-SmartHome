@@ -1,12 +1,13 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
+import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
+import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.home.ContentContainerWidget;
 import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.gui.home.NoHomesWidget;
-import com.davenonymous.smarthome.gui.home.SidebarWidget;
+import com.davenonymous.smarthome.gui.home.sidebar.SidebarWidget;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetFullScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
@@ -17,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,10 +34,12 @@ public class HomeScreen extends WidgetFullScreen {
 	public HomeCore selectedHome;
 	public HomeBlockEntity blockEntity;
 	public List<HomeCore> ownedHomes;
+	public List<FoundDevice> newDevices;
 
-	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes) {
+	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, List<FoundDevice> newDevices) {
 		super(Component.translatable("smarthome.gui.home.title"));
 		this.ownedHomes = ownedHomes;
+		this.newDevices = new ArrayList<>(newDevices);
 
 		if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof HomeBlockEntity hbe) {
 			this.blockEntity = hbe;
@@ -51,8 +55,10 @@ public class HomeScreen extends WidgetFullScreen {
 		if(this.selectedHome == null && !ownedHomes.isEmpty()) {
 			this.selectedHome = ownedHomes.getFirst();
 		}
+	}
 
-		SmartHome.LOGGER.debug("Opening home screen for home {} from {}", selectedHome, blockEntity);
+	public List<FoundDevice> getNewDevicesForZone(HomeZone zone) {
+		return newDevices.stream().filter(device -> device.zoneId().equals(zone.id())).toList();
 	}
 
 	public static HomeScreen get() {

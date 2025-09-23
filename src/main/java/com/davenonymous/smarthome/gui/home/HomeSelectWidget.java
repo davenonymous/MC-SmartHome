@@ -7,10 +7,8 @@ import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.networking.actions.SetSelectedHomePayload;
-import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.network.PacketDistributor;
 

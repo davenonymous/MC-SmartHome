@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.gui.home.main;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
@@ -16,7 +17,7 @@ import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.Component;
+import net.minecraft.client.resources.language.I18n;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ZoneDetailWidget extends WidgetVBox {
@@ -24,8 +25,9 @@ public class ZoneDetailWidget extends WidgetVBox {
 
 	private StringInputWidget zoneRenameInput;
 	private WidgetTextBox zoneSize;
-	private WidgetTextBox zoneDevices;
+	private WidgetTextBox zoneDeviceLabel;
 	private WidgetSprite deleteIcon;
+	private WidgetVBox devicesList;
 
 	public ZoneDetailWidget() {
 		this.setPadding(8);
@@ -46,15 +48,19 @@ public class ZoneDetailWidget extends WidgetVBox {
 			PacketDistributor.sendToServer(new SetZoneNamePayload(selectedZone.home().serverLocation(), selectedZone.home().id(), selectedZone.id(), zoneRenameInput.getValue()));
 			return WidgetEventResult.HANDLED;
 		});
-		zoneRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange("Click to rename zone"));
+		zoneRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.zones.detail.renameable")));
 		this.addContentBox(zoneRenameInput, FlexAlign.CENTER);
 
 		zoneSize = new WidgetTextBox("", ChatFormatting.GRAY.getColor());
 		zoneSize.setFont(ModFonts.TINY);
 		this.addContentBox(zoneSize, FlexAlign.CENTER);
 
-		zoneDevices = new WidgetTextBox("Devices", ChatFormatting.WHITE.getColor());
-		this.addContentBox(zoneDevices, FlexAlign.START);
+		zoneDeviceLabel = new WidgetTextBox(I18n.get("smarthome.gui.home.zones.detail.devices"), ChatFormatting.WHITE.getColor());
+		this.addContentBox(zoneDeviceLabel, FlexAlign.START);
+
+		devicesList = new WidgetVBox();
+		devicesList.setSpacing(2);
+		this.addContentBox(devicesList, FlexAlign.FILL);
 
 		deleteIcon = new WidgetSprite(HackerNoon.Solid.trash);
 		deleteIcon.setPosition(this.width() - 10, this.height() - 10);
@@ -82,7 +88,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 			PacketDistributor.sendToServer(new MarkZoneAsDeletedPayload(homeId, zoneId, false));
 			return WidgetEventResult.HANDLED;
 		});
-		deleteIcon.setTooltipElements(WrappedStringTooltipComponent.orange("Ctrl+Shift+Click to delete zone"));
+		deleteIcon.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.zones.detail.delete")));
 		this.add(deleteIcon);
 	}
 
@@ -99,6 +105,16 @@ public class ZoneDetailWidget extends WidgetVBox {
 			int sizeY = (int)Math.round(bounds.maxY - bounds.minY);
 			int sizeZ = (int)Math.round(bounds.maxZ - bounds.minZ);
 			zoneSize.setText(String.format("%dx%dx%d", sizeX, sizeY, sizeZ));
+
+			var newDevices = HomeScreen.get().getNewDevicesForZone(selectedZone);
+			devicesList.clear();
+			for(var device : newDevices) {
+				var deviceWidget = new WidgetTextBox(device.pos().toShortString() + " - " + I18n.get(device.state().getBlock().getDescriptionId()), 0xFFFFFF);
+				deviceWidget.setFont(ModFonts.TINY);
+				deviceWidget.autoWidth();
+				deviceWidget.autoHeight();
+				devicesList.addContentBox(deviceWidget, FlexAlign.FILL);
+			}
 		}
 
 		updateWidgetSizes();
@@ -112,8 +128,10 @@ public class ZoneDetailWidget extends WidgetVBox {
 		zoneRenameInput.setHeight(12);
 		zoneSize.autoWidth();
 		zoneSize.autoHeight();
-		zoneDevices.autoWidth();
-		zoneDevices.autoHeight();
+		zoneDeviceLabel.autoWidth();
+		zoneDeviceLabel.autoHeight();
+		devicesList.setWidth(this.width() - 60);
+		devicesList.setHeight(this.height() - (zoneDeviceLabel.x() + zoneDeviceLabel.height() + 4 + 2*padding + 40));
 		deleteIcon.setPosition(this.width() - 18, this.height() - 18);
 		this.update(null);
 	}

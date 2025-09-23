@@ -14,6 +14,7 @@ import com.davenonymous.smarthome.networking.actions.AddNewZonePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class InvalidZoneWidget extends WidgetPanel {
@@ -25,7 +26,7 @@ public class InvalidZoneWidget extends WidgetPanel {
 		this.setWidth(100);
 		this.setHeight(32);
 
-		intersectsText = new WidgetTextBox("Invalid");
+		intersectsText = new WidgetTextBox(I18n.get("smarthome.range_finder.invalid"));
 		intersectsText.setWordWrap(false);
 		intersectsText.setTextColor(0xFF000000);
 		this.add(intersectsText);
@@ -43,7 +44,7 @@ public class InvalidZoneWidget extends WidgetPanel {
 		this.add(dimensionsText);
 
 		updateWidgetSizes();
-		this.addTooltipElement(WrappedStringTooltipComponent.red("The selected Range Finder area intersects with an existing zone!"));
+		this.addTooltipElement(WrappedStringTooltipComponent.red(I18n.get("smarthome.range_finder.intersects")));
 	}
 
 	@Override

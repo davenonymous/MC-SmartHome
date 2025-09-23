@@ -6,6 +6,20 @@
   "item.smarthome.server": "Smart Home Server",
   "smarthome.gui.home.no_homes": "No Homes Found",
   "smarthome.gui.home.no_homes.hint": "Build a mini rack and place a Smart Home server in it to get started.",
+  "smarthome.gui.home.sidebar.devices": "Devices",
+  "smarthome.gui.home.sidebar.devices.badge": "New devices found",
+  "smarthome.gui.home.sidebar.settings": "Settings",
+  "smarthome.gui.home.sidebar.zones": "Zones",
   "smarthome.gui.home.title": "Smart Home",
-  "smarthome.gui.server.name_label": "Name your smart home:"
+  "smarthome.gui.home.zones.add_zones.hint": "Enter name",
+  "smarthome.gui.home.zones.detail.delete": "Ctrl+Shift+Click to delete zone",
+  "smarthome.gui.home.zones.detail.devices": "Devices",
+  "smarthome.gui.home.zones.detail.renameable": "Click to rename zone",
+  "smarthome.gui.server.name_label": "Name your smart home:",
+  "smarthome.range_finder.intersects": "The selected Range Finder area intersects with an existing zone!",
+  "smarthome.range_finder.invalid": "Invalid",
+  "smarthome.sensor.occupancy.description": "Records presence of living entities in the home zones.",
+  "smarthome.sensor.occupancy.name": "Occupancy",
+  "smarthome.sensor.redstone.description": "Records redstone power levels of blocks.",
+  "smarthome.sensor.redstone.name": "Redstone Level"
 }

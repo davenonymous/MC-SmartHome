@@ -1,5 +1,7 @@
 package com.davenonymous.smarthome.datagen;
 
+import com.davenonymous.smarthome.sensor.Occupancy;
+import com.davenonymous.smarthome.sensor.RedstonePowered;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import com.davenonymous.smarthome.setup.content.ModItems;
 import net.minecraft.client.KeyMapping;
@@ -33,14 +35,39 @@ public class DGTranslations extends LanguageProvider {
 		add("smarthome.gui.server.name_label", "Name your smart home:");
 		add("smarthome.gui.home.no_homes", "No Homes Found");
 		add("smarthome.gui.home.no_homes.hint", "Build a mini rack and place a Smart Home server in it to get started.");
+
+		add("smarthome.gui.home.sidebar.zones", "Zones");
+
+		add("smarthome.gui.home.zones.detail.devices", "Devices");
+		add("smarthome.gui.home.zones.detail.renameable", "Click to rename zone");
+		add("smarthome.gui.home.zones.detail.delete", "Ctrl+Shift+Click to delete zone");
+		add("smarthome.gui.home.zones.add_zones.hint", "Enter name");
+
+		add("smarthome.gui.home.sidebar.devices", "Devices");
+		add("smarthome.gui.home.sidebar.devices.badge", "New devices found");
+
+		add("smarthome.gui.home.sidebar.settings", "Settings");
+
+		add("smarthome.range_finder.invalid", "Invalid");
+		add("smarthome.range_finder.intersects", "The selected Range Finder area intersects with an existing zone!");
+
+		add(Occupancy.ID, "name", "Occupancy");
+		add(Occupancy.ID, "description", "Records presence of living entities in the home zones.");
+
+		add(RedstonePowered.ID, "name", "Redstone Level");
+		add(RedstonePowered.ID, "description", "Records redstone power levels of blocks.");
 	}
 
 	public void add(ResourceLocation id, String translation) {
+		add(id, "name", translation);
+	}
+
+	public void add(ResourceLocation id, String suffix, String translation) {
 		if(id == null || id.getPath().isEmpty()) {
 			throw new IllegalArgumentException("Node ID cannot be null or empty");
 		}
 		var dotted = id.getPath().replaceAll("/", ".");
-		String key = id.getNamespace() + "." + dotted + ".name";
+		String key = id.getNamespace() + "." + dotted + "." + suffix;
 		add(key, translation);
 	}
 

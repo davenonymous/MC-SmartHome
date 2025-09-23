@@ -1,10 +1,11 @@
-package com.davenonymous.smarthome.gui.home;
+package com.davenonymous.smarthome.gui.home.sidebar;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
@@ -22,6 +23,7 @@ public class SidebarButton extends WidgetPanel {
 	WidgetSprite iconWidget;
 	WidgetTextBox labelWidget;
 	WidgetTextBox labelBackdropWidget;
+	SidebarBadge badgeWidget;
 
 	ResourceLocation contentId;
 
@@ -61,6 +63,19 @@ public class SidebarButton extends WidgetPanel {
 		});
 
 		updateWidgetSizes();
+	}
+
+	public SidebarButton setBadge(String text, String description, int badgeColor, int textColor) {
+		if(this.badgeWidget != null) {
+			this.remove(this.badgeWidget);
+		}
+		this.badgeWidget = new SidebarBadge(text, badgeColor, textColor);
+		this.badgeWidget.setPosition(this.width - this.badgeWidget.width - 5, 3);
+		if(description != null && !description.isEmpty()) {
+			this.badgeWidget.setTooltipElements(WrappedStringTooltipComponent.orange(description));
+		}
+		this.add(this.badgeWidget);
+		return this;
 	}
 
 	public ResourceLocation contentId() {

@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.duckdb.DuckDBConnection;
 
@@ -20,8 +21,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 @SmartHomeSensor(modid = "minecraft")
-public class Occupancy implements ISensor {
-	public static final ResourceLocation ID = SmartHome.resource("sensor/occupancy");
+public class RedstonePowered implements ISensor {
+	public static final ResourceLocation ID = SmartHome.resource("sensor/redstone");
 
 	@Override
 	public ResourceLocation id() {
@@ -30,31 +31,37 @@ public class Occupancy implements ISensor {
 
 	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
-		return state.is(ModBlocks.DASHBOARD);
+		return !state.isAir();
 	}
 
 	@Override
 	public void createTables(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
-		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home UUID, zone VARCHAR, visitor VARCHAR, pos STRUCT(x DOUBLE, y DOUBLE, z DOUBLE))");
+		stmt.execute("CREATE TABLE IF NOT EXISTS redstone (instant TIMESTAMP, tick UBIGINT, home UUID, zone VARCHAR, power UTINYINT, pos STRUCT(x BIGINT, y BIGINT, z BIGINT))");
 		stmt.close();
 	}
 
 	@Override
-	public void visitZoneEntity(DuckDBConnection connection, ServerLevel level, HomeZone zone, Entity entity) throws SQLException {
-		if(!(entity instanceof LivingEntity livingEntity)) {
-			return;
+	public void visitZoneBlock(DuckDBConnection connection, ServerLevel level, HomeZone zone, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
+
+		int signal = 0;
+		if(state.hasAnalogOutputSignal()) {
+			signal = state.getAnalogOutputSignal(level, pos);
+		} else if(state.isRedstoneConductor(level, pos)) {
+			signal = level.getBestNeighborSignal(pos);
+		} else if(level.hasNeighborSignal(pos)){
+			signal = level.getBestNeighborSignal(pos);
 		}
 
-		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?))");
+		PreparedStatement prepped = connection.prepareStatement("INSERT INTO redstone VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?))");
 		int paramIndex = 1;
 		prepped.setLong(paramIndex++, level.getServer().getTickCount());
 		prepped.setObject(paramIndex++, zone.home().id());
 		prepped.setString(paramIndex++, zone.name());
-		prepped.setString(paramIndex++, livingEntity.getName().getString());
-		prepped.setDouble(paramIndex++, livingEntity.getX());
-		prepped.setDouble(paramIndex++, livingEntity.getY());
-		prepped.setDouble(paramIndex++, livingEntity.getZ());
+		prepped.setInt(paramIndex++, signal);
+		prepped.setInt(paramIndex++, pos.getX());
+		prepped.setInt(paramIndex++, pos.getY());
+		prepped.setInt(paramIndex++, pos.getZ());
 		prepped.execute();
 		prepped.close();
 	}
