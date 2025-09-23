@@ -1,9 +1,8 @@
-// 1.21.1	2025-09-22T01:08:58.4148654	Block States: smarthome
+// 1.21.1	2025-09-20T18:45:20.9629718	Block States: smarthome
 0847cf07021a8ea50ab7d942608938ccd53a6abd assets/smarthome/blockstates/dashboard.json
 2d1a64331013a0a2225c2c920327ce8ee4aad55f assets/smarthome/blockstates/mini_rack.json
 f4ad7c22a51d810fd42807769dd7731610faf9a6 assets/smarthome/models/item/dashboard.json
 1801402d38fd9c44123f40a9fac5a085b86a5275 assets/smarthome/models/item/irda_transceiver.json
 e29f788313c50294f5d5ab48fb29985b87ba9339 assets/smarthome/models/item/mini_rack.json
-5a12fb447efeff7e9a70aa9ba5d96fb9265cefcf assets/smarthome/models/item/project_box.json
 e8240c0bbff4a71d4d16374b8ee05153d3b2fc81 assets/smarthome/models/item/range_finder.json
 73d2bd72cd44466e50c5dff73722329a865678c6 assets/smarthome/models/item/server.json

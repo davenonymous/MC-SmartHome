@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.items.projectbox.ProjectBoxDataComponent;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.items.ServerDataComponent;
 import net.minecraft.core.component.DataComponentType;
@@ -24,12 +23,5 @@ public class ModDataComponents {
 		builder -> builder
 			.persistent(RangerFinderDataComponent.CODEC.codec())
 			.networkSynchronized(RangerFinderDataComponent.STREAM_CODEC)
-	);
-
-	public static final DeferredHolder<DataComponentType<?>, DataComponentType<ProjectBoxDataComponent>> PROJECT_BOX_DATA_COMPONENT = DATA_COMPONENTS.registerComponentType(
-		"project_box",
-		builder -> builder
-			.persistent(ProjectBoxDataComponent.CODEC.codec())
-			.networkSynchronized(ProjectBoxDataComponent.STREAM_CODEC)
 	);
 }

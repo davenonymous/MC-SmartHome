@@ -20,8 +20,6 @@ public class SmartHome {
 	public static final String MODID = "smarthome";
 	public static final Logger LOGGER = LogUtils.getLogger();
 
-	public static final String DEFAULT_NAMING_REGEX = "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*";
-
 	public static GuiTheme theme = new Vanilla();
 
 	public SmartHome(IEventBus modEventBus, ModContainer modContainer){

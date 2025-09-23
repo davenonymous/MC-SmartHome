@@ -10,8 +10,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class HomeZone {
@@ -19,7 +17,6 @@ public class HomeZone {
 	AABB bounds;
 	String name;
 	boolean deleted;
-	List<PlacedProjectBox> projectBoxes;
 
 	HomeCore home;
 
@@ -46,24 +43,14 @@ public class HomeZone {
 	}
 
 	public HomeZone(String name, AABB bounds) {
-		this(UUID.randomUUID(), name, bounds, List.of(), false);
+		this(UUID.randomUUID(), name, bounds, false);
 	}
 
-	public HomeZone(UUID id, String name, AABB bounds, List<PlacedProjectBox> projectBoxes, boolean deleted) {
+	public HomeZone(UUID id, String name, AABB bounds, boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.bounds = bounds;
 		this.deleted = deleted;
-		this.projectBoxes = new ArrayList<>(projectBoxes);
-	}
-
-	public List<PlacedProjectBox> projectBoxes() {
-		return projectBoxes;
-	}
-
-	public HomeZone addProjectBox(PlacedProjectBox box) {
-		this.projectBoxes.add(box);
-		return this;
 	}
 
 	public HomeCore home() {
@@ -88,7 +75,6 @@ public class HomeZone {
 		UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeZone::id),
 		Codec.STRING.fieldOf("name").forGetter(HomeZone::name),
 		MoreCodecs.AABB_CODEC.fieldOf("bounds").forGetter(HomeZone::bounds),
-		PlacedProjectBox.CODEC.codec().listOf().fieldOf("projectBoxes").forGetter(HomeZone::projectBoxes),
 		Codec.BOOL.optionalFieldOf("deleted", false).forGetter(HomeZone::isDeleted)
 	).apply(instance, HomeZone::new));
 
@@ -96,7 +82,6 @@ public class HomeZone {
 		UUIDUtil.STREAM_CODEC, HomeZone::id,
 		ByteBufCodecs.STRING_UTF8, HomeZone::name,
 		MoreCodecs.AABB_STREAM_CODEC, HomeZone::bounds,
-		PlacedProjectBox.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeZone::projectBoxes,
 		ByteBufCodecs.BOOL, HomeZone::isDeleted,
 		HomeZone::new
 	);

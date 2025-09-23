@@ -17,6 +17,5 @@ public class RegisterModelsHandler {
 		event.register(ModParticleModels.BLOCK_MARKER_LINE);
 		event.register(ModParticleModels.CORNER_MARKER);
 		event.register(ModParticleModels.CORNER_MARKER_ORANGE);
-		event.register(ModParticleModels.PROJECT_BOX);
 	}
 }

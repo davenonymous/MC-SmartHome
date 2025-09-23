@@ -14,12 +14,8 @@ public class ModParticleModels {
 	public static final ModelResourceLocation CORNER_MARKER_ORANGE = ModelResourceLocation.standalone(
 		SmartHome.resource("block/corner_marker_orange")
 	);
-	public static final ModelResourceLocation PROJECT_BOX = ModelResourceLocation.standalone(
-		SmartHome.resource("block/project_box")
-	);
 
 	public static final AABB BLOCK_MARKER_LINE_AABB = new AABB(0, 0, 0, 16, 3, 3);
 	public static final AABB CORNER_MARKER_AABB = new AABB(0, 0, 0, 16, 16, 16);
 	public static final AABB CORNER_MARKER_ORANGE_AABB = new AABB(0, 0, 0, 16, 16, 16);
-	public static final AABB PROJECT_BOX_AABB = new AABB(5, 5, 0, 11, 11, 2);
 }

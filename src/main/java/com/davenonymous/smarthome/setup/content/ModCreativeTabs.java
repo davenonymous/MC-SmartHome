@@ -27,7 +27,6 @@ public class ModCreativeTabs {
 				output.accept(ModItems.SERVER_ITEM.get());
 				output.accept(ModItems.IRDA_ITEM.get());
 				output.accept(ModItems.RANGE_FINDER_ITEM.get());
-				output.accept(ModItems.PROJECT_BOX_ITEM.get());
 			})
 			.build()
 	);
