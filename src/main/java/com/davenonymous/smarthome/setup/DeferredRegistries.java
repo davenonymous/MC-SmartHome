@@ -13,6 +13,7 @@ public class DeferredRegistries {
 		ModCreativeTabs.CREATIVE_MODE_TABS.register(modbus);
 		ModContainers.CONTAINERS.register(modbus);
 		ModDataComponents.DATA_COMPONENTS.register(modbus);
+		ModEntityTypes.ENTITY_TYPES.register(modbus);
 		ModItems.ITEMS.register(modbus);
 		ModParticles.PARTICLE_TYPES.register(modbus);
 	}

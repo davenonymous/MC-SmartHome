@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.items.projectbox;
 
 import com.davenonymous.smarthome.data.PlacedProjectBox;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
+import com.davenonymous.smarthome.entities.PlacedProjectBoxEntity;
 import com.davenonymous.smarthome.items.BaseItem;
 import com.davenonymous.smarthome.items.IWorldRenderer;
 import com.davenonymous.smarthome.items.RangeFinderItem;
@@ -109,8 +110,11 @@ public class ProjectBoxItem extends BaseItem implements IWorldRenderer {
 		var pos = location.relative(face, 1/8f);
 
 		var box = new PlacedProjectBox(context.getClickedPos(), pos, face, boxData);
-		zone.addProjectBox(box);
-		data.setDirty();
+		//zone.addProjectBox(box);
+		//data.setDirty();
+
+		var entity = new PlacedProjectBoxEntity(level, pos, face);
+		level.addFreshEntity(entity);
 
 		player.sendSystemMessage(Component.translatable("smarthome.message.project_box.placed", boxData.name(), zone.name()));
 
