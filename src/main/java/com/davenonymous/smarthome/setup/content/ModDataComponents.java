@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.items.ProjectBoxDataComponent;
+import com.davenonymous.smarthome.items.projectbox.ProjectBoxDataComponent;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.items.ServerDataComponent;
 import net.minecraft.core.component.DataComponentType;

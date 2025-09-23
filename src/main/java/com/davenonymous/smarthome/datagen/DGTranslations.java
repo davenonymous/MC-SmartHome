@@ -7,6 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import org.jetbrains.annotations.NotNull;
@@ -25,15 +26,39 @@ public class DGTranslations extends LanguageProvider {
 	protected void addTranslations() {
 		add(ModBlocks.DASHBOARD.get(), "Dashboard");
 		add(ModBlocks.MINI_RACK.get(), "Mini Rack");
+
 		add(ModItems.SERVER_ITEM.get(), "Smart Home Server");
+
 		add(ModItems.IRDA_ITEM.get(), "IrDA Transceiver");
+
 		add(ModItems.RANGE_FINDER_ITEM.get(), "Laser Range Finder");
+
 		add(ModItems.PROJECT_BOX_ITEM.get(), "Project Box");
+		addDescription(ModItems.PROJECT_BOX_ITEM.get(),
+			"Used to make devices smart.",
+			"Insert a microcontroller and appropriate sensors, actuators or signal converters."
+		);
+
+		addMessage("project_box.empty", "The project box is empty.");
+		addMessage("project_box.outside_home", "You must be inside a home to place a project box.");
+		addMessage("project_box.placed", "Project box '%s' placed in zone '%s'.");
 
 		add("smarthome.gui.home.title", "Smart Home");
 		add("smarthome.gui.server.name_label", "Name your smart home:");
 		add("smarthome.gui.home.no_homes", "No Homes Found");
 		add("smarthome.gui.home.no_homes.hint", "Build a mini rack and place a Smart Home server in it to get started.");
+
+		add("smarthome.gui.project_box.name_label", "Name your project:");
+	}
+
+	public void addDescription(Item item, String... descriptionLines) {
+		int lineNum = 0;
+		for(String line : descriptionLines) {
+			var suffix = lineNum == 0 ? "" : "." + lineNum;
+			var key = item.getDescriptionId() + ".description" + suffix;
+			add(key, line);
+			lineNum++;
+		}
 	}
 
 	public void add(ResourceLocation id, String translation) {

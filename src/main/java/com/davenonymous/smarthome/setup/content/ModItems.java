@@ -4,7 +4,7 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.minirack.MiniRackitem;
 import com.davenonymous.smarthome.blocks.dashboard.DashboardItem;
 import com.davenonymous.smarthome.items.IrdaTransceiverItem;
-import com.davenonymous.smarthome.items.ProjectBoxItem;
+import com.davenonymous.smarthome.items.projectbox.ProjectBoxItem;
 import com.davenonymous.smarthome.items.RangeFinderItem;
 import com.davenonymous.smarthome.items.ServerItem;
 import net.minecraft.world.item.BlockItem;

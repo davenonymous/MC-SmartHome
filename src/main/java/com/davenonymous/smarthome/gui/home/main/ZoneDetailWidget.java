@@ -31,7 +31,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 		this.setPadding(8);
 		this.setSpacing(4);
 
-		zoneRenameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		zoneRenameInput = new StringInputWidget("", SmartHome.DEFAULT_NAMING_REGEX);
 		zoneRenameInput.setDrawBackground(false);
 		zoneRenameInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
 		zoneRenameInput.addListener(ValueChangedEvent.class, (event, widget) -> {

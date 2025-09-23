@@ -68,5 +68,7 @@ public class Register {
 			MarkZoneAsDeletedPayload.CODEC,
 			MarkZoneAsDeletedPayload::handleOnServer
 		);
+
+		SetProjectBoxNamePayload.register(registrar);
 	}
 }

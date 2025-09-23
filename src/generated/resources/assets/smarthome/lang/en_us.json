@@ -3,10 +3,15 @@
   "block.smarthome.mini_rack": "Mini Rack",
   "item.smarthome.irda_transceiver": "IrDA Transceiver",
   "item.smarthome.project_box": "Project Box",
+  "item.smarthome.project_box.description": "Used to make devices smart.",
+  "item.smarthome.project_box.description.1": "Insert a microcontroller and appropriate sensors, actuators or signal converters.",
   "item.smarthome.range_finder": "Laser Range Finder",
   "item.smarthome.server": "Smart Home Server",
   "smarthome.gui.home.no_homes": "No Homes Found",
   "smarthome.gui.home.no_homes.hint": "Build a mini rack and place a Smart Home server in it to get started.",
   "smarthome.gui.home.title": "Smart Home",
-  "smarthome.gui.server.name_label": "Name your smart home:"
+  "smarthome.gui.server.name_label": "Name your smart home:",
+  "smarthome.message.project_box.empty": "The project box is empty.",
+  "smarthome.message.project_box.outside_home": "You must be inside a home to place a project box.",
+  "smarthome.message.project_box.placed": "Project box '%s' placed in zone '%s'."
 }

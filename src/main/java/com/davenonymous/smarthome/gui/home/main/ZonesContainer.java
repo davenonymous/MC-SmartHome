@@ -55,10 +55,6 @@ public class ZonesContainer extends WidgetPanel {
 			return;
 		}
 
-		if(selectedHome.zones().isEmpty()) {
-			return;
-		}
-
 		zoneButtons.clear();
 		for(var zone : selectedHome.zones()) {
 			if(zone.isDeleted()) {
