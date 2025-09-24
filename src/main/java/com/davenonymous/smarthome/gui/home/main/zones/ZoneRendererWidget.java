@@ -1,8 +1,7 @@
-package com.davenonymous.smarthome.gui.home.main;
+package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.gui.HomeScreen;
-import com.davenonymous.smarthome.items.RangeFinderItem;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -15,18 +14,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class ZonesWidget extends WidgetPanel {
+public class ZoneRendererWidget extends WidgetPanel {
 	VoxelShape homeShape;
 	BoxLineCache boxLines;
 	BoxLineCache boundBoxLines;
@@ -41,7 +36,7 @@ public class ZonesWidget extends WidgetPanel {
 	float rotX = -30;
 	float rotY = -35;
 
-	public ZonesWidget() {
+	public ZoneRendererWidget() {
 		// TODO: this wants to be mouse drag instead of scrolling
 		this.addListener(MouseScrollEvent.class, (event, widget) -> {
 			if(!this.isHovered()) {

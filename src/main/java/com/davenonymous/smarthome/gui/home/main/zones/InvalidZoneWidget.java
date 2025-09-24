@@ -1,21 +1,17 @@
-package com.davenonymous.smarthome.gui.home.main;
+package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
-import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.networking.actions.AddNewZonePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class InvalidZoneWidget extends WidgetPanel {
 	public WidgetTextBox intersectsText;

@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.gui.home.main;
+package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -106,9 +106,8 @@ public class ZoneDetailWidget extends WidgetVBox {
 			int sizeZ = (int)Math.round(bounds.maxZ - bounds.minZ);
 			zoneSize.setText(String.format("%dx%dx%d", sizeX, sizeY, sizeZ));
 
-			var newDevices = HomeScreen.get().getNewDevicesForZone(selectedZone);
 			devicesList.clear();
-			for(var device : newDevices) {
+			for(var device : selectedZone.foundDevices()) {
 				var deviceWidget = new WidgetTextBox(device.pos().toShortString() + " - " + I18n.get(device.state().getBlock().getDescriptionId()), 0xFFFFFF);
 				deviceWidget.setFont(ModFonts.TINY);
 				deviceWidget.autoWidth();

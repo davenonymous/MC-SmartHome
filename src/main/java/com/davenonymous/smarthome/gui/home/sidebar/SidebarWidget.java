@@ -4,6 +4,8 @@ import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.home.ContentIDs;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
+import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import net.minecraft.ChatFormatting;
@@ -25,19 +27,30 @@ public class SidebarWidget extends WidgetVBox {
 
 		this.devicesButton = new SidebarButton(HackerNoon.Solid.retroCamera, I18n.get("smarthome.gui.home.sidebar.devices"));
 		this.devicesButton.setContentId(ContentIDs.DEVICES);
-		var newDeviceCount = screen.newDevices.size();
-		if(newDeviceCount > 0) {
-			this.devicesButton.setBadge(
-				Integer.toString(newDeviceCount),
-				I18n.get("smarthome.gui.home.sidebar.devices.badge", newDeviceCount),
-				ColorHelper.COLOR_GREEN, ChatFormatting.WHITE.getColor());
-		}
+		updateNewDeviceCount();
 		this.addContentBox(devicesButton);
 
 		this.addFlexBox(new Spacer(100, 1), FlexAlign.START, 1);
 
 		this.settingsButton = new SidebarButton(HackerNoon.Solid.cog, I18n.get("smarthome.gui.home.sidebar.settings"));
 		this.addContentBox(settingsButton);
+
+		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
+			updateNewDeviceCount();
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+	}
+
+	private void updateNewDeviceCount() {
+		var count = HomeScreen.get().selectedHome.getAllFoundDevices().values().stream().reduce(0, (a, b) -> a + b.size(), Integer::sum);
+		if(count > 0) {
+			this.devicesButton.setBadge(
+				Integer.toString(count),
+				I18n.get("smarthome.gui.home.sidebar.devices.badge", count),
+				ColorHelper.COLOR_GREEN, ChatFormatting.WHITE.getColor());
+		} else {
+			this.devicesButton.clearBadge();
+		}
 	}
 
 }

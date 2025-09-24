@@ -20,9 +20,7 @@ import org.slf4j.Logger;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class WorldWatcher implements Runnable {
 	public static DuckDBConnection connection;
@@ -37,7 +35,7 @@ public class WorldWatcher implements Runnable {
 		this.overworld = server.overworld();
 	}
 
-	public static Iterable<BlockPos> getBlocksInAABBStream(AABB box) {
+	public static List<BlockPos> getBlocksInAABBStream(AABB box) {
 		int minX = (int)Math.floor(box.minX);
 		int minY = (int)Math.floor(box.minY);
 		int minZ = (int)Math.floor(box.minZ);
@@ -56,14 +54,15 @@ public class WorldWatcher implements Runnable {
 		return positions;
 	}
 
-	public static List<FoundDevice> searchForDevices(MinecraftServer server, HomeCore home) {
+	public static Map<HomeZone, List<FoundDevice>> searchForDevices(MinecraftServer server, HomeCore home) {
 		var level = home.getHomeLevel(server);
 		if(level == null) {
-			return List.of();
+			return Map.of();
 		}
 
-		List<FoundDevice> foundDevices = new ArrayList<>();
+		Map<HomeZone, List<FoundDevice>> result = new HashMap<>();
 		for(var zone : home.zones()) {
+			List<FoundDevice> foundDevices = new ArrayList<>();
 			for(var pos : WorldWatcher.getBlocksInAABBStream(zone.bounds())) {
 				var state = level.getBlockState(pos);
 				if(zone.devices().stream().anyMatch(d -> d.pos().equals(pos) && d.matches(state))) {
@@ -85,11 +84,12 @@ public class WorldWatcher implements Runnable {
 				if(foundSensors.isEmpty()) {
 					continue;
 				}
-				foundDevices.add(new FoundDevice(zone.id(), pos, state, foundSensors));
+				foundDevices.add(new FoundDevice(pos, state, foundSensors));
 			}
+			result.put(zone, foundDevices);
 		}
 
-		return foundDevices;
+		return result;
 	}
 
 	private void processHome(HomeCore home) throws SQLException{
@@ -99,7 +99,7 @@ public class WorldWatcher implements Runnable {
 		}
 
 		ModSensors.callVisitHome(connection, homeLevel, home);
-		for(var zone : home.zones()) {
+		for(var zone : new ArrayList<>(home.zones())) {
 			ModSensors.callVisitZone(connection, homeLevel, zone);
 
 			var entities = overworld.getEntitiesOfClass(Entity.class, zone.bounds());

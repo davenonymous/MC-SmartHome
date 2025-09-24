@@ -50,6 +50,6 @@ public record AddNewZonePayload(UUID homeId, AABB area, String name)  implements
 		homes.setDirty();
 
 		SmartHome.LOGGER.info("Received request to add new zone '{}' to home {}", payload.name, payload.homeId);
-		context.reply(new HomeInfoPayload(home));
+		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

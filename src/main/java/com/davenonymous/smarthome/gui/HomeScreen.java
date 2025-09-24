@@ -14,12 +14,14 @@ import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class HomeScreen extends WidgetFullScreen {
@@ -34,12 +36,12 @@ public class HomeScreen extends WidgetFullScreen {
 	public HomeCore selectedHome;
 	public HomeBlockEntity blockEntity;
 	public List<HomeCore> ownedHomes;
-	public List<FoundDevice> newDevices;
+	public HomeWorldInfo homeWorldInfo;
 
-	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, List<FoundDevice> newDevices) {
+	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
 		super(Component.translatable("smarthome.gui.home.title"));
 		this.ownedHomes = ownedHomes;
-		this.newDevices = new ArrayList<>(newDevices);
+		this.homeWorldInfo = homeWorldInfo;
 
 		if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof HomeBlockEntity hbe) {
 			this.blockEntity = hbe;
@@ -55,10 +57,6 @@ public class HomeScreen extends WidgetFullScreen {
 		if(this.selectedHome == null && !ownedHomes.isEmpty()) {
 			this.selectedHome = ownedHomes.getFirst();
 		}
-	}
-
-	public List<FoundDevice> getNewDevicesForZone(HomeZone zone) {
-		return newDevices.stream().filter(device -> device.zoneId().equals(zone.id())).toList();
 	}
 
 	public static HomeScreen get() {
@@ -140,5 +138,9 @@ public class HomeScreen extends WidgetFullScreen {
 		contentContainerWidget.setWidth(contentLayout.width - sidebarWidget.width - contentLayout.spacing);
 		contentContainerWidget.setHeight(contentLayout.height);
 		contentContainerWidget.updateWidgetSizes();
+	}
+
+	public Map<HomeZone, List<FoundDevice>> getAllNewDevices() {
+		return selectedHome.getAllFoundDevices();
 	}
 }

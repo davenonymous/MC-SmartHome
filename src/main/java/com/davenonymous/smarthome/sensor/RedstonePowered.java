@@ -30,6 +30,11 @@ public class RedstonePowered implements ISensor {
 	}
 
 	@Override
+	public boolean isGeneric() {
+		return true;
+	}
+
+	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
 		return !state.isAir();
 	}

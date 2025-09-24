@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.gui.home.main;
+package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.gui.event.*;
@@ -14,7 +14,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 
 public class ZonesContainer extends WidgetPanel {
-	private ZonesWidget zoneDisplay;
+	private ZoneRendererWidget zoneDisplay;
 	private ZoneDetailWidget zoneDetail;
 
 	private WidgetVBox zoneButtons;
@@ -30,7 +30,7 @@ public class ZonesContainer extends WidgetPanel {
 		newZoneButtons = new WidgetHBox();
 		this.add(newZoneButtons);
 
-		zoneDisplay = new ZonesWidget();
+		zoneDisplay = new ZoneRendererWidget();
 		this.add(zoneDisplay);
 
 		this.addListener(

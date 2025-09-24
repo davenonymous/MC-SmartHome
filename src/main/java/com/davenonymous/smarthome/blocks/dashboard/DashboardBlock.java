@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
+import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.davenonymous.smarthome.setup.WorldWatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,17 +74,19 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 		}
 
 		UUID homeId = entity.home();
-		List<FoundDevice> foundDevices = new ArrayList<>();
+		HomeWorldInfo worldInfo = HomeWorldInfo.empty();
 		if(homeId == null) {
 			homeId = HomeBlockEntity.emptyUUID;
 		} else {
 			var optHome = data.getHome(homeId);
 			if(optHome.isPresent()) {
-				foundDevices.addAll(WorldWatcher.searchForDevices(level.getServer(), optHome.get()));
+				var foundDevices = WorldWatcher.searchForDevices(level.getServer(), optHome.get());
+				optHome.get().setFoundDevices(foundDevices);
+				worldInfo = HomeWorldInfo.create((ServerLevel) level, optHome.get());
 			}
 		}
 
-		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID()), foundDevices));
+		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID()), worldInfo));
 		return InteractionResult.SUCCESS_NO_ITEM_USED;
 	}
 

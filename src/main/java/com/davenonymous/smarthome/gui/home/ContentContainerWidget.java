@@ -2,8 +2,8 @@ package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
-import com.davenonymous.smarthome.gui.home.main.DevicesWidget;
-import com.davenonymous.smarthome.gui.home.main.ZonesContainer;
+import com.davenonymous.smarthome.gui.home.main.devices.DevicesContainer;
+import com.davenonymous.smarthome.gui.home.main.zones.ZonesContainer;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
@@ -25,7 +25,7 @@ public class ContentContainerWidget extends WidgetPanel {
 		registeredContentWidgets = new HashMap<>();
 
 		registerContentWidget(ContentIDs.ZONES, new ZonesContainer());
-		registerContentWidget(ContentIDs.DEVICES, new DevicesWidget());
+		registerContentWidget(ContentIDs.DEVICES, new DevicesContainer());
 
 		this.addListener(ContentSelectionEvent.class, (event, widget) -> {
 			setActiveContentWidget(event.contentId());

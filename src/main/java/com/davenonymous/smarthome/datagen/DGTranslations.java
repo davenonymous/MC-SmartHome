@@ -43,6 +43,17 @@ public class DGTranslations extends LanguageProvider {
 		add("smarthome.gui.home.zones.detail.delete", "Ctrl+Shift+Click to delete zone");
 		add("smarthome.gui.home.zones.add_zones.hint", "Enter name");
 
+		add("smarthome.gui.home.devices.label.new_devices", "New:");
+		add("smarthome.gui.home.devices.label.configured_devices", "Devices:");
+
+		add("smarthome.gui.home.devices.table.tooltip.missing_device", "Missing device");
+
+		add("smarthome.gui.home.devices.add.renameable", "Click to rename device");
+		add("smarthome.gui.home.devices.add.sensors.count", "%d sensors");
+		add("smarthome.gui.home.devices.add.add_device", "Add device");
+		add("smarthome.gui.home.devices.add.ignore_device", "Ignore device");
+		add("smarthome.gui.home.devices.add.ignore_device.hint", "Ignored devices can still be added later from the settings menu.");
+
 		add("smarthome.gui.home.sidebar.devices", "Devices");
 		add("smarthome.gui.home.sidebar.devices.badge", "New devices found");
 

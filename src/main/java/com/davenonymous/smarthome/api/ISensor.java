@@ -19,6 +19,10 @@ public interface ISensor {
 
 	boolean isValid(Level level, BlockPos pos, BlockState state);
 
+	default boolean isGeneric() {
+		return false;
+	}
+
 	default String nameTranslationKey() {
 		var dotted = id().getPath().replaceAll("/", ".");
 		return id().getNamespace() + "." + dotted + ".name";

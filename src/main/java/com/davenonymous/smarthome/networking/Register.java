@@ -68,5 +68,17 @@ public class Register {
 			MarkZoneAsDeletedPayload.CODEC,
 			MarkZoneAsDeletedPayload::handleOnServer
 		);
+
+		registrar.playToServer(
+			AddDevicePayload.TYPE,
+			AddDevicePayload.CODEC,
+			AddDevicePayload::handleOnServer
+		);
+
+		registrar.playToServer(
+			IgnoreDevicePayload.TYPE,
+			IgnoreDevicePayload.CODEC,
+			IgnoreDevicePayload::handleOnServer
+		);
 	}
 }

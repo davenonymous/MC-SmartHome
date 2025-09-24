@@ -13,16 +13,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 import java.util.UUID;
 
-public record FoundDevice(UUID zoneId, BlockPos pos, BlockState state, List<ResourceLocation> sensorIds) {
+public record FoundDevice(BlockPos pos, BlockState state, List<ResourceLocation> sensorIds) {
 	public static final MapCodec<FoundDevice> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-		UUIDUtil.CODEC.fieldOf("zone").forGetter(FoundDevice::zoneId),
 		BlockPos.CODEC.fieldOf("pos").forGetter(FoundDevice::pos),
 		BlockState.CODEC.fieldOf("state").forGetter(FoundDevice::state),
 		ResourceLocation.CODEC.listOf().fieldOf("sensors").forGetter(FoundDevice::sensorIds)
 	).apply(instance, FoundDevice::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, FoundDevice> STREAM_CODEC = StreamCodec.composite(
-		UUIDUtil.STREAM_CODEC, FoundDevice::zoneId,
 		BlockPos.STREAM_CODEC, FoundDevice::pos,
 		ByteBufCodecs.fromCodec(BlockState.CODEC), FoundDevice::state,
 		ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list()), FoundDevice::sensorIds,

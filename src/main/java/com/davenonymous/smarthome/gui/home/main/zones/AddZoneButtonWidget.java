@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.gui.home.main;
+package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.HomeScreen;

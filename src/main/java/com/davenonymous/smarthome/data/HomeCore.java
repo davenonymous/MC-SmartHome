@@ -20,10 +20,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class HomeCore {
@@ -65,6 +62,30 @@ public class HomeCore {
 			this.zones = new ArrayList<>();
 		}
 		updateBounds();
+	}
+
+	public Map<HomeZone, List<FoundDevice>> getAllFoundDevices() {
+		Map<HomeZone, List<FoundDevice>> foundDevices = new HashMap<>();
+		for(HomeZone zone : zones) {
+			foundDevices.put(zone, zone.foundDevices());
+		}
+		return foundDevices;
+	}
+
+	public Map<HomeZone, List<ConfiguredDevice>> getAllConfiguredDevices() {
+		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
+		for(HomeZone zone : zones) {
+			configuredDevices.put(zone, zone.devices());
+		}
+		return configuredDevices;
+	}
+
+	public Map<HomeZone, List<IgnoredDevice>> getAllIgnoredDevices() {
+		Map<HomeZone, List<IgnoredDevice>> ignoredDevices = new HashMap<>();
+		for(HomeZone zone : zones) {
+			ignoredDevices.put(zone, zone.ignoredDevices());
+		}
+		return ignoredDevices;
 	}
 
 	public ServerLevel getHomeLevel(MinecraftServer server) {
@@ -124,6 +145,15 @@ public class HomeCore {
 	public HomeCore setName(String name) {
 		this.name = name;
 		return this;
+	}
+
+	public void setFoundDevices(Map<HomeZone, List<FoundDevice>> foundDevices) {
+		for(var entry : foundDevices.entrySet()) {
+			var zone = entry.getKey();
+			var devices = entry.getValue();
+			zone.foundDevices().clear();
+			zone.foundDevices().addAll(devices);
+		}
 	}
 
 	public CompoundTag writeToNBT(CompoundTag nbt) {

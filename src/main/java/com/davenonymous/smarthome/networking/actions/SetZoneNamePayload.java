@@ -60,6 +60,6 @@ public record SetZoneNamePayload(DimPos rackPos, UUID homeId, UUID zoneId, Strin
 		zone.setName(payload.name());
 		homes.setDirty();
 
-		context.reply(new HomeInfoPayload(home));
+		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

@@ -78,6 +78,14 @@ public class SidebarButton extends WidgetPanel {
 		return this;
 	}
 
+	public SidebarButton clearBadge() {
+		if(this.badgeWidget != null) {
+			this.remove(this.badgeWidget);
+			this.badgeWidget = null;
+		}
+		return this;
+	}
+
 	public ResourceLocation contentId() {
 		return contentId;
 	}
