@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.sensor;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.ISensor;
 import com.davenonymous.smarthome.api.SmartHomeSensor;
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.core.BlockPos;
@@ -42,12 +43,12 @@ public class RedstonePowered implements ISensor {
 	@Override
 	public void createTables(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
-		stmt.execute("CREATE TABLE IF NOT EXISTS redstone (instant TIMESTAMP, tick UBIGINT, home UUID, zone VARCHAR, power UTINYINT, pos STRUCT(x BIGINT, y BIGINT, z BIGINT))");
+		stmt.execute("CREATE TABLE IF NOT EXISTS redstone (instant TIMESTAMP, tick UBIGINT, home UUID, zone UUID, device UUID, power UTINYINT, pos STRUCT(x BIGINT, y BIGINT, z BIGINT))");
 		stmt.close();
 	}
 
 	@Override
-	public void visitZoneBlock(DuckDBConnection connection, ServerLevel level, HomeZone zone, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
+	public void visitZoneBlock(DuckDBConnection connection, ServerLevel level, HomeZone zone, ConfiguredDevice device, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
 
 		int signal = 0;
 		if(state.hasAnalogOutputSignal()) {
@@ -62,7 +63,8 @@ public class RedstonePowered implements ISensor {
 		int paramIndex = 1;
 		prepped.setLong(paramIndex++, level.getServer().getTickCount());
 		prepped.setObject(paramIndex++, zone.home().id());
-		prepped.setString(paramIndex++, zone.name());
+		prepped.setObject(paramIndex++, zone.id());
+		prepped.setObject(paramIndex++, device.id());
 		prepped.setInt(paramIndex++, signal);
 		prepped.setInt(paramIndex++, pos.getX());
 		prepped.setInt(paramIndex++, pos.getY());

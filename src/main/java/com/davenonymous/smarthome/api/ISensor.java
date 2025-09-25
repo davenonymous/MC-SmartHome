@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.api;
 
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
 import net.minecraft.core.BlockPos;
@@ -23,6 +24,10 @@ public interface ISensor {
 		return false;
 	}
 
+	default boolean shouldVisitAllBlocksInZone() {
+		return false;
+	}
+
 	default String nameTranslationKey() {
 		var dotted = id().getPath().replaceAll("/", ".");
 		return id().getNamespace() + "." + dotted + ".name";
@@ -35,9 +40,9 @@ public interface ISensor {
 
 	default void createTables(DuckDBConnection connection) throws SQLException {}
 
-	default void visitHome(DuckDBConnection connection, ServerLevel server, HomeCore home) throws SQLException {}
-	default void visitZone(DuckDBConnection connection, ServerLevel server, HomeZone zone) throws SQLException {}
-	default void visitZoneEntity(DuckDBConnection connection, ServerLevel server, HomeZone zone, Entity entity) throws SQLException {}
-	default void visitZoneBlock(DuckDBConnection connection, ServerLevel server, HomeZone zone, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {}
+	default void visitHome(DuckDBConnection connection, ServerLevel server, HomeCore home, ConfiguredDevice device) throws SQLException {}
+	default void visitZone(DuckDBConnection connection, ServerLevel server, HomeZone zone, ConfiguredDevice device) throws SQLException {}
+	default void visitZoneEntity(DuckDBConnection connection, ServerLevel server, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {}
+	default void visitZoneBlock(DuckDBConnection connection, ServerLevel server, HomeZone zone, ConfiguredDevice device, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {}
 
 }

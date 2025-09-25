@@ -55,9 +55,9 @@ public class DeviceDetailWidget extends WidgetVBox {
 		if(device == null) {
 			deviceRenameInput.setValue("");
 		} else {
-			deviceRenameInput.setValue(device.deviceId());
+			deviceRenameInput.setValue(device.name());
 			deviceRenameInput.nativeWidget().scrollTo(0);
-			deviceRenameInput.nativeWidget().scrollTo(device.deviceId().length() / 2);
+			deviceRenameInput.nativeWidget().scrollTo(device.name().length() / 2);
 		}
 		updateWidgetSizes();
 		return this;

@@ -141,6 +141,9 @@ public class HomeScreen extends WidgetFullScreen {
 	}
 
 	public Map<HomeZone, List<FoundDevice>> getAllNewDevices() {
+		if(selectedHome == null) {
+			return Map.of();
+		}
 		return selectedHome.getAllFoundDevices();
 	}
 }

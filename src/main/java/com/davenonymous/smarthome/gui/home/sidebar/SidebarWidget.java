@@ -42,7 +42,13 @@ public class SidebarWidget extends WidgetVBox {
 	}
 
 	private void updateNewDeviceCount() {
-		var count = HomeScreen.get().selectedHome.getAllFoundDevices().values().stream().reduce(0, (a, b) -> a + b.size(), Integer::sum);
+		var home = HomeScreen.get().selectedHome;
+		if(home == null) {
+			this.devicesButton.clearBadge();
+			return;
+		}
+
+		var count = home.getAllFoundDevices().values().stream().reduce(0, (a, b) -> a + b.size(), Integer::sum);
 		if(count > 0) {
 			this.devicesButton.setBadge(
 				Integer.toString(count),

@@ -102,7 +102,7 @@ public class HomeZone {
 	}
 
 	public void removeDevice(ConfiguredDevice device) {
-		this.devices.removeIf(d -> d.pos().equals(device.pos()) && d.blockId().equals(device.blockId()));
+		this.devices.removeIf(d -> d.id().equals(device.id()));
 	}
 
 	public void removeIgnoredDevice(IgnoredDevice device) {
@@ -112,7 +112,7 @@ public class HomeZone {
 	public void setDeviceName(ConfiguredDevice device, String newName) {
 		for(int i = 0; i < devices.size(); i++) {
 			var d = devices.get(i);
-			if(d.pos().equals(device.pos()) && d.blockId().equals(device.blockId())) {
+			if(d.id().equals(device.id())) {
 				devices.set(i, devices.get(i).withName(newName));
 				return;
 			}

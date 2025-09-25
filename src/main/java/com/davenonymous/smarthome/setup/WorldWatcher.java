@@ -98,27 +98,42 @@ public class WorldWatcher implements Runnable {
 			return;
 		}
 
-		ModSensors.callVisitHome(connection, homeLevel, home);
-		for(var zone : new ArrayList<>(home.zones())) {
-			ModSensors.callVisitZone(connection, homeLevel, zone);
+		for(var entry : home.getAllConfiguredDevices().entrySet()) {
+			var zone = entry.getKey();
+			for(var device : entry.getValue()) {
+				if(!device.enabled()) {
+					continue;
+				}
 
-			var entities = overworld.getEntitiesOfClass(Entity.class, zone.bounds());
-			for(var entity : entities) {
-				ModSensors.callVisitZoneEntity(connection, homeLevel, zone, entity);
-			}
-
-			for(var device : zone.devices()) {
 				var pos = device.pos();
-				var blockState = overworld.getBlockState(pos);
-				var blockEntity = overworld.getBlockEntity(pos);
-				ModSensors.callVisitZoneBlock(connection, homeLevel, zone, pos, blockState, blockEntity);
-			}
+				var blockState = homeLevel.getBlockState(pos);
+				var validSensors = ModSensors.SENSORS.stream().filter(sensor -> sensor.isValid(homeLevel, pos, blockState)).toList();
+				if(validSensors.isEmpty()) {
+					continue;
+				}
 
-//			for(var pos : getBlocksInAABBStream(zone.bounds())) {
-//				var blockState = overworld.getBlockState(pos);
-//				var blockEntity = overworld.getBlockEntity(pos);
-//				ModSensors.callVisitZoneBlock(connection, server, zone, pos, blockState, blockEntity);
-//			}
+				List<ISensor> expensiveSensors = new ArrayList<>();
+				for(var sensor : validSensors) {
+					sensor.visitZone(connection, homeLevel, zone, device);
+					sensor.visitZoneBlock(connection, homeLevel, zone, device, pos, blockState, homeLevel.getBlockEntity(pos));
+					var entities = overworld.getEntitiesOfClass(Entity.class, zone.bounds());
+					for(var entity : entities) {
+						sensor.visitZoneEntity(connection, homeLevel, zone, device, entity);
+					}
+					if(sensor.shouldVisitAllBlocksInZone()) {
+						expensiveSensors.add(sensor);
+					}
+				}
+
+				for(var sensorCheckPos : getBlocksInAABBStream(zone.bounds())) {
+					var sensorCheckState = overworld.getBlockState(sensorCheckPos);
+					var sensorCheckEntity = overworld.getBlockEntity(sensorCheckPos);
+
+					for(var sensor : expensiveSensors) {
+						sensor.visitZoneBlock(connection, homeLevel, zone, device, sensorCheckPos, sensorCheckState, sensorCheckEntity);
+					}
+				}
+			}
 		}
 	}
 

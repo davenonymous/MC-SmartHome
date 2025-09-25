@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.sensor;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.ISensor;
 import com.davenonymous.smarthome.api.SmartHomeSensor;
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.core.BlockPos;
@@ -41,7 +42,7 @@ public class Occupancy implements ISensor {
 	}
 
 	@Override
-	public void visitZoneEntity(DuckDBConnection connection, ServerLevel level, HomeZone zone, Entity entity) throws SQLException {
+	public void visitZoneEntity(DuckDBConnection connection, ServerLevel level, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
 		if(!(entity instanceof LivingEntity livingEntity)) {
 			return;
 		}

@@ -53,29 +53,4 @@ public class ModSensors {
 			sensor.createTables(connection);
 		}
 	}
-
-	public static void callVisitHome(DuckDBConnection connection, ServerLevel level, HomeCore home) throws SQLException {
-		for(var sensor : SENSORS) {
-			sensor.visitHome(connection, level, home);
-		}
-	}
-
-	public static void callVisitZone(DuckDBConnection connection, ServerLevel level, HomeZone zone) throws SQLException {
-		for(var sensor : SENSORS) {
-			sensor.visitZone(connection, level, zone);
-		}
-	}
-
-	public static void callVisitZoneEntity(DuckDBConnection connection, ServerLevel level, HomeZone zone, Entity entity) throws SQLException {
-		for(var sensor : SENSORS) {
-			sensor.visitZoneEntity(connection, level, zone, entity);
-		}
-	}
-
-	public static void callVisitZoneBlock(DuckDBConnection connection, ServerLevel level, HomeZone zone, net.minecraft.core.BlockPos pos, net.minecraft.world.level.block.state.BlockState state, net.minecraft.world.level.block.entity.BlockEntity blockEntity) throws SQLException {
-		for(var sensor : SENSORS) {
-			sensor.visitZoneBlock(connection, level, zone, pos, state, blockEntity);
-		}
-	}
-
 }

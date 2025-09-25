@@ -84,7 +84,7 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 			WrappedStringTooltipComponent.white(I18n.get("smarthome.gui.home.devices.add.add_device"))
 		);
 		addButton.addListener(MouseClickEvent.class, (event, widget) -> {
-			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location());
+			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location(), zone.home().settings().autoEnableNewDevices());
 			PacketDistributor.sendToServer(new AddDevicePayload(zone.home().id(), zone.id(), configured));
 			addButton.setEnabled(false);
 			return WidgetEventResult.HANDLED;
