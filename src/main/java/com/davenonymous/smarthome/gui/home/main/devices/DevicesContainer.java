@@ -18,6 +18,7 @@ public class DevicesContainer extends WidgetPanel {
 	public WidgetTextBox devicesLabel;
 	public ConfiguredDevicesTable configuredDevicesTable;
 	public DeviceDetailWidget deviceDetail;
+	public WidgetPanel tableContainer;
 
 	public DevicesContainer() {
 		newDevicesBar = new NewDevicesWidget();
@@ -43,7 +44,7 @@ public class DevicesContainer extends WidgetPanel {
 		this.add(devicesLabel);
 
 		configuredDevicesTable = new ConfiguredDevicesTable();
-		configuredDevicesTable.setPosition(8, 152);
+		configuredDevicesTable.setPosition(8, 8);
 		configuredDevicesTable.addListener(
 			DeviceSelectionEvent.class, (event, widget) -> {
 			if(deviceDetail.device() != null && deviceDetail.device().equals(event.device())) {
@@ -57,7 +58,12 @@ public class DevicesContainer extends WidgetPanel {
 			updateWidgetSizes();
 			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
-		this.add(configuredDevicesTable);
+
+		tableContainer = new DeviceTableContainer();
+		tableContainer.setPosition(8, 152);
+		tableContainer.add(configuredDevicesTable);
+
+		this.add(tableContainer);
 
 		deviceDetail = new DeviceDetailWidget();
 		this.add(deviceDetail);
@@ -84,14 +90,16 @@ public class DevicesContainer extends WidgetPanel {
 		boolean hasNewDevices = !newDevicesBar.children().isEmpty();
 		if(!hasNewDevices) {
 			devicesLabel.setPosition(8, 8);
-			configuredDevicesTable.setPosition(8, 24);
-			configuredDevicesTable.setHeight(this.height - 34);
+			tableContainer.setPosition(8, 24);
+			tableContainer.setHeight(this.height - 34);
 		} else {
 			devicesLabel.setPosition(8, newDevicesBar.y + newDevicesBar.height + 8);
-			configuredDevicesTable.setPosition(8, devicesLabel.y + devicesLabel.height + 18);
-			configuredDevicesTable.setHeight(this.height - configuredDevicesTable.y - 8);
+			tableContainer.setPosition(8, devicesLabel.y + devicesLabel.height + 18);
+			tableContainer.setHeight(this.height - tableContainer.y - 8);
 			configuredDevicesTable.updateWidgetSizes();
 		}
+
+		configuredDevicesTable.setHeight(tableContainer.height - 16);
 
 		int displayWidth = this.width() - 16;
 		int displayX = 8;
@@ -100,16 +108,17 @@ public class DevicesContainer extends WidgetPanel {
 			int detailX = displayX + displayWidth + 5;
 			int detailWidth = this.width() - displayWidth - 21;
 
-			deviceDetail.setPosition(detailX, configuredDevicesTable.y);
+			deviceDetail.setPosition(detailX, tableContainer.y);
 			deviceDetail.setWidth(detailWidth);
-			deviceDetail.setHeight(configuredDevicesTable.height());
+			deviceDetail.setHeight(tableContainer.height());
 			deviceDetail.setVisible(true);
 			deviceDetail.updateWidgetSizes();
 		} else {
 			deviceDetail.setVisible(false);
 		}
 
-		configuredDevicesTable.setWidth(displayWidth);
+		tableContainer.setWidth(displayWidth);
+		configuredDevicesTable.setWidth(tableContainer.width() - 16);
 
 		if(!hasNewDevices) {
 			newDevicesBar.setVisible(false);

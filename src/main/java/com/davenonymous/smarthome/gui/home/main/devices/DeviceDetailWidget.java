@@ -36,7 +36,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 				updateWidgetSizes();
 				return WidgetEventResult.HANDLED;
 			});
-		deviceRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.zones.detail.renameable")));
+		deviceRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.devices.add.renameable")));
 		this.addContentBox(deviceRenameInput, FlexAlign.CENTER);
 
 	}

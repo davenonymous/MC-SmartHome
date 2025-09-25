@@ -65,13 +65,11 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 
 	private ConfiguredDevicesTable createHeaderRow() {
 		this.clear();
-		this.add(0, 0, new Spacer(8, 1));
-		this.add(1, 0, createHeaderWidget("Device Name"));
-		this.add(2, 0, createHeaderWidget("Zone"));
-		this.add(3, 0, createHeaderWidget("Position", ContentAlignment.MIDDLE_CENTER));
-		this.add(4, 0, createHeaderWidget("Type"));
-		this.add(5, 0, createHeaderWidget("Sensors"));
-		this.add(6, 0, new Spacer(1, 25));
+		this.add(0, 0, createHeaderWidget("Device Name"));
+		this.add(1, 0, createHeaderWidget("Zone"));
+		this.add(2, 0, createHeaderWidget("Position", ContentAlignment.MIDDLE_CENTER));
+		this.add(3, 0, createHeaderWidget("Type"));
+		this.add(4, 0, createHeaderWidget("Sensors"));
 		return this;
 	}
 
@@ -118,9 +116,9 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 			int row = this.getRowCount();
 			devices.put(row, entry);
 
-			this.add(1, row, createCellWidget(device.deviceId()));
-			this.add(2, row, createCellWidget(zone.name()));
-			this.add(3, row, createCellWidget(device.pos().toShortString(), ContentAlignment.MIDDLE_CENTER));
+			this.add(0, row, createCellWidget(device.deviceId()));
+			this.add(1, row, createCellWidget(zone.name()));
+			this.add(2, row, createCellWidget(device.pos().toShortString(), ContentAlignment.MIDDLE_CENTER));
 
 			CellData cellWidget;
 			var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
@@ -136,15 +134,7 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 				cellWidget = createCellWidget(I18n.get(deviceBlockState.getBlock().getDescriptionId()));
 			}
 
-			this.add(4, row, cellWidget);
+			this.add(3, row, cellWidget);
 		}
-	}
-
-	@Override
-	public void draw(GuiGraphics guiGraphics, Window window) {
-		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
-		guiGraphics.fill(3, 3, width()-3, height()-3, 0x88000000);
-
-		super.draw(guiGraphics, window);
 	}
 }
