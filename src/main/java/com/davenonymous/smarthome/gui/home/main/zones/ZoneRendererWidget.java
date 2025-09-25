@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.client.BoxRenderer;
+import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
@@ -20,15 +21,16 @@ import org.joml.Vector3f;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class ZoneRendererWidget extends WidgetPanel {
 	VoxelShape homeShape;
 	BoxLineCache boxLines;
 	BoxLineCache boundBoxLines;
 
-	Map<String, BoxLineCache> zoneBoxes;
+	Map<UUID, BoxLineCache> zoneBoxes;
 
-	public String selectedZone = null;
+	public HomeZone hoveredZone = null;
 	public RangerFinderDataComponent selectedRangeFinder;
 
 	Map<RangerFinderDataComponent, BoxLineCache> rangeFinderBoxes;
@@ -87,7 +89,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 			var shape = Shapes.create(zone.bounds().move(-selectedHome.shape().bounds().minX, -selectedHome.shape().bounds().minY, -selectedHome.shape().bounds().minZ).deflate(1/16d));
 			var boxLineCache = new BoxLineCache();
 			boxLineCache.addShape(shape);
-			zoneBoxes.put(zone.name(), boxLineCache);
+			zoneBoxes.put(zone.id(), boxLineCache);
 		}
 
 
@@ -151,13 +153,15 @@ public class ZoneRendererWidget extends WidgetPanel {
 		int color = ChatFormatting.YELLOW.getColor() | 0xFF000000;
 		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boxLines.lines, color, 2);
 
-		for(var zoneEntry : zoneBoxes.entrySet()) {
-			var zoneName = zoneEntry.getKey();
-			var zoneBox = zoneEntry.getValue();
+		if(this.hoveredZone != null) {
+			for(var zoneEntry : zoneBoxes.entrySet()) {
+				var zoneId = zoneEntry.getKey();
+				var zoneBox = zoneEntry.getValue();
 
-			if(zoneName.equals(selectedZone)) {
-				int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
-				BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
+				if(zoneId.equals(hoveredZone.id())) {
+					int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
+					BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
+				}
 			}
 		}
 

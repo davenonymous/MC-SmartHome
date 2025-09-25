@@ -14,10 +14,10 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.UUID;
 
-public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled) {
+public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored) {
 
-	public ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation blockId, boolean enabled) {
-		this(UUID.randomUUID(), pos, deviceId, blockId, enabled);
+	public ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation blockId, boolean enabled, boolean ignored) {
+		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored);
 	}
 
 	public boolean matches(Block block) {
@@ -34,7 +34,8 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 		BlockPos.CODEC.fieldOf("pos").forGetter(ConfiguredDevice::pos),
 		Codec.STRING.fieldOf("device").forGetter(ConfiguredDevice::name),
 		ResourceLocation.CODEC.fieldOf("block").forGetter(ConfiguredDevice::blockId),
-		Codec.BOOL.optionalFieldOf("enabled", false).forGetter(ConfiguredDevice::enabled)
+		Codec.BOOL.optionalFieldOf("enabled", false).forGetter(ConfiguredDevice::enabled),
+		Codec.BOOL.optionalFieldOf("ignored", false).forGetter(ConfiguredDevice::ignored)
 	).apply(instance, ConfiguredDevice::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ConfiguredDevice> STREAM_CODEC = StreamCodec.composite(
@@ -43,10 +44,19 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 		ByteBufCodecs.STRING_UTF8, ConfiguredDevice::name,
 		ResourceLocation.STREAM_CODEC, ConfiguredDevice::blockId,
 		ByteBufCodecs.BOOL, ConfiguredDevice::enabled,
+		ByteBufCodecs.BOOL, ConfiguredDevice::ignored,
 		ConfiguredDevice::new
 	);
 
 	public ConfiguredDevice withName(String newName) {
-		return new ConfiguredDevice(this.id, this.pos, newName, this.blockId, this.enabled);
+		return new ConfiguredDevice(this.id, this.pos, newName, this.blockId, this.enabled, this.ignored);
+	}
+
+	public ConfiguredDevice withEnabled(boolean newEnabled) {
+		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, newEnabled, this.ignored);
+	}
+
+	public ConfiguredDevice withIgnored(boolean newIgnored) {
+		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, this.enabled, newIgnored);
 	}
 }

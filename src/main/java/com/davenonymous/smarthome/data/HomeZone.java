@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.data;
 
-import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -22,7 +21,6 @@ public class HomeZone {
 	boolean deleted;
 
 	List<ConfiguredDevice> devices;
-	List<IgnoredDevice> ignoredDevices;
 	List<FoundDevice> foundDevices;
 
 	HomeCore home;
@@ -43,10 +41,6 @@ public class HomeZone {
 		return devices;
 	}
 
-	public List<IgnoredDevice> ignoredDevices() {
-		return ignoredDevices;
-	}
-
 	public List<FoundDevice> foundDevices() {
 		return foundDevices;
 	}
@@ -62,16 +56,15 @@ public class HomeZone {
 	}
 
 	public HomeZone(String name, AABB bounds) {
-		this(UUID.randomUUID(), name, bounds, List.of(), List.of(), List.of(), false);
+		this(UUID.randomUUID(), name, bounds, List.of(), List.of(), false);
 	}
 
-	public HomeZone(UUID id, String name, AABB bounds, List<ConfiguredDevice> devices, List<IgnoredDevice> ignoredDevices, List<FoundDevice> foundDevices, boolean deleted) {
+	public HomeZone(UUID id, String name, AABB bounds, List<ConfiguredDevice> devices, List<FoundDevice> foundDevices, boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.bounds = bounds;
 		this.deleted = deleted;
 		this.devices = new ArrayList<>(devices);
-		this.ignoredDevices = new ArrayList<>(ignoredDevices);
 		this.foundDevices = new ArrayList<>(foundDevices);
 	}
 
@@ -97,16 +90,8 @@ public class HomeZone {
 		this.devices.add(device);
 	}
 
-	public void addIgnoredDevice(IgnoredDevice device) {
-		this.ignoredDevices.add(device);
-	}
-
 	public void removeDevice(ConfiguredDevice device) {
 		this.devices.removeIf(d -> d.id().equals(device.id()));
-	}
-
-	public void removeIgnoredDevice(IgnoredDevice device) {
-		this.ignoredDevices.removeIf(d -> d.pos().equals(device.pos()) && d.state().getBlock() == device.state().getBlock());
 	}
 
 	public void setDeviceName(ConfiguredDevice device, String newName) {
@@ -124,17 +109,15 @@ public class HomeZone {
 		Codec.STRING.fieldOf("name").forGetter(HomeZone::name),
 		MoreCodecs.AABB_CODEC.fieldOf("bounds").forGetter(HomeZone::bounds),
 		ConfiguredDevice.CODEC.codec().listOf().optionalFieldOf("devices", List.of()).forGetter(HomeZone::devices),
-		IgnoredDevice.CODEC.codec().listOf().optionalFieldOf("ignoredDevices", List.of()).forGetter(HomeZone::ignoredDevices),
 		FoundDevice.CODEC.codec().listOf().optionalFieldOf("foundDevices", List.of()).forGetter(HomeZone::foundDevices),
 		Codec.BOOL.optionalFieldOf("deleted", false).forGetter(HomeZone::isDeleted)
 	).apply(instance, HomeZone::new));
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, HomeZone> STREAM_CODEC = BiggerStreamCodec.composite(
+	public static final StreamCodec<RegistryFriendlyByteBuf, HomeZone> STREAM_CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, HomeZone::id,
 		ByteBufCodecs.STRING_UTF8, HomeZone::name,
 		MoreCodecs.AABB_STREAM_CODEC, HomeZone::bounds,
 		ConfiguredDevice.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeZone::devices,
-		IgnoredDevice.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeZone::ignoredDevices,
 		FoundDevice.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeZone::foundDevices,
 		ByteBufCodecs.BOOL, HomeZone::isDeleted,
 		HomeZone::new

@@ -7,6 +7,7 @@ import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -35,62 +36,6 @@ public class WorldWatcher implements Runnable {
 		this.overworld = server.overworld();
 	}
 
-	public static List<BlockPos> getBlocksInAABBStream(AABB box) {
-		int minX = (int)Math.floor(box.minX);
-		int minY = (int)Math.floor(box.minY);
-		int minZ = (int)Math.floor(box.minZ);
-		int maxX = (int)Math.ceil(box.maxX)-1;
-		int maxY = (int)Math.ceil(box.maxY)-1;
-		int maxZ = (int)Math.ceil(box.maxZ)-1;
-
-		var positions = new LinkedList<BlockPos>();
-		for(int x = minX; x <= maxX; x++) {
-			for(int y = minY; y <= maxY; y++) {
-				for(int z = minZ; z <= maxZ; z++) {
-					positions.add(new BlockPos(x, y, z));
-				}
-			}
-		}
-		return positions;
-	}
-
-	public static Map<HomeZone, List<FoundDevice>> searchForDevices(MinecraftServer server, HomeCore home) {
-		var level = home.getHomeLevel(server);
-		if(level == null) {
-			return Map.of();
-		}
-
-		Map<HomeZone, List<FoundDevice>> result = new HashMap<>();
-		for(var zone : home.zones()) {
-			List<FoundDevice> foundDevices = new ArrayList<>();
-			for(var pos : WorldWatcher.getBlocksInAABBStream(zone.bounds())) {
-				var state = level.getBlockState(pos);
-				if(zone.devices().stream().anyMatch(d -> d.pos().equals(pos) && d.matches(state))) {
-					continue;
-				}
-
-				if(zone.ignoredDevices().stream().anyMatch(d -> d.pos().equals(pos) && d.matches(state))) {
-					continue;
-				}
-
-				List<ResourceLocation> foundSensors = new ArrayList<>();
-				for(var sensor : ModSensors.SENSORS) {
-					if(!sensor.isValid(level, pos, state)) {
-						continue;
-					}
-
-					foundSensors.add(sensor.id());
-				}
-				if(foundSensors.isEmpty()) {
-					continue;
-				}
-				foundDevices.add(new FoundDevice(pos, state, foundSensors));
-			}
-			result.put(zone, foundDevices);
-		}
-
-		return result;
-	}
 
 	private void processHome(HomeCore home) throws SQLException{
 		var homeLevel = home.getHomeLevel(server);
@@ -125,12 +70,14 @@ public class WorldWatcher implements Runnable {
 					}
 				}
 
-				for(var sensorCheckPos : getBlocksInAABBStream(zone.bounds())) {
-					var sensorCheckState = overworld.getBlockState(sensorCheckPos);
-					var sensorCheckEntity = overworld.getBlockEntity(sensorCheckPos);
+				if(!expensiveSensors.isEmpty()) {
+					for(var sensorCheckPos : WorldWatcherUtil.getBlocksInAABBStream(zone.bounds())) {
+						var sensorCheckState = overworld.getBlockState(sensorCheckPos);
+						var sensorCheckEntity = overworld.getBlockEntity(sensorCheckPos);
 
-					for(var sensor : expensiveSensors) {
-						sensor.visitZoneBlock(connection, homeLevel, zone, device, sensorCheckPos, sensorCheckState, sensorCheckEntity);
+						for(var sensor : expensiveSensors) {
+							sensor.visitZoneBlock(connection, homeLevel, zone, device, sensorCheckPos, sensorCheckState, sensorCheckEntity);
+						}
 					}
 				}
 			}
@@ -151,7 +98,7 @@ public class WorldWatcher implements Runnable {
 		LOGGER.info("Entering world watcher loop");
 		while(true) {
 			try {
-				Thread.sleep(500L);
+				Thread.sleep(100L);
 			} catch (InterruptedException e) {
 				break;
 			}

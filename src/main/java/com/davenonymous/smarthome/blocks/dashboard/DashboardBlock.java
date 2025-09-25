@@ -2,11 +2,10 @@ package com.davenonymous.smarthome.blocks.dashboard;
 
 import com.davenonymous.smarthome.blocks.base.FacingBaseBlock;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
-import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
-import com.davenonymous.smarthome.setup.WorldWatcher;
+import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -26,8 +25,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -80,7 +77,7 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 		} else {
 			var optHome = data.getHome(homeId);
 			if(optHome.isPresent()) {
-				var foundDevices = WorldWatcher.searchForDevices(level.getServer(), optHome.get());
+				var foundDevices = WorldWatcherUtil.searchForDevices(level.getServer(), optHome.get());
 				optHome.get().setFoundDevices(foundDevices);
 				worldInfo = HomeWorldInfo.create((ServerLevel) level, optHome.get());
 			}

@@ -138,6 +138,8 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 
 			this.add(0, row, new BlockStateWidget(deviceBlockState));
 			this.add(4, row, cellWidget);
+			this.add(5, row, createCellWidget(device.enabled() ? "Enabled" : "Disabled"));
+
 		}
 	}
 }

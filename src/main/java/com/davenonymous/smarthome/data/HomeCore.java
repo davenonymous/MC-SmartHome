@@ -21,6 +21,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class HomeCore {
@@ -74,7 +75,7 @@ public class HomeCore {
 		return foundDevices;
 	}
 
-	public Map<HomeZone, List<ConfiguredDevice>> getAllConfiguredDevices() {
+	public Map<HomeZone, List<ConfiguredDevice>> getAllDevices() {
 		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
 			configuredDevices.put(zone, zone.devices());
@@ -82,10 +83,18 @@ public class HomeCore {
 		return configuredDevices;
 	}
 
-	public Map<HomeZone, List<IgnoredDevice>> getAllIgnoredDevices() {
-		Map<HomeZone, List<IgnoredDevice>> ignoredDevices = new HashMap<>();
+	public Map<HomeZone, List<ConfiguredDevice>> getAllConfiguredDevices() {
+		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
-			ignoredDevices.put(zone, zone.ignoredDevices());
+			configuredDevices.put(zone, zone.devices().stream().filter(Predicate.not(ConfiguredDevice::ignored)).toList());
+		}
+		return configuredDevices;
+	}
+
+	public Map<HomeZone, List<ConfiguredDevice>> getAllIgnoredDevices() {
+		Map<HomeZone, List<ConfiguredDevice>> ignoredDevices = new HashMap<>();
+		for(HomeZone zone : zones) {
+			ignoredDevices.put(zone, zone.devices().stream().filter(ConfiguredDevice::ignored).toList());
 		}
 		return ignoredDevices;
 	}

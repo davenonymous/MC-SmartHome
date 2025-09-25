@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.networking.data;
 
 import com.davenonymous.smarthome.data.HomeCore;
-import com.davenonymous.smarthome.setup.WorldWatcher;
+import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -22,7 +22,7 @@ public record HomeWorldInfo(Map<BlockPos, BlockState> blockStates) {
 
 	public static HomeWorldInfo create(ServerLevel level, HomeCore home) {
 		Map<BlockPos, BlockState> blocksInZones = home.zones().stream()
-			.flatMap(zone -> WorldWatcher.getBlocksInAABBStream(zone.bounds()).stream())
+			.flatMap(zone -> WorldWatcherUtil.getBlocksInAABBStream(zone.bounds()).stream())
 			.distinct()
 			.filter(level::isLoaded)
 			.filter(Predicate.not(level::isEmptyBlock))

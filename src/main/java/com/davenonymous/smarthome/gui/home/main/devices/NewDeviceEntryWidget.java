@@ -4,8 +4,6 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.data.IgnoredDevice;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
@@ -18,7 +16,6 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetItemStack;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.networking.actions.AddDevicePayload;
-import com.davenonymous.smarthome.networking.actions.IgnoreDevicePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
@@ -84,7 +81,7 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 			WrappedStringTooltipComponent.white(I18n.get("smarthome.gui.home.devices.add.add_device"))
 		);
 		addButton.addListener(MouseClickEvent.class, (event, widget) -> {
-			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location(), zone.home().settings().autoEnableNewDevices());
+			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location(), zone.home().settings().autoEnableNewDevices(), false);
 			PacketDistributor.sendToServer(new AddDevicePayload(zone.home().id(), zone.id(), configured));
 			addButton.setEnabled(false);
 			return WidgetEventResult.HANDLED;
@@ -99,7 +96,8 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 			WrappedStringTooltipComponent.gray(I18n.get("smarthome.gui.home.devices.add.ignore_device.hint"))
 		);
 		ignoreButton.addListener(MouseClickEvent.class, (event, widget) -> {
-			PacketDistributor.sendToServer(new IgnoreDevicePayload(zone.home().id(), zone.id(), new IgnoredDevice(device.pos(), device.state())));
+			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location(), zone.home().settings().autoEnableNewDevices(), true);
+			PacketDistributor.sendToServer(new AddDevicePayload(zone.home().id(), zone.id(), configured));
 			ignoreButton.setEnabled(false);
 			return WidgetEventResult.HANDLED;
 		});

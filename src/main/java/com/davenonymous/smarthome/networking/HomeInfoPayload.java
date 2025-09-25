@@ -5,7 +5,7 @@ import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
-import com.davenonymous.smarthome.setup.WorldWatcher;
+import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements CustomPacketPayload {
 
 	public static HomeInfoPayload get(MinecraftServer server, HomeCore home) {
-		var foundDevices = WorldWatcher.searchForDevices(server, home);
+		var foundDevices = WorldWatcherUtil.searchForDevices(server, home);
 		home.setFoundDevices(foundDevices);
 		return new HomeInfoPayload(home, HomeWorldInfo.create(home.getHomeLevel(server), home));
 	}

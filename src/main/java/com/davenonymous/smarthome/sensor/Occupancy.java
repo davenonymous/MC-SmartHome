@@ -37,7 +37,7 @@ public class Occupancy implements ISensor {
 	@Override
 	public void createTables(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
-		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home UUID, zone VARCHAR, visitor VARCHAR, pos STRUCT(x DOUBLE, y DOUBLE, z DOUBLE))");
+		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home UUID, zone UUID, device UUID, visitor STRUCT(id INT, name VARCHAR, type VARCHAR, category VARCHAR), pos STRUCT(x DOUBLE, y DOUBLE, z DOUBLE))");
 		stmt.close();
 	}
 
@@ -47,12 +47,21 @@ public class Occupancy implements ISensor {
 			return;
 		}
 
-		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?))");
+		var name = livingEntity.getName().getString();
+		var type = livingEntity.getType().getDescriptionId();
+		var category = livingEntity.getClassification(false).getName();
+		var entityId = livingEntity.getId();
+
+		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?, ?), row(?, ?, ?))");
 		int paramIndex = 1;
 		prepped.setLong(paramIndex++, level.getServer().getTickCount());
 		prepped.setObject(paramIndex++, zone.home().id());
-		prepped.setString(paramIndex++, zone.name());
-		prepped.setString(paramIndex++, livingEntity.getName().getString());
+		prepped.setObject(paramIndex++, zone.id());
+		prepped.setObject(paramIndex++, device.id());
+		prepped.setInt(paramIndex++, entityId);
+		prepped.setString(paramIndex++, name);
+		prepped.setString(paramIndex++, type);
+		prepped.setString(paramIndex++, category);
 		prepped.setDouble(paramIndex++, livingEntity.getX());
 		prepped.setDouble(paramIndex++, livingEntity.getY());
 		prepped.setDouble(paramIndex++, livingEntity.getZ());

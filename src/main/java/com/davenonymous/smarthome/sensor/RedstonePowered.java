@@ -59,7 +59,7 @@ public class RedstonePowered implements ISensor {
 			signal = level.getBestNeighborSignal(pos);
 		}
 
-		PreparedStatement prepped = connection.prepareStatement("INSERT INTO redstone VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?))");
+		PreparedStatement prepped = connection.prepareStatement("INSERT INTO redstone VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, row(?, ?, ?))");
 		int paramIndex = 1;
 		prepped.setLong(paramIndex++, level.getServer().getTickCount());
 		prepped.setObject(paramIndex++, zone.home().id());

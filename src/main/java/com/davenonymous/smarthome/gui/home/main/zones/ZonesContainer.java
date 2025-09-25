@@ -65,12 +65,12 @@ public class ZonesContainer extends WidgetPanel {
 			button.autoWidth();
 			button.autoHeight();
 			button.addListener(MouseEnterEvent.class, (event, widget) -> {
-				zoneDisplay.selectedZone = zone.name();
+				zoneDisplay.hoveredZone = zone;
 				button.setTextColor(ChatFormatting.YELLOW.getColor());
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
 			button.addListener(MouseExitEvent.class, (event, widget) -> {
-				zoneDisplay.selectedZone = null;
+				zoneDisplay.hoveredZone = null;
 				button.setTextColor(ChatFormatting.WHITE.getColor());
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
