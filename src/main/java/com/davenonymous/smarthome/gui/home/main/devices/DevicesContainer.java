@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -16,6 +17,7 @@ public class DevicesContainer extends WidgetPanel {
 
 	public WidgetTextBox devicesLabel;
 	public ConfiguredDevicesTable configuredDevicesTable;
+	public DeviceDetailWidget deviceDetail;
 
 	public DevicesContainer() {
 		newDevicesBar = new NewDevicesWidget();
@@ -42,10 +44,27 @@ public class DevicesContainer extends WidgetPanel {
 
 		configuredDevicesTable = new ConfiguredDevicesTable();
 		configuredDevicesTable.setPosition(8, 152);
+		configuredDevicesTable.addListener(
+			DeviceSelectionEvent.class, (event, widget) -> {
+			if(deviceDetail.device() != null && deviceDetail.device().equals(event.device())) {
+				// Deselect if the same device is clicked again
+				deviceDetail.setDevice(null, null);
+				updateWidgetSizes();
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
+			deviceDetail.setDevice(event.zone(), event.device());
+			updateWidgetSizes();
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
 		this.add(configuredDevicesTable);
+
+		deviceDetail = new DeviceDetailWidget();
+		this.add(deviceDetail);
 
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
 			newDevicesBar.updateDevices(HomeScreen.get().getAllNewDevices());
+			configuredDevicesTable.updateDevices();
 			updateWidgetSizes();
 			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
@@ -62,25 +81,48 @@ public class DevicesContainer extends WidgetPanel {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		configuredDevicesTable.setWidth(this.width - 16);
-
-		if(newDevicesBar.children().isEmpty()) {
-			newDevicesBar.setVisible(false);
-			newDevicesLabel.setVisible(false);
-
+		boolean hasNewDevices = !newDevicesBar.children().isEmpty();
+		if(!hasNewDevices) {
 			devicesLabel.setPosition(8, 8);
 			configuredDevicesTable.setPosition(8, 24);
 			configuredDevicesTable.setHeight(this.height - 34);
 		} else {
-			newDevicesBar.setVisible(true);
-			newDevicesBar.setWidth(this.width - 16);
-			newDevicesBar.updateWidgetSizes();
-			newDevicesLabel.setVisible(true);
-
 			devicesLabel.setPosition(8, newDevicesBar.y + newDevicesBar.height + 8);
 			configuredDevicesTable.setPosition(8, devicesLabel.y + devicesLabel.height + 18);
 			configuredDevicesTable.setHeight(this.height - configuredDevicesTable.y - 8);
 			configuredDevicesTable.updateWidgetSizes();
+		}
+
+		int displayWidth = this.width() - 16;
+		int displayX = 8;
+		if(deviceDetail.device() != null) {
+			displayWidth = (int)(this.width() * 2 / 3f);
+			int detailX = displayX + displayWidth + 5;
+			int detailWidth = this.width() - displayWidth - 21;
+
+			deviceDetail.setPosition(detailX, configuredDevicesTable.y);
+			deviceDetail.setWidth(detailWidth);
+			deviceDetail.setHeight(configuredDevicesTable.height());
+			deviceDetail.setVisible(true);
+			deviceDetail.updateWidgetSizes();
+		} else {
+			deviceDetail.setVisible(false);
+		}
+
+		configuredDevicesTable.setWidth(displayWidth);
+
+		if(!hasNewDevices) {
+			newDevicesBar.setVisible(false);
+			newDevicesLabel.setVisible(false);
+
+
+		} else {
+			newDevicesBar.setVisible(true);
+			newDevicesBar.setWidth(displayWidth - 16);
+			newDevicesBar.updateWidgetSizes();
+			newDevicesLabel.setVisible(true);
+
+
 		}
 
 	}

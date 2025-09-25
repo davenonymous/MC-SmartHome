@@ -157,6 +157,7 @@ public class WidgetPanel extends Widget {
 
 	public void clear() {
 		this.children.clear();
+		this.previouslyHovered.clear();
 	}
 
 	public void add(Widget widget) {

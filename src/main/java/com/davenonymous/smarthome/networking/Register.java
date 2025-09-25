@@ -80,5 +80,11 @@ public class Register {
 			IgnoreDevicePayload.CODEC,
 			IgnoreDevicePayload::handleOnServer
 		);
+
+		registrar.playToServer(
+			SetDeviceNamePayload.TYPE,
+			SetDeviceNamePayload.CODEC,
+			SetDeviceNamePayload::handleOnServer
+		);
 	}
 }

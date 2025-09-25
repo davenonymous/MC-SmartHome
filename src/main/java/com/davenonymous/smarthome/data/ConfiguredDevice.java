@@ -35,4 +35,8 @@ public record ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation b
 		ResourceLocation.STREAM_CODEC, ConfiguredDevice::blockId,
 		ConfiguredDevice::new
 	);
+
+	public ConfiguredDevice withName(String newName) {
+		return new ConfiguredDevice(this.pos, newName, this.blockId);
+	}
 }

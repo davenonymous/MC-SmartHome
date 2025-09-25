@@ -29,22 +29,24 @@ public class HomeCore {
 	String name;
 	List<HomeZone> zones;
 	DimPos serverLocation;
+	HomeSettings settings;
 
 	// internal values, not serialized
 	AABB bounds;
 	VoxelShape shape;
 
 	public HomeCore(String name, UUID owner, DimPos serverLocation) {
-		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>());
+		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>(), new HomeSettings());
 	}
 
-	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones) {
+	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones, HomeSettings settings) {
 		this.name = name;
 		this.id = id;
 		this.owner = owner;
 		this.serverLocation = serverLocation;
 		this.zones = new ArrayList<>(zones);
 		this.zones.forEach(z -> z.setHome(this));
+		this.settings = settings;
 		updateBounds();
 	}
 
@@ -217,6 +219,10 @@ public class HomeCore {
 		return shape;
 	}
 
+	public HomeSettings settings() {
+		return settings;
+	}
+
 	public VoxelShape normalizedShape() {
 		if(shape.isEmpty()) {
 			return shape;
@@ -233,7 +239,8 @@ public class HomeCore {
 			UUIDUtil.STRING_CODEC.fieldOf("owner").forGetter(HomeCore::owner),
 			DimPos.CODEC.fieldOf("location").forGetter(HomeCore::serverLocation),
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
-			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones)
+			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones),
+			HomeSettings.CODEC.codec().optionalFieldOf("settings", new HomeSettings()).forGetter(HomeCore::settings)
 	).apply(instance, HomeCore::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = StreamCodec.composite(
@@ -242,6 +249,7 @@ public class HomeCore {
 		DimPos.STREAM_CODEC, HomeCore::serverLocation,
 		ByteBufCodecs.STRING_UTF8, HomeCore::name,
 		HomeZone.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::zones,
+		HomeSettings.STREAM_CODEC, HomeCore::settings,
 		HomeCore::new
 	);
 

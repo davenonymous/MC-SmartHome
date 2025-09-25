@@ -11,6 +11,7 @@
   "smarthome.gui.home.devices.add.sensors.count": "%d sensors",
   "smarthome.gui.home.devices.label.configured_devices": "Devices:",
   "smarthome.gui.home.devices.label.new_devices": "New:",
+  "smarthome.gui.home.devices.table.tooltip.missing_device": "Missing device",
   "smarthome.gui.home.no_homes": "No Homes Found",
   "smarthome.gui.home.no_homes.hint": "Build a mini rack and place a Smart Home server in it to get started.",
   "smarthome.gui.home.sidebar.devices": "Devices",

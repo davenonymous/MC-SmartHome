@@ -8,12 +8,15 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.phys.Vec2;
+import net.neoforged.neoforge.common.util.Size2i;
 
+import java.util.List;
 import java.util.Map;
 
 public class WidgetTable extends WidgetPanel {
 	Table<Integer, Integer, CellData> table;
-	int cellPadding = 0;
+	int cellPaddingHorizontal = 0;
+	int cellPaddingVertical = 0;
 	public boolean alwaysShowFirstColumn = true;
 	public boolean alwaysShowFirstRow = true;
 
@@ -152,8 +155,53 @@ public class WidgetTable extends WidgetPanel {
 	}
 
 	public WidgetTable setCellPadding(int cellPadding) {
-		this.cellPadding = cellPadding;
+		this.cellPaddingHorizontal = cellPadding;
+		this.cellPaddingVertical = cellPadding;
 		return this;
+	}
+
+	public WidgetTable setCellPadding(int horizontalPadding, int verticalPadding) {
+		this.cellPaddingHorizontal = horizontalPadding;
+		this.cellPaddingVertical = verticalPadding;
+		return this;
+	}
+
+	public WidgetTable setCellPaddingHorizontal(int padding) {
+		this.cellPaddingHorizontal = padding;
+		return this;
+	}
+
+	public WidgetTable setCellPaddingVertical(int padding) {
+		this.cellPaddingVertical = padding;
+		return this;
+	}
+
+	public CellData get(int column, int row) {
+		if(!table.contains(row, column)) {
+			return null;
+		}
+		return table.get(row, column);
+	}
+
+	public Size2i getPosForWidget(Widget widget) {
+		for(Map.Entry<Integer, Map<Integer, CellData>> rowEntry : table.rowMap().entrySet()) {
+			int row = rowEntry.getKey();
+			for(Map.Entry<Integer, CellData> cellEntry : rowEntry.getValue().entrySet()) {
+				int column = cellEntry.getKey();
+				CellData cell = cellEntry.getValue();
+				if(cell.widget() == widget) {
+					return new Size2i(column, row);
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<CellData> getRow(int row) {
+		if(!table.rowMap().containsKey(row)) {
+			return List.of();
+		}
+		return List.copyOf(table.rowMap().get(row).values());
 	}
 
 	public CellData add(int column, int row, Widget widget) {
@@ -273,7 +321,7 @@ public class WidgetTable extends WidgetPanel {
 			int column = columnData.getKey();
 			int columnWidth = getColumnWidth(column);
 
-			if(visibleWidth + cellPadding + columnWidth + scrollBarDimension > this.width) {
+			if(visibleWidth + cellPaddingHorizontal + columnWidth + scrollBarDimension > this.width) {
 				// Widget won't fit -> no more widgets from here on out
 				exceededWidth = true;
 			}
@@ -301,7 +349,7 @@ public class WidgetTable extends WidgetPanel {
 				}
 
 				int rowHeight = getRowHeight(row);
-				if(localVisibleHeight + cellPadding + rowHeight + scrollBarDimension > this.height) {
+				if(localVisibleHeight + cellPaddingVertical + rowHeight + scrollBarDimension > this.height) {
 					// Widget won't fit -> no more widgets from here on out
 					exceededHeight = true;
 				}
@@ -315,19 +363,19 @@ public class WidgetTable extends WidgetPanel {
 				visibleColumns = Math.max(visibleColumns, 1 + column - colOffset);
 
 				cellWidget.setVisible(true);
-				localVisibleHeight += rowHeight + cellPadding;
+				localVisibleHeight += rowHeight + cellPaddingVertical;
 				this.visibleHeight = Math.max(this.visibleHeight, localVisibleHeight);
 
 				var alignmentOffset = cell.contentAlignment().getChildPosition(columnWidth, rowHeight, cellWidget);
 				cellWidget.setX(xOffset + alignmentOffset.getX());
 				cellWidget.setY(yOffset + alignmentOffset.getY());
 
-				yOffset += rowHeight + cellPadding;
+				yOffset += rowHeight + cellPaddingVertical;
 			}
 
 			if(columnForcedVisible || !(column < colOffset || exceededWidth)) {
-				visibleWidth += columnWidth + cellPadding;
-				xOffset += columnWidth + cellPadding;
+				visibleWidth += columnWidth + cellPaddingHorizontal;
+				xOffset += columnWidth + cellPaddingHorizontal;
 			}
 		}
 	}
@@ -403,4 +451,17 @@ public class WidgetTable extends WidgetPanel {
 		this.repositionCells();
 	}
 
+	@Override
+	public void clear() {
+		super.clear();
+		this.table.clear();
+		this.rowOffset = 0;
+		this.colOffset = 0;
+		this.visibleRows = 0;
+		this.visibleColumns = 0;
+		this.visibleHeight = 0;
+		this.visibleWidth = 0;
+		this.totalRows = 0;
+		this.totalColumns = 0;
+	}
 }

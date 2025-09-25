@@ -473,12 +473,14 @@ public class Widget implements ISelectable {
 
 		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().translate(this.x, this.y, this.zLevel);
+		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().scale(this.scale, this.scale, this.scale);
 		if(this.backgroundSprite != null) {
 			pGuiGraphics.blitSprite(this.backgroundSprite, 0, 0, this.width, this.height);
 		}
 
 		this.draw(pGuiGraphics, Minecraft.getInstance().getWindow());
+		pGuiGraphics.pose().popPose();
 
 		if(renderDebugOutlines) {
 			var font = Minecraft.getInstance().font;

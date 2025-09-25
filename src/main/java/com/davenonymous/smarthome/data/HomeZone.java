@@ -109,6 +109,16 @@ public class HomeZone {
 		this.ignoredDevices.removeIf(d -> d.pos().equals(device.pos()) && d.state().getBlock() == device.state().getBlock());
 	}
 
+	public void setDeviceName(ConfiguredDevice device, String newName) {
+		for(int i = 0; i < devices.size(); i++) {
+			var d = devices.get(i);
+			if(d.pos().equals(device.pos()) && d.blockId().equals(device.blockId())) {
+				devices.set(i, devices.get(i).withName(newName));
+				return;
+			}
+		}
+	}
+
 	public static final MapCodec<HomeZone> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeZone::id),
 		Codec.STRING.fieldOf("name").forGetter(HomeZone::name),
