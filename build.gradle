@@ -123,6 +123,8 @@ dependencies {
 
     implementation "curse.maven:jade-324717:${jade_fileid}"
 
+    implementation "curse.maven:just-dire-things-1002348:${just_dire_things_fileid}"
+
     jarJar(implementation("org.duckdb:duckdb_jdbc:1.3.2.1"))
 
     additionalRuntimeClasspath(implementation("org.duckdb:duckdb_jdbc:1.3.2.1"))

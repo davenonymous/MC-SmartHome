@@ -1,6 +1,8 @@
 package com.davenonymous.smarthome.commands.duckdb;
 
-import com.davenonymous.smarthome.setup.WorldWatcher;
+import com.davenonymous.smarthome.watcher.DatabaseTask;
+import com.davenonymous.smarthome.watcher.InitWorldWatcher;
+import com.davenonymous.smarthome.watcher.WorldWatcher;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -26,7 +28,7 @@ public class ExecuteStatementCommand implements Command<CommandSourceStack> {
 
 	@Override
 	public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-		if(WorldWatcher.connection == null) {
+		if(InitWorldWatcher.taskQueue == null) {
 			context.getSource().sendFailure(Component.literal("No database connection"));
 			return 0;
 		}
@@ -41,19 +43,21 @@ public class ExecuteStatementCommand implements Command<CommandSourceStack> {
 		String text = "Executing query: " + statement;
 		context.getSource().sendSuccess(() -> Component.literal(text), true);
 
-		try {
-			var stmt = WorldWatcher.connection.createStatement();
-			boolean success = stmt.execute(statement);
-			if(success) {
-				context.getSource().sendSuccess(() -> Component.literal("Statement executed successfully, result is a ResultSet"), true);
-			} else {
-				int updateCount = stmt.getUpdateCount();
-				context.getSource().sendSuccess(() -> Component.literal("Statement executed successfully, " + updateCount + " rows affected"), true);
+		InitWorldWatcher.taskQueue.offer(new DatabaseTask(connection -> {
+			try {
+				var stmt = connection.createStatement();
+				boolean success = stmt.execute(statement);
+				if(success) {
+					context.getSource().sendSuccess(() -> Component.literal("Statement executed successfully, result is a ResultSet"), true);
+				} else {
+					int updateCount = stmt.getUpdateCount();
+					context.getSource().sendSuccess(() -> Component.literal("Statement executed successfully, " + updateCount + " rows affected"), true);
+				}
+				stmt.close();
+			} catch (SQLException e) {
+				context.getSource().sendFailure(Component.literal("SQL Error: " + e.getMessage()));
 			}
-			stmt.close();
-		} catch (SQLException e) {
-			context.getSource().sendFailure(Component.literal("SQL Error: " + e.getMessage()));
-		}
+		}));
 
 		return 0;
 	}

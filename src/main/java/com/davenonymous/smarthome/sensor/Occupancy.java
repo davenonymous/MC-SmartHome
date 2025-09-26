@@ -6,6 +6,7 @@ import com.davenonymous.smarthome.api.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
+import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -42,9 +43,9 @@ public class Occupancy implements ISensor {
 	}
 
 	@Override
-	public void visitZoneEntity(DuckDBConnection connection, ServerLevel level, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
+	public ThrowingConsumer<DuckDBConnection> visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
 		if(!(entity instanceof LivingEntity livingEntity)) {
-			return;
+			return NOOP;
 		}
 
 		var name = livingEntity.getName().getString();
@@ -52,20 +53,22 @@ public class Occupancy implements ISensor {
 		var category = livingEntity.getClassification(false).getName();
 		var entityId = livingEntity.getId();
 
-		PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?, ?), row(?, ?, ?))");
-		int paramIndex = 1;
-		prepped.setLong(paramIndex++, level.getServer().getTickCount());
-		prepped.setObject(paramIndex++, zone.home().id());
-		prepped.setObject(paramIndex++, zone.id());
-		prepped.setObject(paramIndex++, device.id());
-		prepped.setInt(paramIndex++, entityId);
-		prepped.setString(paramIndex++, name);
-		prepped.setString(paramIndex++, type);
-		prepped.setString(paramIndex++, category);
-		prepped.setDouble(paramIndex++, livingEntity.getX());
-		prepped.setDouble(paramIndex++, livingEntity.getY());
-		prepped.setDouble(paramIndex++, livingEntity.getZ());
-		prepped.execute();
-		prepped.close();
+		return connection -> {
+			PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?, ?), row(?, ?, ?))");
+			int paramIndex = 1;
+			prepped.setLong(paramIndex++, level.getServer().getTickCount());
+			prepped.setObject(paramIndex++, zone.home().id());
+			prepped.setObject(paramIndex++, zone.id());
+			prepped.setObject(paramIndex++, device.id());
+			prepped.setInt(paramIndex++, entityId);
+			prepped.setString(paramIndex++, name);
+			prepped.setString(paramIndex++, type);
+			prepped.setString(paramIndex++, category);
+			prepped.setDouble(paramIndex++, livingEntity.getX());
+			prepped.setDouble(paramIndex++, livingEntity.getY());
+			prepped.setDouble(paramIndex++, livingEntity.getZ());
+			prepped.execute();
+			prepped.close();
+		};
 	}
 }
