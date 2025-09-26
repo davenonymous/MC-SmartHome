@@ -6,10 +6,12 @@ import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.networking.actions.RequestDeviceDataPayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class DevicesContainer extends WidgetPanel {
 	public WidgetTextBox newDevicesLabel;
@@ -53,6 +55,8 @@ public class DevicesContainer extends WidgetPanel {
 				updateWidgetSizes();
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
+
+			PacketDistributor.sendToServer(new RequestDeviceDataPayload(event.zone().home().id(), event.zone().id(), event.device()));
 
 			deviceDetail.setDevice(event.zone(), event.device());
 			updateWidgetSizes();

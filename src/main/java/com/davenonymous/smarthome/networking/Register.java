@@ -31,6 +31,12 @@ public class Register {
 			OpenHomeScreenPayload::handleOnClient
 		);
 
+		registrar.playToClient(
+			DeviceDataPayload.TYPE,
+			DeviceDataPayload.CODEC,
+			DeviceDataPayload::handleOnClient
+		);
+
 
 
 		registrar.playToServer(
@@ -79,6 +85,12 @@ public class Register {
 			SetDeviceNamePayload.TYPE,
 			SetDeviceNamePayload.CODEC,
 			SetDeviceNamePayload::handleOnServer
+		);
+
+		registrar.playToServer(
+			RequestDeviceDataPayload.TYPE,
+			RequestDeviceDataPayload.CODEC,
+			RequestDeviceDataPayload::handleOnServer
 		);
 	}
 }

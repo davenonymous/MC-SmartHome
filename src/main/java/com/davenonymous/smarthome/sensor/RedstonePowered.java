@@ -20,11 +20,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.duckdb.DuckDBConnection;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 @SmartHomeSensor(modid = "minecraft")
-public class RedstonePowered implements ISensor {
+public class RedstonePowered implements ISensor<RedstonePoweredSettings, RedstonePoweredData> {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/redstone");
 
 	@Override
@@ -48,7 +49,12 @@ public class RedstonePowered implements ISensor {
 	}
 
 	@Override
-	public SensorSettings getDefaultSettings() {
+	public RedstonePoweredData getStateFromResultSet(ResultSet resultSet) throws SQLException {
+		return new RedstonePoweredData(resultSet.getInt("power"));
+	}
+
+	@Override
+	public RedstonePoweredSettings getDefaultSettings() {
 		return new RedstonePoweredSettings();
 	}
 

@@ -19,11 +19,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.duckdb.DuckDBConnection;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 @SmartHomeSensor(modid = "minecraft")
-public class Occupancy implements ISensor {
+public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/occupancy");
 
 	@Override
@@ -42,7 +44,13 @@ public class Occupancy implements ISensor {
 	}
 
 	@Override
-	public SensorSettings getDefaultSettings() {
+	public OccupancyData getStateFromResultSet(ResultSet resultSet) throws SQLException {
+		// TODO: implement me
+		return new OccupancyData(List.of());
+	}
+
+	@Override
+	public OccupancySettings getDefaultSettings() {
 		return new OccupancySettings();
 	}
 

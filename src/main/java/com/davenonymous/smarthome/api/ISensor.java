@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.api;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.sensor.EnergyStorageData;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.core.BlockPos;
@@ -17,13 +18,35 @@ import org.duckdb.DuckDBConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public interface ISensor<T extends SensorSettings> {
+public interface ISensor<T extends SensorSettings, U extends SensorData> {
 	ResourceLocation id();
 
 	boolean isValid(Level level, BlockPos pos, BlockState state);
 
 	T getDefaultSettings();
+
+	String getTableName();
+
+	U getStateFromResultSet(ResultSet resultSet) throws SQLException;
+
+	default Map<Long, U> getHistoryFromResultSet(ResultSet resultSet)  {
+		Map<Long, U> results = new HashMap<>();
+		try {
+			while(resultSet.next()) {
+				long tick = resultSet.getLong("tick");
+				var state = getStateFromResultSet(resultSet);
+
+				results.put(tick, state);
+			}
+		} catch(SQLException ex) {
+			ex.printStackTrace();
+		}
+		return results;
+	}
 
 	default boolean isGeneric() {
 		return false;
@@ -42,8 +65,6 @@ public interface ISensor<T extends SensorSettings> {
 		var dotted = id().getPath().replaceAll("/", ".");
 		return id().getNamespace() + "." + dotted + ".description";
 	}
-
-	String getTableName();
 
 	default void createTable(DuckDBConnection connection) throws SQLException {}
 

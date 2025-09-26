@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.ISensor;
+import com.davenonymous.smarthome.api.SensorSettings;
 import com.davenonymous.smarthome.api.SmartHomeSensor;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
@@ -13,7 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ModSensors {
-	public static List<ISensor> SENSORS = new ArrayList<>();
+	public static List<ISensor<?, ?>> SENSORS = new ArrayList<>();
+
+	public static <T extends SensorSettings> ISensor<T, ?> getBySettings(T settings) {
+		for(var sensor : SENSORS) {
+			if(sensor.getDefaultSettings().getClass() == settings.getClass()) {
+				//noinspection unchecked
+				return (ISensor<T, ?>) sensor;
+			}
+		}
+
+		return null;
+	}
 
 	public static void find() {
 		SENSORS.clear();

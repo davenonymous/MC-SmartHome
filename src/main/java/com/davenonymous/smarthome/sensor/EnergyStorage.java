@@ -20,11 +20,16 @@ import org.duckdb.DuckDBConnection;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @SmartHomeSensor(modid = "minecraft")
-public class EnergyStorage implements ISensor<EnergyStorageSettings> {
+public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStorageData> {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/forge_energy_storage");
 	public static final BlockCapability<IEnergyStorage, @Nullable Direction> ENERGY = Capabilities.EnergyStorage.BLOCK;
 
@@ -46,6 +51,13 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings> {
 	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
 		return level.getCapability(ENERGY, pos, null) != null;
+	}
+
+	@Override
+	public EnergyStorageData getStateFromResultSet(ResultSet resultSet) throws SQLException{
+		long energy = resultSet.getLong("energy");
+		long max = resultSet.getLong("max");
+		return new EnergyStorageData(energy, max);
 	}
 
 	@Override
