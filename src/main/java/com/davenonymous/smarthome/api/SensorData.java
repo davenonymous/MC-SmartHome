@@ -14,6 +14,8 @@ public abstract class SensorData {
 	public abstract MapCodec<? extends SensorData> type();
 	public abstract StreamCodec<RegistryFriendlyByteBuf, ? extends SensorData> streamCodec();
 
+	public abstract String displayString();
+
 	public static final Codec<SensorData> CODEC = SensorDataCodecRegistry.SENSOR_DATA_SERIALIZERS.byNameCodec() // Gets Codec<MapCodec<? extends ExampleObject>>
 		.dispatch(
 			SensorData::type, // Get the codec from the specific object

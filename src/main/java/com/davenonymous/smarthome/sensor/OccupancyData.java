@@ -18,6 +18,11 @@ public class OccupancyData extends SensorData {
 		this.occupants = occupants;
 	}
 
+	@Override
+	public String displayString() {
+		return "" + occupants.size();
+	}
+
 	public List<Occupant> occupants() {
 		return occupants;
 	}

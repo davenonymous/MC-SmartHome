@@ -25,6 +25,11 @@ public class EnergyStorageData extends SensorData {
 		return maxEnergyStored;
 	}
 
+	@Override
+	public String displayString() {
+		return energyStored + " / " + maxEnergyStored + " FE";
+	}
+
 	public static final MapCodec<EnergyStorageData> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Codec.LONG.fieldOf("energy_stored").forGetter(EnergyStorageData::energyStored),
 		Codec.LONG.fieldOf("max_energy_stored").forGetter(EnergyStorageData::maxEnergyStored)

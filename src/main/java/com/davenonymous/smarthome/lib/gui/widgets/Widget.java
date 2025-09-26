@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.ISelectable;
 import com.davenonymous.smarthome.lib.gui.event.*;
@@ -459,6 +460,19 @@ public class Widget implements ISelectable {
 		return null;
 	}
 
+	public String getParentChain() {
+		StringBuilder sb = new StringBuilder();
+		Widget current = this;
+		while(current != null) {
+			if(sb.length() > 0) {
+				sb.append(" -> ");
+			}
+			sb.append(current.getClass().getSimpleName()).append("[").append(current.id).append("]");
+			current = current.parent;
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Use this in your Screens drawScreen() method and pass it as parameter.
 	 * This draws the Gui on the screen.
@@ -470,6 +484,11 @@ public class Widget implements ISelectable {
 	 */
 	public void shiftAndDraw(GuiGraphics pGuiGraphics, Window window) {
 		this.drawBeforeShift(pGuiGraphics, window);
+
+		if(this.width <= 0 || this.height <= 0) {
+			SmartHome.LOGGER.warn("Widget {} has non-positive dimensions ({}x{}), skipping draw. [parent={}]", this, this.width, this.height, this.getParentChain());
+			return;
+		}
 
 		pGuiGraphics.pose().pushPose();
 		pGuiGraphics.pose().translate(this.x, this.y, this.zLevel);

@@ -100,43 +100,40 @@ public class DevicesContainer extends WidgetPanel {
 			devicesLabel.setPosition(8, newDevicesBar.y + newDevicesBar.height + 8);
 			tableContainer.setPosition(8, devicesLabel.y + devicesLabel.height + 18);
 			tableContainer.setHeight(this.height - tableContainer.y - 8);
-			configuredDevicesTable.updateWidgetSizes();
 		}
 
 		configuredDevicesTable.setHeight(tableContainer.height - 16);
+		configuredDevicesTable.updateWidgetSizes();
 
 		int displayWidth = this.width() - 16;
 		int displayX = 8;
 		if(deviceDetail.device() != null) {
 			displayWidth = (int)(this.width() * 2 / 3f);
-			int detailX = displayX + displayWidth + 5;
-			int detailWidth = this.width() - displayWidth - 21;
-
-			deviceDetail.setPosition(detailX, tableContainer.y);
-			deviceDetail.setWidth(detailWidth);
-			deviceDetail.setHeight(tableContainer.height());
 			deviceDetail.setVisible(true);
-			deviceDetail.updateWidgetSizes();
 		} else {
 			deviceDetail.setVisible(false);
 		}
 
+		int detailX = displayX + displayWidth + 5;
+		int detailWidth = this.width() - displayWidth - 21;
+
+		deviceDetail.setPosition(detailX, tableContainer.y);
+		deviceDetail.setWidth(detailWidth);
+		deviceDetail.setHeight(tableContainer.height());
+		deviceDetail.updateWidgetSizes();
+
 		tableContainer.setWidth(displayWidth);
 		configuredDevicesTable.setWidth(tableContainer.width() - 16);
 
+		newDevicesBar.setWidth(displayWidth - 16);
 		if(!hasNewDevices) {
 			newDevicesBar.setVisible(false);
 			newDevicesLabel.setVisible(false);
-
-
 		} else {
 			newDevicesBar.setVisible(true);
-			newDevicesBar.setWidth(displayWidth - 16);
-			newDevicesBar.updateWidgetSizes();
 			newDevicesLabel.setVisible(true);
-
-
 		}
+		newDevicesBar.updateWidgetSizes();
 
 	}
 }

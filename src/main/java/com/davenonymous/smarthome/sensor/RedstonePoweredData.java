@@ -15,6 +15,11 @@ public class RedstonePoweredData extends SensorData {
 		this.redstoneLevel = redstoneLevel;
 	}
 
+	@Override
+	public String displayString() {
+		return "" + redstoneLevel;
+	}
+
 	public int redstoneLevel() {
 		return redstoneLevel;
 	}

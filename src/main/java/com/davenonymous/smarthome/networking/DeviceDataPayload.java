@@ -44,6 +44,6 @@ public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice devic
 			return;
 		}
 
-		SmartHome.LOGGER.info("Received data for device {} with {} sensor states", payload.device().pos(), payload.data().size());
+		homeScreen.setSensorData(payload.device.id(), payload.data());
 	}
 }

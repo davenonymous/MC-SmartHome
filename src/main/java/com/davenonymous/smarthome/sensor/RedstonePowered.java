@@ -29,6 +29,11 @@ public class RedstonePowered implements ISensor<RedstonePoweredSettings, Redston
 	public static final ResourceLocation ID = SmartHome.resource("sensor/redstone");
 
 	@Override
+	public Class<RedstonePoweredData> getDataClass() {
+		return RedstonePoweredData.class;
+	}
+
+	@Override
 	public String getTableName() {
 		return "redstone";
 	}

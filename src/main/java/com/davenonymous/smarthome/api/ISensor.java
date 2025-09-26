@@ -29,6 +29,8 @@ public interface ISensor<T extends SensorSettings, U extends SensorData> {
 
 	T getDefaultSettings();
 
+	Class<U> getDataClass();
+
 	String getTableName();
 
 	U getStateFromResultSet(ResultSet resultSet) throws SQLException;
@@ -70,7 +72,7 @@ public interface ISensor<T extends SensorSettings, U extends SensorData> {
 
 	default ThrowingFunction<DuckDBConnection, ResultSet> stateForDevice(HomeZone zone, ConfiguredDevice device) {
 		return connection -> {
-			PreparedStatement prepped = connection.prepareStatement("SELECT * FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY tick DESC LIMIT 1");
+			PreparedStatement prepped = connection.prepareStatement("SELECT * FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY instant DESC LIMIT 1");
 			int paramIndex = 1;
 			prepped.setObject(paramIndex++, zone.home().id());
 			prepped.setObject(paramIndex++, zone.id());

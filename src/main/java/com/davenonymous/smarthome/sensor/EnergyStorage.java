@@ -34,6 +34,11 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 	public static final BlockCapability<IEnergyStorage, @Nullable Direction> ENERGY = Capabilities.EnergyStorage.BLOCK;
 
 	@Override
+	public Class<EnergyStorageData> getDataClass() {
+		return EnergyStorageData.class;
+	}
+
+	@Override
 	public EnergyStorageSettings getDefaultSettings() {
 		return new EnergyStorageSettings();
 	}

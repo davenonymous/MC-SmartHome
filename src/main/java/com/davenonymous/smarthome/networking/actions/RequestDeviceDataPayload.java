@@ -68,9 +68,9 @@ public record RequestDeviceDataPayload(UUID homeId, UUID zone, ConfiguredDevice 
 
 		CompletableFuture.allOf(futures).thenRun(() -> {
 			List<SensorData> sensorData = new ArrayList<>();
-			for(var f : futures) {
+			for(var watcherFuture : futures) {
 				try {
-					var data = f.get();
+					var data = watcherFuture.get();
 					if(data != null) {
 						sensorData.add(data);
 					}

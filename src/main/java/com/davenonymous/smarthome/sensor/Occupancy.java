@@ -29,6 +29,11 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/occupancy");
 
 	@Override
+	public Class<OccupancyData> getDataClass() {
+		return OccupancyData.class;
+	}
+
+	@Override
 	public String getTableName() {
 		return "occupancy";
 	}

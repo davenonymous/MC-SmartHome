@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.datagen;
 
+import com.davenonymous.smarthome.sensor.EnergyStorage;
 import com.davenonymous.smarthome.sensor.Occupancy;
 import com.davenonymous.smarthome.sensor.RedstonePowered;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
@@ -67,6 +68,9 @@ public class DGTranslations extends LanguageProvider {
 
 		add(RedstonePowered.ID, "name", "Redstone Level");
 		add(RedstonePowered.ID, "description", "Records redstone power levels of blocks.");
+
+		add(EnergyStorage.ID, "name", "Energy Storage");
+		add(EnergyStorage.ID, "description", "Records stored forge energy.");
 	}
 
 	public void add(ResourceLocation id, String translation) {
