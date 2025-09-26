@@ -1,8 +1,7 @@
 package com.davenonymous.smarthome.commands.duckdb;
 
 import com.davenonymous.smarthome.watcher.DatabaseTask;
-import com.davenonymous.smarthome.watcher.InitWorldWatcher;
-import com.davenonymous.smarthome.watcher.WorldWatcher;
+import com.davenonymous.smarthome.watcher.WorldWatcherPool;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -28,7 +27,7 @@ public class RunQueryCommand implements Command<CommandSourceStack> {
 
 	@Override
 	public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-		if(InitWorldWatcher.taskQueue == null) {
+		if(WorldWatcherPool.taskQueue == null) {
 			context.getSource().sendFailure(Component.literal("No database connection"));
 			return 0;
 		}
@@ -53,7 +52,7 @@ public class RunQueryCommand implements Command<CommandSourceStack> {
 		context.getSource().sendSuccess(() -> Component.literal(text), true);
 
 		String finalStatement = statement;
-		InitWorldWatcher.taskQueue.offer(new DatabaseTask(connection -> {
+		WorldWatcherPool.taskQueue.offer(new DatabaseTask(connection -> {
 			try {
 				var stmt = connection.createStatement();
 				var result = stmt.executeQuery(finalStatement);

@@ -1,5 +1,7 @@
 package com.davenonymous.smarthome.watcher;
 
+import com.davenonymous.smarthome.api.ISensor;
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -9,9 +11,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.AABB;
 
+import java.sql.ResultSet;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class WorldWatcherUtil {
+
+	public static CompletableFuture<ResultSet> getSensorState(HomeZone zone, ConfiguredDevice device, ISensor sensor) {
+		return WorldWatcherPool.query(sensor.stateForDevice(zone, device));
+	}
+
+	public static CompletableFuture<ResultSet> getSensorHistory(HomeZone zone, ConfiguredDevice device, ISensor sensor, long start, long end) {
+		return WorldWatcherPool.query(sensor.historyForDevice(zone, device, start, end));
+	}
+
 	public static List<BlockPos> getBlocksInAABBStream(AABB box) {
 		int minX = (int)Math.floor(box.minX);
 		int minY = (int)Math.floor(box.minY);

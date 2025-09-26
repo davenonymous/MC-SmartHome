@@ -6,6 +6,7 @@ import com.davenonymous.smarthome.api.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
+import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -20,14 +21,19 @@ import org.duckdb.DuckDBConnection;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.function.Consumer;
 
 @SmartHomeSensor(modid = "minecraft")
 public class EnergyStorage implements ISensor {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/forge_energy_storage");
 	public static final BlockCapability<IEnergyStorage, @Nullable Direction> ENERGY = Capabilities.EnergyStorage.BLOCK;
+
+	@Override
+	public String getTableName() {
+		return "forge_energy_storage";
+	}
 
 	@Override
 	public ResourceLocation id() {
@@ -40,7 +46,7 @@ public class EnergyStorage implements ISensor {
 	}
 
 	@Override
-	public void createTables(DuckDBConnection connection) throws SQLException {
+	public void createTable(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.execute("CREATE TABLE IF NOT EXISTS forge_energy_storage (instant TIMESTAMP, tick UBIGINT, home UUID, zone UUID, device UUID, energy UBIGINT, max UBIGINT, pos STRUCT(x BIGINT, y BIGINT, z BIGINT))");
 		stmt.close();

@@ -26,6 +26,11 @@ public class Occupancy implements ISensor {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/occupancy");
 
 	@Override
+	public String getTableName() {
+		return "occupancy";
+	}
+
+	@Override
 	public ResourceLocation id() {
 		return ID;
 	}
@@ -36,7 +41,7 @@ public class Occupancy implements ISensor {
 	}
 
 	@Override
-	public void createTables(DuckDBConnection connection) throws SQLException {
+	public void createTable(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home UUID, zone UUID, device UUID, visitor STRUCT(id INT, name VARCHAR, type VARCHAR, category VARCHAR), pos STRUCT(x DOUBLE, y DOUBLE, z DOUBLE))");
 		stmt.close();

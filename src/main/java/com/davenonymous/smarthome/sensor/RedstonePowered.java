@@ -27,6 +27,11 @@ public class RedstonePowered implements ISensor {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/redstone");
 
 	@Override
+	public String getTableName() {
+		return "redstone";
+	}
+
+	@Override
 	public ResourceLocation id() {
 		return ID;
 	}
@@ -42,7 +47,7 @@ public class RedstonePowered implements ISensor {
 	}
 
 	@Override
-	public void createTables(DuckDBConnection connection) throws SQLException {
+	public void createTable(DuckDBConnection connection) throws SQLException {
 		Statement stmt = connection.createStatement();
 		stmt.execute("CREATE TABLE IF NOT EXISTS redstone (instant TIMESTAMP, tick UBIGINT, home UUID, zone UUID, device UUID, power UTINYINT, pos STRUCT(x BIGINT, y BIGINT, z BIGINT))");
 		stmt.close();

@@ -3,11 +3,6 @@ package com.davenonymous.smarthome.setup.content;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.ISensor;
 import com.davenonymous.smarthome.api.SmartHomeSensor;
-import com.davenonymous.smarthome.data.HomeCore;
-import com.davenonymous.smarthome.data.HomeZone;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.duckdb.DuckDBConnection;
@@ -50,7 +45,7 @@ public class ModSensors {
 
 	public static void createTables(DuckDBConnection connection) throws SQLException {
 		for(var sensor : SENSORS) {
-			sensor.createTables(connection);
+			sensor.createTable(connection);
 		}
 	}
 }

@@ -23,8 +23,6 @@ public class WorldWatcher {
 
 	private final MinecraftServer server;
 	private ServerLevel overworld;
-	private long lastTick = 0;
-
 
 	public WorldWatcher(MinecraftServer server) {
 		this.server = server;
