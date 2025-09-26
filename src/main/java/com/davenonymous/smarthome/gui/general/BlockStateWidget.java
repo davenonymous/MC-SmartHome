@@ -38,7 +38,7 @@ public class BlockStateWidget extends Widget {
 	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		super.draw(pGuiGraphics, window);
 
-		if(model == null) {
+		if(model == null || state == null) {
 			return;
 		}
 

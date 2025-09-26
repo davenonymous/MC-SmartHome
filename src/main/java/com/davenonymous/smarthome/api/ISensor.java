@@ -18,10 +18,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public interface ISensor {
+public interface ISensor<T extends SensorSettings> {
 	ResourceLocation id();
 
 	boolean isValid(Level level, BlockPos pos, BlockState state);
+
+	T getDefaultSettings();
 
 	default boolean isGeneric() {
 		return false;

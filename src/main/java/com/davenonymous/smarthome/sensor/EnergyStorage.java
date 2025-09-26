@@ -6,7 +6,6 @@ import com.davenonymous.smarthome.api.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
-import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -21,14 +20,18 @@ import org.duckdb.DuckDBConnection;
 import org.jetbrains.annotations.Nullable;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 @SmartHomeSensor(modid = "minecraft")
-public class EnergyStorage implements ISensor {
+public class EnergyStorage implements ISensor<EnergyStorageSettings> {
 	public static final ResourceLocation ID = SmartHome.resource("sensor/forge_energy_storage");
 	public static final BlockCapability<IEnergyStorage, @Nullable Direction> ENERGY = Capabilities.EnergyStorage.BLOCK;
+
+	@Override
+	public EnergyStorageSettings getDefaultSettings() {
+		return new EnergyStorageSettings();
+	}
 
 	@Override
 	public String getTableName() {

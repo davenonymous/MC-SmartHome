@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.ISensor;
+import com.davenonymous.smarthome.api.SensorSettings;
 import com.davenonymous.smarthome.api.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -38,6 +39,11 @@ public class Occupancy implements ISensor {
 	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
 		return state.is(ModBlocks.DASHBOARD);
+	}
+
+	@Override
+	public SensorSettings getDefaultSettings() {
+		return new OccupancySettings();
 	}
 
 	@Override

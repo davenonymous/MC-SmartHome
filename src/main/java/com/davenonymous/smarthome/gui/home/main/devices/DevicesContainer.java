@@ -47,7 +47,7 @@ public class DevicesContainer extends WidgetPanel {
 		configuredDevicesTable.setPosition(8, 8);
 		configuredDevicesTable.addListener(
 			DeviceSelectionEvent.class, (event, widget) -> {
-			if(deviceDetail.device() != null && deviceDetail.device().equals(event.device())) {
+			if(deviceDetail.device() != null && deviceDetail.device().id().equals(event.device().id())) {
 				// Deselect if the same device is clicked again
 				deviceDetail.setDevice(null, null);
 				updateWidgetSizes();

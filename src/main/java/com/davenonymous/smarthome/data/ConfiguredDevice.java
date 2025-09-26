@@ -1,5 +1,7 @@
 package com.davenonymous.smarthome.data;
 
+import com.davenonymous.smarthome.api.SensorSettings;
+import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,12 +14,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
 import java.util.UUID;
 
-public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored) {
+public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored, List<SensorSettings> sensors) {
 
 	public ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation blockId, boolean enabled, boolean ignored) {
-		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored);
+		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored, List.of());
 	}
 
 	public boolean matches(Block block) {
@@ -35,28 +38,34 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 		Codec.STRING.fieldOf("device").forGetter(ConfiguredDevice::name),
 		ResourceLocation.CODEC.fieldOf("block").forGetter(ConfiguredDevice::blockId),
 		Codec.BOOL.optionalFieldOf("enabled", false).forGetter(ConfiguredDevice::enabled),
-		Codec.BOOL.optionalFieldOf("ignored", false).forGetter(ConfiguredDevice::ignored)
+		Codec.BOOL.optionalFieldOf("ignored", false).forGetter(ConfiguredDevice::ignored),
+		SensorSettings.CODEC.listOf().fieldOf("sensors").forGetter(ConfiguredDevice::sensors)
 	).apply(instance, ConfiguredDevice::new));
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, ConfiguredDevice> STREAM_CODEC = StreamCodec.composite(
+	public static final StreamCodec<RegistryFriendlyByteBuf, ConfiguredDevice> STREAM_CODEC = BiggerStreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, ConfiguredDevice::id,
 		BlockPos.STREAM_CODEC, ConfiguredDevice::pos,
 		ByteBufCodecs.STRING_UTF8, ConfiguredDevice::name,
 		ResourceLocation.STREAM_CODEC, ConfiguredDevice::blockId,
 		ByteBufCodecs.BOOL, ConfiguredDevice::enabled,
 		ByteBufCodecs.BOOL, ConfiguredDevice::ignored,
+		SensorSettings.STREAM_CODEC.apply(ByteBufCodecs.list()), ConfiguredDevice::sensors,
 		ConfiguredDevice::new
 	);
 
 	public ConfiguredDevice withName(String newName) {
-		return new ConfiguredDevice(this.id, this.pos, newName, this.blockId, this.enabled, this.ignored);
+		return new ConfiguredDevice(this.id, this.pos, newName, this.blockId, this.enabled, this.ignored, this.sensors);
 	}
 
 	public ConfiguredDevice withEnabled(boolean newEnabled) {
-		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, newEnabled, this.ignored);
+		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, newEnabled, this.ignored, this.sensors);
 	}
 
 	public ConfiguredDevice withIgnored(boolean newIgnored) {
-		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, this.enabled, newIgnored);
+		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, this.enabled, newIgnored, this.sensors);
+	}
+
+	public ConfiguredDevice withSensors(List<SensorSettings> newSensors) {
+		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, this.enabled, this.ignored, newSensors);
 	}
 }
