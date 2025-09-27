@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.visualization;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
+import com.davenonymous.smarthome.visualization.line.LineVizSettings;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -28,6 +29,9 @@ public class VisualizationSettingsCodecRegistry {
 	static {
 		DEFERRED_VIZ_SETTINGS.register("gauge", () -> GaugeVizSettings.CODEC);
 		DEFERRED_VIZ_SETTINGS_DISPATCHER.register("gauge", () -> GaugeVizSettings.STREAM_CODEC);
+
+		DEFERRED_VIZ_SETTINGS.register("line_chart", () -> LineVizSettings.CODEC);
+		DEFERRED_VIZ_SETTINGS_DISPATCHER.register("line_chart", () -> LineVizSettings.STREAM_CODEC);
 	}
 
 

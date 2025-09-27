@@ -12,6 +12,7 @@ import net.minecraft.network.codec.StreamCodec;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: turn this from POC to a real thing, i.e. fix/add more settings
 public record GaugeVizSettings(double min, double max, Map<Double, Integer> colorThresholds) implements IVisualizationSettings {
 	public static final Map<Double, Integer> DEFAULT_THRESHOLDS = Map.of(0d, ColorHelper.COLOR_GREEN, 50d, ColorHelper.COLOR_ORANGE, 80d, ColorHelper.COLOR_ERRORED.getRGB());
 

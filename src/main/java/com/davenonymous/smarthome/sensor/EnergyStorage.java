@@ -9,11 +9,16 @@ import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.setup.content.ModVisualizations;
 import com.davenonymous.smarthome.visualization.gauge.GaugeViz;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizData;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
+import com.davenonymous.smarthome.visualization.line.LineViz;
+import com.davenonymous.smarthome.visualization.line.LineVizData;
+import com.davenonymous.smarthome.visualization.line.LineVizSettings;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -31,7 +36,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -52,12 +57,14 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 
 	@Override
 	public ResourceLocation getDefaultVisualization() {
-		return GaugeViz.ID;
+		return LineViz.ID;
 	}
 
 	@Override
 	public IVisualizationSettings getDefaultVisualizationSettings() {
-		return new GaugeVizSettings(0, 100);
+		return new LineVizSettings(List.of(
+			ColorHelper.COLOR_ORANGE, ColorHelper.COLOR_PURPLE, ColorHelper.COLOR_CYAN, ColorHelper.COLOR_GREEN, ChatFormatting.BLUE.getColor()
+		));
 	}
 
 	@Override
@@ -77,9 +84,8 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 
 	@Override
 	public boolean supportsVisualization(IVisualization<?, ?> visualization) {
-		if(visualization instanceof GaugeViz) {
-			return true;
-		}
+		if(visualization instanceof GaugeViz)return true;
+		if(visualization instanceof LineViz)return true;
 
 		return false;
 	}
@@ -87,27 +93,56 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 	@Override
 	public Function<DuckDBConnection, IVisualizationData> getVisualizationData(HomeZone zone, ConfiguredDevice device, SensorSettings sensorSettings, IVisualization<?, ?> visualization, IVisualizationSettings visualizationSettings) {
 		return connection -> {
-			if(visualization instanceof GaugeViz gaugeViz && visualizationSettings instanceof GaugeVizSettings gaugeSettings) {
-
-				try {
-					PreparedStatement prepped = connection.prepareStatement("SELECT energy FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY instant DESC LIMIT 1");
-					int paramIndex = 0;
-					prepped.setObject(paramIndex++, zone.home().id());
-					prepped.setObject(paramIndex++, zone.id());
-					prepped.setObject(paramIndex++, device.id());
-					var resultSet = prepped.executeQuery();
-					if(resultSet.next()) {
-						long energy = resultSet.getLong("energy");
-						return new GaugeVizData((double)energy);
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-
-				return null;
+			if(visualization instanceof GaugeViz && visualizationSettings instanceof GaugeVizSettings) {
+				return getGaugeVizData(zone, device, connection);
+			} else if(visualization instanceof LineViz && visualizationSettings instanceof LineVizSettings) {
+				return getLineVizData(zone, device, connection);
 			}
 			return null;
 		};
+	}
+
+	private @Nullable LineVizData getLineVizData(HomeZone zone, ConfiguredDevice device, DuckDBConnection connection) {
+		try {
+			PreparedStatement prepped = connection.prepareStatement("SELECT tick, energy FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY instant DESC LIMIT 2000");
+			int paramIndex = 1;
+			prepped.setObject(paramIndex++, zone.home().id());
+			prepped.setObject(paramIndex++, zone.id());
+			prepped.setObject(paramIndex++, device.id());
+			var resultSet = prepped.executeQuery();
+
+			Map<Long, Double> series = new LinkedHashMap<>();
+			while(resultSet.next()) {
+				long tick = resultSet.getLong("tick");
+				long energy = resultSet.getLong("energy");
+				series.put(tick, (double) energy);
+			}
+
+			return new LineVizData(List.of(series));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	private @Nullable GaugeVizData getGaugeVizData(HomeZone zone, ConfiguredDevice device, DuckDBConnection connection) {
+		try {
+			PreparedStatement prepped = connection.prepareStatement("SELECT energy FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY instant DESC LIMIT 1");
+			int paramIndex = 1;
+			prepped.setObject(paramIndex++, zone.home().id());
+			prepped.setObject(paramIndex++, zone.id());
+			prepped.setObject(paramIndex++, device.id());
+			var resultSet = prepped.executeQuery();
+			if(resultSet.next()) {
+				long energy = resultSet.getLong("energy");
+				return new GaugeVizData((double) energy);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	@Override
