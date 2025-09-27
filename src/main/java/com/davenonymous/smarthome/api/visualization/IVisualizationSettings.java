@@ -13,8 +13,6 @@ public interface IVisualizationSettings {
 	MapCodec<? extends IVisualizationSettings> type();
 	StreamCodec<RegistryFriendlyByteBuf, ? extends IVisualizationSettings> streamCodec();
 
-	IVisualizationSettings getDefault();
-
 	Codec<IVisualizationSettings> CODEC = VisualizationSettingsCodecRegistry.VIZ_SETTINGS_SERIALIZERS.byNameCodec() // Gets Codec<MapCodec<? extends ExampleObject>>
 		.dispatch(
 			IVisualizationSettings::type, // Get the codec from the specific object

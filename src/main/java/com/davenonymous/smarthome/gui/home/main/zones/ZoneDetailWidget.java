@@ -130,7 +130,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 		zoneDeviceLabel.autoWidth();
 		zoneDeviceLabel.autoHeight();
 		devicesList.setWidth(this.width() - 60);
-		devicesList.setHeight(this.height() - (zoneDeviceLabel.x() + zoneDeviceLabel.height() + 4 + 2*padding + 40));
+		devicesList.setHeight(this.height() - (zoneDeviceLabel.x() + zoneDeviceLabel.height() + 4 + 2*paddingVertical + 40));
 		deleteIcon.setPosition(this.width() - 18, this.height() - 18);
 		this.update(null);
 	}

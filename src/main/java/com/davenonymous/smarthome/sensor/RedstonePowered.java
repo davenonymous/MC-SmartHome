@@ -58,6 +58,16 @@ public class RedstonePowered implements ISensor<RedstonePoweredSettings, Redston
 	}
 
 	@Override
+	public ResourceLocation getDefaultVisualization() {
+		return GaugeViz.ID;
+	}
+
+	@Override
+	public IVisualizationSettings getDefaultVisualizationSettings() {
+		return new GaugeVizSettings(0, 15);
+	}
+
+	@Override
 	public boolean supportsVisualization(IVisualization<?, ?> visualization) {
 		if(visualization instanceof GaugeViz) {
 			return true;

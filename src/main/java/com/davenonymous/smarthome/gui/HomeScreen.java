@@ -1,11 +1,13 @@
 package com.davenonymous.smarthome.gui;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.events.SensorDataUpdatedEvent;
+import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.home.ContentContainerWidget;
 import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.gui.home.NoHomesWidget;
@@ -17,9 +19,12 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.*;
 
@@ -36,11 +41,14 @@ public class HomeScreen extends WidgetFullScreen {
 	public HomeBlockEntity blockEntity;
 	public List<HomeCore> ownedHomes;
 	public HomeWorldInfo homeWorldInfo;
+
 	public Map<UUID, List<ISensorData>> sensorDataCache;
+	public Table<UUID, ResourceLocation, Map<ResourceLocation, IVisualizationData>> visualizationDataCache;
 
 	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
 		super(Component.translatable("smarthome.gui.home.title"));
 		this.sensorDataCache = new HashMap<>();
+		this.visualizationDataCache = TreeBasedTable.create();
 		this.ownedHomes = ownedHomes;
 		this.homeWorldInfo = homeWorldInfo;
 
@@ -73,6 +81,16 @@ public class HomeScreen extends WidgetFullScreen {
 		sensorDataCache.put(deviceId, new ArrayList<>(data));
 		if(gui != null) {
 			gui.fireEvent(new SensorDataUpdatedEvent(deviceId, data));
+		}
+	}
+
+	public void setVisualizationData(UUID deviceId, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationData data) {
+		if(!visualizationDataCache.contains(deviceId, sensorId)) {
+			visualizationDataCache.put(deviceId, sensorId, new HashMap<>());
+		}
+		visualizationDataCache.get(deviceId, sensorId).put(vizId, data);
+		if(gui != null) {
+			gui.fireEvent(new VisualizationDataUpdatedEvent(deviceId, sensorId, vizId, data));
 		}
 	}
 
@@ -136,9 +154,9 @@ public class HomeScreen extends WidgetFullScreen {
 		footerLayout.setWidth(mainLayout.width);
 		footerLayout.setHeight(20);
 
-		contentLayout.setWidth(mainLayout.width - mainLayout.padding*2);
-		contentLayout.setX(mainLayout.padding);
-		contentLayout.setHeight(mainLayout.height - headerLayout.height - footerLayout.height - mainLayout.padding*2 - mainLayout.spacing*2);
+		contentLayout.setWidth(mainLayout.width - mainLayout.paddingHorizontal*2);
+		contentLayout.setX(mainLayout.paddingHorizontal);
+		contentLayout.setHeight(mainLayout.height - headerLayout.height - footerLayout.height - mainLayout.paddingVertical*2 - mainLayout.spacing*2);
 
 		contentLayout.update(null);
 		noHomesWidget.updateWidgetSizes();

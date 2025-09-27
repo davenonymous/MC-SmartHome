@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.List;
 import java.util.UUID;
 
-public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice device, ResourceLocation sensorId, IVisualizationData data) implements CustomPacketPayload {
+public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationData data) implements CustomPacketPayload {
 	public static final Type<VisualizationDataPayload> TYPE = new Type<>(SmartHome.resource("viz_data"));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, VisualizationDataPayload> CODEC = StreamCodec.composite(
@@ -24,6 +24,7 @@ public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevic
 		UUIDUtil.STREAM_CODEC, VisualizationDataPayload::zoneId,
 		ConfiguredDevice.STREAM_CODEC, VisualizationDataPayload::device,
 		ResourceLocation.STREAM_CODEC, VisualizationDataPayload::sensorId,
+		ResourceLocation.STREAM_CODEC, VisualizationDataPayload::vizId,
 		IVisualizationData.STREAM_CODEC, VisualizationDataPayload::data,
 		VisualizationDataPayload::new
 	);
@@ -43,7 +44,7 @@ public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevic
 			return;
 		}
 
-		//homeScreen.setSensorData(payload.device.id(), payload.data());
+		homeScreen.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
 		SmartHome.LOGGER.info("Received visualization data for device {} sensor {}", payload.device().id(), payload.sensorId());
 	}
 }

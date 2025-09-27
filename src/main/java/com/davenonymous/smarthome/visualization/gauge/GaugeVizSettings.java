@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public record GaugeVizSettings(double min, double max, Map<Double, Integer> colorThresholds) implements IVisualizationSettings {
-	private static final Map<Double, Integer> DEFAULT_THRESHOLDS = Map.of(0d, ColorHelper.COLOR_GREEN, 50d, ColorHelper.COLOR_ORANGE, 80d, ColorHelper.COLOR_ERRORED.getRGB());
+	public static final Map<Double, Integer> DEFAULT_THRESHOLDS = Map.of(0d, ColorHelper.COLOR_GREEN, 50d, ColorHelper.COLOR_ORANGE, 80d, ColorHelper.COLOR_ERRORED.getRGB());
 
 	public static final MapCodec<GaugeVizSettings> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
 		Codec.DOUBLE.optionalFieldOf("min", 0.0).forGetter(GaugeVizSettings::min),
@@ -30,11 +30,6 @@ public record GaugeVizSettings(double min, double max, Map<Double, Integer> colo
 
 	public GaugeVizSettings(int min, int max) {
 		this((double)min, (double)max, DEFAULT_THRESHOLDS);
-	}
-
-	@Override
-	public IVisualizationSettings getDefault() {
-		return new GaugeVizSettings(0.0, 100.0, DEFAULT_THRESHOLDS);
 	}
 
 	@Override

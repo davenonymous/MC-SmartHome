@@ -15,7 +15,9 @@ public interface IVisualization<D extends IVisualizationData, S extends IVisuali
 		return id().getNamespace() + "." + dotted + ".description";
 	}
 
+	S getDefaultSettings();
+
 	// Function<DuckDBConnection, D> dataFetcher(HomeZone zone, ConfiguredDevice device, ISensor<?, ?> sensor);
 
-	Widget getWidget(D data, S settings);
+	Widget getWidget(D data, S vizSettings);
 }

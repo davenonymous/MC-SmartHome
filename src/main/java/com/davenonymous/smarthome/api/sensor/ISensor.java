@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -38,6 +39,16 @@ public interface ISensor<T extends SensorSettings, U extends ISensorData> {
 	String getTableName();
 
 	U getStateFromResultSet(ResultSet resultSet) throws SQLException;
+
+	ResourceLocation getDefaultVisualization();
+
+	default boolean hasDefaultVisualization() {
+		return getDefaultVisualization() != null;
+	}
+
+	default IVisualizationSettings getDefaultVisualizationSettings() {
+		return null;
+	}
 
 	boolean supportsVisualization(IVisualization<?, ?> visualization);
 

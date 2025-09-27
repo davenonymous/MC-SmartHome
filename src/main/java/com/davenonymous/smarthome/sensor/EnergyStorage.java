@@ -9,6 +9,7 @@ import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.setup.content.ModVisualizations;
 import com.davenonymous.smarthome.visualization.gauge.GaugeViz;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizData;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
@@ -47,6 +48,16 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 	@Override
 	public EnergyStorageSettings getDefaultSettings() {
 		return new EnergyStorageSettings(Optional.empty());
+	}
+
+	@Override
+	public ResourceLocation getDefaultVisualization() {
+		return GaugeViz.ID;
+	}
+
+	@Override
+	public IVisualizationSettings getDefaultVisualizationSettings() {
+		return new GaugeVizSettings(0, 100);
 	}
 
 	@Override

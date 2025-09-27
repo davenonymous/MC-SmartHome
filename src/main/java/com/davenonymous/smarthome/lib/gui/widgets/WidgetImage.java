@@ -82,7 +82,7 @@ public class WidgetImage extends Widget {
 
 	@Override
 	public void draw(GuiGraphics pGuiGraphics, Window window) {
-		if(visible && areAllParentsVisible()) {
+		if(image != null && visible && areAllParentsVisible()) {
 			RenderSystem.enableBlend();
 			float r = (color >> 16 & 0xFF) / 255.0F;
 			float g = (color >> 8 & 0xFF) / 255.0F;

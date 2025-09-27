@@ -60,6 +60,11 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 	}
 
 	@Override
+	public ResourceLocation getDefaultVisualization() {
+		return null;
+	}
+
+	@Override
 	public OccupancySettings getDefaultSettings() {
 		return new OccupancySettings(false);
 	}

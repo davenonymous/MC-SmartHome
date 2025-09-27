@@ -39,7 +39,8 @@ public abstract class FlexSizer extends WidgetPanel {
 	Map<Integer, Integer> realBoxSize;
 
 	FlexDirection flexDirection = FlexDirection.X;
-	public int padding = 0;
+	public int paddingHorizontal = 0;
+	public int paddingVertical = 0;
 	public int spacing = 4;
 
 	public FlexSizer() {
@@ -80,7 +81,8 @@ public abstract class FlexSizer extends WidgetPanel {
 
 	public int getTotalRealSize() {
 		int lastOffset = realBoxOffsets.get(realBoxOffsets.size()-1) + realBoxSize.get(realBoxSize.size()-1) + (realBoxOffsets.size()-1)*spacing;
-		return lastOffset + padding; // Add padding to the end
+		// Add horizontal or vertical padding to the end, depending on direction
+		return lastOffset + (isHorizontal() ? paddingHorizontal : paddingVertical);
 	}
 
 	public FlexSizer setFlexDirection(FlexDirection direction) {
@@ -88,8 +90,20 @@ public abstract class FlexSizer extends WidgetPanel {
 		return this;
 	}
 
+	public FlexSizer setPaddingHorizontal(int padding) {
+		this.paddingHorizontal = padding;
+		return this;
+	}
+
+	public FlexSizer setPaddingVertical(int padding) {
+		this.paddingVertical = padding;
+		return this;
+	}
+
+	// For backward compatibility, keep setPadding as a shortcut for both
 	public FlexSizer setPadding(int padding) {
-		this.padding = padding;
+		this.paddingHorizontal = padding;
+		this.paddingVertical = padding;
 		return this;
 	}
 
@@ -141,8 +155,8 @@ public abstract class FlexSizer extends WidgetPanel {
 		flexAligns.put(flexAligns.size(), align);
 
 		update(null);
-		box.y = padding;
-		box.x = padding;
+		box.y = paddingVertical;
+		box.x = paddingHorizontal;
 
 		if(isHorizontal()) {
 			if(box.height <= 0) {
@@ -180,7 +194,7 @@ public abstract class FlexSizer extends WidgetPanel {
 		int totalFlexWeight = 0;
 		int totalFixedPx = 0;
 		int totalContentPx = 0;
-		int totalPadding = (flexWidgets.size() - 1) * padding;
+		int totalPadding = (flexWidgets.size() - 1) * (isHorizontal() ? paddingHorizontal : paddingVertical);
 
 		for(var entry : flexModes.entrySet()) {
 			int columnIndex = entry.getKey();
@@ -206,7 +220,7 @@ public abstract class FlexSizer extends WidgetPanel {
 		int remainingPx = thisSize - totalFixedPx - totalContentPx - totalPadding;
 		int pxPerFlex = totalFlexWeight > 0 ? remainingPx / totalFlexWeight : 0;
 
-		int offset = padding;
+		int offset = isHorizontal() ? paddingHorizontal : paddingVertical;
 		for(var entry : flexValues.entrySet()) {
 			int columnIndex = entry.getKey();
 			int value = entry.getValue();
@@ -240,46 +254,46 @@ public abstract class FlexSizer extends WidgetPanel {
 				if(flexDirection == FlexDirection.X) {
 					box.setX(realBoxOffsets.get(columnIndex));
 					box.setWidth(realBoxSize.get(columnIndex));
-					if(box.height > this.height - padding*2) {
-						box.setHeight(this.height - padding*2);
+					if(box.height > this.height - paddingVertical*2) {
+						box.setHeight(this.height - paddingVertical*2);
 					}
 
 					switch(flexAlign) {
 						case START:
-							box.setY(padding);
+							box.setY(paddingVertical);
 							break;
 						case CENTER:
-							var availableHeight = this.height - box.height - padding*2;
-							box.setY(padding + Math.round(availableHeight / 2f));
+							var availableHeight = this.height - box.height - paddingVertical*2;
+							box.setY(paddingVertical + Math.round(availableHeight / 2f));
 							break;
 						case FILL:
-							box.setY(padding);
+							box.setY(paddingVertical);
 							box.setHeight(this.height);
 							break;
 						case END:
-							box.setY(padding + this.height - box.height);
+							box.setY(paddingVertical + this.height - box.height);
 							break;
 					}
 				} else {
 					box.setY(realBoxOffsets.get(columnIndex));
 					box.setHeight(realBoxSize.get(columnIndex));
-					if(box.width > this.width - padding*2) {
-						box.setWidth(this.width - padding*2);
+					if(box.width > this.width - paddingHorizontal*2) {
+						box.setWidth(this.width - paddingHorizontal*2);
 					}
 					switch(flexAlign) {
 						case START:
-							box.setX(padding);
+							box.setX(paddingHorizontal);
 							break;
 						case CENTER:
-							var availableWidth = this.width - box.width - padding*2;
-							box.setX(padding + Math.round(availableWidth / 2f));
+							var availableWidth = this.width - box.width - paddingHorizontal*2;
+							box.setX(paddingHorizontal + Math.round(availableWidth / 2f));
 							break;
 						case FILL:
-							box.setX(padding);
+							box.setX(paddingHorizontal);
 							box.setWidth(this.width);
 							break;
 						case END:
-							box.setX(padding + this.width - box.width);
+							box.setX(paddingHorizontal + this.width - box.width);
 							break;
 					}
 				}
