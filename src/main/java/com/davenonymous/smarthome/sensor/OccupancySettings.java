@@ -1,14 +1,23 @@
 package com.davenonymous.smarthome.sensor;
 
-import com.davenonymous.smarthome.api.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public class OccupancySettings extends SensorSettings {
-	public static final OccupancySettings UNIT = new OccupancySettings();
-	public static final MapCodec<OccupancySettings> CODEC = MapCodec.unit(OccupancySettings::new);
-	public static final StreamCodec<RegistryFriendlyByteBuf, OccupancySettings> STREAM_CODEC = StreamCodec.unit(UNIT);
+public record OccupancySettings(boolean enabled) implements SensorSettings {
+
+	public static final MapCodec<OccupancySettings> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+		Codec.BOOL.optionalFieldOf("enabled", true).forGetter(OccupancySettings::enabled)
+	).apply(instance, OccupancySettings::new));
+
+	public static final StreamCodec<RegistryFriendlyByteBuf, OccupancySettings> STREAM_CODEC = StreamCodec.composite(
+		ByteBufCodecs.BOOL, OccupancySettings::enabled,
+		OccupancySettings::new
+	);
 
 	@Override
 	public MapCodec<? extends SensorSettings> type() {
@@ -20,8 +29,4 @@ public class OccupancySettings extends SensorSettings {
 		return STREAM_CODEC;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj) || obj == UNIT;
-	}
 }

@@ -1,9 +1,11 @@
-package com.davenonymous.smarthome.api;
+package com.davenonymous.smarthome.api.sensor;
 
+import com.davenonymous.smarthome.api.visualization.IVisualization;
+import com.davenonymous.smarthome.api.visualization.IVisualizationData;
+import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.sensor.EnergyStorageData;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.core.BlockPos;
@@ -19,10 +21,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public interface ISensor<T extends SensorSettings, U extends SensorData> {
+public interface ISensor<T extends SensorSettings, U extends ISensorData> {
 	ResourceLocation id();
 
 	boolean isValid(Level level, BlockPos pos, BlockState state);
@@ -34,6 +35,12 @@ public interface ISensor<T extends SensorSettings, U extends SensorData> {
 	String getTableName();
 
 	U getStateFromResultSet(ResultSet resultSet) throws SQLException;
+
+	boolean supportsVisualization(IVisualization<?, ?> visualization);
+
+	default <S extends IVisualizationSettings, V extends IVisualization<D, S>, D extends IVisualizationData> D getVisualizationData(HomeZone zone, ConfiguredDevice device, T sensorSettings, IVisualization<D, S> visualization, S visualizationSettings) {
+		return null;
+	}
 
 	default Map<Long, U> getHistoryFromResultSet(ResultSet resultSet)  {
 		Map<Long, U> results = new HashMap<>();

@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.SensorData;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.HomeScreen;
@@ -96,7 +96,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 			return;
 		}
 
-		List<SensorData> dataCache = HomeScreen.get().sensorDataCache.get(device.id());
+		List<ISensorData> dataCache = HomeScreen.get().sensorDataCache.get(device.id());
 		for(var sensorSettings : device.sensors()) {
 			var sensor = ModSensors.getBySettings(sensorSettings);
 			if(sensor == null) {
@@ -114,7 +114,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 			sensorsList.addContentBox(label, FlexAlign.FILL);
 
 			if(dataCache != null) {
-				Optional<SensorData> optSensorData = dataCache.stream().filter(data -> ModSensors.getByData(data) == sensor).findFirst();
+				Optional<ISensorData> optSensorData = dataCache.stream().filter(data -> ModSensors.getByData(data) == sensor).findFirst();
 				if(optSensorData.isEmpty()) {
 					continue;
 				}

@@ -1,12 +1,11 @@
 package com.davenonymous.smarthome.blocks.minirack;
 
-import com.davenonymous.smarthome.api.IRackable;
-import com.davenonymous.smarthome.api.IServer;
+import com.davenonymous.smarthome.api.items.IRackable;
+import com.davenonymous.smarthome.api.items.IServer;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 import java.util.List;

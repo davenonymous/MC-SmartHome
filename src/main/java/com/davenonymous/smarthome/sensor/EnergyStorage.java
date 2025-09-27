@@ -1,8 +1,9 @@
 package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.ISensor;
-import com.davenonymous.smarthome.api.SmartHomeSensor;
+import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.visualization.IVisualization;
+import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
@@ -23,10 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 @SmartHomeSensor(modid = "minecraft")
 public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStorageData> {
@@ -40,7 +38,7 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 
 	@Override
 	public EnergyStorageSettings getDefaultSettings() {
-		return new EnergyStorageSettings();
+		return new EnergyStorageSettings(Optional.empty());
 	}
 
 	@Override
@@ -56,6 +54,11 @@ public class EnergyStorage implements ISensor<EnergyStorageSettings, EnergyStora
 	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
 		return level.getCapability(ENERGY, pos, null) != null;
+	}
+
+	@Override
+	public boolean supportsVisualization(IVisualization<?, ?> visualization) {
+		return false;
 	}
 
 	@Override

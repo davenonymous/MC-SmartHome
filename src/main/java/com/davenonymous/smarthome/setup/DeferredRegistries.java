@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.setup;
 
 import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
 import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
+import com.davenonymous.smarthome.visualization.VisualizationDataCodecRegistry;
 import com.davenonymous.smarthome.setup.content.*;
 import net.neoforged.bus.api.IEventBus;
 
@@ -19,7 +20,7 @@ public class DeferredRegistries {
 		ModParticles.PARTICLE_TYPES.register(modbus);
 		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS.register(modbus);
 		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS_DISPATCHER.register(modbus);
-		SensorDataCodecRegistry.DEFERRED_SENSOR_DATA.register(modbus);
 		SensorDataCodecRegistry.DEFERRED_SENSOR_DATA_DISPATCHER.register(modbus);
+		VisualizationDataCodecRegistry.DEFERRED_VIZ_DATA_DISPATCHER.register(modbus);
 	}
 }

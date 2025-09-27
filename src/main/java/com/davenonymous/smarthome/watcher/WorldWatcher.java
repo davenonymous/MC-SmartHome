@@ -1,23 +1,18 @@
 package com.davenonymous.smarthome.watcher;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.ISensor;
+import com.davenonymous.smarthome.api.sensor.ISensor;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.setup.content.ModSensors;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
-import com.mojang.logging.LogUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.storage.LevelResource;
 import org.duckdb.DuckDBConnection;
-import org.slf4j.Logger;
 
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class WorldWatcher {
 

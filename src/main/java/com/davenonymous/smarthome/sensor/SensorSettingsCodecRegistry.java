@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;

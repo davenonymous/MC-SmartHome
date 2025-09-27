@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.watcher;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.ISensor;
+import com.davenonymous.smarthome.api.sensor.ISensor;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.world.level.storage.LevelResource;

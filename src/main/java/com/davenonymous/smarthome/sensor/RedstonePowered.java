@@ -1,19 +1,15 @@
 package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.ISensor;
-import com.davenonymous.smarthome.api.SensorSettings;
-import com.davenonymous.smarthome.api.SmartHomeSensor;
+import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.visualization.IVisualization;
+import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.setup.content.ModBlocks;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,13 +50,18 @@ public class RedstonePowered implements ISensor<RedstonePoweredSettings, Redston
 	}
 
 	@Override
+	public boolean supportsVisualization(IVisualization<?, ?> visualization) {
+		return false;
+	}
+
+	@Override
 	public RedstonePoweredData getStateFromResultSet(ResultSet resultSet) throws SQLException {
 		return new RedstonePoweredData(resultSet.getInt("power"));
 	}
 
 	@Override
 	public RedstonePoweredSettings getDefaultSettings() {
-		return new RedstonePoweredSettings();
+		return new RedstonePoweredSettings(false);
 	}
 
 	@Override

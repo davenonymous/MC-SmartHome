@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.watcher;
 
-import com.davenonymous.smarthome.api.ISensor;
-import com.davenonymous.smarthome.api.SensorData;
-import com.davenonymous.smarthome.api.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
@@ -19,7 +19,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class WorldWatcherUtil {
 
-	public static <T extends SensorSettings, U extends SensorData> CompletableFuture<U> getSensorState(HomeZone zone, ConfiguredDevice device, T settings) {
+	public static <T extends SensorSettings, U extends ISensorData> CompletableFuture<U> getSensorState(HomeZone zone, ConfiguredDevice device, T settings) {
 		//noinspection unchecked
 		ISensor<T, U> sensor = (ISensor<T, U>) ModSensors.getBySettings(settings);
 		if(sensor == null) {
@@ -28,7 +28,7 @@ public class WorldWatcherUtil {
 		return getSensorState(zone, device, sensor);
 	}
 
-	private static <U extends SensorData> CompletableFuture<U> getSensorState(HomeZone zone, ConfiguredDevice device, ISensor<?, U> sensor) {
+	private static <U extends ISensorData> CompletableFuture<U> getSensorState(HomeZone zone, ConfiguredDevice device, ISensor<?, U> sensor) {
 		return WorldWatcherPool
 			.query(sensor.stateForDevice(zone, device))
 			.thenApply(resultSet -> {
@@ -43,7 +43,7 @@ public class WorldWatcherUtil {
 			});
 	}
 
-	public static <T extends SensorSettings, U extends SensorData> CompletableFuture<Map<Long, U>> getSensorHistory(HomeZone zone, ConfiguredDevice device, T settings, long start, long end) {
+	public static <T extends SensorSettings, U extends ISensorData> CompletableFuture<Map<Long, U>> getSensorHistory(HomeZone zone, ConfiguredDevice device, T settings, long start, long end) {
 		//noinspection unchecked
 		ISensor<T, U> sensor = (ISensor<T, U>) ModSensors.getBySettings(settings);
 		if(sensor == null) {
@@ -53,7 +53,7 @@ public class WorldWatcherUtil {
 		return getSensorHistory(zone, device, sensor, start, end);
 	}
 
-	private static <U extends SensorData> CompletableFuture<Map<Long, U>> getSensorHistory(HomeZone zone, ConfiguredDevice device, ISensor<?, U> sensor, long start, long end) {
+	private static <U extends ISensorData> CompletableFuture<Map<Long, U>> getSensorHistory(HomeZone zone, ConfiguredDevice device, ISensor<?, U> sensor, long start, long end) {
 		return WorldWatcherPool
 			.query(sensor.historyForDevice(zone, device, start, end))
 			.thenApply(sensor::getHistoryFromResultSet);

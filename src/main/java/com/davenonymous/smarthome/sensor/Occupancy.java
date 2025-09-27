@@ -1,16 +1,15 @@
 package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.ISensor;
-import com.davenonymous.smarthome.api.SensorSettings;
-import com.davenonymous.smarthome.api.SmartHomeSensor;
+import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.visualization.IVisualization;
+import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,6 +48,11 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 	}
 
 	@Override
+	public boolean supportsVisualization(IVisualization<?, ?> visualization) {
+		return false;
+	}
+
+	@Override
 	public OccupancyData getStateFromResultSet(ResultSet resultSet) throws SQLException {
 		// TODO: implement me
 		return new OccupancyData(List.of());
@@ -56,7 +60,7 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 
 	@Override
 	public OccupancySettings getDefaultSettings() {
-		return new OccupancySettings();
+		return new OccupancySettings(false);
 	}
 
 	@Override

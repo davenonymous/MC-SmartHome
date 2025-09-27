@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.api.SensorData;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
@@ -36,7 +36,7 @@ public class HomeScreen extends WidgetFullScreen {
 	public HomeBlockEntity blockEntity;
 	public List<HomeCore> ownedHomes;
 	public HomeWorldInfo homeWorldInfo;
-	public Map<UUID, List<SensorData>> sensorDataCache;
+	public Map<UUID, List<ISensorData>> sensorDataCache;
 
 	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
 		super(Component.translatable("smarthome.gui.home.title"));
@@ -69,7 +69,7 @@ public class HomeScreen extends WidgetFullScreen {
 		return null;
 	}
 
-	public void setSensorData(UUID deviceId, List<SensorData> data) {
+	public void setSensorData(UUID deviceId, List<ISensorData> data) {
 		sensorDataCache.put(deviceId, new ArrayList<>(data));
 		if(gui != null) {
 			gui.fireEvent(new SensorDataUpdatedEvent(deviceId, data));

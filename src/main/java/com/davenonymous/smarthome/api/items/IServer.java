@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.api;
+package com.davenonymous.smarthome.api.items;
 
 import net.minecraft.world.item.ItemStack;
 

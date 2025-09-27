@@ -1,13 +1,11 @@
 package com.davenonymous.smarthome.networking.actions;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.SensorData;
-import com.davenonymous.smarthome.api.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.DeviceDataPayload;
-import com.davenonymous.smarthome.networking.HomeInfoPayload;
-import com.davenonymous.smarthome.setup.content.ModSensors;
 import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -60,14 +58,14 @@ public record RequestDeviceDataPayload(UUID homeId, UUID zone, ConfiguredDevice 
 		var zone = optZone.get();
 		var device = payload.device();
 
-		CompletableFuture<SensorData>[] futures = new CompletableFuture[device.sensors().size()];
+		CompletableFuture<ISensorData>[] futures = new CompletableFuture[device.sensors().size()];
 		int i = 0;
 		for(SensorSettings sensorSettings : device.sensors()) {
 			futures[i++] = WorldWatcherUtil.getSensorState(zone, device, sensorSettings);
 		}
 
 		CompletableFuture.allOf(futures).thenRun(() -> {
-			List<SensorData> sensorData = new ArrayList<>();
+			List<ISensorData> sensorData = new ArrayList<>();
 			for(var watcherFuture : futures) {
 				try {
 					var data = watcherFuture.get();

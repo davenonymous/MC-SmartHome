@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.sensor;
 
-import com.davenonymous.smarthome.api.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Direction;
@@ -10,19 +10,10 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.util.Optional;
 
-public class EnergyStorageSettings extends SensorSettings {
-	Direction face;
+public record EnergyStorageSettings(Optional<Direction> face) implements SensorSettings {
 
-	public EnergyStorageSettings() {
-		this.face = null;
-	}
-
-	public EnergyStorageSettings(Optional<Direction> face) {
-		this.face = face.orElse(null);
-	}
-
-	public Optional<Direction> face() {
-		return Optional.ofNullable(face);
+	public EnergyStorageSettings(Direction face) {
+		this(Optional.ofNullable(face));
 	}
 
 	public static final MapCodec<EnergyStorageSettings> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

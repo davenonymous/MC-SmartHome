@@ -1,10 +1,10 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.ISensor;
-import com.davenonymous.smarthome.api.SensorData;
-import com.davenonymous.smarthome.api.SensorSettings;
-import com.davenonymous.smarthome.api.SmartHomeSensor;
+import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.duckdb.DuckDBConnection;
@@ -28,7 +28,7 @@ public class ModSensors {
 		return null;
 	}
 
-	public static <T extends SensorData> ISensor<?, T> getByData(T data) {
+	public static <T extends ISensorData> ISensor<?, T> getByData(T data) {
 		// TODO: This is non-sense, we should have sensor IDs or a registry or something
 		for(var sensor : SENSORS) {
 			if(sensor.getDataClass() == data.getClass()) {

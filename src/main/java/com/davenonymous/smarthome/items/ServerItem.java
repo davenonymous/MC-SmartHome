@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.items;
 
-import com.davenonymous.smarthome.api.IServer;
-import com.davenonymous.smarthome.lib.gui.tooltip.HBoxTooltipComponent;
+import com.davenonymous.smarthome.api.items.IServer;
 import com.davenonymous.smarthome.lib.gui.tooltip.TableTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.tooltip.VBoxTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
