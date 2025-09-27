@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.visualization;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
+import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -25,7 +26,8 @@ public class VisualizationSettingsCodecRegistry {
 	public static final DeferredRegister<StreamCodec<? super RegistryFriendlyByteBuf, ? extends IVisualizationSettings>> DEFERRED_VIZ_SETTINGS_DISPATCHER = DeferredRegister.create(VisualizationSettingsCodecRegistry.VIZ_SETTINGS_DISPATCHER, SmartHome.MODID);
 
 	static {
-
+		DEFERRED_VIZ_SETTINGS.register("gauge", () -> GaugeVizSettings.CODEC);
+		DEFERRED_VIZ_SETTINGS_DISPATCHER.register("gauge", () -> GaugeVizSettings.STREAM_CODEC);
 	}
 
 

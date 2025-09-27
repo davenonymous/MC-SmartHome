@@ -15,10 +15,10 @@ public class DatabaseWorker extends Thread {
 	public static DuckDBConnection connection;
 	private final Path dbPath;
 
-	private BlockingQueue<DatabaseTask> taskQueue;
+	private BlockingQueue<DatabaseTask<?>> taskQueue;
 	private volatile boolean isRunning = true;
 
-	public DatabaseWorker(Path dbPath, BlockingQueue<DatabaseTask> taskQueue) {
+	public DatabaseWorker(Path dbPath, BlockingQueue<DatabaseTask<?>> taskQueue) {
 		super("SmartHome DuckDB Worker");
 		this.dbPath = dbPath;
 		this.taskQueue = taskQueue;

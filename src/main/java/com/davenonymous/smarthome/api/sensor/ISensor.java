@@ -1,12 +1,13 @@
 package com.davenonymous.smarthome.api.sensor;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.machinezoo.noexception.throwing.ThrowingConsumer;
+import com.davenonymous.smarthome.watcher.DatabaseTask;
 import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public interface ISensor<T extends SensorSettings, U extends ISensorData> {
 	ResourceLocation id();
@@ -38,8 +41,8 @@ public interface ISensor<T extends SensorSettings, U extends ISensorData> {
 
 	boolean supportsVisualization(IVisualization<?, ?> visualization);
 
-	default <S extends IVisualizationSettings, V extends IVisualization<D, S>, D extends IVisualizationData> D getVisualizationData(HomeZone zone, ConfiguredDevice device, T sensorSettings, IVisualization<D, S> visualization, S visualizationSettings) {
-		return null;
+	default Function<DuckDBConnection, IVisualizationData> getVisualizationData(HomeZone zone, ConfiguredDevice device, SensorSettings sensorSettings, IVisualization<?, ?> visualization, IVisualizationSettings visualizationSettings) {
+		return (connection) -> null;
 	}
 
 	default Map<Long, U> getHistoryFromResultSet(ResultSet resultSet)  {
@@ -77,42 +80,52 @@ public interface ISensor<T extends SensorSettings, U extends ISensorData> {
 
 	default void createTable(DuckDBConnection connection) throws SQLException {}
 
-	default ThrowingFunction<DuckDBConnection, ResultSet> stateForDevice(HomeZone zone, ConfiguredDevice device) {
+	default Function<DuckDBConnection, ResultSet> stateForDevice(HomeZone zone, ConfiguredDevice device) {
 		return connection -> {
-			PreparedStatement prepped = connection.prepareStatement("SELECT * FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY instant DESC LIMIT 1");
-			int paramIndex = 1;
-			prepped.setObject(paramIndex++, zone.home().id());
-			prepped.setObject(paramIndex++, zone.id());
-			prepped.setObject(paramIndex++, device.id());
-			return prepped.executeQuery();
+			try {
+				PreparedStatement prepped = connection.prepareStatement("SELECT * FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? ORDER BY instant DESC LIMIT 1");
+				int paramIndex = 1;
+				prepped.setObject(paramIndex++, zone.home().id());
+				prepped.setObject(paramIndex++, zone.id());
+				prepped.setObject(paramIndex++, device.id());
+				return prepped.executeQuery();
+			} catch (SQLException e) {
+				SmartHome.LOGGER.error("Error querying sensor state", e);
+				return null;
+			}
 		};
 	}
 
-	default ThrowingFunction<DuckDBConnection, ResultSet> historyForDevice(HomeZone zone, ConfiguredDevice device, long start, long end) {
+	default Function<DuckDBConnection, ResultSet> historyForDevice(HomeZone zone, ConfiguredDevice device, long start, long end) {
 		return connection -> {
-			PreparedStatement prepped = connection.prepareStatement("SELECT * FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? AND tick > ? AND tick <= ? ORDER BY tick DESC");
-			int paramIndex = 1;
-			prepped.setObject(paramIndex++, zone.home().id());
-			prepped.setObject(paramIndex++, zone.id());
-			prepped.setObject(paramIndex++, device.id());
-			prepped.setLong(paramIndex++, start);
-			prepped.setLong(paramIndex++, end);
-			return prepped.executeQuery();
+			try {
+				PreparedStatement prepped = connection.prepareStatement("SELECT * FROM " + getTableName() + " WHERE home = ? AND zone = ? AND device = ? AND tick > ? AND tick <= ? ORDER BY tick DESC");
+				int paramIndex = 1;
+				prepped.setObject(paramIndex++, zone.home().id());
+				prepped.setObject(paramIndex++, zone.id());
+				prepped.setObject(paramIndex++, device.id());
+				prepped.setLong(paramIndex++, start);
+				prepped.setLong(paramIndex++, end);
+				return prepped.executeQuery();
+			} catch (SQLException e) {
+				SmartHome.LOGGER.error("Error querying sensor history", e);
+				return null;
+			}
 		};
 	}
 
-	ThrowingConsumer<DuckDBConnection> NOOP = (connection) -> {};
+	Consumer<DuckDBConnection> NOOP = (connection) -> {};
 
-	default ThrowingConsumer<DuckDBConnection> visitHome(ServerLevel server, HomeCore home, ConfiguredDevice device) throws SQLException {
+	default Consumer<DuckDBConnection> visitHome(ServerLevel server, HomeCore home, ConfiguredDevice device) throws SQLException {
 		return NOOP;
 	}
-	default ThrowingConsumer<DuckDBConnection> visitZone(ServerLevel server, HomeZone zone, ConfiguredDevice device) throws SQLException {
+	default Consumer<DuckDBConnection> visitZone(ServerLevel server, HomeZone zone, ConfiguredDevice device) throws SQLException {
 		return NOOP;
 	}
-	default ThrowingConsumer<DuckDBConnection> visitZoneEntity(ServerLevel server, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
+	default Consumer<DuckDBConnection> visitZoneEntity(ServerLevel server, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
 		return NOOP;
 	}
-	default ThrowingConsumer<DuckDBConnection> visitZoneBlock(ServerLevel server, HomeZone zone, ConfiguredDevice device, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
+	default Consumer<DuckDBConnection> visitZoneBlock(ServerLevel server, HomeZone zone, ConfiguredDevice device, BlockPos pos, BlockState state, BlockEntity blockEntity) throws SQLException {
 		return NOOP;
 	}
 

@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.visualization;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.visualization.IVisualizationData;
+import com.davenonymous.smarthome.visualization.gauge.GaugeVizData;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -20,7 +21,7 @@ public class VisualizationDataCodecRegistry {
 	public static final DeferredRegister<StreamCodec<? super RegistryFriendlyByteBuf, ? extends IVisualizationData>> DEFERRED_VIZ_DATA_DISPATCHER = DeferredRegister.create(VisualizationDataCodecRegistry.VIZ_DATA_DISPATCHER, SmartHome.MODID);
 
 	static {
-
+		DEFERRED_VIZ_DATA_DISPATCHER.register("gauge", () -> GaugeVizData.STREAM_CODEC);
 
 	}
 

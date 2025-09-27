@@ -37,6 +37,12 @@ public class Register {
 			DeviceDataPayload::handleOnClient
 		);
 
+		registrar.playToClient(
+			VisualizationDataPayload.TYPE,
+			VisualizationDataPayload.CODEC,
+			VisualizationDataPayload::handleOnClient
+		);
+
 
 
 		registrar.playToServer(
@@ -91,6 +97,12 @@ public class Register {
 			RequestDeviceDataPayload.TYPE,
 			RequestDeviceDataPayload.CODEC,
 			RequestDeviceDataPayload::handleOnServer
+		);
+
+		registrar.playToServer(
+			RequestVisualizationDataPayload.TYPE,
+			RequestVisualizationDataPayload.CODEC,
+			RequestVisualizationDataPayload::handleOnServer
 		);
 	}
 }

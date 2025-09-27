@@ -2,8 +2,6 @@ package com.davenonymous.smarthome.watcher;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensor;
-import com.machinezoo.noexception.throwing.ThrowingConsumer;
-import com.machinezoo.noexception.throwing.ThrowingFunction;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -14,28 +12,29 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.duckdb.DuckDBConnection;
 
 import java.sql.ResultSet;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @EventBusSubscriber(modid = SmartHome.MODID)
 public class WorldWatcherPool {
-	public static BlockingQueue<DatabaseTask> taskQueue;
+	public static BlockingQueue<DatabaseTask<?>> taskQueue;
 	public static DatabaseWorker databaseWorker;
 	public static WorldWatcher instance;
 
-	public static final DatabaseTask POISON_PILL = new DatabaseTask(ISensor.NOOP);
+	public static final DatabaseTask<?> POISON_PILL = new ActionDatabaseTask(ISensor.NOOP);
 
-	public static CompletableFuture<ResultSet> query(ThrowingFunction<DuckDBConnection, ResultSet> query) {
-		CompletableFuture<ResultSet> future = new CompletableFuture<>();
-		taskQueue.offer(new FutureDatabaseTask(query, future));
-		return future;
+	public static CompletableFuture<ResultSet> query(Function<DuckDBConnection, ResultSet> query) {
+		var task = new QueryDatabaseTask(query);
+		return task.enqueue(taskQueue);
 	}
 
-	public static CompletableFuture<Void> execute(ThrowingConsumer<DuckDBConnection> action) {
-		CompletableFuture<Void> future = new CompletableFuture<>();
-		taskQueue.offer(new FutureDatabaseTask(action, future));
-		return future;
+	public static CompletableFuture<Void> execute(Consumer<DuckDBConnection> action) {
+		var task = new ActionDatabaseTask(action);
+		return task.enqueue(taskQueue);
 	}
 
 	@SubscribeEvent
@@ -53,9 +52,9 @@ public class WorldWatcherPool {
 			return;
 		}
 
-		var databaseActions = instance.processHomes();
+		List<Consumer<DuckDBConnection>> databaseActions = instance.processHomes();
 		for(var action : databaseActions) {
-			taskQueue.offer(new DatabaseTask(action));
+			new ActionDatabaseTask(action).enqueue(taskQueue);
 		}
 	}
 

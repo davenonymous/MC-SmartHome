@@ -7,7 +7,11 @@ import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.networking.actions.RequestDeviceDataPayload;
+import com.davenonymous.smarthome.networking.actions.RequestVisualizationDataPayload;
+import com.davenonymous.smarthome.sensor.RedstonePowered;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.davenonymous.smarthome.visualization.gauge.GaugeViz;
+import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
@@ -57,6 +61,9 @@ public class DevicesContainer extends WidgetPanel {
 			}
 
 			PacketDistributor.sendToServer(new RequestDeviceDataPayload(event.zone().home().id(), event.zone().id(), event.device()));
+
+			var vizPayload = new RequestVisualizationDataPayload(event.zone().home().id(), event.zone().id(), event.device(), RedstonePowered.ID, GaugeViz.ID, new GaugeVizSettings(0, 15));
+			PacketDistributor.sendToServer(vizPayload);
 
 			deviceDetail.setDevice(event.zone(), event.device());
 			updateWidgetSizes();

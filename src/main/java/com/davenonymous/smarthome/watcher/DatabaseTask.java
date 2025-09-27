@@ -1,48 +1,37 @@
 package com.davenonymous.smarthome.watcher;
 
-import com.machinezoo.noexception.throwing.ThrowingConsumer;
-import com.machinezoo.noexception.throwing.ThrowingFunction;
 import org.duckdb.DuckDBConnection;
 
-import java.sql.ResultSet;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 
-public class DatabaseTask implements Runnable {
+public abstract class DatabaseTask<T> implements Runnable {
 	DuckDBConnection connection;
-	ThrowingConsumer<DuckDBConnection> databaseAction;
-	ThrowingFunction<DuckDBConnection, ResultSet> databaseQuery;
+	CompletableFuture<T> future;
 
-	public DatabaseTask(ThrowingConsumer<DuckDBConnection> databaseAction) {
-		this.databaseAction = databaseAction;
+	public DatabaseTask() {
+		this.future = new CompletableFuture<>();
 	}
 
-	public DatabaseTask(ThrowingFunction<DuckDBConnection, ResultSet> databaseQuery) {
-		this.databaseQuery = databaseQuery;
-	}
-
-	public DatabaseTask setConnection(DuckDBConnection connection) {
+	public DatabaseTask<T> setConnection(DuckDBConnection connection) {
 		this.connection = connection;
 		return this;
 	}
 
+	public CompletableFuture<T> enqueue(BlockingQueue<DatabaseTask<?>> queue) {
+		queue.offer(this);
+		return future;
+	}
+
+	abstract CompletableFuture<T> call();
+
 	@Override
 	public void run() {
 		if(connection == null) {
+			future.completeExceptionally(new IllegalStateException("No database connection"));
 			return;
 		}
 
-		if(databaseAction != null) {
-			try {
-				databaseAction.accept(connection);
-			} catch (Throwable e) {
-				DatabaseWorker.LOGGER.error("Error executing database task", e);
-			}
-		} else if(databaseQuery != null) {
-			try {
-				var resultSet = databaseQuery.apply(connection);
-			} catch (Throwable e) {
-				DatabaseWorker.LOGGER.error("Error executing database query", e);
-			}
-		}
-
+		call();
 	}
 }

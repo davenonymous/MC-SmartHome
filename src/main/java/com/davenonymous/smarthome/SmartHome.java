@@ -4,6 +4,7 @@ import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
 import com.davenonymous.smarthome.setup.DeferredRegistries;
 import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.setup.content.ModVisualizations;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.font.providers.GlyphProviderType;
 import net.minecraft.resources.ResourceLocation;
@@ -31,6 +32,7 @@ public class SmartHome {
 		}
 
 		ModSensors.find();
+		ModVisualizations.find();
 	}
 
 	public static ResourceLocation sprite(GuiTheme.SpriteComponent component) {

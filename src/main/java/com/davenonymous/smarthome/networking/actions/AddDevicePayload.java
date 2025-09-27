@@ -10,13 +10,12 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public record AddDevicePayload(UUID homeId, UUID zone, ConfiguredDevice device)  implements CustomPacketPayload {
 	public static final Type<AddDevicePayload> TYPE = new Type<>(SmartHome.resource("add_device"));
@@ -56,14 +55,11 @@ public record AddDevicePayload(UUID homeId, UUID zone, ConfiguredDevice device) 
 		var zone = optZone.get();
 		var device = payload.device();
 		var state = level.getBlockState(device.pos());
-		List<SensorSettings> foundSensors = new ArrayList<>();
-		for(var sensor : ModSensors.SENSORS) {
-			if(!sensor.isValid(level, device.pos(), state)) {
-				continue;
-			}
-
-			foundSensors.add(sensor.getDefaultSettings());
+		Map<ResourceLocation, SensorSettings> foundSensors = new HashMap<>();
+		for(var sensor : ModSensors.getValidSensors(level, device.pos(), state)) {
+			foundSensors.put(sensor.id(), sensor.getDefaultSettings());
 		}
+
 		var fullDataDevice = device.withSensors(foundSensors);
 		zone.addDevice(fullDataDevice);
 		homes.setDirty();

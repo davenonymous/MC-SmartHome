@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.function.Consumer;
 
 @SmartHomeSensor(modid = "minecraft")
 public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
@@ -71,7 +72,7 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 	}
 
 	@Override
-	public ThrowingConsumer<DuckDBConnection> visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
+	public Consumer<DuckDBConnection> visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
 		if(!(entity instanceof LivingEntity livingEntity)) {
 			return NOOP;
 		}
@@ -82,21 +83,25 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 		var entityId = livingEntity.getId();
 
 		return connection -> {
-			PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?, ?), row(?, ?, ?))");
-			int paramIndex = 1;
-			prepped.setLong(paramIndex++, level.getServer().getTickCount());
-			prepped.setObject(paramIndex++, zone.home().id());
-			prepped.setObject(paramIndex++, zone.id());
-			prepped.setObject(paramIndex++, device.id());
-			prepped.setInt(paramIndex++, entityId);
-			prepped.setString(paramIndex++, name);
-			prepped.setString(paramIndex++, type);
-			prepped.setString(paramIndex++, category);
-			prepped.setDouble(paramIndex++, livingEntity.getX());
-			prepped.setDouble(paramIndex++, livingEntity.getY());
-			prepped.setDouble(paramIndex++, livingEntity.getZ());
-			prepped.execute();
-			prepped.close();
+			try {
+				PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?, ?), row(?, ?, ?))");
+				int paramIndex = 1;
+				prepped.setLong(paramIndex++, level.getServer().getTickCount());
+				prepped.setObject(paramIndex++, zone.home().id());
+				prepped.setObject(paramIndex++, zone.id());
+				prepped.setObject(paramIndex++, device.id());
+				prepped.setInt(paramIndex++, entityId);
+				prepped.setString(paramIndex++, name);
+				prepped.setString(paramIndex++, type);
+				prepped.setString(paramIndex++, category);
+				prepped.setDouble(paramIndex++, livingEntity.getX());
+				prepped.setDouble(paramIndex++, livingEntity.getY());
+				prepped.setDouble(paramIndex++, livingEntity.getZ());
+				prepped.execute();
+				prepped.close();
+			} catch (SQLException e) {
+				SmartHome.LOGGER.error("Failed to record occupancy data for device {}", device.id(), e);
+			}
 		};
 	}
 }

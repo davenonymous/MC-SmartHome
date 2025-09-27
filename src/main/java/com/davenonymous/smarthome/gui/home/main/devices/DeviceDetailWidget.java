@@ -97,8 +97,9 @@ public class DeviceDetailWidget extends WidgetVBox {
 		}
 
 		List<ISensorData> dataCache = HomeScreen.get().sensorDataCache.get(device.id());
-		for(var sensorSettings : device.sensors()) {
-			var sensor = ModSensors.getBySettings(sensorSettings);
+		for(var sensorEntry : device.sensors().entrySet()) {
+			var sensorId = sensorEntry.getKey();
+			var sensor = ModSensors.getById(sensorId);
 			if(sensor == null) {
 				continue;
 			}

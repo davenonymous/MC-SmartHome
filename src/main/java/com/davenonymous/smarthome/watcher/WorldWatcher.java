@@ -5,14 +5,15 @@ import com.davenonymous.smarthome.api.sensor.ISensor;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.setup.content.ModSensors;
-import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import org.duckdb.DuckDBConnection;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public class WorldWatcher {
 
@@ -24,9 +25,9 @@ public class WorldWatcher {
 		this.overworld = server.overworld();
 	}
 
-	public List<ThrowingConsumer<DuckDBConnection>> processHomes() {
+	public List<Consumer<DuckDBConnection>> processHomes() {
 		var homes = WorldSavedHomes.get(overworld);
-		List<ThrowingConsumer<DuckDBConnection>> homeConsumers = new ArrayList<>();
+		List<Consumer<DuckDBConnection>> homeConsumers = new ArrayList<>();
 		for(var home : homes.homes().values()) {
 			try {
 				homeConsumers.addAll(processHome(home));
@@ -37,13 +38,13 @@ public class WorldWatcher {
 		return homeConsumers;
 	}
 
-	private List<ThrowingConsumer<DuckDBConnection>> processHome(HomeCore home) throws SQLException{
+	private List<Consumer<DuckDBConnection>> processHome(HomeCore home) throws SQLException{
 		var homeLevel = home.getHomeLevel(server);
 		if(homeLevel == null) {
 			return List.of();
 		}
 
-		List<ThrowingConsumer<DuckDBConnection>> homeConsumers = new ArrayList<>();
+		List<Consumer<DuckDBConnection>> homeConsumers = new ArrayList<>();
 		for(var entry : home.getAllConfiguredDevices().entrySet()) {
 			var zone = entry.getKey();
 			for(var device : entry.getValue()) {
@@ -53,7 +54,7 @@ public class WorldWatcher {
 
 				var pos = device.pos();
 				var blockState = homeLevel.getBlockState(pos);
-				var validSensors = ModSensors.SENSORS.stream().filter(sensor -> sensor.isValid(homeLevel, pos, blockState)).toList();
+				var validSensors = ModSensors.getValidSensors(homeLevel, pos, blockState);
 				if(validSensors.isEmpty()) {
 					continue;
 				}

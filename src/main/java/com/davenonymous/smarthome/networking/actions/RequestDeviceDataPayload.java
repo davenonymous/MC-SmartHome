@@ -60,7 +60,7 @@ public record RequestDeviceDataPayload(UUID homeId, UUID zone, ConfiguredDevice 
 
 		CompletableFuture<ISensorData>[] futures = new CompletableFuture[device.sensors().size()];
 		int i = 0;
-		for(SensorSettings sensorSettings : device.sensors()) {
+		for(SensorSettings sensorSettings : device.sensors().values()) {
 			futures[i++] = WorldWatcherUtil.getSensorState(zone, device, sensorSettings);
 		}
 

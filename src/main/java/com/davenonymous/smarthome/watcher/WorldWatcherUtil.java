@@ -93,14 +93,7 @@ public class WorldWatcherUtil {
 					continue;
 				}
 
-				List<ResourceLocation> foundSensors = new ArrayList<>();
-				for(var sensor : ModSensors.SENSORS) {
-					if(!sensor.isValid(level, pos, state)) {
-						continue;
-					}
-
-					foundSensors.add(sensor.id());
-				}
+				List<ResourceLocation> foundSensors = ModSensors.getValidSensors(level, pos, state).stream().map(ISensor::id).toList();
 				if(foundSensors.isEmpty()) {
 					continue;
 				}

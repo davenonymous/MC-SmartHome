@@ -14,13 +14,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
-public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored, List<SensorSettings> sensors) {
+public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored, Map<ResourceLocation, SensorSettings> sensors) {
 
 	public ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation blockId, boolean enabled, boolean ignored) {
-		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored, List.of());
+		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored, Map.of());
 	}
 
 	public boolean matches(Block block) {
@@ -39,7 +41,7 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 		ResourceLocation.CODEC.fieldOf("block").forGetter(ConfiguredDevice::blockId),
 		Codec.BOOL.optionalFieldOf("enabled", false).forGetter(ConfiguredDevice::enabled),
 		Codec.BOOL.optionalFieldOf("ignored", false).forGetter(ConfiguredDevice::ignored),
-		SensorSettings.CODEC.listOf().fieldOf("sensors").forGetter(ConfiguredDevice::sensors)
+		Codec.unboundedMap(ResourceLocation.CODEC, SensorSettings.CODEC).fieldOf("sensors").forGetter(ConfiguredDevice::sensors)
 	).apply(instance, ConfiguredDevice::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, ConfiguredDevice> STREAM_CODEC = BiggerStreamCodec.composite(
@@ -49,7 +51,7 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 		ResourceLocation.STREAM_CODEC, ConfiguredDevice::blockId,
 		ByteBufCodecs.BOOL, ConfiguredDevice::enabled,
 		ByteBufCodecs.BOOL, ConfiguredDevice::ignored,
-		SensorSettings.STREAM_CODEC.apply(ByteBufCodecs.list()), ConfiguredDevice::sensors,
+		ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, SensorSettings.STREAM_CODEC), ConfiguredDevice::sensors,
 		ConfiguredDevice::new
 	);
 
@@ -65,7 +67,7 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, this.enabled, newIgnored, this.sensors);
 	}
 
-	public ConfiguredDevice withSensors(List<SensorSettings> newSensors) {
+	public ConfiguredDevice withSensors(Map<ResourceLocation, SensorSettings> newSensors) {
 		return new ConfiguredDevice(this.id, this.pos, this.name, this.blockId, this.enabled, this.ignored, newSensors);
 	}
 }

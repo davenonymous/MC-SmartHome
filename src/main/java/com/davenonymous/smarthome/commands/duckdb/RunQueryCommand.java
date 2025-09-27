@@ -1,6 +1,8 @@
 package com.davenonymous.smarthome.commands.duckdb;
 
+import com.davenonymous.smarthome.watcher.ActionDatabaseTask;
 import com.davenonymous.smarthome.watcher.DatabaseTask;
+import com.davenonymous.smarthome.watcher.QueryDatabaseTask;
 import com.davenonymous.smarthome.watcher.WorldWatcherPool;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -54,7 +56,7 @@ public class RunQueryCommand implements Command<CommandSourceStack> {
 		context.getSource().sendSuccess(() -> Component.literal(text), true);
 
 		String finalStatement = statement;
-		WorldWatcherPool.taskQueue.offer(new DatabaseTask(connection -> {
+		var task = new ActionDatabaseTask(connection -> {
 			try {
 				var stmt = connection.createStatement();
 				var result = stmt.executeQuery(finalStatement);
@@ -74,8 +76,8 @@ public class RunQueryCommand implements Command<CommandSourceStack> {
 			} catch (SQLException e) {
 				context.getSource().sendFailure(Component.literal("SQL Error: " + e.getMessage()));
 			}
-		}));
-
+		});
+		task.enqueue(WorldWatcherPool.taskQueue);
 		return 0;
 	}
 }
