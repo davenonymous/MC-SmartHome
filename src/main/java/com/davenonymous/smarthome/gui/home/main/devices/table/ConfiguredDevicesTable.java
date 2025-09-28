@@ -1,5 +1,6 @@
-package com.davenonymous.smarthome.gui.home.main.devices;
+package com.davenonymous.smarthome.gui.home.main.devices.table;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -10,18 +11,17 @@ import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
+import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.davenonymous.smarthome.setup.content.ModSensors;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfiguredDevicesTable extends AbstractDevicesTable {
 	HomeCore home;
@@ -62,12 +62,11 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 
 	private ConfiguredDevicesTable createHeaderRow() {
 		this.clear();
-		this.add(0, 0, new Spacer(5, 5));
-		this.add(1, 0, createHeaderWidget("Device Name"));
-		this.add(2, 0, createHeaderWidget("Zone"));
-		this.add(3, 0, createHeaderWidget("Position", ContentAlignment.MIDDLE_CENTER));
-		this.add(4, 0, createHeaderWidget("Type"));
-		this.add(5, 0, createHeaderWidget("Sensors"));
+		this.add(0, 0, createHeaderWidget("Device"));
+		this.add(1, 0, new Spacer(5, 5));
+		this.add(2, 0, createHeaderWidget("Position"));
+		this.add(3, 0, createHeaderWidget("State"));
+		this.add(4, 0, createHeaderWidget("Sensors"));
 		return this;
 	}
 
@@ -92,6 +91,12 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 				textBox.setTextColor(0xFFFFFFFF);
 			} else {
 				textBox.setTextColor(0xFFAAAAAA);
+			}
+		} else if(cell.widget() instanceof TextCell textCell) {
+			if(isHovered) {
+				textCell.setTextColor(0xFFFFFFFF);
+			} else {
+				textCell.setTextColor(0xFFAAAAAA);
 			}
 		}
 	}
@@ -118,11 +123,9 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 			int row = this.getRowCount();
 			devices.put(row, entry);
 
-			this.add(1, row, createCellWidget(device.name()));
-			this.add(2, row, createCellWidget(zone.name()));
-			this.add(3, row, createCellWidget(device.pos().toShortString(), ContentAlignment.MIDDLE_CENTER));
+			var positionCell = new TextCell(zone.name(), device.pos().toShortString());
+			this.add(2, row, new CellData(positionCell, ContentAlignment.MIDDLE_LEFT, true));
 
-			CellData cellWidget;
 			var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
 			if(deviceBlockState == null) {
 				var sprite = new WidgetSprite(HackerNoon.Solid.exclaimation);
@@ -131,15 +134,45 @@ public class ConfiguredDevicesTable extends AbstractDevicesTable {
 				sprite.setTooltipElements(
 					WrappedStringTooltipComponent.red(I18n.get("smarthome.gui.home.devices.table.tooltip.missing_device"))
 				);
-				cellWidget = new CellData(sprite, ContentAlignment.MIDDLE_CENTER);
+
+				var deviceNameCell = new TextCell(device.name());
+				this.add(1, row, new CellData(deviceNameCell, ContentAlignment.MIDDLE_LEFT, true));
+				this.add(0, row, new CellData(sprite, ContentAlignment.MIDDLE_CENTER));
 			} else {
-				cellWidget = createCellWidget(I18n.get(deviceBlockState.getBlock().getDescriptionId()));
+				var blockName = I18n.get(deviceBlockState.getBlock().getDescriptionId());
+
+				var deviceNameCell = new TextCell(blockName, device.name().equals(blockName) ? "" : device.name());
+				this.add(1, row, new CellData(deviceNameCell, ContentAlignment.MIDDLE_LEFT, true));
+
+				var blockStateWidget = new BlockStateWidget(deviceBlockState);
+				blockStateWidget.setSize(24, 24);
+				blockStateWidget.setTooltipElements(WrappedStringTooltipComponent.orange(blockName));
+
+				this.add(0, row, blockStateWidget);
 			}
 
-			this.add(0, row, new BlockStateWidget(deviceBlockState));
-			this.add(4, row, cellWidget);
-			this.add(5, row, createCellWidget(device.enabled() ? "Enabled" : "Disabled"));
+			var statusSprite = new WidgetSprite(SmartHome.sprite(device.enabled() ? GuiTheme.SpriteComponent.WIDGET_TOGGLE_ON : GuiTheme.SpriteComponent.WIDGET_TOGGLE_OFF));
+			this.add(3, row, statusSprite);
 
+			Set<String> sensorNames = new HashSet<>();
+			for(var sensorEntry : device.sensors().entrySet()) {
+				var sensorId = sensorEntry.getKey();
+				var sensorSettings = sensorEntry.getValue();
+				var sensor = ModSensors.getById(sensorId);
+				if(sensor == null) {
+					continue;
+				}
+				if(sensor.isGeneric()) {
+					// sensorNames.add(I18n.get("smarthome.sensors.generic_sensor"));
+					continue;
+				}
+				sensorNames.add(I18n.get(sensor.nameTranslationKey()));
+			}
+			String sensorsText = String.join(", ", sensorNames);
+			if(sensorsText.isEmpty()) {
+				sensorsText = I18n.get("smarthome.sensors.no_sensors");
+			}
+			this.add(4, row, createCellWidget(sensorsText));
 		}
 	}
 }

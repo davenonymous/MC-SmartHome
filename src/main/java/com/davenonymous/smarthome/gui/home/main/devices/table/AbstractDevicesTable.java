@@ -1,9 +1,10 @@
-package com.davenonymous.smarthome.gui.home.main.devices;
+package com.davenonymous.smarthome.gui.home.main.devices.table;
 
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseMoveEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTable;
 
 public abstract class AbstractDevicesTable extends WidgetTable {
@@ -20,6 +21,9 @@ public abstract class AbstractDevicesTable extends WidgetTable {
 			}
 
 			var pos = getPosForWidget(hovered.getFirst());
+			if(pos == null) {
+				pos = getPosForWidget(hovered.getFirst().getParent());
+			}
 			if(pos == null) {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
@@ -38,7 +42,12 @@ public abstract class AbstractDevicesTable extends WidgetTable {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			var pos = getPosForWidget(hovered.getFirst());
+			Widget firstHovered = hovered.getFirst();
+			var pos = getPosForWidget(firstHovered);
+			if(pos == null) {
+				pos = getPosForWidget(firstHovered.getParent());
+			}
+
 			if(pos != null && pos.height != hoveredRow) {
 				if(hoveredRow != -1) {
 					onRowHoverEnd(hoveredRow);

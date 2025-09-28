@@ -1,42 +1,32 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.visualization.IVisualization;
-import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.SensorDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
+import com.davenonymous.smarthome.gui.general.WidgetFlowBox;
+import com.davenonymous.smarthome.gui.home.main.devices.sensor.SensorBox;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.networking.actions.SetDeviceNamePayload;
-import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.content.ModSensors;
-import com.davenonymous.smarthome.setup.content.ModVisualizations;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.Map;
-import java.util.Optional;
 
 public class DeviceDetailWidget extends WidgetVBox {
 	private HomeZone zone;
 	private ConfiguredDevice device;
 
 	private StringInputWidget deviceRenameInput;
-	private WidgetVBox sensorsList;
+	private WidgetFlowBox sensorsList;
 
 	public DeviceDetailWidget() {
 		this.setPaddingHorizontal(8);
@@ -57,7 +47,8 @@ public class DeviceDetailWidget extends WidgetVBox {
 		deviceRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.devices.add.renameable")));
 		this.addContentBox(deviceRenameInput, FlexAlign.CENTER);
 
-		sensorsList = new WidgetVBox();
+		sensorsList = new WidgetFlowBox();
+		sensorsList.setPadding(0);
 		sensorsList.setSpacing(2);
 		this.addContentBox(sensorsList, FlexAlign.START);
 
@@ -66,7 +57,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			updateSensorList();
+			//updateSensorList();
 			return WidgetEventResult.HANDLED;
 		});
 
@@ -107,13 +98,17 @@ public class DeviceDetailWidget extends WidgetVBox {
 	}
 
 	private void updateSensorList() {
-		sensorsList.clear();
 		if(device == null) {
 			return;
 		}
+		if(this.width <= this.paddingHorizontal*2) {
+			return;
+		}
 
-		var dataCache = HomeScreen.get().sensorDataCache.get(device.id());
-		var vizCache = HomeScreen.get().visualizationDataCache;
+		SmartHome.LOGGER.debug("Updating sensor list for device {}", device.id());
+		sensorsList.clear();
+		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
+		sensorsList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
 		for(var sensorEntry : device.sensors().entrySet()) {
 			var sensorId = sensorEntry.getKey();
 			var sensor = ModSensors.getById(sensorId);
@@ -121,46 +116,11 @@ public class DeviceDetailWidget extends WidgetVBox {
 				continue;
 			}
 
-			var name = I18n.get(sensor.nameTranslationKey());
-			var description = I18n.get(sensor.descriptionTranslationKey());
-
-			var label = new WidgetTextBox(name);
-			label.setFont(ModFonts.NOKIA);
-			label.autoWidth();
-			label.autoHeight();
-			label.setTextColor(0xFFFFFFFF);
-			label.setTooltipElements(WrappedStringTooltipComponent.orange(description));
-			sensorsList.addContentBox(label, FlexAlign.START);
-
-			if(sensor.hasDefaultVisualization() && vizCache.contains(device.id(), sensor.id())) {
-				Map<ResourceLocation, IVisualizationData> availableVisualizations = vizCache.get(device.id(), sensor.id());
-				if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
-					var data = availableVisualizations.get(sensor.getDefaultVisualization());
-					//noinspection rawtypes
-					IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
-					if(vizImpl != null) {
-						//noinspection unchecked
-						var widget = vizImpl.getWidget(data, sensor.getDefaultVisualizationSettings());
-						if(widget != null) {
-							sensorsList.addContentBox(widget, FlexAlign.CENTER);
-						}
-					}
-				}
-			} else if(dataCache != null) {
-				Optional<ISensorData> optSensorData = dataCache.stream().filter(data -> ModSensors.getByData(data) == sensor).findFirst();
-				if(optSensorData.isEmpty()) {
-					continue;
-				}
-				var sensorData = optSensorData.get();
-				var value = new WidgetTextBox(sensorData.displayString());
-				value.autoWidth();
-				value.autoHeight();
-				value.setTextColor(0xFFFFFFAA);
-				sensorsList.addContentBox(value, FlexAlign.CENTER);
-			}
-			sensorsList.addContentBox(new Spacer(1, 10), FlexAlign.START);
+			SmartHome.LOGGER.debug(" - Adding sensor box for sensor {}", sensorId);
+			var box = new SensorBox(device, sensor);
+			sensorsList.add(box);
 		}
-		sensorsList.update(null);
+		sensorsList.updateWidgetSizes();
 	}
 
 	@Override
@@ -168,10 +128,15 @@ public class DeviceDetailWidget extends WidgetVBox {
 		super.updateWidgetSizes();
 		deviceRenameInput.autoWidth();
 		deviceRenameInput.setHeight(12);
+		this.update(null);
+
+		if(this.width <= this.paddingHorizontal*2) {
+			return;
+		}
 		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
 		sensorsList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
+		//sensorsList.spreadBoxes();
 
-		this.update(null);
 	}
 
 

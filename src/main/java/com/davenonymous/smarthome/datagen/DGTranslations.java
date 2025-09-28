@@ -60,6 +60,11 @@ public class DGTranslations extends LanguageProvider {
 
 		add("smarthome.gui.home.sidebar.settings", "Settings");
 
+		add("smarthome.sensors.generic_sensor", "Generic");
+		add("smarthome.sensors.generic_sensor.info", "Tracks basic information that all devices provide.");
+
+		add("smarthome.sensors.no_sensors", "-");
+
 		add("smarthome.range_finder.invalid", "Invalid");
 		add("smarthome.range_finder.intersects", "The selected Range Finder area intersects with an existing zone!");
 

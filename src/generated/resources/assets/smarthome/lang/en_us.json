@@ -31,5 +31,8 @@
   "smarthome.sensor.occupancy.description": "Records presence of living entities in the home zones.",
   "smarthome.sensor.occupancy.name": "Occupancy",
   "smarthome.sensor.redstone.description": "Records redstone power levels of blocks.",
-  "smarthome.sensor.redstone.name": "Redstone Level"
+  "smarthome.sensor.redstone.name": "Redstone Level",
+  "smarthome.sensors.generic_sensor": "Generic",
+  "smarthome.sensors.generic_sensor.info": "Tracks basic information that all devices provide.",
+  "smarthome.sensors.no_sensors": "-"
 }

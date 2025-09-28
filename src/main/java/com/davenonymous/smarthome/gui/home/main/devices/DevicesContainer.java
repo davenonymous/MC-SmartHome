@@ -2,17 +2,16 @@ package com.davenonymous.smarthome.gui.home.main.devices;
 
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
+import com.davenonymous.smarthome.gui.home.main.devices.table.ConfiguredDevicesTable;
+import com.davenonymous.smarthome.gui.home.main.devices.table.DeviceTableContainer;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.networking.actions.RequestDeviceDataPayload;
 import com.davenonymous.smarthome.networking.actions.RequestVisualizationDataPayload;
-import com.davenonymous.smarthome.sensor.RedstonePowered;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.content.ModSensors;
-import com.davenonymous.smarthome.visualization.gauge.GaugeViz;
-import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.resources.language.I18n;
@@ -103,11 +102,6 @@ public class DevicesContainer extends WidgetPanel {
 	}
 
 	@Override
-	public void draw(GuiGraphics guiGraphics, Window window) {
-		super.draw(guiGraphics, window);
-	}
-
-	@Override
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
@@ -125,27 +119,28 @@ public class DevicesContainer extends WidgetPanel {
 		configuredDevicesTable.setHeight(tableContainer.height - 16);
 		configuredDevicesTable.updateWidgetSizes();
 
-		int displayWidth = this.width() - 16;
+		int tableWidth = this.width() - 16;
 		int displayX = 8;
 		if(deviceDetail.device() != null) {
-			displayWidth = (int)(this.width() * 2 / 3f);
+			var requiredWidth = configuredDevicesTable.getColumnWidth(0) + configuredDevicesTable.getColumnWidth(1);
+			tableWidth = requiredWidth + 48;
 			deviceDetail.setVisible(true);
 		} else {
 			deviceDetail.setVisible(false);
 		}
 
-		int detailX = displayX + displayWidth + 5;
-		int detailWidth = this.width() - displayWidth - 21;
+		int detailX = displayX + tableWidth + 5;
+		int detailWidth = this.width() - tableWidth - 21;
 
 		deviceDetail.setPosition(detailX, tableContainer.y);
 		deviceDetail.setWidth(detailWidth);
 		deviceDetail.setHeight(tableContainer.height());
 		deviceDetail.updateWidgetSizes();
 
-		tableContainer.setWidth(displayWidth);
+		tableContainer.setWidth(tableWidth);
 		configuredDevicesTable.setWidth(tableContainer.width() - 16);
 
-		newDevicesBar.setWidth(displayWidth - 16);
+		newDevicesBar.setWidth(tableWidth - 16);
 		if(!hasNewDevices) {
 			newDevicesBar.setVisible(false);
 			newDevicesLabel.setVisible(false);

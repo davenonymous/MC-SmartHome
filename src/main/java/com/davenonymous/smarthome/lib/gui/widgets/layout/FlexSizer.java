@@ -85,6 +85,10 @@ public abstract class FlexSizer extends WidgetPanel {
 		return lastOffset + (isHorizontal() ? paddingHorizontal : paddingVertical);
 	}
 
+	public int getOrthogonalSize() {
+		return this.children().stream().filter(Widget::isVisible).mapToInt(w -> isHorizontal() ? w.height : w.width).max().orElse(0) + (isHorizontal() ? paddingVertical*2 : paddingHorizontal*2);
+	}
+
 	public FlexSizer setFlexDirection(FlexDirection direction) {
 		this.flexDirection = direction;
 		return this;
@@ -148,7 +152,7 @@ public abstract class FlexSizer extends WidgetPanel {
 		return addContentBox(box, FlexAlign.CENTER);
 	}
 
-	private FlexSizer addBox(Widget box, FlexMode mode, FlexAlign align, int value) {
+	protected FlexSizer addBox(Widget box, FlexMode mode, FlexAlign align, int value) {
 		flexValues.put(flexValues.size(), value);
 		flexModes.put(flexModes.size(), mode);
 		flexWidgets.put(flexWidgets.size(), box);
@@ -306,8 +310,10 @@ public abstract class FlexSizer extends WidgetPanel {
 	public void adjustSizeToContent() {
 		if(isHorizontal()) {
 			this.setWidth(getTotalRealSize());
+			this.setHeight(getOrthogonalSize());
 		} else {
 			this.setHeight(getTotalRealSize());
+			this.setWidth(getOrthogonalSize());
 		}
 	}
 }

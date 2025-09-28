@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.gui.home.main.devices;
+package com.davenonymous.smarthome.gui.home.main.devices.table;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;

@@ -13,6 +13,9 @@ import org.knowm.xchart.DialChart;
 import org.knowm.xchart.DialChartBuilder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.internal.series.MarkerSeries;
+import org.knowm.xchart.style.markers.Marker;
+import org.knowm.xchart.style.markers.None;
 
 import java.awt.*;
 import java.util.List;
@@ -40,6 +43,9 @@ public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
 			.build();
 
 		chart.getStyler()
+			.setAxisTickLabelsColor(new Color(ChatFormatting.WHITE.getColor(), false))
+			.setSeriesLines(new BasicStroke[] {new BasicStroke(1.5f)})
+			.setSeriesMarkers(new Marker[] {new None()})
 			.setChartTitleVisible(false)
 			.setPlotBorderVisible(false)
 			.setLegendVisible(false)
