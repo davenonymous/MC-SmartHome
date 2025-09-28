@@ -236,6 +236,10 @@ public class WidgetPanel extends Widget {
 	}
 
 	public void adjustSizeToContent() {
+		adjustSizeToContent(true);
+	}
+
+	public void adjustSizeToContent(boolean normalizeToZero) {
 		int smallestY = Integer.MAX_VALUE;
 		int smallestX = Integer.MAX_VALUE;
 		int largestY = Integer.MIN_VALUE;
@@ -248,12 +252,14 @@ public class WidgetPanel extends Widget {
 			largestY = Math.max(child.y + child.height, largestY);
 		}
 
-		largestX -= smallestX;
-		largestY -= smallestY;
+		if(normalizeToZero) {
+			largestX -= smallestX;
+			largestY -= smallestY;
 
-		for(Widget child : this.children) {
-			child.setX(child.x - smallestX);    // Shift all children to 0
-			child.setY(child.y - smallestY);    // Shift all children to 0
+			for(Widget child : this.children) {
+				child.setX(child.x - smallestX);    // Shift all children to 0
+				child.setY(child.y - smallestY);    // Shift all children to 0
+			}
 		}
 		this.setSize(largestX, largestY);
 	}

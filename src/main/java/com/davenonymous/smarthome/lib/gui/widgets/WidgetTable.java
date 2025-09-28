@@ -176,6 +176,14 @@ public class WidgetTable extends WidgetPanel {
 		return this;
 	}
 
+	public int paddingHorizontal() {
+		return this.cellPaddingHorizontal;
+	}
+
+	public int paddingVertical() {
+		return this.cellPaddingVertical;
+	}
+
 	public CellData get(int column, int row) {
 		if(!table.contains(row, column)) {
 			return null;

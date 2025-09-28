@@ -33,6 +33,7 @@ public class SidebarWidget extends WidgetVBox {
 		this.addFlexBox(new Spacer(100, 1), FlexAlign.START, 1);
 
 		this.settingsButton = new SidebarButton(HackerNoon.Solid.cog, I18n.get("smarthome.gui.home.sidebar.settings"));
+		this.settingsButton.setContentId(ContentIDs.SETTINGS);
 		this.addContentBox(settingsButton);
 
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {

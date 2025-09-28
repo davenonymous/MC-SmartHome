@@ -33,7 +33,7 @@ public class SidebarButton extends WidgetPanel {
 		this.label = label;
 
 		this.iconWidget = new WidgetSprite(icon, ChatFormatting.DARK_GRAY.getColor() | 0xFF000000);
-		this.iconWidget.scale = 0.5f;
+		this.iconWidget.setSize(12, 12);
 		this.add(this.iconWidget);
 
 		this.labelWidget = new WidgetTextBox(label);

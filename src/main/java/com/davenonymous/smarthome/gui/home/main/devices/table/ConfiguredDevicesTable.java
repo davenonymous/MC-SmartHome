@@ -7,6 +7,7 @@ import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.general.BlockStateWidget;
+import com.davenonymous.smarthome.gui.general.HoverableWidgetTable;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
@@ -23,7 +24,7 @@ import net.minecraft.client.resources.language.I18n;
 
 import java.util.*;
 
-public class ConfiguredDevicesTable extends AbstractDevicesTable {
+public class ConfiguredDevicesTable extends HoverableWidgetTable {
 	HomeCore home;
 	Map<Integer, Pair<HomeZone, ConfiguredDevice>> devices = new HashMap<>();
 

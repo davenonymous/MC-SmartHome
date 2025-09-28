@@ -208,6 +208,10 @@ public class HomeCore {
 		return this;
 	}
 
+	public void setSettings(HomeSettings settings) {
+		this.settings = settings;
+	}
+
 	public UUID id() {
 		return id;
 	}

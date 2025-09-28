@@ -21,7 +21,11 @@ public abstract class GuiTheme {
 		WIDGET_TOGGLE_OFF,
 		WIDGET_TOGGLE_AUTO,
 
-		SLOT,
+		SLOT;
+
+		public static SpriteComponent getToggleSprite(boolean state) {
+			return state ? WIDGET_TOGGLE_ON : WIDGET_TOGGLE_OFF;
+		}
 	}
 
 	public abstract ResourceLocation getSprite(SpriteComponent component);

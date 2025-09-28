@@ -104,5 +104,11 @@ public class Register {
 			RequestVisualizationDataPayload.CODEC,
 			RequestVisualizationDataPayload::handleOnServer
 		);
+
+		registrar.playToServer(
+			SetHomeSettingsPayload.TYPE,
+			SetHomeSettingsPayload.CODEC,
+			SetHomeSettingsPayload::handleOnServer
+		);
 	}
 }

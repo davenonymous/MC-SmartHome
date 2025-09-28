@@ -198,7 +198,7 @@ public abstract class FlexSizer extends WidgetPanel {
 		int totalFlexWeight = 0;
 		int totalFixedPx = 0;
 		int totalContentPx = 0;
-		int totalPadding = (flexWidgets.size() - 1) * (isHorizontal() ? paddingHorizontal : paddingVertical);
+		int totalPadding = (isHorizontal() ? paddingHorizontal : paddingVertical) * 2;
 
 		for(var entry : flexModes.entrySet()) {
 			int columnIndex = entry.getKey();
@@ -208,7 +208,7 @@ public abstract class FlexSizer extends WidgetPanel {
 			int value = flexValues.get(columnIndex);
 			switch(entry.getValue()) {
 				case FIXED:
-					totalFixedPx += value;
+					totalFixedPx += value + spacing;
 					break;
 				case FLEX:
 					totalFlexWeight += value;
@@ -216,6 +216,7 @@ public abstract class FlexSizer extends WidgetPanel {
 				case CONTENT:
 					var box = flexWidgets.get(columnIndex);
 					totalContentPx += isHorizontal() ? box.width : box.height;
+					totalContentPx += spacing;
 					break;
 			}
 		}
@@ -272,7 +273,7 @@ public abstract class FlexSizer extends WidgetPanel {
 							break;
 						case FILL:
 							box.setY(paddingVertical);
-							box.setHeight(this.height);
+							box.setHeight(this.height - paddingVertical*2);
 							break;
 						case END:
 							box.setY(paddingVertical + this.height - box.height);
@@ -294,7 +295,7 @@ public abstract class FlexSizer extends WidgetPanel {
 							break;
 						case FILL:
 							box.setX(paddingHorizontal);
-							box.setWidth(this.width);
+							box.setWidth(this.width - paddingHorizontal*2);
 							break;
 						case END:
 							box.setX(paddingHorizontal + this.width - box.width);
@@ -307,7 +308,8 @@ public abstract class FlexSizer extends WidgetPanel {
 		return this;
 	}
 
-	public void adjustSizeToContent() {
+	@Override
+	public void adjustSizeToContent(boolean normalizeToZero) {
 		if(isHorizontal()) {
 			this.setWidth(getTotalRealSize());
 			this.setHeight(getOrthogonalSize());

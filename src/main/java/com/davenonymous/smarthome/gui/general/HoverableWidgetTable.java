@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.gui.home.main.devices.table;
+package com.davenonymous.smarthome.gui.general;
 
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
@@ -7,10 +7,10 @@ import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTable;
 
-public abstract class AbstractDevicesTable extends WidgetTable {
+public abstract class HoverableWidgetTable extends WidgetTable {
 	int hoveredRow = -1;
 
-	public AbstractDevicesTable() {
+	public HoverableWidgetTable() {
 		setCellPaddingHorizontal(8);
 		setCellPaddingVertical(2);
 
