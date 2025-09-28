@@ -2,6 +2,10 @@ package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
+import com.davenonymous.smarthome.sensor.fluid.FluidStorageData;
+import com.davenonymous.smarthome.sensor.occupancy.OccupancyData;
+import com.davenonymous.smarthome.sensor.redstone.RedstonePoweredData;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -23,6 +27,7 @@ public class SensorDataCodecRegistry {
 		DEFERRED_SENSOR_DATA_DISPATCHER.register("energy_storage", () -> EnergyStorageData.STREAM_CODEC);
 		DEFERRED_SENSOR_DATA_DISPATCHER.register("redstone_powered", () -> RedstonePoweredData.STREAM_CODEC);
 		DEFERRED_SENSOR_DATA_DISPATCHER.register("occupancy", () -> OccupancyData.STREAM_CODEC);
+		DEFERRED_SENSOR_DATA_DISPATCHER.register("fluid_storage", () -> FluidStorageData.STREAM_CODEC);
 	}
 
 	@SubscribeEvent

@@ -105,7 +105,6 @@ public class DeviceDetailWidget extends WidgetVBox {
 			return;
 		}
 
-		SmartHome.LOGGER.debug("Updating sensor list for device {}", device.id());
 		sensorsList.clear();
 		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
 		sensorsList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
@@ -116,7 +115,6 @@ public class DeviceDetailWidget extends WidgetVBox {
 				continue;
 			}
 
-			SmartHome.LOGGER.debug(" - Adding sensor box for sensor {}", sensorId);
 			var box = new SensorBox(device, sensor);
 			sensorsList.add(box);
 		}

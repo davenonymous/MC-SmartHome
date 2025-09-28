@@ -84,7 +84,6 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 				return;
 			}
 
-			SmartHome.LOGGER.info("Sending viz data to player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
 			var replyPayload = new VisualizationDataPayload(zone.home().id(), zone.id(), device, payload.sensorId, payload.vizId, vizData);
 			context.reply(replyPayload);
 		});

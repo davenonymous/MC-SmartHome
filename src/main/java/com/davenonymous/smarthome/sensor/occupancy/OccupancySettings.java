@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.sensor;
+package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.mojang.serialization.Codec;

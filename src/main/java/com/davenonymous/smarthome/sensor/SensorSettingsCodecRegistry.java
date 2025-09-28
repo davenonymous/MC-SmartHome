@@ -2,6 +2,10 @@ package com.davenonymous.smarthome.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorSettings;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorageSettings;
+import com.davenonymous.smarthome.sensor.fluid.FluidStorageSettings;
+import com.davenonymous.smarthome.sensor.occupancy.OccupancySettings;
+import com.davenonymous.smarthome.sensor.redstone.RedstonePoweredSettings;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -34,6 +38,8 @@ public class SensorSettingsCodecRegistry {
 		DEFERRED_SENSOR_SETTINGS.register("occupancy", () -> OccupancySettings.CODEC);
 		DEFERRED_SENSOR_SETTINGS_DISPATCHER.register("occupancy", () -> OccupancySettings.STREAM_CODEC);
 
+		DEFERRED_SENSOR_SETTINGS.register("fluid_storage", () -> FluidStorageSettings.CODEC);
+		DEFERRED_SENSOR_SETTINGS_DISPATCHER.register("fluid_storage", () -> FluidStorageSettings.STREAM_CODEC);
 
 	}
 

@@ -26,6 +26,8 @@
   "smarthome.gui.server.name_label": "Name your smart home:",
   "smarthome.range_finder.intersects": "The selected Range Finder area intersects with an existing zone!",
   "smarthome.range_finder.invalid": "Invalid",
+  "smarthome.sensor.fluid_storage.description": "Records stored fluids.",
+  "smarthome.sensor.fluid_storage.name": "Fluid Storage",
   "smarthome.sensor.forge_energy_storage.description": "Records stored forge energy.",
   "smarthome.sensor.forge_energy_storage.name": "Energy Storage",
   "smarthome.sensor.occupancy.description": "Records presence of living entities in the home zones.",

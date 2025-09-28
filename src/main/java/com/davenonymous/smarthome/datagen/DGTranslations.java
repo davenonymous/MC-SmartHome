@@ -1,8 +1,9 @@
 package com.davenonymous.smarthome.datagen;
 
-import com.davenonymous.smarthome.sensor.EnergyStorage;
-import com.davenonymous.smarthome.sensor.Occupancy;
-import com.davenonymous.smarthome.sensor.RedstonePowered;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorage;
+import com.davenonymous.smarthome.sensor.fluid.FluidStorage;
+import com.davenonymous.smarthome.sensor.occupancy.Occupancy;
+import com.davenonymous.smarthome.sensor.redstone.RedstonePowered;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import com.davenonymous.smarthome.setup.content.ModItems;
 import net.minecraft.client.KeyMapping;
@@ -76,6 +77,9 @@ public class DGTranslations extends LanguageProvider {
 
 		add(EnergyStorage.ID, "name", "Energy Storage");
 		add(EnergyStorage.ID, "description", "Records stored forge energy.");
+
+		add(FluidStorage.ID, "name", "Fluid Storage");
+		add(FluidStorage.ID, "description", "Records stored fluids.");
 	}
 
 	public void add(ResourceLocation id, String translation) {

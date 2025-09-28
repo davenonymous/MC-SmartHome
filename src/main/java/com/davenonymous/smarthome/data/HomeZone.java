@@ -122,4 +122,9 @@ public class HomeZone {
 		ByteBufCodecs.BOOL, HomeZone::isDeleted,
 		HomeZone::new
 	);
+
+	public HomeZone updateDevices(List<ConfiguredDevice> newDevices) {
+		this.devices = new ArrayList<>(newDevices);
+		return this;
+	}
 }

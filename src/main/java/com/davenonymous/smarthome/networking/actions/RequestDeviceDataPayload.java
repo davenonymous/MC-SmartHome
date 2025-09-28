@@ -6,18 +6,18 @@ import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.DeviceDataPayload;
+import com.davenonymous.smarthome.setup.content.ModSensors;
 import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public record RequestDeviceDataPayload(UUID homeId, UUID zone, ConfiguredDevice device)  implements CustomPacketPayload {
@@ -77,7 +77,7 @@ public record RequestDeviceDataPayload(UUID homeId, UUID zone, ConfiguredDevice 
 				}
 			}
 
-			context.reply(new DeviceDataPayload(payload.homeId, payload.zone, payload.device, sensorData));
+			context.reply(new DeviceDataPayload(payload.homeId, payload.zone, device, sensorData));
 		});
 
 	}

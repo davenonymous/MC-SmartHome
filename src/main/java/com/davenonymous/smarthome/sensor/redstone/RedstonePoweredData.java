@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.sensor;
+package com.davenonymous.smarthome.sensor.redstone;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import net.minecraft.network.RegistryFriendlyByteBuf;

@@ -1,13 +1,17 @@
 package com.davenonymous.smarthome.blocks.dashboard;
 
+import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.blocks.base.FacingBaseBlock;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
+import com.davenonymous.smarthome.setup.content.ModSensors;
 import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
@@ -25,8 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 	private static Map<Direction, VoxelShape> SHAPES = Map.of(
@@ -77,9 +80,35 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 		} else {
 			var optHome = data.getHome(homeId);
 			if(optHome.isPresent()) {
-				var foundDevices = WorldWatcherUtil.searchForDevices(level.getServer(), optHome.get());
-				optHome.get().setFoundDevices(foundDevices);
-				worldInfo = HomeWorldInfo.create((ServerLevel) level, optHome.get());
+				var home = optHome.get();
+				var foundDevices = WorldWatcherUtil.searchForDevices(level.getServer(), home);
+				home.setFoundDevices(foundDevices);
+
+				for(var zone : home.zones()) {
+					List<ConfiguredDevice> newDeviceList = new ArrayList<>();
+					for(var device : zone.devices()) {
+						// Update the device's sensors with any new sensors that might be available
+						// This can happen when new sensors are added by other mods, or when the block
+						// at the device's position has changed to a different block that supports
+						// different sensors.
+						Map<ResourceLocation, SensorSettings> foundSensors = new HashMap<>(device.sensors());
+						for(var sensor : ModSensors.getValidSensors(level, device.pos(), level.getBlockState(device.pos()))) {
+							var settings = foundSensors.get(sensor.id());
+							if(settings == null) {
+								settings = sensor.getDefaultSettings();
+							}
+							foundSensors.put(sensor.id(), settings);
+						}
+
+						device = device.withSensors(foundSensors);
+						newDeviceList.add(device);
+					}
+
+					zone.updateDevices(newDeviceList);
+				}
+
+				data.setDirty();
+				worldInfo = HomeWorldInfo.create((ServerLevel) level, home);
 			}
 		}
 

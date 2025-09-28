@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.sensor;
+package com.davenonymous.smarthome.sensor.redstone;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensor;
@@ -12,7 +12,6 @@ import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.visualization.gauge.GaugeViz;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizData;
 import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
-import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;

@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.sensor;
+package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensor;
@@ -7,7 +7,6 @@ import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
-import com.machinezoo.noexception.throwing.ThrowingConsumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;

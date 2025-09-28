@@ -37,7 +37,6 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 
 	public static void handleOnClient(OpenHomeScreenPayload payload, IPayloadContext context) {
 		ClientCache.INSTANCE.ownedHomes = payload.homes();
-		SmartHome.LOGGER.debug("Received open home screen packet for {} homes", payload.homes.size());
 
 		var mc = Minecraft.getInstance();
 		if(mc.screen instanceof HomeScreen homeScreen) {

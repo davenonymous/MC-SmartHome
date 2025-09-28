@@ -45,6 +45,5 @@ public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevic
 		}
 
 		homeScreen.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
-		SmartHome.LOGGER.info("Received visualization data for device {} sensor {}", payload.device().id(), payload.sensorId());
 	}
 }
