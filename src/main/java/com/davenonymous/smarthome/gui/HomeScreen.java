@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.gui;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
@@ -19,6 +20,8 @@ import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
@@ -46,8 +49,12 @@ public class HomeScreen extends WidgetFullScreen {
 	public Map<UUID, List<ISensorData>> sensorDataCache;
 	public Table<UUID, ResourceLocation, Map<ResourceLocation, IVisualizationData>> visualizationDataCache;
 
+	@I18DataGen(lang = "en_us", string = "Smart Home")
+	@I18DataGen(lang = "de_de", string = "Smart Home")
+	public static final I18String TITLE = SmartHome.guiString("home", "title");
+
 	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
-		super(Component.translatable("smarthome.gui.home.title"));
+		super(Component.translatable(TITLE.key()));
 		this.sensorDataCache = new HashMap<>();
 		this.visualizationDataCache = TreeBasedTable.create();
 		this.ownedHomes = ownedHomes;

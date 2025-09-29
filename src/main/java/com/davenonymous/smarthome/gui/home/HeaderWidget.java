@@ -16,7 +16,7 @@ public class HeaderWidget extends WidgetHBox {
 		this.setPadding(0);
 		this.setHeight(20);
 
-		this.titleText = new WidgetTextBox(I18n.get("smarthome.gui.home.title"));
+		this.titleText = new WidgetTextBox(HomeScreen.TITLE.get());
 		this.titleText.setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		this.titleText.setWordWrap(true);
 		this.addFlexBox(this.titleText, FlexAlign.CENTER, 1);

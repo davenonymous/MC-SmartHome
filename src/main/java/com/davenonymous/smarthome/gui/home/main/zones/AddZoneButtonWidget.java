@@ -10,12 +10,13 @@ import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.AddNewZonePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -24,13 +25,18 @@ public class AddZoneButtonWidget extends WidgetPanel {
 	public WidgetSprite plusIcon;
 	public WidgetTextBox dimensionsText;
 
+	@I18DataGen(lang = "en_us", string = "Enter name")
+	@I18DataGen(lang = "de_de", string = "Name eingeben")
+	public static final I18String CLICK_TO_RENAME = SmartHome.guiString("home.zones", "add_zones.hint");
+
+
 	public AddZoneButtonWidget(ZonesContainer parent, RangerFinderDataComponent rangeFinderData) {
 		this.setWidth(100);
 		this.setHeight(32);
 
 		newZoneNameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
 		newZoneNameInput.setDrawBackground(false);
-		newZoneNameInput.nativeWidget().setHint(Component.literal(I18n.get("smarthome.gui.home.zones.add_zones.hint")));
+		newZoneNameInput.nativeWidget().setHint(Component.literal(CLICK_TO_RENAME.key()));
 		newZoneNameInput.nativeWidget().setBordered(false);
 		newZoneNameInput.nativeWidget().setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		newZoneNameInput.addListener(

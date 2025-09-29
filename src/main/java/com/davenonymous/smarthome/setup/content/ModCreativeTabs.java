@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.gui.HomeScreen;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -18,7 +19,7 @@ public class ModCreativeTabs {
 	public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SMART_HOME_TAB = CREATIVE_MODE_TABS.register(
 		SmartHome.MODID,
 		() -> CreativeModeTab.builder()
-			.title(Component.translatable("smarthome.gui.home.title"))
+			.title(Component.translatable(HomeScreen.TITLE.key()))
 			.withTabsBefore(CreativeModeTabs.COMBAT)
 			.icon(() -> new ItemStack(ModBlocks.DASHBOARD.get()))
 			.displayItems((parameters, output) -> {

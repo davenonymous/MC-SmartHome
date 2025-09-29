@@ -44,7 +44,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 				updateWidgetSizes();
 				return WidgetEventResult.HANDLED;
 			});
-		deviceRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.devices.add.renameable")));
+		deviceRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(NewDeviceEntryWidget.CLICK_TO_RENAME.get()));
 		this.addContentBox(deviceRenameInput, FlexAlign.CENTER);
 
 		sensorsList = new WidgetFlowBox();

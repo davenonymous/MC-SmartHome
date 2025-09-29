@@ -17,6 +17,8 @@ import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.datafixers.util.Pair;
@@ -27,6 +29,30 @@ import java.util.*;
 public class ConfiguredDevicesTable extends HoverableWidgetTable {
 	HomeCore home;
 	Map<Integer, Pair<HomeZone, ConfiguredDevice>> devices = new HashMap<>();
+
+	@I18DataGen(lang = "en_us", string = "Device")
+	@I18DataGen(lang = "de_de", string = "Gerät")
+	public static final I18String HEADER_DEVICE = SmartHome.guiString("home.devices.table", "header.device");
+
+	@I18DataGen(lang = "en_us", string = "Position")
+	@I18DataGen(lang = "de_de", string = "Position")
+	public static final I18String HEADER_POSITION = SmartHome.guiString("home.devices.table", "header.position");
+
+	@I18DataGen(lang = "en_us", string = "State")
+	@I18DataGen(lang = "de_de", string = "Status")
+	public static final I18String HEADER_STATE = SmartHome.guiString("home.devices.table", "header.state");
+
+	@I18DataGen(lang = "en_us", string = "Sensors")
+	@I18DataGen(lang = "de_de", string = "Sensoren")
+	public static final I18String HEADER_SENSORS = SmartHome.guiString("home.devices.table", "header.sensors");
+
+	@I18DataGen(lang = "en_us", string = "The device is missing (block removed?)")
+	@I18DataGen(lang = "de_de", string = "Das Gerät fehlt (Block entfernt?)")
+	public static final I18String MISSING_DEVICE_TOOLTIP = SmartHome.guiString("home.devices.table", "tooltip.missing_device");
+
+	@I18DataGen(lang = "en_us", string = "-")
+	@I18DataGen(lang = "de_de", string = "-")
+	public static final I18String NO_SENSORS = SmartHome.guiString("smarthome.sensors", "no_sensors");
 
 	public ConfiguredDevicesTable() {
 		super();
@@ -63,11 +89,11 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 
 	private ConfiguredDevicesTable createHeaderRow() {
 		this.clear();
-		this.add(0, 0, createHeaderWidget("Device"));
+		this.add(0, 0, createHeaderWidget(HEADER_DEVICE.get()));
 		this.add(1, 0, new Spacer(5, 5));
-		this.add(2, 0, createHeaderWidget("Position"));
-		this.add(3, 0, createHeaderWidget("State"));
-		this.add(4, 0, createHeaderWidget("Sensors"));
+		this.add(2, 0, createHeaderWidget(HEADER_POSITION.get()));
+		this.add(3, 0, createHeaderWidget(HEADER_STATE.get()));
+		this.add(4, 0, createHeaderWidget(HEADER_SENSORS.get()));
 		return this;
 	}
 
@@ -133,7 +159,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 				sprite.setColor(ColorHelper.COLOR_ERRORED.getRGB());
 				sprite.setSize(sprite.width()/2, sprite.height()/2);
 				sprite.setTooltipElements(
-					WrappedStringTooltipComponent.red(I18n.get("smarthome.gui.home.devices.table.tooltip.missing_device"))
+					WrappedStringTooltipComponent.red(MISSING_DEVICE_TOOLTIP.get())
 				);
 
 				var deviceNameCell = new TextCell(device.name());
@@ -164,14 +190,13 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 					continue;
 				}
 				if(sensor.isGeneric()) {
-					// sensorNames.add(I18n.get("smarthome.sensors.generic_sensor"));
 					continue;
 				}
 				sensorNames.add(I18n.get(sensor.nameTranslationKey()));
 			}
 			String sensorsText = String.join(", ", sensorNames);
 			if(sensorsText.isEmpty()) {
-				sensorsText = I18n.get("smarthome.sensors.no_sensors");
+				sensorsText = NO_SENSORS.get();
 			}
 			this.add(4, row, createCellWidget(sensorsText));
 		}

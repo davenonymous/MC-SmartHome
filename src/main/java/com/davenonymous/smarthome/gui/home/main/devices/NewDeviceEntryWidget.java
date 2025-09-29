@@ -15,6 +15,8 @@ import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetItemStack;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.AddDevicePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
@@ -33,13 +35,33 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 	AddDeviceButtonWidget addButton;
 	AddDeviceButtonWidget ignoreButton;
 
+	@I18DataGen(lang = "en_us", string = "Click to rename")
+	@I18DataGen(lang = "de_de", string = "Klicken zum Umbenennen")
+	public static final I18String CLICK_TO_RENAME = SmartHome.guiString("devices", "add.renameable");
+
+	@I18DataGen(lang = "en_us", string = "%d sensors")
+	@I18DataGen(lang = "de_de", string = "%d Sensoren")
+	public static final I18String SENSORS_COUNT = SmartHome.guiString("devices", "add.sensors.count");
+
+	@I18DataGen(lang = "en_us", string = "Add device")
+	@I18DataGen(lang = "de_de", string = "Gerät hinzufügen")
+	public static final I18String ADD_DEVICE = SmartHome.guiString("devices", "add.add_device");
+
+	@I18DataGen(lang = "en_us", string = "Ignore device")
+	@I18DataGen(lang = "de_de", string = "Gerät ignorieren")
+	public static final I18String IGNORE_DEVICE = SmartHome.guiString("devices", "add.ignore_device");
+
+	@I18DataGen(lang = "en_us", string = "Ignored devices can still be added later from the settings menu.")
+	@I18DataGen(lang = "de_de", string = "Ignorierte Geräte können später über das Einstellungsmenü hinzugefügt werden.")
+	public static final I18String IGNORE_DEVICE_HINT = SmartHome.guiString("devices", "add.ignore_device.hint");
+
 	public NewDeviceEntryWidget(HomeZone zone, FoundDevice device) {
 		this.setSize(100, 100);
 
 		deviceName = new StringInputWidget(I18n.get(device.state().getBlock().getDescriptionId()), "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
 		deviceName.setDrawBackground(false);
 		deviceName.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
-		deviceName.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.devices.add.renameable")));
+		deviceName.setTooltipElements(WrappedStringTooltipComponent.orange(CLICK_TO_RENAME.get()));
 		deviceName.autoWidth();
 		deviceName.setHeight(12);
 		deviceName.setPosition(this.width / 2 - deviceName.width / 2, 8);
@@ -66,7 +88,7 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 		deviceIcon.setPosition(this.width / 2 - deviceIcon.width() / 2, zoneName.y + zoneName.height + 4);
 		this.add(deviceIcon);
 
-		sensorCount = new WidgetTextBox(I18n.get("smarthome.gui.home.devices.add.sensors.count", device.sensorIds().size()));
+		sensorCount = new WidgetTextBox(SENSORS_COUNT.get(device.sensorIds().size()));
 		sensorCount.setFont(ModFonts.TINY);
 		sensorCount.setTextColor(0xFFAAAAAA);
 		sensorCount.autoWidth(this.width);
@@ -78,7 +100,7 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 		addButton.setButtonColor(ColorHelper.COLOR_GREEN);
 		addButton.setPosition(this.width - addButton.width - 8, this.height - addButton.height - 8);
 		addButton.setTooltipElements(
-			WrappedStringTooltipComponent.white(I18n.get("smarthome.gui.home.devices.add.add_device"))
+			WrappedStringTooltipComponent.white(ADD_DEVICE.get())
 		);
 		addButton.addListener(MouseClickEvent.class, (event, widget) -> {
 			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location(), zone.home().settings().autoEnableNewDevices(), false);
@@ -92,8 +114,8 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 		ignoreButton.setButtonColor(ColorHelper.COLOR_ERRORED.getRGB());
 		ignoreButton.setPosition(8, this.height - ignoreButton.height - 8);
 		ignoreButton.setTooltipElements(
-			WrappedStringTooltipComponent.white(I18n.get("smarthome.gui.home.devices.add.ignore_device")),
-			WrappedStringTooltipComponent.gray(I18n.get("smarthome.gui.home.devices.add.ignore_device.hint"))
+			WrappedStringTooltipComponent.white(IGNORE_DEVICE.get()),
+			WrappedStringTooltipComponent.gray(IGNORE_DEVICE_HINT.get())
 		);
 		ignoreButton.addListener(MouseClickEvent.class, (event, widget) -> {
 			var configured = new ConfiguredDevice(device.pos(), deviceName.getValue(), device.state().getBlock().builtInRegistryHolder().getKey().location(), zone.home().settings().autoEnableNewDevices(), true);

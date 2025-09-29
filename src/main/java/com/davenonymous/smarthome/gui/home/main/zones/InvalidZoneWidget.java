@@ -8,6 +8,8 @@ import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,11 +20,19 @@ public class InvalidZoneWidget extends WidgetPanel {
 	public WidgetSprite warningIcon;
 	public WidgetTextBox dimensionsText;
 
+	@I18DataGen(lang = "en_us", string = "The Range Finder area intersects with an existing zone")
+	@I18DataGen(lang = "de_de", string = "Der Bereich des Entfernungsmessers überschneidet sich mit einer bestehenden Zone")
+	public static final I18String RANGE_FINDER_INTERSECTS = SmartHome.guiString("home.zones", "range_finder.intersects");
+
+	@I18DataGen(lang = "en_us", string = "Invalid")
+	@I18DataGen(lang = "de_de", string = "Ungültig")
+	public static final I18String INVALID_ZONE = SmartHome.guiString("home.zones", "label.invalid_zone");
+
 	public InvalidZoneWidget(ZonesContainer parent, RangerFinderDataComponent rangeFinderData) {
 		this.setWidth(100);
 		this.setHeight(32);
 
-		intersectsText = new WidgetTextBox(I18n.get("smarthome.range_finder.invalid"));
+		intersectsText = new WidgetTextBox(INVALID_ZONE.get());
 		intersectsText.setWordWrap(false);
 		intersectsText.setTextColor(0xFF000000);
 		this.add(intersectsText);
@@ -40,7 +50,7 @@ public class InvalidZoneWidget extends WidgetPanel {
 		this.add(dimensionsText);
 
 		updateWidgetSizes();
-		this.addTooltipElement(WrappedStringTooltipComponent.red(I18n.get("smarthome.range_finder.intersects")));
+		this.addTooltipElement(WrappedStringTooltipComponent.red(RANGE_FINDER_INTERSECTS.get()));
 	}
 
 	@Override

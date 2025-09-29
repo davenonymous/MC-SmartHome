@@ -2,6 +2,9 @@ package com.davenonymous.smarthome.datagen;
 
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.datagen.I18n.DGTranslations_DE;
+import com.davenonymous.smarthome.datagen.I18n.DGTranslations_EN;
+import com.davenonymous.smarthome.setup.dynamic.ModTranslations;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -31,8 +34,10 @@ public class DGHandler {
 		generator.addProvider(event.includeClient(), blockTagsProvider);
 		generator.addProvider(event.includeServer(), new DGBlockStates(output, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DGRecipes(output, lookupProvider));
-		generator.addProvider(event.includeClient(), new DGTranslations(output, SmartHome.MODID, "en_us"));
 		generator.addProvider(event.includeClient(), new DGFonts(SmartHome.MODID, output, existingFileHelper));
+
+		generator.addProvider(event.includeClient(), new DGTranslations_EN(output));
+		generator.addProvider(event.includeClient(), new DGTranslations_DE(output));
 
 		// Block-Loot
 		List<LootTableProvider.SubProviderEntry> lootTableSources = new ArrayList<>();

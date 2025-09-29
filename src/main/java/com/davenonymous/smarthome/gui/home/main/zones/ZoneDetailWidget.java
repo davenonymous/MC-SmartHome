@@ -11,6 +11,8 @@ import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.MarkZoneAsDeletedPayload;
 import com.davenonymous.smarthome.networking.actions.SetZoneNamePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
@@ -28,6 +30,18 @@ public class ZoneDetailWidget extends WidgetVBox {
 	private WidgetTextBox zoneDeviceLabel;
 	private WidgetSprite deleteIcon;
 	private WidgetVBox devicesList;
+
+	@I18DataGen(lang = "en_us", string = "Click to rename")
+	@I18DataGen(lang = "de_de", string = "Klicken zum Umbenennen")
+	public static final I18String RENAMABLE_ZONE = SmartHome.guiString("home.zones", "detail.renameable");
+
+	@I18DataGen(lang = "en_us", string = "Devices")
+	@I18DataGen(lang = "de_de", string = "Geräte")
+	public static final I18String DEVICES_LABEL = SmartHome.guiString("home.zones", "detail.devices");
+
+	@I18DataGen(lang = "en_us", string = "Hold Ctrl + Shift and click to delete this zone")
+	@I18DataGen(lang = "de_de", string = "Halte Strg + Shift und klicke, um diese Zone zu löschen")
+	public static final I18String DELETE_ZONE = SmartHome.guiString("home.zones", "detail.delete");
 
 	public ZoneDetailWidget() {
 		this.setPadding(8);
@@ -48,14 +62,14 @@ public class ZoneDetailWidget extends WidgetVBox {
 			PacketDistributor.sendToServer(new SetZoneNamePayload(selectedZone.home().serverLocation(), selectedZone.home().id(), selectedZone.id(), zoneRenameInput.getValue()));
 			return WidgetEventResult.HANDLED;
 		});
-		zoneRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.zones.detail.renameable")));
+		zoneRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(RENAMABLE_ZONE.get()));
 		this.addContentBox(zoneRenameInput, FlexAlign.CENTER);
 
 		zoneSize = new WidgetTextBox("", ChatFormatting.GRAY.getColor());
 		zoneSize.setFont(ModFonts.TINY);
 		this.addContentBox(zoneSize, FlexAlign.CENTER);
 
-		zoneDeviceLabel = new WidgetTextBox(I18n.get("smarthome.gui.home.zones.detail.devices"), ChatFormatting.WHITE.getColor());
+		zoneDeviceLabel = new WidgetTextBox(DEVICES_LABEL.get(), ChatFormatting.WHITE.getColor());
 		this.addContentBox(zoneDeviceLabel, FlexAlign.START);
 
 		devicesList = new WidgetVBox();
@@ -88,7 +102,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 			PacketDistributor.sendToServer(new MarkZoneAsDeletedPayload(homeId, zoneId, false));
 			return WidgetEventResult.HANDLED;
 		});
-		deleteIcon.setTooltipElements(WrappedStringTooltipComponent.orange(I18n.get("smarthome.gui.home.zones.detail.delete")));
+		deleteIcon.setTooltipElements(WrappedStringTooltipComponent.orange(DELETE_ZONE.get()));
 		this.add(deleteIcon);
 	}
 

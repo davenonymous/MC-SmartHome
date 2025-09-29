@@ -2,6 +2,7 @@ package com.davenonymous.smarthome;
 
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.DeferredRegistries;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
@@ -37,5 +38,9 @@ public class SmartHome {
 
 	public static ResourceLocation resource(String path) {
 		return ResourceLocation.fromNamespaceAndPath(MODID, path);
+	}
+
+	public static I18String guiString(String category, String id) {
+		return new I18String(MODID, category, id);
 	}
 }

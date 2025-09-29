@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.table.ConfiguredDevicesTable;
@@ -8,6 +9,8 @@ import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.RequestDeviceDataPayload;
 import com.davenonymous.smarthome.networking.actions.RequestVisualizationDataPayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
@@ -25,6 +28,15 @@ public class DevicesContainer extends WidgetPanel {
 	public DeviceDetailWidget deviceDetail;
 	public WidgetPanel tableContainer;
 
+	@I18DataGen(lang = "en_us", string = "New Devices")
+	@I18DataGen(lang = "de_de", string = "Neue Geräte")
+	public static final I18String NEW_DEVICES = SmartHome.guiString("home.devices", "label.new_devices");
+
+	@I18DataGen(lang = "en_us", string = "Configured Devices")
+	@I18DataGen(lang = "de_de", string = "Konfigurierte Geräte")
+	public static final I18String CONFIGURED_DEVICES = SmartHome.guiString("home.devices", "label.configured_devices");
+
+
 	public DevicesContainer() {
 		newDevicesBar = new NewDevicesWidget();
 		newDevicesBar.setPosition(8, 20);
@@ -32,7 +44,7 @@ public class DevicesContainer extends WidgetPanel {
 		newDevicesBar.updateDevices(HomeScreen.get().getAllNewDevices());
 		this.add(newDevicesBar);
 
-		newDevicesLabel = new WidgetTextBox(I18n.get("smarthome.gui.home.devices.label.new_devices"));
+		newDevicesLabel = new WidgetTextBox(NEW_DEVICES.get());
 		newDevicesLabel.setFont(ModFonts.BASEL);
 		newDevicesLabel.autoWidth();
 		newDevicesLabel.autoHeight();
@@ -40,7 +52,7 @@ public class DevicesContainer extends WidgetPanel {
 		newDevicesLabel.setTextColor(0xFFFFFFFF);
 		this.add(newDevicesLabel);
 
-		devicesLabel = new WidgetTextBox(I18n.get("smarthome.gui.home.devices.label.configured_devices"));
+		devicesLabel = new WidgetTextBox(CONFIGURED_DEVICES.get());
 		devicesLabel.setFont(ModFonts.BASEL);
 		devicesLabel.autoWidth();
 		devicesLabel.autoHeight();
