@@ -1,29 +1,26 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
-import com.davenonymous.smarthome.lib.DimPos;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.core.UUIDUtil;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Nameable;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
-public record SetDeviceNamePayload(UUID homeId, UUID zoneId, ConfiguredDevice device, String name) implements CustomPacketPayload {
-	public static final Type<SetDeviceNamePayload> TYPE = new Type<>(SmartHome.resource("set_device_name"));
-
+@Packet
+public record SetDeviceNamePayload(UUID homeId, UUID zoneId, ConfiguredDevice device, String name) implements LibPacketPayload {
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetDeviceNamePayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, SetDeviceNamePayload::homeId,
 		UUIDUtil.STREAM_CODEC, SetDeviceNamePayload::zoneId,
@@ -32,11 +29,7 @@ public record SetDeviceNamePayload(UUID homeId, UUID zoneId, ConfiguredDevice de
 		SetDeviceNamePayload::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Server)
 	public static void handleOnServer(SetDeviceNamePayload payload, IPayloadContext context) {
 		ServerPlayer player = (ServerPlayer) context.player();
 		ServerLevel level = (ServerLevel) player.level();

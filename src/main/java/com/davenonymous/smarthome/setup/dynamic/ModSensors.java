@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.setup.content;
+package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensor;

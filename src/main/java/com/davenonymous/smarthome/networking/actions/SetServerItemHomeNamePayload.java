@@ -1,29 +1,27 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.items.ServerDataComponent;
 import com.davenonymous.smarthome.items.ServerItem;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.InteractionHand;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record SetServerItemHomeNamePayload(String name) implements CustomPacketPayload {
-	public static final Type<SetServerItemHomeNamePayload> TYPE = new Type<>(SmartHome.resource("set_server_item_home_name"));
-
+@Packet
+public record SetServerItemHomeNamePayload(String name) implements LibPacketPayload {
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetServerItemHomeNamePayload> CODEC = StreamCodec.composite(
 		ByteBufCodecs.STRING_UTF8, SetServerItemHomeNamePayload::name,
 		SetServerItemHomeNamePayload::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Server)
 	public static void handleOnServer(SetServerItemHomeNamePayload payload, IPayloadContext context) {
 		var player = context.player();
 		var serverItem = player.getItemInHand(InteractionHand.MAIN_HAND);

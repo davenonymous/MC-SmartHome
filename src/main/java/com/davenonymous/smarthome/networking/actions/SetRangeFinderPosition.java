@@ -3,31 +3,28 @@ package com.davenonymous.smarthome.networking.actions;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.items.RangeFinderItem;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
-import com.davenonymous.smarthome.items.ServerDataComponent;
-import com.davenonymous.smarthome.items.ServerItem;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.InteractionHand;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public record SetRangeFinderPosition(BlockPos pos, boolean isSecond) implements CustomPacketPayload {
-	public static final Type<SetRangeFinderPosition> TYPE = new Type<>(SmartHome.resource("set_range_finder_position"));
-
+@Packet
+public record SetRangeFinderPosition(BlockPos pos, boolean isSecond) implements LibPacketPayload {
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetRangeFinderPosition> CODEC = StreamCodec.composite(
 		BlockPos.STREAM_CODEC, SetRangeFinderPosition::pos,
 		ByteBufCodecs.BOOL, SetRangeFinderPosition::isSecond,
 		SetRangeFinderPosition::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Server)
 	public static void handleOnServer(SetRangeFinderPosition payload, IPayloadContext context) {
 		var player = context.player();
 		var rangeFinderStack = player.getItemInHand(InteractionHand.MAIN_HAND);

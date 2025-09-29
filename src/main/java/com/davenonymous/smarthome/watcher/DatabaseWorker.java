@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.watcher;
 
-import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.logging.LogUtils;
 import org.duckdb.DuckDBConnection;
 import org.slf4j.Logger;

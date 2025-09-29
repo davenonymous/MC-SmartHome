@@ -1,25 +1,29 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
-import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-public record AddDevicePayload(UUID homeId, UUID zone, ConfiguredDevice device)  implements CustomPacketPayload {
-	public static final Type<AddDevicePayload> TYPE = new Type<>(SmartHome.resource("add_device"));
-
+@Packet
+public record AddDevicePayload(UUID homeId, UUID zone, ConfiguredDevice device) implements LibPacketPayload {
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, AddDevicePayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, AddDevicePayload::homeId,
 		UUIDUtil.STREAM_CODEC, AddDevicePayload::zone,
@@ -27,11 +31,7 @@ public record AddDevicePayload(UUID homeId, UUID zone, ConfiguredDevice device) 
 		AddDevicePayload::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Server)
 	public static void handleOnServer(AddDevicePayload payload, IPayloadContext context) {
 		ServerPlayer player = (ServerPlayer) context.player();
 		ServerLevel level = (ServerLevel) player.level();

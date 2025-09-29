@@ -4,7 +4,7 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensor;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
-import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;

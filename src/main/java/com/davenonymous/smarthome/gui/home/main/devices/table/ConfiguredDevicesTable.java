@@ -18,7 +18,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.setup.content.ModFonts;
-import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 

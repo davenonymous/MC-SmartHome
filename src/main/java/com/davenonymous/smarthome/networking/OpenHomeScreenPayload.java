@@ -1,27 +1,28 @@
 package com.davenonymous.smarthome.networking;
 
-import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCore> homes, HomeWorldInfo worldInfo) implements CustomPacketPayload {
-	public static final Type<OpenHomeScreenPayload> TYPE = new Type<>(SmartHome.resource("open_home_screen"));
+@Packet
+public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCore> homes, HomeWorldInfo worldInfo) implements LibPacketPayload {
 
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, OpenHomeScreenPayload> CODEC = StreamCodec.composite(
 		BlockPos.STREAM_CODEC, OpenHomeScreenPayload::pos,
 		UUIDUtil.STREAM_CODEC, OpenHomeScreenPayload::selectedHome,
@@ -30,11 +31,7 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 		OpenHomeScreenPayload::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(OpenHomeScreenPayload payload, IPayloadContext context) {
 		ClientCache.INSTANCE.ownedHomes = payload.homes();
 

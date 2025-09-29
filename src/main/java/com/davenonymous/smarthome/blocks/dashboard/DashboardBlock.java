@@ -6,8 +6,9 @@ import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
+import com.davenonymous.smarthome.networking.TestPacketDataPayload;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
-import com.davenonymous.smarthome.setup.content.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -112,6 +113,7 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 			}
 		}
 
+		PacketDistributor.sendToPlayer(serverPlayer, new TestPacketDataPayload("Sup, ma boi"));
 		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID()), worldInfo));
 		return InteractionResult.SUCCESS_NO_ITEM_USED;
 	}

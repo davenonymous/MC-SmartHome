@@ -1,36 +1,30 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeSettings;
-import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
-import com.davenonymous.smarthome.util.MoreCodecs;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
-public record SetHomeSettingsPayload(UUID homeId, HomeSettings settings)  implements CustomPacketPayload {
-	public static final Type<SetHomeSettingsPayload> TYPE = new Type<>(SmartHome.resource("set_home_settings"));
-
+@Packet
+public record SetHomeSettingsPayload(UUID homeId, HomeSettings settings)  implements LibPacketPayload {
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetHomeSettingsPayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, SetHomeSettingsPayload::homeId,
 		HomeSettings.STREAM_CODEC, SetHomeSettingsPayload::settings,
 		SetHomeSettingsPayload::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Server)
 	public static void handleOnServer(SetHomeSettingsPayload payload, IPayloadContext context) {
 		var player = context.player();
 

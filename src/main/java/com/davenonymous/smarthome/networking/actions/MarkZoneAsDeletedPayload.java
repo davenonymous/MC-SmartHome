@@ -1,22 +1,25 @@
 package com.davenonymous.smarthome.networking.actions;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
+import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
+import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
+import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
-public record MarkZoneAsDeletedPayload(UUID homeId, UUID zone, boolean restore)  implements CustomPacketPayload {
-	public static final Type<MarkZoneAsDeletedPayload> TYPE = new Type<>(SmartHome.resource("mark_zone_as_deleted"));
+@Packet
+public record MarkZoneAsDeletedPayload(UUID homeId, UUID zone, boolean restore) implements LibPacketPayload {
 
+	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, MarkZoneAsDeletedPayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, MarkZoneAsDeletedPayload::homeId,
 		UUIDUtil.STREAM_CODEC, MarkZoneAsDeletedPayload::zone,
@@ -24,11 +27,7 @@ public record MarkZoneAsDeletedPayload(UUID homeId, UUID zone, boolean restore) 
 		MarkZoneAsDeletedPayload::new
 	);
 
-	@Override
-	public Type<? extends CustomPacketPayload> type() {
-		return TYPE;
-	}
-
+	@PacketHandler(PacketHandler.Receiver.Server)
 	public static void handleOnServer(MarkZoneAsDeletedPayload payload, IPayloadContext context) {
 		var player = context.player();
 
