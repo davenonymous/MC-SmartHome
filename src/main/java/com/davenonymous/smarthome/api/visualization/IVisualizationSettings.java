@@ -1,8 +1,11 @@
 package com.davenonymous.smarthome.api.visualization;
 
+import com.davenonymous.smarthome.lib.gui.CircularPointedArrayList;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.visualization.VisualizationSettingsCodecRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -24,4 +27,10 @@ public interface IVisualizationSettings {
 			IVisualizationSettings::streamCodec,
 			Function.identity()
 	);
+
+	static CircularPointedArrayList<Integer> defaultColors() {
+		return new CircularPointedArrayList<>(
+			ColorHelper.COLOR_ORANGE, ColorHelper.COLOR_PURPLE, ColorHelper.COLOR_CYAN, ColorHelper.COLOR_GREEN, ChatFormatting.BLUE.getColor()
+		);
+	};
 }

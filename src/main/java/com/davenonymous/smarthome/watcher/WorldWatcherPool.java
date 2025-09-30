@@ -1,7 +1,9 @@
 package com.davenonymous.smarthome.watcher;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -11,7 +13,8 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.duckdb.DuckDBConnection;
 
-import java.sql.ResultSet;
+import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -25,10 +28,15 @@ public class WorldWatcherPool {
 	public static DatabaseWorker databaseWorker;
 	public static WorldWatcher instance;
 
-	public static final DatabaseTask<?> POISON_PILL = new ActionDatabaseTask(ISensor.NOOP);
+	public static final DatabaseTask<?> POISON_PILL = new ActionDatabaseTask(HomeSensor.NOOP);
 
-	public static CompletableFuture<ResultSet> query(Function<DuckDBConnection, ResultSet> query) {
+	public static CompletableFuture<ISensorData> query(Function<DuckDBConnection, ISensorData> query) {
 		var task = new QueryDatabaseTask(query);
+		return task.enqueue(taskQueue);
+	}
+
+	public static CompletableFuture<LinkedHashMap<Pair<Instant, Long>, ?>> fullQuery(Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> query) {
+		var task = new VizQueryDatabaseTask(query);
 		return task.enqueue(taskQueue);
 	}
 

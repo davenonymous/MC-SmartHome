@@ -19,8 +19,8 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 
@@ -192,7 +192,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 				if(sensor.isGeneric()) {
 					continue;
 				}
-				sensorNames.add(I18n.get(sensor.nameTranslationKey()));
+				sensorNames.add(sensor.getDisplayName().get());
 			}
 			String sensorsText = String.join(", ", sensorNames);
 			if(sensorsText.isEmpty()) {

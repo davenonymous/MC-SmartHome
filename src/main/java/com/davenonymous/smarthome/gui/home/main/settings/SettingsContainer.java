@@ -53,6 +53,10 @@ public class SettingsContainer extends WidgetPanel {
 		this.add(generalBox);
 
 		var home = HomeScreen.get().selectedHome;
+		if(home == null) {
+			return;
+		}
+
 		var table = generalBox.getSettingsTable();
 		table.addListener(ValueChangedEvent.class, (event, widget) -> {
 			var newHomeSettings = new HomeSettings(

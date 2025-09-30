@@ -3,8 +3,8 @@ package com.davenonymous.smarthome;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.setup.DeferredRegistries;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.setup.DeferredRegistries;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -21,15 +21,15 @@ public class SmartHome {
 	public static GuiTheme theme = new Vanilla();
 
 	public SmartHome(IEventBus modEventBus, ModContainer modContainer){
+		ModVisualizations.find();
+		ModSensors.find();
+
 		DeferredRegistries.register(modEventBus);
 		try {
 			Class.forName("org.duckdb.DuckDBDriver");
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-
-		ModSensors.find();
-		ModVisualizations.find();
 	}
 
 	public static ResourceLocation sprite(GuiTheme.SpriteComponent component) {
@@ -41,6 +41,10 @@ public class SmartHome {
 	}
 
 	public static I18String guiString(String category, String id) {
-		return new I18String(MODID, category, id);
+		return new I18String(MODID, "gui", category, id);
+	}
+
+	public static I18String dataString(String category, String id) {
+		return new I18String(MODID, "data", category, id);
 	}
 }

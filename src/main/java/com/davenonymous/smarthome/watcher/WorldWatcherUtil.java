@@ -1,62 +1,54 @@
 package com.davenonymous.smarthome.watcher;
 
-import com.davenonymous.smarthome.api.sensor.ISensor;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.AABB;
+import org.duckdb.DuckDBConnection;
 
-import java.sql.SQLException;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public class WorldWatcherUtil {
 
-	public static <T extends SensorSettings, U extends ISensorData> CompletableFuture<U> getSensorState(HomeZone zone, ConfiguredDevice device, T settings) {
+	public static <U extends ISensorData> CompletableFuture<U> getSensorState(ConfiguredDevice device, ResourceLocation sensorId) {
 		//noinspection unchecked
-		ISensor<T, U> sensor = (ISensor<T, U>) ModSensors.getBySettings(settings);
+		HomeSensor<U, ?> sensor = (HomeSensor<U, ?>) ModSensors.getById(sensorId);
 		if(sensor == null) {
 			return CompletableFuture.completedFuture(null);
 		}
-		return getSensorState(zone, device, sensor);
+		return getSensorState(device, sensor);
 	}
 
-	private static <U extends ISensorData> CompletableFuture<U> getSensorState(HomeZone zone, ConfiguredDevice device, ISensor<?, U> sensor) {
-		return WorldWatcherPool
-			.query(sensor.stateForDevice(zone, device))
-			.thenApply(resultSet -> {
-				try {
-					if(resultSet.next()) {
-						return sensor.getStateFromResultSet(resultSet);
-					}
-					return null;
-				} catch (SQLException e) {
-					throw new RuntimeException(e);
-				}
-			});
-	}
-
-	public static <T extends SensorSettings, U extends ISensorData> CompletableFuture<Map<Long, U>> getSensorHistory(HomeZone zone, ConfiguredDevice device, T settings, long start, long end) {
+	private static <U extends ISensorData> CompletableFuture<U> getSensorState(ConfiguredDevice device, HomeSensor<U, ?> sensor) {
 		//noinspection unchecked
-		ISensor<T, U> sensor = (ISensor<T, U>) ModSensors.getBySettings(settings);
+		return (CompletableFuture<U>) WorldWatcherPool
+			.query((Function<DuckDBConnection, ISensorData>) sensor.getDBHandler().getLatestValue(device.id()));
+	}
+
+	public static <U extends ISensorData> CompletableFuture<LinkedHashMap<Pair<Instant, Long>, ?>> getSensorHistory(ConfiguredDevice device, ResourceLocation sensorId, long start, long end) {
+		//noinspection unchecked
+		HomeSensor<U, ?> sensor = (HomeSensor<U, ?>) ModSensors.getById(sensorId);
 		if(sensor == null) {
 			return CompletableFuture.completedFuture(null);
 		}
 
-		return getSensorHistory(zone, device, sensor, start, end);
+		return getSensorHistory(device, sensor, start, end);
 	}
 
-	private static <U extends ISensorData> CompletableFuture<Map<Long, U>> getSensorHistory(HomeZone zone, ConfiguredDevice device, ISensor<?, U> sensor, long start, long end) {
+	private static <U extends ISensorData> CompletableFuture<LinkedHashMap<Pair<Instant, Long>, ?>> getSensorHistory(ConfiguredDevice device, HomeSensor<U, ?> sensor, long start, long end) {
 		return WorldWatcherPool
-			.query(sensor.historyForDevice(zone, device, start, end))
-			.thenApply(sensor::getHistoryFromResultSet);
+			.fullQuery(sensor.getDBHandler().getValues(device.id(), start, end));
 	}
 
 	public static List<BlockPos> getBlocksInAABBStream(AABB box) {
@@ -93,7 +85,7 @@ public class WorldWatcherUtil {
 					continue;
 				}
 
-				List<ResourceLocation> foundSensors = ModSensors.getValidSensors(level, pos, state).stream().map(ISensor::id).toList();
+				List<ResourceLocation> foundSensors = ModSensors.getValidSensors(level, pos, state).stream().map(HomeSensor::id).toList();
 				if(foundSensors.isEmpty()) {
 					continue;
 				}

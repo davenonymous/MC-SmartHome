@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.data;
 
-import com.davenonymous.smarthome.api.sensor.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

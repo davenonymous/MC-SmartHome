@@ -1,14 +1,20 @@
 package com.davenonymous.smarthome.api.sensor;
 
 import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.function.Function;
 
 public interface ISensorData {
-	StreamCodec<RegistryFriendlyByteBuf, ? extends ISensorData> streamCodec();
+	default StreamCodec<RegistryFriendlyByteBuf, ? extends ISensorData> streamCodec() {
+		//noinspection unchecked
+		return ModSensors.DATA_STREAM_CODEC_BY_CLASS.get(this.getClass());
+	}
 
 	String displayString();
 
@@ -17,4 +23,8 @@ public interface ISensorData {
 			ISensorData::streamCodec,
 			Function.identity()
 	);
+
+	int bindParameters(PreparedStatement prepped, int nextParamIndex) throws SQLException;
+
+	double getDouble(String columnName);
 }

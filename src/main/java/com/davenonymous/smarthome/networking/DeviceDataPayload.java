@@ -11,20 +11,23 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Packet
-public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice device, List<ISensorData> data) implements LibPacketPayload {
+public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice device, Map<ResourceLocation, ISensorData> data) implements LibPacketPayload {
 
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, DeviceDataPayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, DeviceDataPayload::homeId,
 		UUIDUtil.STREAM_CODEC, DeviceDataPayload::zoneId,
 		ConfiguredDevice.STREAM_CODEC, DeviceDataPayload::device,
-		ISensorData.STREAM_CODEC.apply(ByteBufCodecs.list()), DeviceDataPayload::data,
+		ByteBufCodecs.map(HashMap::new, ResourceLocation.STREAM_CODEC, ISensorData.STREAM_CODEC), DeviceDataPayload::data,
 		DeviceDataPayload::new
 	);
 

@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.visualization.line;
 
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,14 +9,14 @@ import net.minecraft.network.codec.StreamCodec;
 
 import java.util.List;
 
-public record LineVizSettings(List<Integer> seriesColors) implements IVisualizationSettings {
+public record LineVizSettings(List<LineVizSeriesSettings> series) implements IVisualizationSettings {
 
 	public static final MapCodec<LineVizSettings> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-		Codec.INT.listOf().fieldOf("seriesColors").forGetter(LineVizSettings::seriesColors)
+		LineVizSeriesSettings.CODEC.codec().listOf().fieldOf("seriesColors").forGetter(LineVizSettings::series)
 	).apply(inst, LineVizSettings::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, LineVizSettings> STREAM_CODEC = StreamCodec.composite(
-		ByteBufCodecs.INT.apply(ByteBufCodecs.list()), LineVizSettings::seriesColors,
+		LineVizSeriesSettings.STREAM_CODEC.apply(ByteBufCodecs.list()), LineVizSettings::series,
 		LineVizSettings::new
 	);
 

@@ -1,6 +1,7 @@
-package com.davenonymous.smarthome.api.sensor;
+package com.davenonymous.smarthome.api.sensor.settings;
 
 import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -10,8 +11,15 @@ import net.minecraft.network.codec.StreamCodec;
 import java.util.function.Function;
 
 public interface SensorSettings {
-	MapCodec<? extends SensorSettings> type();
-	StreamCodec<RegistryFriendlyByteBuf, ? extends SensorSettings> streamCodec();
+	default MapCodec<? extends SensorSettings> type() {
+		//noinspection unchecked
+		return ModSensors.SETTINGS_CODEC_BY_CLASS.get(this.getClass());
+	}
+
+	default StreamCodec<RegistryFriendlyByteBuf, ? extends SensorSettings> streamCodec() {
+		//noinspection unchecked
+		return ModSensors.SETTINGS_STREAM_CODEC_BY_CLASS.get(this.getClass());
+	}
 
 	Codec<SensorSettings> CODEC = SensorSettingsCodecRegistry.SENSOR_SETTINGS_SERIALIZERS.byNameCodec() // Gets Codec<MapCodec<? extends ExampleObject>>
 		.dispatch(

@@ -13,9 +13,8 @@ import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.RequestDeviceDataPayload;
 import com.davenonymous.smarthome.networking.actions.RequestVisualizationDataPayload;
-import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
-import net.minecraft.client.resources.language.I18n;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -76,9 +75,6 @@ public class DevicesContainer extends WidgetPanel {
 			for(var sensorId : event.device().sensors().keySet()) {
 				var sensor = ModSensors.getById(sensorId);
 				if(sensor == null) {
-					continue;
-				}
-				if(!sensor.hasDefaultVisualization()) {
 					continue;
 				}
 				ResourceLocation vizId = sensor.getDefaultVisualization();

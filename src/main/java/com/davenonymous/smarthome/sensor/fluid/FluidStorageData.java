@@ -1,27 +1,45 @@
 package com.davenonymous.smarthome.sensor.fluid;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
 
-public record FluidStorageData(ResourceLocation fluidId, long stored, long capacity) implements ISensorData {
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public record FluidStorageData(String fluidId, long stored, long capacity) implements ISensorData {
 
 	@Override
 	public String displayString() {
 		return fluidId() + ": " + stored + " / " + capacity + " FE";
 	}
 
+	@Override
+	public double getDouble(String columnName) {
+		if("stored".equals(columnName)) {
+			return stored();
+		}
+		if("capacity".equals(columnName)) {
+			return capacity();
+		}
+		return 0;
+	}
+
+	@Override
+	public int bindParameters(PreparedStatement prepped, int nextParamIndex) throws SQLException {
+		prepped.setString(nextParamIndex++, fluidId());
+		prepped.setLong(nextParamIndex++, stored());
+		prepped.setLong(nextParamIndex++, capacity());
+		return nextParamIndex;
+	}
+
+	@SensorDataStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, FluidStorageData> STREAM_CODEC = StreamCodec.composite(
-		ResourceLocation.STREAM_CODEC, FluidStorageData::fluidId,
+		ByteBufCodecs.STRING_UTF8, FluidStorageData::fluidId,
 		ByteBufCodecs.VAR_LONG, FluidStorageData::stored,
 		ByteBufCodecs.VAR_LONG, FluidStorageData::capacity,
 		FluidStorageData::new
 	);
-
-	@Override
-	public StreamCodec<RegistryFriendlyByteBuf, ? extends ISensorData> streamCodec() {
-		return STREAM_CODEC;
-	}
 }

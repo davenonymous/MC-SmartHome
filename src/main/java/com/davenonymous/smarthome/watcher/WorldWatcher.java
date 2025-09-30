@@ -1,10 +1,15 @@
 package com.davenonymous.smarthome.watcher;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.api.sensor.sensortypes.BlockSensor;
+import com.davenonymous.smarthome.api.sensor.sensortypes.EntitySensor;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.api.sensor.sensortypes.ZoneSensor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -54,22 +59,42 @@ public class WorldWatcher {
 
 				var pos = device.pos();
 				var blockState = homeLevel.getBlockState(pos);
-				var validSensors = ModSensors.getValidSensors(homeLevel, pos, blockState);
-				if(validSensors.isEmpty()) {
-					continue;
-				}
 
-				List<ISensor> expensiveSensors = new ArrayList<>();
-				for(var sensor : validSensors) {
-					homeConsumers.add(sensor.visitZone(homeLevel, zone, device));
-					homeConsumers.add(sensor.visitZoneBlock(homeLevel, zone, device, pos, blockState, homeLevel.getBlockEntity(pos)));
-
-					var entities = homeLevel.getEntitiesOfClass(Entity.class, zone.bounds());
-					for(var entity : entities) {
-						homeConsumers.add(sensor.visitZoneEntity(homeLevel, zone, device, entity));
+				List<BlockSensor<?,?>> expensiveSensors = new ArrayList<>();
+				var newValidSensors = ModSensors.getValidSensors(homeLevel, pos, blockState);
+				for(var sensor : newValidSensors) {
+					SensorSettings settings = device.sensors().get(sensor.id());
+					if(settings == null) {
+						settings = sensor.getDefaultSettings();
 					}
-					if(sensor.shouldVisitAllBlocksInZone()) {
-						expensiveSensors.add(sensor);
+
+					ISensorData data = null;
+					switch(sensor) {
+						case ZoneSensor<?, ?> zoneSensor -> {
+							data = zoneSensor.visitZone(homeLevel, zone, device, HomeSensor.cast(settings));
+						}
+						case BlockSensor<?, ?> blockSensor -> {
+							if(blockSensor.shouldVisitAllBlocksInZone()) {
+								expensiveSensors.add(blockSensor);
+							} else {
+								data = blockSensor.visitZoneBlock(homeLevel, zone, device, HomeSensor.cast(settings), pos, blockState, homeLevel.getBlockEntity(pos));
+							}
+						}
+						case EntitySensor<?, ?> entitySensor -> {
+							var entities = homeLevel.getEntitiesOfClass(Entity.class, zone.bounds());
+							for(var entity : entities) {
+								data = entitySensor.visitZoneEntity(homeLevel, zone, device, HomeSensor.cast(settings), entity);
+							}
+						}
+						default -> {
+							SmartHome.LOGGER.warn("Sensor {} is not a ZoneSensor, BlockSensor or EntitySensor, cannot process", sensor.id());
+							continue;
+						}
+					}
+
+					if(data != null) {
+						var handler = ModSensors.DB_HANDLERS.get(sensor.id());
+						homeConsumers.add(handler.insertValues(homeLevel.getServer().getTickCount(), home.id(), zone.id(), device.id(), data));
 					}
 				}
 
@@ -79,7 +104,16 @@ public class WorldWatcher {
 						var sensorCheckEntity = overworld.getBlockEntity(sensorCheckPos);
 
 						for(var sensor : expensiveSensors) {
-							homeConsumers.add(sensor.visitZoneBlock(homeLevel, zone, device, sensorCheckPos, sensorCheckState, sensorCheckEntity));
+							SensorSettings settings = device.sensors().get(sensor.id());
+							if(settings == null) {
+								settings = sensor.getDefaultSettings();
+							}
+
+							ISensorData result = sensor.visitZoneBlock(homeLevel, zone, device, HomeSensor.cast(settings), sensorCheckPos, sensorCheckState, sensorCheckEntity);
+							if(result != null) {
+								var handler = ModSensors.DB_HANDLERS.get(sensor.id());
+								homeConsumers.add(handler.insertValues(homeLevel.getServer().getTickCount(), home.id(), zone.id(), device.id(), result));
+							}
 						}
 					}
 				}

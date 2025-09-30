@@ -1,25 +1,24 @@
 package com.davenonymous.smarthome.visualization.line;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.gui.WidgetChart;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
-import com.davenonymous.smarthome.visualization.gauge.GaugeVizData;
-import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
-import org.knowm.xchart.DialChart;
-import org.knowm.xchart.DialChartBuilder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.internal.series.MarkerSeries;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.None;
 
 import java.awt.*;
+import java.time.Instant;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 @SmartHomeVisualization(modid = SmartHome.MODID)
 public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
@@ -36,7 +35,7 @@ public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(LineVizData data, LineVizSettings settings) {
+	public Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, LineVizSettings settings) {
 		XYChart chart = new XYChartBuilder()
 			.width(360).height(210)
 			.title("Line")
@@ -54,11 +53,31 @@ public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
 			.setChartFontColor(new Color(ChatFormatting.WHITE.getColor(), false))
 			.setChartPadding(0);
 
+		List<Long> xData = new ArrayList<>();
+		Map<String, List<Double>> yData = new HashMap<>();
+		data.forEach((date, sensorData) ->{
+			xData.add(date.getSecond());
+			for(var column : sensor.getColumns()) {
+				if(!column.type().isNumeric()) {
+					continue;
+				}
+				var columnName = column.name();
+				var list = yData.computeIfAbsent(columnName, k -> new ArrayList<>());
+				var value = sensorData.getDouble(columnName);
+
+				list.add(value);
+			}
+		});
+
+		var seriesSettings = settings.series();
 		int seriesIndex = 0;
-		for(Map<Long, Double> series : data.values()) {
-			List<Long> xData = series.keySet().stream().toList();
-			List<Double> yData = series.values().stream().toList();
-			chart.addSeries("" + seriesIndex, xData, yData);
+		for(String seriesName : yData.keySet()) {
+			LineVizSeriesSettings serieSetting = seriesSettings.get(seriesIndex % seriesSettings.size());
+
+			List<Double> series = yData.get(seriesName);
+			chart.addSeries(seriesName, xData, series)
+				.setLineColor(new Color(serieSetting.color(), false));
+
 			seriesIndex++;
 		}
 

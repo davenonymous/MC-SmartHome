@@ -29,6 +29,7 @@ public class DatabaseWorker extends Thread {
 		try {
 			connection = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:" + this.dbPath);
 			ModSensors.createTables(connection);
+			ModSensors.createTables(connection);
 		} catch (SQLException e) {
 			LOGGER.error("Error initializing DuckDB", e);
 			throw new RuntimeException(e);

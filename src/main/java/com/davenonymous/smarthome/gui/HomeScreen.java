@@ -25,11 +25,13 @@ import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.time.Instant;
 import java.util.*;
 
 public class HomeScreen extends WidgetFullScreen {
@@ -46,8 +48,8 @@ public class HomeScreen extends WidgetFullScreen {
 	public List<HomeCore> ownedHomes;
 	public HomeWorldInfo homeWorldInfo;
 
-	public Map<UUID, List<ISensorData>> sensorDataCache;
-	public Table<UUID, ResourceLocation, Map<ResourceLocation, IVisualizationData>> visualizationDataCache;
+	public Map<UUID, Map<ResourceLocation, ISensorData>> sensorDataCache;
+	public Table<UUID, ResourceLocation, Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>> visualizationDataCache;
 
 	@I18DataGen(lang = "en_us", string = "Smart Home")
 	@I18DataGen(lang = "de_de", string = "Smart Home")
@@ -89,14 +91,14 @@ public class HomeScreen extends WidgetFullScreen {
 
 	}
 
-	public void setSensorData(UUID deviceId, List<ISensorData> data) {
-		sensorDataCache.put(deviceId, new ArrayList<>(data));
+	public void setSensorData(UUID deviceId, Map<ResourceLocation, ISensorData> data) {
+		sensorDataCache.put(deviceId, new HashMap<>(data));
 		if(gui != null) {
 			gui.fireEvent(new SensorDataUpdatedEvent(deviceId, data));
 		}
 	}
 
-	public void setVisualizationData(UUID deviceId, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationData data) {
+	public void setVisualizationData(UUID deviceId, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) {
 		if(!visualizationDataCache.contains(deviceId, sensorId)) {
 			visualizationDataCache.put(deviceId, sensorId, new HashMap<>());
 		}

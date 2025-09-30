@@ -18,7 +18,6 @@ import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class DeviceDetailWidget extends WidgetVBox {

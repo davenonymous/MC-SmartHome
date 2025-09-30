@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.blocks.dashboard;
 
-import com.davenonymous.smarthome.api.sensor.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.blocks.base.FacingBaseBlock;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.ConfiguredDevice;

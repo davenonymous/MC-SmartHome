@@ -1,11 +1,20 @@
 package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensor;
+import com.davenonymous.smarthome.api.sensor.DBHandler;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.SensorSettings;
-import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
+import com.davenonymous.smarthome.api.sensor.SensorColumnType;
+import com.davenonymous.smarthome.api.sensor.annotations.*;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
+import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
+import com.davenonymous.smarthome.util.AnnotationHelpers;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,60 +23,37 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.duckdb.DuckDBConnection;
 
 import java.lang.annotation.ElementType;
+import java.lang.reflect.Modifier;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+@SuppressWarnings("rawtypes")
 public class ModSensors {
-	public static Map<ResourceLocation, ISensor<?, ?>> SENSORS = new HashMap<>();
+	public static Map<ResourceLocation, HomeSensor<?, ?>> SENSORS = new HashMap<>();
+	public static Map<ResourceLocation, DBHandler<?, ?>> DB_HANDLERS = new HashMap<>();
+	public static Map<ResourceLocation, List<SensorColumn>> SENSOR_COLUMNS = new HashMap<>();
 
-	public static <T extends SensorSettings> ISensor<T, ?> getBySettings(T settings) {
-		for(var sensor : SENSORS.values()) {
-			if(sensor.getDefaultSettings().getClass() == settings.getClass()) {
-				//noinspection unchecked
-				return (ISensor<T, ?>) sensor;
-			}
-		}
+	public static Map<Class<?>, ResourceLocation> ID_BY_CLASS = new HashMap<>();
+	public static Map<Class<?>, I18String> NAME_BY_CLASS = new HashMap<>();
 
-		return null;
-	}
+	public static Map<Class<?>, MapCodec> SETTINGS_CODEC_BY_CLASS = new HashMap<>();
+	public static Map<Class<?>, StreamCodec> SETTINGS_STREAM_CODEC_BY_CLASS = new HashMap<>();
+	public static Map<Class<?>, StreamCodec> DATA_STREAM_CODEC_BY_CLASS = new HashMap<>();
+	public static Map<Class<?>, SensorSettings> DEFAULT_SETTINGS_BY_CLASS = new HashMap<>();
 
-	public static <T extends ISensorData> ISensor<?, T> getByData(T data) {
-		// TODO: This is non-sense, we should have sensor IDs or a registry or something
-		for(var sensor : SENSORS.values()) {
-			if(sensor.getDataClass() == data.getClass()) {
-				//noinspection unchecked
-				return (ISensor<?, T>) sensor;
-			}
-		}
-
-		return null;
-	}
-
-	public static ISensor<?, ?> getById(ResourceLocation id) {
+	public static HomeSensor<?, ?> getById(ResourceLocation id) {
 		return SENSORS.get(id);
 	}
 
-	public static List<ISensor<?, ?>> getValidSensors(Level level, BlockPos pos, BlockState state) {
-		List<ISensor<?, ?>> validSensors = new ArrayList<>();
-		for(var sensor : SENSORS.values()) {
-			if(sensor.isValid(level, pos, state)) {
-				validSensors.add(sensor);
-			}
-		}
-		return validSensors;
-	}
-
 	public static void find() {
-		SENSORS.clear();
-
 		ModFileScanData scanData = ModList.get().getModFileById(SmartHome.MODID).getFile().getScanResult();
-		var foundAnalyzerClasses = scanData.getAnnotatedBy(SmartHomeSensor.class, ElementType.TYPE);
+		var sensorClassAnnotations = scanData.getAnnotatedBy(SmartHomeSensor.class, ElementType.TYPE);
 
-		foundAnalyzerClasses.forEach(annotationData -> {
-			Object modIdAnnotation = annotationData.annotationData().get("modid");
+		Set<String> registeredSettingsCodecs = new HashSet<>();
+		Set<String> registeredDataCodecs = new HashSet<>();
+		sensorClassAnnotations.forEach(annotationData -> {
+			var rawAnnotationData = annotationData.annotationData();
+			Object modIdAnnotation = rawAnnotationData.get("modid");
 			if(!(modIdAnnotation instanceof String modid)) {
 				return;
 			}
@@ -76,21 +62,112 @@ public class ModSensors {
 				return;
 			}
 
-			try {
-				Class<?> clazz = Class.forName(annotationData.clazz().getClassName());
-				ISensor<?, ?> sensor = (ISensor<?, ?>) clazz.getDeclaredConstructor().newInstance();
-				SENSORS.put(sensor.id(), sensor);
+			Object sensorDataAnnotation = rawAnnotationData.get("data");
+			Class<ISensorData> dataClazz = AnnotationHelpers.getClassFromAnnotationData(sensorDataAnnotation, ISensorData.class);
 
-				SmartHome.LOGGER.info("Found sensor: {} for mod: {}", sensor.id(), modid);
+			Object sensorSettingsAnnotation = rawAnnotationData.get("settings");
+			Class<SensorSettings> settingsClazz = AnnotationHelpers.getClassFromAnnotationData(sensorSettingsAnnotation, SensorSettings.class);
+
+			Class<HomeSensor<?, ?>> sensorClazz = AnnotationHelpers.getAnnotatedClass(annotationData);
+
+			ResourceLocation sensorId = AnnotationHelpers.getSingularFieldData(sensorClazz, SensorId.class, ResourceLocation.class);
+			I18String sensorName = AnnotationHelpers.getSingularFieldData(sensorClazz, SensorName.class, I18String.class);
+			SensorSettings defaultSettings = AnnotationHelpers.getSingularFieldData(settingsClazz, SensorSettingsDefault.class, SensorSettings.class);
+
+			MapCodec settingsCodec = AnnotationHelpers.getSingularFieldData(settingsClazz, SensorSettingsCodec.class, MapCodec.class);
+			StreamCodec settingsStreamCodec = AnnotationHelpers.getSingularFieldData(settingsClazz, SensorSettingsStreamCodec.class, StreamCodec.class);
+			StreamCodec dataStreamCodec = AnnotationHelpers.getSingularFieldData(dataClazz, SensorDataStreamCodec.class, StreamCodec.class);
+
+			var sensorClassSimpleName = sensorClazz.getSimpleName();
+			var sensorClassSnakeCaseName = snakeCase(sensorClassSimpleName);
+
+			var settingsClassSimpleName = settingsClazz.getSimpleName();
+			var settingsClassSnakeCaseName = snakeCase(settingsClassSimpleName);
+
+			List<SensorColumn> columns = new ArrayList<>();
+			for(var field : dataClazz.getDeclaredFields()) {
+				if(Modifier.isStatic(field.getModifiers())) {
+					continue;
+				}
+
+				var columnType = SensorColumnType.byValueClass(field.getType());
+				if(columnType == null) {
+					SmartHome.LOGGER.error("Sensor class {} has data class with field of unsupported type: {} {}", annotationData.clazz().getClassName(), field.getName(), field.getType().getName());
+					return;
+				}
+
+				var snakeCaseName = snakeCase(field.getName());
+				String translationKey = SmartHome.MODID + ".sensor." + sensorClassSnakeCaseName + ".column." + snakeCaseName;
+
+				var column = new SensorColumn(snakeCaseName, translationKey, columnType);
+				columns.add(column);
+			}
+
+			try {
+				HomeSensor<?, ?> sensor = sensorClazz.getDeclaredConstructor().newInstance();
+				SENSORS.put(sensorId, sensor);
+				DB_HANDLERS.put(sensorId, new DBHandler<>(sensor));
+				ID_BY_CLASS.put(sensorClazz, sensorId);
+				NAME_BY_CLASS.put(sensorClazz, sensorName);
+
+				if(!registeredSettingsCodecs.contains(settingsClassSnakeCaseName)) {
+					SmartHome.LOGGER.info("Registering sensor settings codec for {} as {}", settingsClazz.getSimpleName(), settingsClassSnakeCaseName);
+					SETTINGS_CODEC_BY_CLASS.put(settingsClazz, settingsCodec);
+					//noinspection unchecked
+					SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS.register(settingsClassSnakeCaseName, () -> settingsCodec);
+
+					SETTINGS_STREAM_CODEC_BY_CLASS.put(settingsClazz, settingsStreamCodec);
+					//noinspection unchecked
+					SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS_DISPATCHER.register(settingsClassSnakeCaseName, () -> settingsStreamCodec);
+
+					registeredSettingsCodecs.add(settingsClassSnakeCaseName);
+				}
+
+				DATA_STREAM_CODEC_BY_CLASS.put(dataClazz, dataStreamCodec);
+				if(!registeredDataCodecs.contains(sensorClassSnakeCaseName)) {
+					SmartHome.LOGGER.info("Registering sensor data codec for {} as {}", dataClazz.getSimpleName(), sensorClassSnakeCaseName);
+					//noinspection unchecked
+					SensorDataCodecRegistry.DEFERRED_SENSOR_DATA_DISPATCHER.register(sensorClassSnakeCaseName, () -> dataStreamCodec);
+					registeredDataCodecs.add(sensorClassSnakeCaseName);
+				}
+
+				DEFAULT_SETTINGS_BY_CLASS.put(sensorClazz, defaultSettings);
+				DEFAULT_SETTINGS_BY_CLASS.put(settingsClazz, defaultSettings);
+
+				SETTINGS_CODEC_BY_CLASS.put(sensorClazz, settingsCodec);
+				SETTINGS_STREAM_CODEC_BY_CLASS.put(sensorClazz, settingsStreamCodec);
+				DATA_STREAM_CODEC_BY_CLASS.put(sensorClazz, dataStreamCodec);
+				DEFAULT_SETTINGS_BY_CLASS.put(sensorClazz, defaultSettings);
+
+
+				SmartHome.LOGGER.info("Found sensor: {} for mod: {}", sensorId, modid);
+				for(var col : columns) {
+					SmartHome.LOGGER.info("  Column: {} ({}) Type: {}", col.name(), col.translationKey(), col.type().sqlType());
+				}
+				SENSOR_COLUMNS.put(sensorId, columns);
 			} catch (Exception e) {
 				SmartHome.LOGGER.error("Failed to instantiate sensor class: {}", annotationData.clazz().getClassName(), e);
 			}
 		});
 	}
 
-	public static void createTables(DuckDBConnection connection) throws SQLException {
+	private static String snakeCase(String input) {
+		return input.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
+	}
+
+	public static List<HomeSensor<?, ?>> getValidSensors(Level level, BlockPos pos, BlockState state) {
+		List<HomeSensor<?, ?>> validSensors = new ArrayList<>();
 		for(var sensor : SENSORS.values()) {
-			sensor.createTable(connection);
+			if(sensor.isValid(level, pos, state)) {
+				validSensors.add(sensor);
+			}
+		}
+		return validSensors;
+	}
+
+	public static void createTables(DuckDBConnection connection) throws SQLException {
+		for(var handler : DB_HANDLERS.values()) {
+			handler.createTable(connection);
 		}
 	}
 }

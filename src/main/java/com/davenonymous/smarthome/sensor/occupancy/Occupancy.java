@@ -1,11 +1,15 @@
 package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensor;
-import com.davenonymous.smarthome.api.visualization.IVisualization;
-import com.davenonymous.smarthome.api.sensor.SmartHomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.api.sensor.sensortypes.EntitySensor;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
+import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
+import com.davenonymous.smarthome.api.sensor.settings.OnOffSettings;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -14,32 +18,23 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import org.duckdb.DuckDBConnection;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.List;
-import java.util.function.Consumer;
 
-@SmartHomeSensor(modid = "minecraft")
-public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
+@SmartHomeSensor(modid = "minecraft", data = OccupancyData.class, settings = OnOffSettings.class)
+public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
+	@SensorId
 	public static final ResourceLocation ID = SmartHome.resource("sensor/occupancy");
 
-	@Override
-	public Class<OccupancyData> getDataClass() {
-		return OccupancyData.class;
-	}
+	@SensorName
+	@I18DataGen(lang = "en_us", string = "Occupancy")
+	@I18DataGen(lang = "de_de", string = "Anwesenheit")
+	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor", "occupancy");
 
 	@Override
-	public String getTableName() {
-		return "occupancy";
-	}
-
-	@Override
-	public ResourceLocation id() {
-		return ID;
+	public boolean isMultiRow() {
+		return true;
 	}
 
 	@Override
@@ -48,64 +43,33 @@ public class Occupancy implements ISensor<OccupancySettings, OccupancyData> {
 	}
 
 	@Override
-	public boolean supportsVisualization(IVisualization<?, ?> visualization) {
-		return false;
+	public OnOffSettings getDefaultSettings() {
+		return OnOffSettings.DEFAULT;
 	}
 
 	@Override
-	public OccupancyData getStateFromResultSet(ResultSet resultSet) throws SQLException {
-		// TODO: implement me
-		return new OccupancyData(List.of());
-	}
-
-	@Override
-	public ResourceLocation getDefaultVisualization() {
-		return null;
-	}
-
-	@Override
-	public OccupancySettings getDefaultSettings() {
-		return new OccupancySettings(false);
-	}
-
-	@Override
-	public void createTable(DuckDBConnection connection) throws SQLException {
-		Statement stmt = connection.createStatement();
-		stmt.execute("CREATE TABLE IF NOT EXISTS occupancy (instant TIMESTAMP, tick LONG, home UUID, zone UUID, device UUID, visitor STRUCT(id INT, name VARCHAR, type VARCHAR, category VARCHAR), pos STRUCT(x DOUBLE, y DOUBLE, z DOUBLE))");
-		stmt.close();
-	}
-
-	@Override
-	public Consumer<DuckDBConnection> visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, Entity entity) throws SQLException {
+	public OccupancyData visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings, Entity entity) {
 		if(!(entity instanceof LivingEntity livingEntity)) {
-			return NOOP;
+			return null;
 		}
 
 		var name = livingEntity.getName().getString();
 		var type = livingEntity.getType().getDescriptionId();
 		var category = livingEntity.getClassification(false).getName();
 		var entityId = livingEntity.getId();
+		return new OccupancyData(entityId, name, type, category, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+	}
 
-		return connection -> {
-			try {
-				PreparedStatement prepped = connection.prepareStatement("INSERT INTO occupancy VALUES (CURRENT_TIMESTAMP, ?, ?, ?, ?, row(?, ?, ?, ?), row(?, ?, ?))");
-				int paramIndex = 1;
-				prepped.setLong(paramIndex++, level.getServer().getTickCount());
-				prepped.setObject(paramIndex++, zone.home().id());
-				prepped.setObject(paramIndex++, zone.id());
-				prepped.setObject(paramIndex++, device.id());
-				prepped.setInt(paramIndex++, entityId);
-				prepped.setString(paramIndex++, name);
-				prepped.setString(paramIndex++, type);
-				prepped.setString(paramIndex++, category);
-				prepped.setDouble(paramIndex++, livingEntity.getX());
-				prepped.setDouble(paramIndex++, livingEntity.getY());
-				prepped.setDouble(paramIndex++, livingEntity.getZ());
-				prepped.execute();
-				prepped.close();
-			} catch (SQLException e) {
-				SmartHome.LOGGER.error("Failed to record occupancy data for device {}", device.id(), e);
-			}
-		};
+	@Override
+	public OccupancyData dataFromResultSet(ResultSet resultSet) throws SQLException {
+		return new OccupancyData(
+				resultSet.getInt(getColumns().get(0).name()),
+				resultSet.getString(getColumns().get(1).name()),
+				resultSet.getString(getColumns().get(2).name()),
+				resultSet.getString(getColumns().get(3).name()),
+				resultSet.getDouble(getColumns().get(4).name()),
+				resultSet.getDouble(getColumns().get(5).name()),
+				resultSet.getDouble(getColumns().get(6).name())
+		);
 	}
 }

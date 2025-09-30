@@ -6,16 +6,18 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-// tick -> value
-public record LineVizData(List<Map<Long, Double>> values) implements IVisualizationData {
-	private static final StreamCodec<RegistryFriendlyByteBuf, Map<Long, Double>> MAP_STREAM_CODEC =
-		ByteBufCodecs.map(HashMap::new, ByteBufCodecs.VAR_LONG, ByteBufCodecs.DOUBLE);
+// tick -> column -> value
+public record LineVizData(Map<Long, Map<String, Double>> values) implements IVisualizationData {
+	private static final StreamCodec<RegistryFriendlyByteBuf, Map<String, Double>> FIELD_VALUE_STREAM_CODEC =
+		ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, ByteBufCodecs.DOUBLE);
+
+	private static final StreamCodec<RegistryFriendlyByteBuf, Map<Long, Map<String, Double>>> TICK_FIELD_STREAM_CODEC =
+		ByteBufCodecs.map(HashMap::new, ByteBufCodecs.VAR_LONG, FIELD_VALUE_STREAM_CODEC);
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, LineVizData> STREAM_CODEC = StreamCodec.composite(
-		MAP_STREAM_CODEC.apply(ByteBufCodecs.list()), LineVizData::values,
+		TICK_FIELD_STREAM_CODEC, LineVizData::values,
 		LineVizData::new
 	);
 

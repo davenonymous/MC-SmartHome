@@ -48,7 +48,7 @@ public class ModTranslations extends LanguageProvider {
 				return;
 			}
 
-			SmartHome.LOGGER.info("Found translations for field: key={}, locale={} -> {}", key, lang, translation);
+			// SmartHome.LOGGER.info("Found translations for field: key={}, locale={} -> {}", key, lang, translation);
 			this.add(key, translation);
 		});
 	}

@@ -1,21 +1,22 @@
 package com.davenonymous.smarthome.networking.actions;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensor;
-import com.davenonymous.smarthome.api.sensor.SensorSettings;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
-import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.VisualizationDataPayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import com.davenonymous.smarthome.watcher.VizQueryDatabaseTask;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,6 +26,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.duckdb.DuckDBConnection;
 
+import java.time.Instant;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -66,17 +69,23 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 		var device = payload.device();
 
 		IVisualization<?, ?> viz = ModVisualizations.getById(payload.vizId);
-		ISensor<?, ?> sensor = ModSensors.getById(payload.sensorId);
+		HomeSensor<?, ?> sensor = ModSensors.getById(payload.sensorId);
 		SensorSettings sensorSettings = device.sensors().get(payload.sensorId);
 
-		Function<DuckDBConnection, IVisualizationData> dbFunction = sensor.getVisualizationData(zone, device, sensorSettings, viz, payload.settings);
+		var dbHandler = ModSensors.DB_HANDLERS.get(sensor.id());
+		Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> dbFunction = dbHandler.getValues(device.id(), 0, level.getGameTime());
+
+		//Function<DuckDBConnection, IVisualizationData> dbFunction = sensor.getVisualizationData(zone, device, sensorSettings, viz, payload.settings);
 		VizQueryDatabaseTask.execute(dbFunction).thenAccept((vizData) -> {
 			if(vizData == null) {
 				SmartHome.LOGGER.warn("Failed to get viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
 				return;
 			}
 
-			var replyPayload = new VisualizationDataPayload(zone.home().id(), zone.id(), device, payload.sensorId, payload.vizId, vizData);
+			SmartHome.LOGGER.info("Got viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
+
+			//noinspection unchecked
+			var replyPayload = new VisualizationDataPayload(zone.home().id(), zone.id(), device, payload.sensorId, payload.vizId, (LinkedHashMap<Pair<Instant, Long>, ISensorData>) vizData);
 			context.reply(replyPayload);
 		});
 	}

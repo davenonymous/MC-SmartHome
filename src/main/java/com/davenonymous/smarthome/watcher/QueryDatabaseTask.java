@@ -1,21 +1,21 @@
 package com.davenonymous.smarthome.watcher;
 
+import com.davenonymous.smarthome.api.sensor.ISensorData;
 import org.duckdb.DuckDBConnection;
 
-import java.sql.ResultSet;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class QueryDatabaseTask extends DatabaseTask<ResultSet> {
-	Function<DuckDBConnection, ResultSet> dbRawGetter;
+public class QueryDatabaseTask extends DatabaseTask<ISensorData> {
+	Function<DuckDBConnection, ISensorData> dbRawGetter;
 
-	public QueryDatabaseTask(Function<DuckDBConnection, ResultSet> databaseQuery) {
+	public QueryDatabaseTask(Function<DuckDBConnection, ISensorData> databaseQuery) {
 		super();
 		this.dbRawGetter = databaseQuery;
 	}
 
 	@Override
-	public CompletableFuture<ResultSet> call() {
+	public CompletableFuture<ISensorData> call() {
 		future.complete(dbRawGetter.apply(connection));
 		return future;
 	}

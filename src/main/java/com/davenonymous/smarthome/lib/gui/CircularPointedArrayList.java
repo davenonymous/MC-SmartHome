@@ -1,10 +1,26 @@
 package com.davenonymous.smarthome.lib.gui;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 public class CircularPointedArrayList<E> extends ArrayList<E> {
 	int pointer = 0;
 	public boolean wrap = true;
+
+	public CircularPointedArrayList() {
+		super();
+	}
+
+	public CircularPointedArrayList(E... elements) {
+		this(Arrays.asList(elements));
+	}
+
+	public CircularPointedArrayList(@NotNull Collection<? extends E> c) {
+		super(c);
+	}
 
 	public int getPointerIndex() {
 		return pointer;

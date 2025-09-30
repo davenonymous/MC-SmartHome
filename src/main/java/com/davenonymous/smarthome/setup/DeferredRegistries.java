@@ -19,11 +19,11 @@ public class DeferredRegistries {
 		ModDataComponents.DATA_COMPONENTS.register(modbus);
 		ModItems.ITEMS.register(modbus);
 		ModParticles.PARTICLE_TYPES.register(modbus);
-		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS.register(modbus);
-		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS_DISPATCHER.register(modbus);
-		SensorDataCodecRegistry.DEFERRED_SENSOR_DATA_DISPATCHER.register(modbus);
 		VisualizationDataCodecRegistry.DEFERRED_VIZ_DATA_DISPATCHER.register(modbus);
 		VisualizationSettingsCodecRegistry.DEFERRED_VIZ_SETTINGS.register(modbus);
 		VisualizationSettingsCodecRegistry.DEFERRED_VIZ_SETTINGS_DISPATCHER.register(modbus);
+		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS.register(modbus);
+		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS_DISPATCHER.register(modbus);
+		SensorDataCodecRegistry.DEFERRED_SENSOR_DATA_DISPATCHER.register(modbus);
 	}
 }

@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.networking.actions;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.DeviceDataPayload;
@@ -13,13 +12,12 @@ import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Packet
@@ -57,18 +55,23 @@ public record RequestDeviceDataPayload(UUID homeId, UUID zone, ConfiguredDevice 
 		var device = payload.device();
 
 		CompletableFuture<ISensorData>[] futures = new CompletableFuture[device.sensors().size()];
+		ResourceLocation[] sensorIds = new ResourceLocation[device.sensors().size()];
 		int i = 0;
-		for(SensorSettings sensorSettings : device.sensors().values()) {
-			futures[i++] = WorldWatcherUtil.getSensorState(zone, device, sensorSettings);
+		for(ResourceLocation sensorId : device.sensors().keySet()) {
+			futures[i] = WorldWatcherUtil.getSensorState(device, sensorId);
+			sensorIds[i] = sensorId;
+			i++;
 		}
 
 		CompletableFuture.allOf(futures).thenRun(() -> {
-			List<ISensorData> sensorData = new ArrayList<>();
-			for(var watcherFuture : futures) {
+			Map<ResourceLocation, ISensorData> sensorData = new HashMap<>();
+			for(int j = 0; j < futures.length; j++) {
+				var watcherFuture = futures[j];
+				var sensorId = sensorIds[j];
 				try {
 					var data = watcherFuture.get();
 					if(data != null) {
-						sensorData.add(data);
+						sensorData.put(sensorId, data);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
