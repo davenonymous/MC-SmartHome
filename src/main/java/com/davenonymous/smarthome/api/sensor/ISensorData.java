@@ -25,6 +25,4 @@ public interface ISensorData {
 	);
 
 	int bindParameters(PreparedStatement prepped, int nextParamIndex) throws SQLException;
-
-	double getDouble(String columnName);
 }

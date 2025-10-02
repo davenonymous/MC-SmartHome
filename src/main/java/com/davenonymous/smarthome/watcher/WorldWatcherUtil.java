@@ -70,10 +70,10 @@ public class WorldWatcherUtil {
 		return positions;
 	}
 
-	public static Map<HomeZone, List<FoundDevice>> searchForDevices(MinecraftServer server, HomeCore home) {
+	public static void updateDevicesInHome(MinecraftServer server, HomeCore home) {
 		var level = home.getHomeLevel(server);
 		if(level == null) {
-			return Map.of();
+			return;
 		}
 
 		Map<HomeZone, List<FoundDevice>> result = new HashMap<>();
@@ -85,15 +85,16 @@ public class WorldWatcherUtil {
 					continue;
 				}
 
-				List<ResourceLocation> foundSensors = ModSensors.getValidSensors(level, pos, state).stream().map(HomeSensor::id).toList();
+				List<HomeSensor<?, ?>> foundSensors = ModSensors.getValidSensors(level, pos, state).stream().toList();
 				if(foundSensors.isEmpty()) {
 					continue;
 				}
-				foundDevices.add(new FoundDevice(pos, state, foundSensors));
+
+				foundDevices.add(new FoundDevice(pos, state, foundSensors.stream().map(HomeSensor::id).toList()));
 			}
 			result.put(zone, foundDevices);
 		}
 
-		return result;
+		home.setFoundDevices(result);
 	}
 }

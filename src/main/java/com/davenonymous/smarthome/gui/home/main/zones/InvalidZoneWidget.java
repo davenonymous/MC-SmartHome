@@ -13,7 +13,6 @@ import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.resources.language.I18n;
 
 public class InvalidZoneWidget extends WidgetPanel {
 	public WidgetTextBox intersectsText;
@@ -37,7 +36,7 @@ public class InvalidZoneWidget extends WidgetPanel {
 		intersectsText.setTextColor(0xFF000000);
 		this.add(intersectsText);
 
-		warningIcon = new WidgetSprite(HackerNoon.Solid.exclaimation);
+		warningIcon = new WidgetSprite(HackerNoon.Solid.exclamation);
 		warningIcon.setColor(0xFFAAAAAA);
 		warningIcon.scale = 0.5f;
 		warningIcon.setColor(0xFF904444);

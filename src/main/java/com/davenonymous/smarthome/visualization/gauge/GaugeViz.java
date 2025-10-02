@@ -46,7 +46,7 @@ public class GaugeViz implements IVisualization<GaugeVizData, GaugeVizSettings> 
 		}
 
 		var column = sensor.getDefaultColumn().get();
-		var value = sensorData.getDouble(column.name());
+		var value = sensor.valueFromData(HomeSensor.cast(sensorData), column);
 		var chart = new DialChartBuilder()
 			.width(360).height(210)
 			.title("Gauge")

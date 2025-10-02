@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.sensor.fluid;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -10,6 +11,7 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
 import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.SidedOnOffSettings;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -67,6 +69,18 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 		var fluid = fluidInTank.getFluid();
 		var fluidName = fluid.getFluidType().getDescriptionId(fluidInTank);
 		return new FluidStorageData(fluidName, fluidInTank.getAmount(), cap.getTankCapacity(0));
+	}
+
+	@Override
+	public double valueFromData(FluidStorageData data, SensorColumn column) {
+		var columns = getColumns();
+		if(columns.get(0).name().equals(column.name())) {
+			return data.stored();
+		}
+		if(columns.get(1).name().equals(column.name())) {
+			return data.capacity();
+		}
+		return 0;
 	}
 
 	@Override

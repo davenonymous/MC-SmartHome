@@ -1,21 +1,29 @@
 package com.davenonymous.smarthome.gui.home.main.devices.sensor;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
+import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.general.WidgetToggle;
+import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.networking.actions.SetSensorStatePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -25,12 +33,18 @@ public class SensorBox extends WidgetVBox {
 	WidgetHBox header;
 	Widget sensorWidget;
 
-	public SensorBox(ConfiguredDevice device, HomeSensor<?, ?> sensor) {
+	public SensorBox(HomeZone zone, ConfiguredDevice device, HomeSensor<?, ?> sensor) {
 		super();
 		this.setPadding(4);
 		this.setSize(400, 400);
 		var name = sensor.getDisplayName().get();
 		var description = sensor.getDescription().get();
+
+		var headerBox = new WidgetHBox();
+		headerBox.setSize(400, 400);
+		headerBox.setPadding(0);
+		headerBox.setSpacing(4);
+		this.addContentBox(headerBox, FlexAlign.START);
 
 		var label = new WidgetTextBox(name);
 		label.setFont(ModFonts.NOKIA);
@@ -38,7 +52,20 @@ public class SensorBox extends WidgetVBox {
 		label.autoHeight();
 		label.setTextColor(0xFFFFFFFF);
 		label.setTooltipElements(WrappedStringTooltipComponent.orange(description));
-		this.addContentBox(label, FlexAlign.START);
+		headerBox.addContentBox(label, FlexAlign.START);
+
+		headerBox.addFlexBox(new Spacer(1, 8), FlexAlign.START, 1);
+		if(device.sensors().containsKey(sensor.id())) {
+			SensorSettings settings = device.sensors().get(sensor.id());
+			var toggle = new WidgetToggle(settings.enabled());
+			toggle.addListener(
+				ValueChangedEvent.class, (event, widget) -> {
+					PacketDistributor.sendToServer(new SetSensorStatePayload(zone.home().id(), zone.id(), device, sensor.id(), toggle.getValue()));
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				});
+			headerBox.addContentBox(toggle, FlexAlign.END);
+		}
+		headerBox.adjustSizeToContent();
 
 		var vizCache = HomeScreen.get().visualizationDataCache;
 		var dataCache = HomeScreen.get().sensorDataCache.get(device.id());

@@ -6,11 +6,14 @@ import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.DeferredRegistries;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 @Mod(SmartHome.MODID)
@@ -29,6 +32,15 @@ public class SmartHome {
 			Class.forName("org.duckdb.DuckDBDriver");
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
+		}
+
+		if(!FMLEnvironment.production) {
+			LOGGER.info("SmartHome is running in a development environment");
+			Window window = Minecraft.getInstance().getWindow();
+			window.setWindowed(1920, 1080);
+			window.windowedX = 3440 - 1920 - 1 ;
+			window.windowedY = 32;
+			window.setWindowed(1920, 1080);
 		}
 	}
 

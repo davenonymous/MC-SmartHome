@@ -63,8 +63,7 @@ public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
 				}
 				var columnName = column.name();
 				var list = yData.computeIfAbsent(columnName, k -> new ArrayList<>());
-				var value = sensorData.getDouble(columnName);
-
+				var value = sensor.valueFromData(HomeSensor.cast(sensorData), column);
 				list.add(value);
 			}
 		});

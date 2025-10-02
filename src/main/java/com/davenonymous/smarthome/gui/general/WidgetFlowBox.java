@@ -87,5 +87,7 @@ public class WidgetFlowBox extends WidgetPanel {
 			currentX += child.width + spacingHorizontal;
 			rowHeight = Math.max(rowHeight, child.height);
 		}
+
+		this.height = currentY + rowHeight + paddingVertical;
 	}
 }

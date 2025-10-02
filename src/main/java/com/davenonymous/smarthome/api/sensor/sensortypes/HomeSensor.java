@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.api.sensor.DBHandler;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.visualization.line.LineViz;
@@ -95,6 +96,12 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 	static <T> T cast(SensorSettings settings) {
 		return (T)settings;
 	}
+
+	static <D> D cast(ISensorData data) {
+		return (D)data;
+	}
+
+	double valueFromData(D data, SensorColumn column);
 
 	D dataFromResultSet(ResultSet resultSet) throws SQLException;
 }

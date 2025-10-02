@@ -30,20 +30,6 @@ public record ZoneLightLevelData(short minLevel, short maxLevel, double avgLevel
 		return nextParamIndex;
 	}
 
-	@Override
-	public double getDouble(String columnName) {
-		if("min_level".equals(columnName)) {
-			return minLevel();
-		}
-		if("max_level".equals(columnName)) {
-			return maxLevel();
-		}
-		if("avg_level".equals(columnName)) {
-			return avgLevel();
-		}
-		return 0;
-	}
-
 	@SensorDataStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, ZoneLightLevelData> STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.SHORT, ZoneLightLevelData::minLevel,

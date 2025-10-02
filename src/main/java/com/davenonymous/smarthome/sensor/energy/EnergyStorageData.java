@@ -23,17 +23,6 @@ public record EnergyStorageData(long energyStored, long maxEnergyStored) impleme
 		return nextParamIndex;
 	}
 
-	@Override
-	public double getDouble(String columnName) {
-		if("energy_stored".equals(columnName)) {
-			return energyStored();
-		}
-		if("max_energy_stored".equals(columnName)) {
-			return maxEnergyStored();
-		}
-		return 0;
-	}
-
 	@SensorDataStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, EnergyStorageData> STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.VAR_LONG, EnergyStorageData::energyStored,

@@ -28,4 +28,9 @@ public record OnOffSettings(boolean enabled) implements SensorSettings {
 
 	@SensorSettingsDefault
 	public static final OnOffSettings DEFAULT = new OnOffSettings(false);
+
+	@Override
+	public SensorSettings withEnabled(boolean enabled) {
+		return new OnOffSettings(enabled);
+	}
 }

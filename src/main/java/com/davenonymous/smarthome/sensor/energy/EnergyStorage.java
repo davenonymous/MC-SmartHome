@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.sensor.energy;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -58,6 +59,18 @@ public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffS
 		long max = cap.getMaxEnergyStored();
 
 		return new EnergyStorageData(stored, max);
+	}
+
+	@Override
+	public double valueFromData(EnergyStorageData data, SensorColumn column) {
+		var columns = getColumns();
+		if(columns.get(0).name().equals(column.name())) {
+			return data.energyStored();
+		}
+		if(columns.get(1).name().equals(column.name())) {
+			return data.maxEnergyStored();
+		}
+		return 0;
 	}
 
 	@Override

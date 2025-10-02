@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.data;
 
+import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -8,6 +9,7 @@ import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -99,6 +101,34 @@ public class HomeZone {
 			var d = devices.get(i);
 			if(d.id().equals(device.id())) {
 				devices.set(i, devices.get(i).withName(newName));
+				return;
+			}
+		}
+	}
+
+	public void setDeviceState(ConfiguredDevice device, boolean enabled) {
+		for(int i = 0; i < devices.size(); i++) {
+			var d = devices.get(i);
+			if(d.id().equals(device.id())) {
+				devices.set(i, devices.get(i).withEnabled(enabled));
+				return;
+			}
+		}
+	}
+
+	public void setSensorState(ConfiguredDevice device, ResourceLocation sensorId, boolean enabled) {
+		for(int i = 0; i < devices.size(); i++) {
+			var d = devices.get(i);
+			if(d.id().equals(device.id())) {
+				var dev = devices.get(i);
+				var existingSensorConfig = dev.sensors();
+				if(!existingSensorConfig.containsKey(sensorId)) {
+					return;
+				}
+
+				var newSensorSettings = existingSensorConfig.get(sensorId).withEnabled(enabled);
+				existingSensorConfig.put(sensorId, newSensorSettings);
+				devices.set(i, dev.withSensors(existingSensorConfig));
 				return;
 			}
 		}

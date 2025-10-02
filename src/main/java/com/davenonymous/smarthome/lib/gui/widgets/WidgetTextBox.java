@@ -109,19 +109,8 @@ public class WidgetTextBox extends Widget {
 			return;
 		}
 
-		if(window == null) {
-			window = Minecraft.getInstance().getWindow();
-		}
-
 		pGuiGraphics.pose().pushPose();
 		RenderSystem.enableBlend();
-
-		int scale = (int) window.getGuiScale();
-		int bottomOffset = (int) (((double) (window.getHeight() / scale) - (getActualY() + height)) * scale);
-		int heightTmp = (height * scale) - 1;
-		if(heightTmp < 0) {
-			heightTmp = 0;
-		}
 
 		int lineHeight = 9;
 		int yOffset = 0;
@@ -130,10 +119,10 @@ public class WidgetTextBox extends Widget {
 			yOffset = font.yOffset();
 		}
 
-		int lineWidth = wordWrap ? width : Integer.MAX_VALUE;
-		RenderSystem.enableScissor(getActualX() * scale - 3, bottomOffset + 2, width * scale, heightTmp);
+		int lineWidth = wordWrap ? (int)(width * scale) : Integer.MAX_VALUE;
+		pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width * scale), getActualY() + (int)(height * scale));
 		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), 0, -yOffset, lineWidth, lineHeight, textColor);
-		RenderSystem.disableScissor();
+		pGuiGraphics.disableScissor();
 
 		RenderSystem.disableBlend();
 		pGuiGraphics.pose().popPose();

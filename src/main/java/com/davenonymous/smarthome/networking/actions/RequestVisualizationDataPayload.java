@@ -82,8 +82,6 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 				return;
 			}
 
-			SmartHome.LOGGER.info("Got viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
-
 			//noinspection unchecked
 			var replyPayload = new VisualizationDataPayload(zone.home().id(), zone.id(), device, payload.sensorId, payload.vizId, (LinkedHashMap<Pair<Instant, Long>, ISensorData>) vizData);
 			context.reply(replyPayload);

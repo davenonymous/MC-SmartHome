@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -10,6 +11,7 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
 import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.OnOffSettings;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -71,5 +73,24 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 				resultSet.getDouble(getColumns().get(5).name()),
 				resultSet.getDouble(getColumns().get(6).name())
 		);
+	}
+
+	@Override
+	public double valueFromData(OccupancyData data, SensorColumn column) {
+		var columns = getColumns();
+		if(columns.get(0).name().equals(column.name())) {
+			return data.id();
+		}
+		if(columns.get(4).name().equals(column.name())) {
+			return data.x();
+		}
+		if(columns.get(5).name().equals(column.name())) {
+			return data.y();
+		}
+		if(columns.get(6).name().equals(column.name())) {
+			return data.z();
+		}
+
+		return 0;
 	}
 }

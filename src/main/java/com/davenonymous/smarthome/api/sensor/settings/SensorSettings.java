@@ -21,6 +21,9 @@ public interface SensorSettings {
 		return ModSensors.SETTINGS_STREAM_CODEC_BY_CLASS.get(this.getClass());
 	}
 
+	boolean enabled();
+	SensorSettings withEnabled(boolean enabled);
+
 	Codec<SensorSettings> CODEC = SensorSettingsCodecRegistry.SENSOR_SETTINGS_SERIALIZERS.byNameCodec() // Gets Codec<MapCodec<? extends ExampleObject>>
 		.dispatch(
 			SensorSettings::type, // Get the codec from the specific object

@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.sensor.redstone;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -67,5 +68,14 @@ public class RedstonePowered implements BlockSensor<RedstonePoweredData, OnOffSe
 		return new RedstonePoweredData(
 			resultSet.getInt(getColumns().getFirst().name())
 		);
+	}
+
+	@Override
+	public double valueFromData(RedstonePoweredData data, SensorColumn column) {
+		var columns = getColumns();
+		if(columns.get(0).name().equals(column.name())) {
+			return data.redstoneLevel();
+		}
+		return 0;
 	}
 }

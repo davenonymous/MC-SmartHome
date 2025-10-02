@@ -485,8 +485,13 @@ public class Widget implements ISelectable {
 	public void shiftAndDraw(GuiGraphics pGuiGraphics, Window window) {
 		this.drawBeforeShift(pGuiGraphics, window);
 
-		if(this.width <= 0 || this.height <= 0) {
-			SmartHome.LOGGER.warn("Widget {} has non-positive dimensions ({}x{}), skipping draw. [parent={}]", this, this.width, this.height, this.getParentChain());
+		if(this.width < 0 || this.height < 0) {
+			// SmartHome.LOGGER.warn("Widget {} has negative dimensions ({}x{}), skipping draw. [parent={}]", this, this.width, this.height, this.getParentChain());
+			return;
+		}
+
+		if(this.width == 0 || this.height == 0) {
+			// Nothing to draw
 			return;
 		}
 

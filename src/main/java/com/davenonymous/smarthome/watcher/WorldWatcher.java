@@ -68,6 +68,10 @@ public class WorldWatcher {
 						settings = sensor.getDefaultSettings();
 					}
 
+					if(!settings.enabled()) {
+						continue;
+					}
+
 					ISensorData data = null;
 					switch(sensor) {
 						case ZoneSensor<?, ?> zoneSensor -> {
@@ -94,7 +98,7 @@ public class WorldWatcher {
 
 					if(data != null) {
 						var handler = ModSensors.DB_HANDLERS.get(sensor.id());
-						homeConsumers.add(handler.insertValues(homeLevel.getServer().getTickCount(), home.id(), zone.id(), device.id(), data));
+						homeConsumers.add(handler.insertValues(homeLevel.getGameTime(), home.id(), zone.id(), device.id(), data));
 					}
 				}
 
@@ -112,7 +116,7 @@ public class WorldWatcher {
 							ISensorData result = sensor.visitZoneBlock(homeLevel, zone, device, HomeSensor.cast(settings), sensorCheckPos, sensorCheckState, sensorCheckEntity);
 							if(result != null) {
 								var handler = ModSensors.DB_HANDLERS.get(sensor.id());
-								homeConsumers.add(handler.insertValues(homeLevel.getServer().getTickCount(), home.id(), zone.id(), device.id(), result));
+								homeConsumers.add(handler.insertValues(homeLevel.getGameTime(), home.id(), zone.id(), device.id(), result));
 							}
 						}
 					}

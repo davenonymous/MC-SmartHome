@@ -118,7 +118,7 @@ public class HackerNoon {
 		public static final ResourceLocation ellipsesVerticalCircle = SmartHome.resource("hackernoon/solid/ellipses-vertical-circle");
 		public static final ResourceLocation ellipsesVertical = SmartHome.resource("hackernoon/solid/ellipses-vertical");
 		public static final ResourceLocation envelope = SmartHome.resource("hackernoon/solid/envelope");
-		public static final ResourceLocation exclaimation = SmartHome.resource("hackernoon/solid/exclaimation");
+		public static final ResourceLocation exclamation = SmartHome.resource("hackernoon/solid/exclaimation");
 		public static final ResourceLocation exclamationTriangle = SmartHome.resource("hackernoon/solid/exclamation-triangle");
 		public static final ResourceLocation expand = SmartHome.resource("hackernoon/solid/expand");
 		public static final ResourceLocation externalLink = SmartHome.resource("hackernoon/solid/external-link");

@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.sensor.lightlevel;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -10,6 +11,7 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
 import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.OnOffSettings;
+import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -80,6 +82,21 @@ public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSetti
 
 		double avgLight = (double) totalLight / (double) totalBlocks;
 		return new ZoneLightLevelData(minLight, maxLight, avgLight);
+	}
+
+	@Override
+	public double valueFromData(ZoneLightLevelData data, SensorColumn column) {
+		var columns = getColumns();
+		if(columns.get(0).name().equals(column.name())) {
+			return data.minLevel();
+		}
+		if(columns.get(1).name().equals(column.name())) {
+			return data.maxLevel();
+		}
+		if(columns.get(2).name().equals(column.name())) {
+			return data.avgLevel();
+		}
+		return 0;
 	}
 
 	@Override

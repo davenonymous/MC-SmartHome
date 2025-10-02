@@ -17,17 +17,6 @@ public record FluidStorageData(String fluidId, long stored, long capacity) imple
 	}
 
 	@Override
-	public double getDouble(String columnName) {
-		if("stored".equals(columnName)) {
-			return stored();
-		}
-		if("capacity".equals(columnName)) {
-			return capacity();
-		}
-		return 0;
-	}
-
-	@Override
 	public int bindParameters(PreparedStatement prepped, int nextParamIndex) throws SQLException {
 		prepped.setString(nextParamIndex++, fluidId());
 		prepped.setLong(nextParamIndex++, stored());

@@ -33,4 +33,9 @@ public record SidedOnOffSettings(boolean enabled, Optional<Direction> side) impl
 
 	@SensorSettingsDefault
 	public static final SidedOnOffSettings DEFAULT = new SidedOnOffSettings(false, Optional.empty());
+
+	@Override
+	public SensorSettings withEnabled(boolean enabled) {
+		return new SidedOnOffSettings(enabled, this.side);
+	}
 }

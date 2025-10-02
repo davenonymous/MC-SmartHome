@@ -8,21 +8,26 @@ import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.general.BlockStateWidget;
 import com.davenonymous.smarthome.gui.general.HoverableWidgetTable;
+import com.davenonymous.smarthome.gui.general.WidgetToggle;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
+import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.networking.actions.SetDeviceStatePayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -155,7 +160,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 
 			var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
 			if(deviceBlockState == null) {
-				var sprite = new WidgetSprite(HackerNoon.Solid.exclaimation);
+				var sprite = new WidgetSprite(HackerNoon.Solid.exclamation);
 				sprite.setColor(ColorHelper.COLOR_ERRORED.getRGB());
 				sprite.setSize(sprite.width()/2, sprite.height()/2);
 				sprite.setTooltipElements(
@@ -178,8 +183,12 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 				this.add(0, row, blockStateWidget);
 			}
 
-			var statusSprite = new WidgetSprite(SmartHome.sprite(device.enabled() ? GuiTheme.SpriteComponent.WIDGET_TOGGLE_ON : GuiTheme.SpriteComponent.WIDGET_TOGGLE_OFF));
-			this.add(3, row, statusSprite);
+			var statusToggle = new WidgetToggle(device.enabled());
+			statusToggle.addListener(ValueChangedEvent.class, (event, widget) -> {
+				PacketDistributor.sendToServer(new SetDeviceStatePayload(zone.home().id(), zone.id(), device, statusToggle.getValue()));
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			});
+			this.add(3, row, statusToggle);
 
 			Set<String> sensorNames = new HashSet<>();
 			for(var sensorEntry : device.sensors().entrySet()) {

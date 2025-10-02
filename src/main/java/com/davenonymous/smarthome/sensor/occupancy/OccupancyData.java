@@ -40,18 +40,4 @@ public record OccupancyData(int id, String name, String type, String category, d
 		prepped.setDouble(nextParamIndex++, z());
 		return nextParamIndex;
 	}
-
-	@Override
-	public double getDouble(String columnName) {
-		if("x".equals(columnName)) {
-			return x();
-		}
-		if("y".equals(columnName)) {
-			return y();
-		}
-		if("z".equals(columnName)) {
-			return z();
-		}
-		return 0;
-	}
 }

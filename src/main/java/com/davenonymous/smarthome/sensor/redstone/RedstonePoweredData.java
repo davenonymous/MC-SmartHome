@@ -21,14 +21,6 @@ public record RedstonePoweredData(int redstoneLevel) implements ISensorData {
 		return nextParamIndex;
 	}
 
-	@Override
-	public double getDouble(String columnName) {
-		if("redstone_level".equals(columnName)) {
-			return redstoneLevel();
-		}
-		return 0;
-	}
-
 	@SensorDataStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, RedstonePoweredData> STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.INT, RedstonePoweredData::redstoneLevel,

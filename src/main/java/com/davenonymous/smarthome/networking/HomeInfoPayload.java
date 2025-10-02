@@ -19,8 +19,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements LibPacketPayload {
 
 	public static HomeInfoPayload get(MinecraftServer server, HomeCore home) {
-		var foundDevices = WorldWatcherUtil.searchForDevices(server, home);
-		home.setFoundDevices(foundDevices);
+		WorldWatcherUtil.updateDevicesInHome(server, home);
 		return new HomeInfoPayload(home, HomeWorldInfo.create(home.getHomeLevel(server), home));
 	}
 

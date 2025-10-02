@@ -82,8 +82,7 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 			var optHome = data.getHome(homeId);
 			if(optHome.isPresent()) {
 				var home = optHome.get();
-				var foundDevices = WorldWatcherUtil.searchForDevices(level.getServer(), home);
-				home.setFoundDevices(foundDevices);
+				WorldWatcherUtil.updateDevicesInHome(level.getServer(), home);
 
 				for(var zone : home.zones()) {
 					List<ConfiguredDevice> newDeviceList = new ArrayList<>();
@@ -113,7 +112,6 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 			}
 		}
 
-		PacketDistributor.sendToPlayer(serverPlayer, new TestPacketDataPayload("Sup, ma boi"));
 		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID()), worldInfo));
 		return InteractionResult.SUCCESS_NO_ITEM_USED;
 	}

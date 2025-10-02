@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.events.SensorDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
+import com.davenonymous.smarthome.gui.general.ScissorScrollWrap;
 import com.davenonymous.smarthome.gui.general.WidgetFlowBox;
 import com.davenonymous.smarthome.gui.home.main.devices.sensor.SensorBox;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
@@ -26,6 +27,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 
 	private StringInputWidget deviceRenameInput;
 	private WidgetFlowBox sensorsList;
+	private ScissorScrollWrap scrollPanel;
 
 	public DeviceDetailWidget() {
 		this.setPaddingHorizontal(8);
@@ -49,7 +51,9 @@ public class DeviceDetailWidget extends WidgetVBox {
 		sensorsList = new WidgetFlowBox();
 		sensorsList.setPadding(0);
 		sensorsList.setSpacing(2);
-		this.addContentBox(sensorsList, FlexAlign.START);
+
+		scrollPanel = new ScissorScrollWrap(sensorsList);
+		this.addContentBox(scrollPanel, FlexAlign.START);
 
 		this.addListener(SensorDataUpdatedEvent.class, (event, widget) -> {
 			if(device == null || !device.id().equals(event.deviceId())) {
@@ -106,7 +110,8 @@ public class DeviceDetailWidget extends WidgetVBox {
 
 		sensorsList.clear();
 		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
-		sensorsList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
+		scrollPanel.setWidth(this.width - this.paddingHorizontal*2);
+		scrollPanel.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
 		for(var sensorEntry : device.sensors().entrySet()) {
 			var sensorId = sensorEntry.getKey();
 			var sensor = ModSensors.getById(sensorId);
@@ -114,7 +119,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 				continue;
 			}
 
-			var box = new SensorBox(device, sensor);
+			var box = new SensorBox(zone, device, sensor);
 			sensorsList.add(box);
 		}
 		sensorsList.updateWidgetSizes();
@@ -132,6 +137,8 @@ public class DeviceDetailWidget extends WidgetVBox {
 		}
 		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
 		sensorsList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
+		sensorsList.updateWidgetSizes();
+		scrollPanel.updateWidgetSizes();
 		//sensorsList.spreadBoxes();
 
 	}
