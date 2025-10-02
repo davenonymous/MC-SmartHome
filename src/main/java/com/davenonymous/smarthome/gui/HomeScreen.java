@@ -48,6 +48,8 @@ public class HomeScreen extends WidgetFullScreen {
 	public HomeWorldInfo homeWorldInfo;
 
 	public Map<UUID, Map<ResourceLocation, ISensorData>> sensorDataCache;
+
+	//          (DevID, SensorId) ->     {VizID ->              [ (Timestamp, Tick) -> Data ]}
 	public Table<UUID, ResourceLocation, Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>> visualizationDataCache;
 
 	@I18DataGen(lang = "en_us", string = "Smart Home")

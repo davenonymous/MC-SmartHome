@@ -28,6 +28,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class SensorBox extends WidgetVBox {
 	WidgetHBox header;
@@ -55,8 +56,9 @@ public class SensorBox extends WidgetVBox {
 		headerBox.addContentBox(label, FlexAlign.START);
 
 		headerBox.addFlexBox(new Spacer(1, 8), FlexAlign.START, 1);
-		if(device.sensors().containsKey(sensor.id())) {
-			SensorSettings settings = device.sensors().get(sensor.id());
+		Optional<SensorSettings> optSettings = device.getSettings(sensor.id());
+		if(optSettings.isPresent()) {
+			SensorSettings settings = optSettings.get();
 			var toggle = new WidgetToggle(settings.enabled());
 			toggle.addListener(
 				ValueChangedEvent.class, (event, widget) -> {
@@ -69,6 +71,12 @@ public class SensorBox extends WidgetVBox {
 
 		var vizCache = HomeScreen.get().visualizationDataCache;
 		var dataCache = HomeScreen.get().sensorDataCache.get(device.id());
+
+		if(dataCache != null && dataCache.containsKey(sensor.id())) {
+			var sensorData = dataCache.get(sensor.id());
+
+		}
+
 		if(vizCache.contains(device.id(), sensor.id())) {
 			Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>availableVisualizations = vizCache.get(device.id(), sensor.id());
 			if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
@@ -81,6 +89,7 @@ public class SensorBox extends WidgetVBox {
 					if(sensorWidget != null) {
 						this.addContentBox(sensorWidget, FlexAlign.CENTER);
 					}
+					// TODO: else error widget?
 				}
 			}
 		} else if(dataCache != null) {

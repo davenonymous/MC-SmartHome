@@ -29,9 +29,32 @@ public class DatabaseWorker extends Thread {
 		try {
 			connection = (DuckDBConnection) DriverManager.getConnection("jdbc:duckdb:" + this.dbPath);
 			ModSensors.createTables(connection);
-			ModSensors.createTables(connection);
+			createMacros();
 		} catch (SQLException e) {
 			LOGGER.error("Error initializing DuckDB", e);
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void createMacros() {
+		String statement = "CREATE OR REPLACE MACRO avgVizData(tblName := NULL, deviceId := NULL, numericCols := NULL, otherCols := NULL, groupBySeconds := 30, maxResults := 1000) AS TABLE\n" +
+			"SELECT * FROM query(\n" +
+			"    FORMAT(\n" +
+			"        'SELECT avg(instant) as instant, max(tick) as tick, device, round(tick / {}) AS entryNum, {}{}{} FROM {} WHERE device = ''{}'' GROUP BY entryNum, device ORDER BY instant DESC LIMIT {}',\n" +
+			"        20 * groupBySeconds,\n" +
+			"        if(length(otherCols) > 0, array_to_string_comma_default(list_transform(otherCols, lambda c: format('first({}) AS {}', c, c))), ''),\n" +
+			"        if(length(otherCols) > 0 and length(numericCols) > 0, ', ', ''),\n" +
+			"        if(length(numericCols) > 0, array_to_string_comma_default(list_transform(numericCols, lambda c: format('avg({}) AS {}', c, c))), ''),        \n" +
+			"        tblName,\n" +
+			"        deviceId,\n" +
+			"        maxResults\n" +
+			"    )\n" +
+			");";
+
+		try {
+			connection.prepareStatement(statement).execute();
+		} catch (SQLException e) {
+			LOGGER.error("Error creating DuckDB macros", e);
 			throw new RuntimeException(e);
 		}
 	}

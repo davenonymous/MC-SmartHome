@@ -16,12 +16,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored, Map<ResourceLocation, SensorSettings> sensors) {
 
 	public ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation blockId, boolean enabled, boolean ignored) {
 		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored, Map.of());
+	}
+
+
+	public Optional<SensorSettings> getSettings(ResourceLocation sensorId) {
+		return Optional.ofNullable(sensors.get(sensorId));
 	}
 
 	public boolean matches(Block block) {

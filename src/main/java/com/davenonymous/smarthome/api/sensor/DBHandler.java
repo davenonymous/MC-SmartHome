@@ -59,21 +59,27 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 	public Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> getValues(UUID deviceId, long startTick, long endTick) {
 		return connection -> {
-			String statement =
-				"SELECT instant, tick, " +
-					sensor.getColumns().stream().map(SensorColumn::name).collect(Collectors.joining(", ")) +
-					" FROM " + getTableName() +
-					" WHERE device = ?" +
-					" AND tick >= " + startTick +
-					" AND tick <= " + endTick +
-					" ORDER BY instant DESC" +
-					" LIMIT 10000";
+			String numericColumns = sensor.getColumns().stream()
+				.filter(sensorColumn -> sensorColumn.type().isNumeric())
+				.map(column -> "'" + column.name() + "'")
+				.collect(Collectors.joining(", "));
 
+			String otherColumns = sensor.getColumns().stream()
+				.filter(sensorColumn -> !sensorColumn.type().isNumeric())
+				.map(column -> "'" + column.name() + "'")
+				.collect(Collectors.joining(", "));
+
+			String statement = "select * from avgVizData(" +
+				"tblName := '"+getTableName()+"', " +
+			  	"deviceId := '"+deviceId+"', " +
+			  	"numericCols := ["+numericColumns+"]," +
+				"otherCols := ["+otherColumns+"]" +
+			");";
+
+			//SmartHome.LOGGER.info("Executing sensor data query: {}", statement);
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {
 				PreparedStatement prepped = connection.prepareStatement(statement);
-				prepped.setObject(1, deviceId);
-
 				var resultSet = prepped.executeQuery();
 				while(resultSet.next()) {
 					Instant instant = resultSet.getTimestamp("instant").toInstant();

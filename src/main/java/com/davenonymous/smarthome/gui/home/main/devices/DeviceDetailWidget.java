@@ -30,7 +30,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 	private ScissorScrollWrap scrollPanel;
 
 	public DeviceDetailWidget() {
-		this.setPaddingHorizontal(8);
+		this.setPaddingHorizontal(6);
 		this.setPaddingVertical(4);
 		this.setSpacing(10);
 

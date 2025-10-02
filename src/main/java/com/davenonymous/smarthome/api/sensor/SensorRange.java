@@ -77,6 +77,9 @@ public interface SensorRange {
 			for(var data : dataList) {
 				foundMin = Math.min(foundMin, sensor.valueFromData(HomeSensor.cast(data), column));
 			}
+			if(foundMin == Double.POSITIVE_INFINITY) {
+				foundMin = 0.0;
+			}
 			return foundMin;
 		}
 
@@ -92,6 +95,9 @@ public interface SensorRange {
 			double foundMax = Double.NEGATIVE_INFINITY;
 			for(var data : dataList) {
 				foundMax = Math.max(foundMax, sensor.valueFromData(HomeSensor.cast(data), column));
+			}
+			if(foundMax == Double.NEGATIVE_INFINITY) {
+				foundMax = 0.0;
 			}
 			return foundMax;
 		}
@@ -109,6 +115,9 @@ public interface SensorRange {
 			for(var data : dataList) {
 				foundMin = Math.min(foundMin, sensor.valueFromData(HomeSensor.cast(data), minColumn));
 			}
+			if(foundMin == Double.POSITIVE_INFINITY) {
+				foundMin = 0.0;
+			}
 			return foundMin;
 		}
 
@@ -122,6 +131,9 @@ public interface SensorRange {
 			double foundMax = Double.NEGATIVE_INFINITY;
 			for(var data : dataList) {
 				foundMax = Math.max(foundMax, sensor.valueFromData(HomeSensor.cast(data), maxColumn));
+			}
+			if(foundMax == Double.NEGATIVE_INFINITY) {
+				foundMax = 0.0;
 			}
 			return foundMax;
 		}
@@ -149,6 +161,9 @@ public interface SensorRange {
 			for(var data : dataList) {
 				foundMax = Math.max(foundMax, sensor.valueFromData(HomeSensor.cast(data), maxColumn));
 			}
+			if(foundMax == Double.NEGATIVE_INFINITY) {
+				foundMax = 0.0;
+			}
 			return foundMax;
 		}
 
@@ -164,6 +179,9 @@ public interface SensorRange {
 			double foundMin = Double.POSITIVE_INFINITY;
 			for(var data : dataList) {
 				foundMin = Math.min(foundMin, sensor.valueFromData(HomeSensor.cast(data), minColumn));
+			}
+			if(foundMin == Double.POSITIVE_INFINITY) {
+				foundMin = 0.0;
 			}
 			return foundMin;
 		}
