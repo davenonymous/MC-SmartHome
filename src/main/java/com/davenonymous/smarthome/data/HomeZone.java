@@ -43,6 +43,11 @@ public class HomeZone {
 		return devices;
 	}
 
+	public HomeZone setFoundDevices(List<FoundDevice> foundDevices) {
+		this.foundDevices = new ArrayList<>(foundDevices);
+		return this;
+	}
+
 	public List<FoundDevice> foundDevices() {
 		return foundDevices;
 	}

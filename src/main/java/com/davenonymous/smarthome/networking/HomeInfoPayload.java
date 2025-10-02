@@ -41,6 +41,9 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 			if(homeScreen.selectedHome != null && homeScreen.selectedHome.id().equals(home.id())) {
 				homeScreen.selectedHome = home;
 			}
+
+			WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
+
 			homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
 		}
 	}

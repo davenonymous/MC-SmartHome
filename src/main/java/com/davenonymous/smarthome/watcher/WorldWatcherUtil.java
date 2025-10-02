@@ -5,13 +5,16 @@ import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.networking.actions.AddDevicePayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.phys.AABB;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.duckdb.DuckDBConnection;
 
 import java.time.Instant;
@@ -96,5 +99,38 @@ public class WorldWatcherUtil {
 		}
 
 		home.setFoundDevices(result);
+	}
+
+	// Client-Side only!
+	public static void autoIgnoreGenericOnlyDevices(HomeCore home) {
+		if(home != null && home.settings().autoIgnoreGenericOnlyDevices()) {
+			for(var zone : home.getAllFoundDevices().keySet()) {
+				List<FoundDevice> foundDevices = zone.foundDevices();
+				if(foundDevices == null) {
+					continue;
+				}
+
+				List<FoundDevice> filteredDevices = new ArrayList<>();
+				for(var foundDevice : foundDevices) {
+					var foundSensors = foundDevice.sensorIds().stream().map(ModSensors::getById);
+					if(!foundSensors.allMatch(HomeSensor::isGeneric)) {
+						filteredDevices.add(foundDevice);
+						continue;
+					}
+
+					var deviceBlockState = foundDevice.state();
+					var deviceTranslationKey = deviceBlockState.getBlock().getDescriptionId();
+					var deviceBlockId = deviceBlockState.getBlock().builtInRegistryHolder().getKey().location();
+					ConfiguredDevice configuredDevice = new ConfiguredDevice(
+						foundDevice.pos(), I18n.get(deviceTranslationKey), deviceBlockId, false, true
+					);
+
+					zone.addDevice(configuredDevice);
+					PacketDistributor.sendToServer(new AddDevicePayload(home.id(), zone.id(), configuredDevice));
+				}
+
+				zone.setFoundDevices(filteredDevices);
+			}
+		}
 	}
 }

@@ -8,6 +8,7 @@ import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
+import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
@@ -37,10 +38,12 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 
 		var mc = Minecraft.getInstance();
 		if(mc.screen instanceof HomeScreen homeScreen) {
-			// homeScreen.newDevices = new ArrayList<>(payload.newDevices);
 			homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
 			return;
 		}
+
+		var home = payload.homes().stream().filter(h -> h.id().equals(payload.selectedHome())).findFirst().orElse(null);
+		WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
 
 		Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome(), payload.homes(), payload.worldInfo()));
 	}
