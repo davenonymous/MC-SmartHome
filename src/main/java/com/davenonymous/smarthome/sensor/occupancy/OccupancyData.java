@@ -12,6 +12,11 @@ import java.sql.SQLException;
 
 public record OccupancyData(int id, String name, String type, String category, double x, double y, double z) implements ISensorData {
 
+	@Override
+	public Object[] columnValues() {
+		return new Object[] {id, name, type, category, x, y, z};
+	}
+
 	@SensorDataStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, OccupancyData> STREAM_CODEC = BiggerStreamCodec.composite(
 		ByteBufCodecs.INT, OccupancyData::id,

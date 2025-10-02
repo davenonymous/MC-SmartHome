@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.visualization.line;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.gui.WidgetChart;
@@ -26,7 +27,7 @@ import java.util.*;
 import java.util.List;
 
 @SmartHomeVisualization(modid = SmartHome.MODID)
-public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
+public class LineViz implements IVisualization<LineVizSettings> {
 	public static final ResourceLocation ID = SmartHome.resource("visualization/line");
 
 	@Override
@@ -70,16 +71,13 @@ public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
 			.setAxisTicksLineVisible(false)
 			.setPlotGridLinesVisible(false);
 
-		if(sensor.hasMin()) {
-			if(!sensor.usesDynamicMin()) {
-				styler.setYAxisMin(sensor.getStaticMin());
-			}
+		SensorRange range = sensor.getRange();
+		if(range.hasMin()) {
+			styler.setYAxisMin(range.min(sensor, data.values()));
 		}
 
-		if(sensor.hasMax()) {
-			if(!sensor.usesDynamicMax()) {
-				styler.setYAxisMax(sensor.getStaticMax());
-			}
+		if(range.hasMax()) {
+			styler.setYAxisMax(range.max(sensor, data.values()));
 		}
 
 		styler
@@ -107,14 +105,14 @@ public class LineViz implements IVisualization<LineVizData, LineVizSettings> {
 			}
 		});
 
-		var seriesSettings = settings.series();
+		var seriesSettingsList = settings.series();
 		int seriesIndex = 0;
 		for(String seriesName : yData.keySet()) {
-			LineVizSeriesSettings serieSetting = seriesSettings.get(seriesIndex % seriesSettings.size());
+			LineVizSeriesSettings seriesSetting = seriesSettingsList.get(seriesIndex % seriesSettingsList.size());
 
 			List<Double> series = yData.get(seriesName);
 			chart.addSeries(seriesName, xData, series)
-				.setLineColor(new Color(serieSetting.color(), false));
+				.setLineColor(new Color(seriesSetting.color(), false));
 
 			seriesIndex++;
 		}

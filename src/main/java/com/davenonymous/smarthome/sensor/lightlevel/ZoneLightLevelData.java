@@ -18,6 +18,11 @@ public record ZoneLightLevelData(short minLevel, short maxLevel, double avgLevel
 	}
 
 	@Override
+	public Object[] columnValues() {
+		return new Object[] {minLevel, maxLevel, avgLevel};
+	}
+
+	@Override
 	public String displayString() {
 		return String.format("%.2f", avgLevel);
 	}

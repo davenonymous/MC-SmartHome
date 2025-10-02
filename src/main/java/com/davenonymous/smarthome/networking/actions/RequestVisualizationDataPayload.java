@@ -68,7 +68,7 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 		var zone = optZone.get();
 		var device = payload.device();
 
-		IVisualization<?, ?> viz = ModVisualizations.getById(payload.vizId);
+		IVisualization<?> viz = ModVisualizations.getById(payload.vizId);
 		HomeSensor<?, ?> sensor = ModSensors.getById(payload.sensorId);
 		SensorSettings sensorSettings = device.sensors().get(payload.sensorId);
 

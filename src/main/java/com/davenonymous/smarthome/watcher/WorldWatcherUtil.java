@@ -120,6 +120,7 @@ public class WorldWatcherUtil {
 
 					var deviceBlockState = foundDevice.state();
 					var deviceTranslationKey = deviceBlockState.getBlock().getDescriptionId();
+					//noinspection deprecation
 					var deviceBlockId = deviceBlockState.getBlock().builtInRegistryHolder().getKey().location();
 					ConfiguredDevice configuredDevice = new ConfiguredDevice(
 						foundDevice.pos(), I18n.get(deviceTranslationKey), deviceBlockId, false, true

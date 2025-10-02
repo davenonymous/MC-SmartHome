@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.api.sensor.sensortypes;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.lib.i18n.I18String;
@@ -55,36 +56,8 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 		return false;
 	}
 
-	default boolean hasMin() {
-		return false;
-	}
-
-	default boolean hasMax() {
-		return false;
-	}
-
-	default boolean usesDynamicMax() {
-		return true;
-	}
-
-	default boolean usesDynamicMin() {
-		return true;
-	}
-
-	default SensorColumn getMinColumn() {
-		throw new UnsupportedOperationException("This sensor does not have a min column");
-	}
-
-	default SensorColumn getMaxColumn() {
-		throw new UnsupportedOperationException("This sensor does not have a max column");
-	}
-
-	default double getStaticMin() {
-		throw new UnsupportedOperationException("This sensor does not have a static min value");
-	}
-
-	default double getStaticMax() {
-		throw new UnsupportedOperationException("This sensor does not have a static max value");
+	default SensorRange getRange() {
+		return new SensorRange.None();
 	}
 
 	default ResourceLocation id() {
@@ -114,6 +87,14 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 		return ModSensors.SENSOR_COLUMNS.getOrDefault(id(), List.of());
 	}
 
+	default SensorColumn getColumn(int index) {
+		List<SensorColumn> sensorList = ModSensors.SENSOR_COLUMNS.getOrDefault(id(), List.of());
+		if(index < 0 || index >= sensorList.size()) {
+			throw new IndexOutOfBoundsException("Column index " + index + " is out of bounds for sensor " + id() + " with " + sensorList.size() + " columns");
+		}
+		return sensorList.get(index);
+	}
+
 	default ResourceLocation getTableName() {
 		var noSlashPath = id().getPath().replace('/', '_');
 		return ResourceLocation.fromNamespaceAndPath(id().getNamespace(), noSlashPath);
@@ -133,7 +114,17 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 		return (D)data;
 	}
 
-	double valueFromData(D data, SensorColumn column);
+	default double valueFromData(D data, SensorColumn column) {
+		if(!column.type().isNumeric()) {
+			throw new IllegalArgumentException("Column " + column.name() + " is not numeric");
+		}
+		if(data.columnValues().length <= column.index()) {
+			throw new IllegalArgumentException("Column index " + column.index() + " is out of bounds for data with " + data.columnValues().length + " columns");
+		}
+
+		var num = (Number) data.columnValues()[column.index()];
+		return num.doubleValue();
+	}
 
 	D dataFromResultSet(ResultSet resultSet) throws SQLException;
 }

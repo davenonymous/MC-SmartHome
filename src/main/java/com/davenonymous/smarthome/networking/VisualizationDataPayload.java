@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.networking;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -14,8 +13,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
-import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.time.Instant;

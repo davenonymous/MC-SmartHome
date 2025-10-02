@@ -2,7 +2,6 @@ package com.davenonymous.smarthome.gui;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.visualization.IVisualizationData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;

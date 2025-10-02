@@ -85,6 +85,7 @@ public class ModSensors {
 			var settingsClassSnakeCaseName = snakeCase(settingsClassSimpleName);
 
 			List<SensorColumn> columns = new ArrayList<>();
+			int colIndex = 0;
 			for(var field : dataClazz.getDeclaredFields()) {
 				if(Modifier.isStatic(field.getModifiers())) {
 					continue;
@@ -99,7 +100,7 @@ public class ModSensors {
 				var snakeCaseName = snakeCase(field.getName());
 				String translationKey = SmartHome.MODID + ".sensor." + sensorClassSnakeCaseName + ".column." + snakeCaseName;
 
-				var column = new SensorColumn(snakeCaseName, translationKey, columnType);
+				var column = new SensorColumn(colIndex++, snakeCaseName, translationKey, columnType);
 				columns.add(column);
 			}
 

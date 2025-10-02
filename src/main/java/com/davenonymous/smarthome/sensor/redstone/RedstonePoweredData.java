@@ -10,6 +10,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public record RedstonePoweredData(int redstoneLevel) implements ISensorData {
+
+	@Override
+	public Object[] columnValues() {
+		return new Object[] {redstoneLevel};
+	}
+
 	@Override
 	public String displayString() {
 		return "" + redstoneLevel;

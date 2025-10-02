@@ -7,15 +7,25 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 
-public record SensorColumn(String name, String translationKey, SensorColumnType type) {
+public record SensorColumn(int index, String name, String translationKey, SensorColumnType type) {
+
+	public SensorColumn(String name, String translationKey, SensorColumnType type) {
+		this(-1, name, translationKey, type);
+	}
+
+	public SensorColumn withIndex(int index) {
+		return new SensorColumn(index, this.name, this.translationKey, this.type);
+	}
 
 	public static final MapCodec<SensorColumn> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+		Codec.INT.fieldOf("index").forGetter(SensorColumn::index),
 		Codec.STRING.fieldOf("name").forGetter(SensorColumn::name),
 		Codec.STRING.fieldOf("translation_key").forGetter(SensorColumn::translationKey),
 		SensorColumnType.CODEC.fieldOf("type").forGetter(SensorColumn::type)
 	).apply(instance, SensorColumn::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, SensorColumn> STREAM_CODEC = StreamCodec.composite(
+		ByteBufCodecs.INT, SensorColumn::index,
 		ByteBufCodecs.STRING_UTF8, SensorColumn::name,
 		ByteBufCodecs.STRING_UTF8, SensorColumn::translationKey,
 		SensorColumnType.STREAM_CODEC, SensorColumn::type,

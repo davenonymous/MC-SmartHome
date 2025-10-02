@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.sensor.redstone;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorColumn;
+import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -47,33 +48,8 @@ public class RedstonePowered implements BlockSensor<RedstonePoweredData, OnOffSe
 	}
 
 	@Override
-	public boolean hasMin() {
-		return true;
-	}
-
-	@Override
-	public boolean hasMax() {
-		return true;
-	}
-
-	@Override
-	public boolean usesDynamicMin() {
-		return false;
-	}
-
-	@Override
-	public boolean usesDynamicMax() {
-		return false;
-	}
-
-	@Override
-	public double getStaticMin() {
-		return 0;
-	}
-
-	@Override
-	public double getStaticMax() {
-		return 15;
+	public SensorRange getRange() {
+		return new SensorRange.StaticMinMax(0, 15);
 	}
 
 	@Override
@@ -98,14 +74,5 @@ public class RedstonePowered implements BlockSensor<RedstonePoweredData, OnOffSe
 		return new RedstonePoweredData(
 			resultSet.getInt(getColumns().getFirst().name())
 		);
-	}
-
-	@Override
-	public double valueFromData(RedstonePoweredData data, SensorColumn column) {
-		var columns = getColumns();
-		if(columns.get(0).name().equals(column.name())) {
-			return data.redstoneLevel();
-		}
-		return 0;
 	}
 }

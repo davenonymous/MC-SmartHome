@@ -16,6 +16,8 @@ public interface ISensorData {
 		return ModSensors.DATA_STREAM_CODEC_BY_CLASS.get(this.getClass());
 	}
 
+	Object[] columnValues();
+
 	String displayString();
 
 	StreamCodec<RegistryFriendlyByteBuf, ISensorData> STREAM_CODEC = ByteBufCodecs.registry(SensorDataCodecRegistry.SENSOR_DATA_DISPATCHER_KEY)

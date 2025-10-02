@@ -74,23 +74,4 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 				resultSet.getDouble(getColumns().get(6).name())
 		);
 	}
-
-	@Override
-	public double valueFromData(OccupancyData data, SensorColumn column) {
-		var columns = getColumns();
-		if(columns.get(0).name().equals(column.name())) {
-			return data.id();
-		}
-		if(columns.get(4).name().equals(column.name())) {
-			return data.x();
-		}
-		if(columns.get(5).name().equals(column.name())) {
-			return data.y();
-		}
-		if(columns.get(6).name().equals(column.name())) {
-			return data.z();
-		}
-
-		return 0;
-	}
 }

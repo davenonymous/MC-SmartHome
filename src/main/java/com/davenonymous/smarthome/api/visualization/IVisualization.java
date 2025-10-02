@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 
-public interface IVisualization<D extends IVisualizationData, S extends IVisualizationSettings> {
+public interface IVisualization<S extends IVisualizationSettings> {
 	ResourceLocation id();
 	default String nameTranslationKey() {
 		var dotted = id().getPath().replaceAll("/", ".");
@@ -26,8 +26,6 @@ public interface IVisualization<D extends IVisualizationData, S extends IVisuali
 	}
 
 	S getDefaultSettings();
-
-	// Function<DuckDBConnection, D> dataFetcher(HomeZone zone, ConfiguredDevice device, ISensor<?, ?> sensor);
 
 	Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, S vizSettings);
 }

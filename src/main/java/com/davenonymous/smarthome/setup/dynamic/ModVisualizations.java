@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModVisualizations {
-	private static Map<ResourceLocation, IVisualization<?, ?>> VISUALIZATIONS = new HashMap<>();
-	public static IVisualization<?, ?> getById(ResourceLocation id) {
+	private static Map<ResourceLocation, IVisualization<?>> VISUALIZATIONS = new HashMap<>();
+	public static IVisualization<?> getById(ResourceLocation id) {
 		return VISUALIZATIONS.get(id);
 	}
 
@@ -36,7 +36,7 @@ public class ModVisualizations {
 
 			try {
 				Class<?> clazz = Class.forName(annotationData.clazz().getClassName());
-				IVisualization<?, ?> sensor = (IVisualization<?, ?>) clazz.getDeclaredConstructor().newInstance();
+				IVisualization<?> sensor = (IVisualization<?>) clazz.getDeclaredConstructor().newInstance();
 				VISUALIZATIONS.put(sensor.id(), sensor);
 
 				SmartHome.LOGGER.info("Found visualization: {} (mod={})", sensor.id(), modid);

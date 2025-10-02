@@ -12,6 +12,11 @@ import java.sql.SQLException;
 public record FluidStorageData(String fluidId, long stored, long capacity) implements ISensorData {
 
 	@Override
+	public Object[] columnValues() {
+		return new Object[] {fluidId, stored, capacity};
+	}
+
+	@Override
 	public String displayString() {
 		return fluidId() + ": " + stored + " / " + capacity + " FE";
 	}

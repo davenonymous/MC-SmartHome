@@ -12,6 +12,11 @@ import java.sql.SQLException;
 public record EnergyStorageData(long energyStored, long maxEnergyStored) implements ISensorData {
 
 	@Override
+	public Object[] columnValues() {
+		return new Object[] {energyStored, maxEnergyStored};
+	}
+
+	@Override
 	public String displayString() {
 		return energyStored + " / " + maxEnergyStored + " FE";
 	}

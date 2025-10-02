@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.sensor.fluid;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorColumn;
+import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -51,28 +52,8 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	}
 
 	@Override
-	public boolean hasMin() {
-		return true;
-	}
-
-	@Override
-	public boolean usesDynamicMin() {
-		return false;
-	}
-
-	@Override
-	public double getStaticMin() {
-		return 0;
-	}
-
-	@Override
-	public boolean hasMax() {
-		return true;
-	}
-
-	@Override
-	public SensorColumn getMaxColumn() {
-		return getColumns().get(2);
+	public SensorRange getRange() {
+		return new SensorRange.StaticMinDynamicMax(0, getColumn(2));
 	}
 
 	@Override
@@ -100,18 +81,6 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 		var fluid = fluidInTank.getFluid();
 		var fluidName = fluid.getFluidType().getDescriptionId(fluidInTank);
 		return new FluidStorageData(fluidName, fluidInTank.getAmount(), cap.getTankCapacity(0));
-	}
-
-	@Override
-	public double valueFromData(FluidStorageData data, SensorColumn column) {
-		var columns = getColumns();
-		if(columns.get(1).name().equals(column.name())) {
-			return data.stored();
-		}
-		if(columns.get(2).name().equals(column.name())) {
-			return data.capacity();
-		}
-		return 0;
 	}
 
 	@Override
