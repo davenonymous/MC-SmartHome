@@ -4,6 +4,8 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.commands.debug.WindowCommand;
 import com.davenonymous.smarthome.commands.duckdb.ExecuteStatementCommand;
 import com.davenonymous.smarthome.commands.duckdb.RunQueryCommand;
+import com.davenonymous.smarthome.commands.duckdb.StartWebUICommand;
+import com.davenonymous.smarthome.commands.duckdb.StopWebUICommand;
 import com.davenonymous.smarthome.commands.home.DeleteHomeCommand;
 import com.davenonymous.smarthome.commands.home.ListHomesCommand;
 import com.davenonymous.smarthome.commands.home.ShowHomeCommand;
@@ -32,6 +34,10 @@ public class SmartHomeCommand {
 		).then(Commands.literal("duckdb").requires(PermissionLevel.isAdmin())
 			.then(RunQueryCommand.registerCommand(dispatcher))
 			.then(ExecuteStatementCommand.registerCommand(dispatcher))
+			.then(Commands.literal("webui")
+				.then(StartWebUICommand.registerCommand(dispatcher))
+				.then(StopWebUICommand.registerCommand(dispatcher))
+			)
 		).then(Commands.literal("debug").requires(PermissionLevel.isGameMaster())
 			.then(WindowCommand.registerCommand(dispatcher)));
 	}
