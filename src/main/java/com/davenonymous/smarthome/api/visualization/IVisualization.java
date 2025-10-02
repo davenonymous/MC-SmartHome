@@ -21,6 +21,10 @@ public interface IVisualization<D extends IVisualizationData, S extends IVisuali
 		return id().getNamespace() + "." + dotted + ".description";
 	}
 
+	default boolean requiresHistory() {
+		return true;
+	}
+
 	S getDefaultSettings();
 
 	// Function<DuckDBConnection, D> dataFetcher(HomeZone zone, ConfiguredDevice device, ISensor<?, ?> sensor);

@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 @SmartHomeSensor(modid = "minecraft", data = FluidStorageData.class, settings = SidedOnOffSettings.class)
 public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSettings> {
@@ -47,6 +48,36 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
 		return level.getCapability(FLUID, pos, null) != null;
+	}
+
+	@Override
+	public boolean hasMin() {
+		return true;
+	}
+
+	@Override
+	public boolean usesDynamicMin() {
+		return false;
+	}
+
+	@Override
+	public double getStaticMin() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasMax() {
+		return true;
+	}
+
+	@Override
+	public SensorColumn getMaxColumn() {
+		return getColumns().get(2);
+	}
+
+	@Override
+	public Optional<SensorColumn> getDefaultColumn() {
+		return Optional.of(getColumns().get(1));
 	}
 
 	@Override
@@ -74,10 +105,10 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	@Override
 	public double valueFromData(FluidStorageData data, SensorColumn column) {
 		var columns = getColumns();
-		if(columns.get(0).name().equals(column.name())) {
+		if(columns.get(1).name().equals(column.name())) {
 			return data.stored();
 		}
-		if(columns.get(1).name().equals(column.name())) {
+		if(columns.get(2).name().equals(column.name())) {
 			return data.capacity();
 		}
 		return 0;

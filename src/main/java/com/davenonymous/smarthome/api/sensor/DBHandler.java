@@ -67,7 +67,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 					" AND tick >= " + startTick +
 					" AND tick <= " + endTick +
 					" ORDER BY instant DESC" +
-					" LIMIT 1000";
+					" LIMIT 10000";
 
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {

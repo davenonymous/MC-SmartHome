@@ -49,6 +49,21 @@ public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffS
 	}
 
 	@Override
+	public boolean hasMin() {
+		return true;
+	}
+
+	@Override
+	public boolean usesDynamicMin() {
+		return false;
+	}
+
+	@Override
+	public double getStaticMin() {
+		return 0;
+	}
+
+	@Override
 	public EnergyStorageData visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, SidedOnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
 		IEnergyStorage cap = level.getCapability(ENERGY, pos, settings.side().orElse(null));
 		if(cap == null) {

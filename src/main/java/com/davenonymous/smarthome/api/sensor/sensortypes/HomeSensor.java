@@ -55,6 +55,38 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 		return false;
 	}
 
+	default boolean hasMin() {
+		return false;
+	}
+
+	default boolean hasMax() {
+		return false;
+	}
+
+	default boolean usesDynamicMax() {
+		return true;
+	}
+
+	default boolean usesDynamicMin() {
+		return true;
+	}
+
+	default SensorColumn getMinColumn() {
+		throw new UnsupportedOperationException("This sensor does not have a min column");
+	}
+
+	default SensorColumn getMaxColumn() {
+		throw new UnsupportedOperationException("This sensor does not have a max column");
+	}
+
+	default double getStaticMin() {
+		throw new UnsupportedOperationException("This sensor does not have a static min value");
+	}
+
+	default double getStaticMax() {
+		throw new UnsupportedOperationException("This sensor does not have a static max value");
+	}
+
 	default ResourceLocation id() {
 		return ModSensors.ID_BY_CLASS.get(this.getClass());
 	}

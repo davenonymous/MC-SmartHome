@@ -34,6 +34,11 @@ public class GaugeViz implements IVisualization<GaugeVizData, GaugeVizSettings> 
 	}
 
 	@Override
+	public boolean requiresHistory() {
+		return false;
+	}
+
+	@Override
 	public Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, GaugeVizSettings settings) {
 		Map.Entry<Pair<Instant, Long>, ISensorData> entry = data.sequencedEntrySet().getFirst();
 		if(entry == null) {

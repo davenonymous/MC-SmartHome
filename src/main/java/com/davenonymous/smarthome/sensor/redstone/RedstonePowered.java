@@ -47,6 +47,36 @@ public class RedstonePowered implements BlockSensor<RedstonePoweredData, OnOffSe
 	}
 
 	@Override
+	public boolean hasMin() {
+		return true;
+	}
+
+	@Override
+	public boolean hasMax() {
+		return true;
+	}
+
+	@Override
+	public boolean usesDynamicMin() {
+		return false;
+	}
+
+	@Override
+	public boolean usesDynamicMax() {
+		return false;
+	}
+
+	@Override
+	public double getStaticMin() {
+		return 0;
+	}
+
+	@Override
+	public double getStaticMax() {
+		return 15;
+	}
+
+	@Override
 	public RedstonePoweredData visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
 
 		int signal;
