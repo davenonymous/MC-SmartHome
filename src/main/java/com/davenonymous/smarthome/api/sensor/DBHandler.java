@@ -5,7 +5,9 @@ import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import org.duckdb.DuckDBConnection;
+import org.slf4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -20,6 +22,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
+	public static final Logger LOGGER = LogUtils.getLogger();
+
 	T sensor;
 
 	public DBHandler(T sensor) {
@@ -50,7 +54,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 					return sensor.dataFromResultSet(resultSet);
 				}
 			} catch (SQLException e) {
-				SmartHome.LOGGER.error("Failed to query latest sensor data for device {}", deviceId, e);
+				LOGGER.error("Failed to query latest sensor data for device {}", deviceId, e);
 			}
 
 			return null;
@@ -76,7 +80,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 				"otherCols := ["+otherColumns+"]" +
 			");";
 
-			//SmartHome.LOGGER.info("Executing sensor data query: {}", statement);
+			SmartHome.LOGGER.info("Executing sensor data query: {}", statement);
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {
 				PreparedStatement prepped = connection.prepareStatement(statement);
@@ -89,6 +93,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 					values.put(Pair.of(instant, tick), data);
 				}
+				SmartHome.LOGGER.info("Queried {} sensor data points for device {}", values.size(), deviceId);
 			} catch (SQLException e) {
 				SmartHome.LOGGER.error("Failed to query sensor data for device {}", deviceId, e);
 			}
@@ -120,7 +125,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 				prepped.execute();
 				prepped.close();
 			} catch (SQLException e) {
-				SmartHome.LOGGER.error("Failed to record redstone data for device {}", deviceId, e);
+				LOGGER.error("Failed to record redstone data for device {}", deviceId, e);
 			}
 		};
 	}

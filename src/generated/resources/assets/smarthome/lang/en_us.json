@@ -16,7 +16,7 @@
   "smarthome.data.sensor.energy_storage": "Energy Storage",
   "smarthome.data.sensor.fluid_storage": "Fluid Storage",
   "smarthome.data.sensor.occupancy": "Occupancy",
-  "smarthome.data.sensor.redstone": "Redstone Signal",
+  "smarthome.data.sensor.redstone_signal": "Redstone Signal",
   "smarthome.gui.devices.add.add_device": "Add device",
   "smarthome.gui.devices.add.ignore_device": "Ignore device",
   "smarthome.gui.devices.add.ignore_device.hint": "Ignored devices can still be added later from the settings menu.",
@@ -57,6 +57,6 @@
   "smarthome.sensor.fluid_storage.name": "Fluid Storage",
   "smarthome.sensor.occupancy.description": "Records presence of living entities in the home zones.",
   "smarthome.sensor.occupancy.name": "Occupancy",
-  "smarthome.sensor.redstone.description": "Records redstone power levels of blocks.",
-  "smarthome.sensor.redstone.name": "Redstone Level"
+  "smarthome.sensor.redstone_signal.description": "Records redstone power levels of blocks.",
+  "smarthome.sensor.redstone_signal.name": "Redstone Level"
 }

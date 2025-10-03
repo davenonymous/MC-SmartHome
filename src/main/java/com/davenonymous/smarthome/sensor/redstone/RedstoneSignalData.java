@@ -9,27 +9,29 @@ import net.minecraft.network.codec.StreamCodec;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public record RedstonePoweredData(int redstoneLevel) implements ISensorData {
+public record RedstoneSignalData(int outputLevel, int maxNeighborLevel) implements ISensorData {
 
 	@Override
 	public Object[] columnValues() {
-		return new Object[] {redstoneLevel};
+		return new Object[] {outputLevel, maxNeighborLevel};
 	}
 
 	@Override
 	public String displayString() {
-		return "" + redstoneLevel;
+		return "" + outputLevel;
 	}
 
 	@Override
 	public int bindParameters(PreparedStatement prepped, int nextParamIndex) throws SQLException {
-		prepped.setInt(nextParamIndex++, redstoneLevel());
+		prepped.setInt(nextParamIndex++, outputLevel());
+		prepped.setInt(nextParamIndex++, maxNeighborLevel());
 		return nextParamIndex;
 	}
 
 	@SensorDataStreamCodec
-	public static final StreamCodec<RegistryFriendlyByteBuf, RedstonePoweredData> STREAM_CODEC = StreamCodec.composite(
-		ByteBufCodecs.INT, RedstonePoweredData::redstoneLevel,
-		RedstonePoweredData::new
+	public static final StreamCodec<RegistryFriendlyByteBuf, RedstoneSignalData> STREAM_CODEC = StreamCodec.composite(
+		ByteBufCodecs.INT, RedstoneSignalData::outputLevel,
+		ByteBufCodecs.INT, RedstoneSignalData::maxNeighborLevel,
+		RedstoneSignalData::new
 	);
 }

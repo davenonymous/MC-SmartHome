@@ -18,6 +18,9 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 	public boolean renderInventoryTitle = true;
 	public Component customTitle = null;
 
+	private float partialTicks = 0;
+	private int renderTick = 0;
+
 	public WidgetContainerScreen(T container, Inventory inv, Component name) {
 		super(container, inv, name);
 
@@ -48,6 +51,7 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 			this.menu.cleaned();
 		}
 		this.resetMousePositions();
+		this.renderTick++;
 	}
 
 
@@ -122,6 +126,14 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
     }
     */
 
+	public int renderTick() {
+		return renderTick;
+	}
+
+	public float partialTicks() {
+		return partialTicks;
+	}
+
 	@Override
 	protected void renderLabels(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY) {
 		if(this.renderInventoryTitle) {
@@ -154,6 +166,8 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 
 	@Override
 	public void render(GuiGraphics pGuiGraphics, int mouseX, int mouseY, float partialTicks) {
+		this.partialTicks = partialTicks;
+
 		if(dataUpdated) {
 			dataUpdated = false;
 			gui.fireEvent(new GuiDataUpdatedEvent());

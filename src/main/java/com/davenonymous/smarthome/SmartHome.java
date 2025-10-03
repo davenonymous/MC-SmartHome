@@ -33,15 +33,6 @@ public class SmartHome {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
 		}
-
-		if(!FMLEnvironment.production) {
-			LOGGER.info("SmartHome is running in a development environment");
-			Window window = Minecraft.getInstance().getWindow();
-			window.setWindowed(1920, 1080);
-			window.windowedX = 3440 - 1920 - 1 ;
-			window.windowedY = 32;
-			window.setWindowed(1920, 1080);
-		}
 	}
 
 	public static ResourceLocation sprite(GuiTheme.SpriteComponent component) {

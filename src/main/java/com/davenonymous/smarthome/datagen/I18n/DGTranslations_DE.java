@@ -3,7 +3,7 @@ package com.davenonymous.smarthome.datagen.I18n;
 import com.davenonymous.smarthome.sensor.energy.EnergyStorage;
 import com.davenonymous.smarthome.sensor.fluid.FluidStorage;
 import com.davenonymous.smarthome.sensor.occupancy.Occupancy;
-import com.davenonymous.smarthome.sensor.redstone.RedstonePowered;
+import com.davenonymous.smarthome.sensor.redstone.RedstoneSignal;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import com.davenonymous.smarthome.setup.content.ModItems;
 import net.minecraft.data.PackOutput;
@@ -29,8 +29,8 @@ public class DGTranslations_DE extends DGBaseTranslations {
 		add(Occupancy.ID, "name", "Anwesenheit");
 		add(Occupancy.ID, "description", "Erfasst die Anwesenheit von Lebewesen in den Hauszonen.");
 
-		add(RedstonePowered.ID, "name", "Redstone Signal");
-		add(RedstonePowered.ID, "description", "Erfasst Redstone-Signalstärken von Blöcken.");
+		add(RedstoneSignal.ID, "name", "Redstone Signal");
+		add(RedstoneSignal.ID, "description", "Erfasst Redstone-Signalstärken von Blöcken.");
 
 		add(EnergyStorage.ID, "name", "Energie Speicher");
 		add(EnergyStorage.ID, "description", "Erfasst gespeicherte Forge-Energie.");

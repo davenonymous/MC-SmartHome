@@ -76,39 +76,47 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 		UUID homeId = entity.home();
 		HomeWorldInfo worldInfo = HomeWorldInfo.empty();
 		if(homeId == null) {
+			var homes = data.getPlayerHomes(entity.ownerUUID());
+			if(!homes.isEmpty()) {
+				homeId = homes.getFirst().id();
+				entity.setHome(homeId);
+				entity.setChanged();
+			}
+		}
+		if(homeId == null) {
 			homeId = HomeBlockEntity.emptyUUID;
-		} else {
-			var optHome = data.getHome(homeId);
-			if(optHome.isPresent()) {
-				var home = optHome.get();
-				WorldWatcherUtil.updateDevicesInHome(level.getServer(), home);
+		}
 
-				for(var zone : home.zones()) {
-					List<ConfiguredDevice> newDeviceList = new ArrayList<>();
-					for(var device : zone.devices()) {
-						// Update the device's sensors with any new sensors that might be available
-						// This can happen when new sensors are added by other mods, or when the block
-						// at the device's position has changed to a different block that supports
-						// different sensors.
-						Map<ResourceLocation, SensorSettings> foundSensors = new HashMap<>(device.sensors());
-						for(var sensor : ModSensors.getValidSensors(level, device.pos(), level.getBlockState(device.pos()))) {
-							var settings = foundSensors.get(sensor.id());
-							if(settings == null) {
-								settings = sensor.getDefaultSettings();
-							}
-							foundSensors.put(sensor.id(), settings);
+		var optHome = data.getHome(homeId);
+		if(optHome.isPresent()) {
+			var home = optHome.get();
+			WorldWatcherUtil.updateDevicesInHome(level.getServer(), home);
+
+			for(var zone : home.zones()) {
+				List<ConfiguredDevice> newDeviceList = new ArrayList<>();
+				for(var device : zone.devices()) {
+					// Update the device's sensors with any new sensors that might be available
+					// This can happen when new sensors are added by other mods, or when the block
+					// at the device's position has changed to a different block that supports
+					// different sensors.
+					Map<ResourceLocation, SensorSettings> foundSensors = new HashMap<>(device.sensors());
+					for(var sensor : ModSensors.getValidSensors(level, device.pos(), level.getBlockState(device.pos()))) {
+						var settings = foundSensors.get(sensor.id());
+						if(settings == null) {
+							settings = sensor.getDefaultSettings();
 						}
-
-						device = device.withSensors(foundSensors);
-						newDeviceList.add(device);
+						foundSensors.put(sensor.id(), settings);
 					}
 
-					zone.updateDevices(newDeviceList);
+					device = device.withSensors(foundSensors);
+					newDeviceList.add(device);
 				}
 
-				data.setDirty();
-				worldInfo = HomeWorldInfo.create((ServerLevel) level, home);
+				zone.updateDevices(newDeviceList);
 			}
+
+			data.setDirty();
+			worldInfo = HomeWorldInfo.create((ServerLevel) level, home);
 		}
 
 		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID()), worldInfo));

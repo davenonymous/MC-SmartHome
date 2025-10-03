@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.ISelectable;
 import com.davenonymous.smarthome.lib.gui.event.*;

@@ -81,6 +81,10 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 				SmartHome.LOGGER.warn("Failed to get viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
 				return;
 			}
+			if(vizData.isEmpty()) {
+				SmartHome.LOGGER.info("No viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
+				return;
+			}
 
 			//noinspection unchecked
 			var replyPayload = new VisualizationDataPayload(zone.home().id(), zone.id(), device, payload.sensorId, payload.vizId, (LinkedHashMap<Pair<Instant, Long>, ISensorData>) vizData);

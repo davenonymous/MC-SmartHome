@@ -5,16 +5,34 @@ import com.davenonymous.smarthome.items.IHudRenderer;
 import com.davenonymous.smarthome.items.IWorldRenderer;
 import com.davenonymous.smarthome.particles.ModelParticleProvider;
 import com.davenonymous.smarthome.setup.content.ModParticles;
+import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 
 @EventBusSubscriber(modid = SmartHome.MODID, value = Dist.CLIENT)
 public class ClientRegistrations {
+	@SubscribeEvent
+	public static void onScreenOpen(ScreenEvent.Opening event) {
+		if(event.getScreen() instanceof TitleScreen) {
+			if(!FMLEnvironment.production) {
+				SmartHome.LOGGER.info("SmartHome is running in a development environment");
+				Window window = Minecraft.getInstance().getWindow();
+				window.setWindowed(1920, 1080);
+				window.windowedX = 3440 - 1920 - 1 ;
+				window.windowedY = 32;
+				window.setWindowed(1920, 1080);
+			}
+		}
+	}
+
 	@SubscribeEvent
 	public static void onRenderHud(RenderGuiEvent.Post event) {
 		if(Minecraft.getInstance().screen != null) {

@@ -7,10 +7,13 @@ import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
+import com.davenonymous.smarthome.lib.HackerNoon;
+import com.davenonymous.smarthome.lib.gui.Animations;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
@@ -77,6 +80,7 @@ public class SensorBox extends WidgetVBox {
 
 		}
 
+		boolean hasPlacedViz = false;
 		if(vizCache.contains(device.id(), sensor.id())) {
 			Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>availableVisualizations = vizCache.get(device.id(), sensor.id());
 			if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
@@ -88,11 +92,15 @@ public class SensorBox extends WidgetVBox {
 					sensorWidget = vizImpl.getWidget(data, sensor, sensor.getDefaultVisualizationSettings());
 					if(sensorWidget != null) {
 						this.addContentBox(sensorWidget, FlexAlign.CENTER);
+						hasPlacedViz = true;
 					}
 					// TODO: else error widget?
 				}
+
 			}
-		} else if(dataCache != null) {
+		}
+
+		if(!hasPlacedViz && dataCache != null) {
 			if(dataCache.containsKey(sensor.id())) {
 				var sensorData = dataCache.get(sensor.id());
 				var value = new WidgetTextBox(sensorData.displayString());
@@ -101,16 +109,25 @@ public class SensorBox extends WidgetVBox {
 				value.setTextColor(0xFFFFFFAA);
 				this.sensorWidget = value;
 				this.addContentBox(value, FlexAlign.CENTER);
+				hasPlacedViz = true;
 			}
+		}
+
+		if(!hasPlacedViz) {
+			var noData = new WidgetSprite(HackerNoon.Regular.spinner);
+			noData.addAnimation(Animations.spin(true, 2.0f));
+			this.sensorWidget = noData;
+			this.setHeight(70);
+			this.addFlexBox(new Spacer(1,1), 4);
+			this.addContentBox(noData, FlexAlign.CENTER);
+			this.addFlexBox(new Spacer(1,1), 5);
 		}
 
 		this.update(null);
 		this.adjustSizeToContent();
-		if(this.sensorWidget == null) {
-			this.setWidth(40);
-		} else {
-			this.setWidth(this.sensorWidget.width() + 10);
-		}
+
+		this.setWidth(Math.max(130, Math.max(this.sensorWidget.width(), label.width() + 20) + 10));
+		this.setHeight(Math.max(100, this.height()));
 	}
 
 	@Override

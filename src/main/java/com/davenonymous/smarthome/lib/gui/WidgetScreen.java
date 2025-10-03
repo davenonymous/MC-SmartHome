@@ -15,6 +15,7 @@ public abstract class WidgetScreen extends Screen {
 	private int previousMouseX = Integer.MAX_VALUE;
 	private int previousMouseY = Integer.MAX_VALUE;
 	private float partialTicks = 0;
+	private int renderTick = 0;
 
 	protected Window window;
 	protected ResourceLocation id;
@@ -50,12 +51,18 @@ public abstract class WidgetScreen extends Screen {
 		return this.partialTicks;
 	}
 
+	public int renderTick() {
+		return renderTick;
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
 
 		getOrCreateGui().fireEvent(new UpdateScreenEvent());
 		this.resetMousePositions();
+
+		this.renderTick++;
 	}
 
 	@Override

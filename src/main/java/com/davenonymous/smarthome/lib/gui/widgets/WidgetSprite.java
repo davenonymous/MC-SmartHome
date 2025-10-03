@@ -1,17 +1,25 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.lib.gui.Animation;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.SpriteSizeCache;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WidgetSprite extends Widget {
 	ResourceLocation sprite;
 	GuiTheme.SpriteComponent component;
 	int color;
+
+	List<Animation> animations;
 
 	public WidgetSprite(ResourceLocation sprite) {
 		this(sprite, 0xFFFFFFFF);
@@ -24,6 +32,7 @@ public class WidgetSprite extends Widget {
 	public WidgetSprite(ResourceLocation sprite, int color) {
 		this.sprite = sprite;
 		this.color = color;
+		this.animations = new ArrayList<>();
 		autoSize();
 	}
 
@@ -57,6 +66,16 @@ public class WidgetSprite extends Widget {
 		return this;
 	}
 
+	public WidgetSprite addAnimation(Animation animation) {
+		this.animations.add(animation);
+		return this;
+	}
+
+	public WidgetSprite clearAnimations() {
+		this.animations.clear();
+		return this;
+	}
+
 	public int color() {
 		return color;
 	}
@@ -74,9 +93,24 @@ public class WidgetSprite extends Widget {
 		float g = (color >> 8 & 0xFF) / 255.0F;
 		float b = (color & 0xFF) / 255.0F;
 
+		float partialTicks = HomeScreen.get().partialTicks() + HomeScreen.get().renderTick();
+
+		var pose = pGuiGraphics.pose();
+		pose.pushPose();
+
+		// always rotate
+		pose.translate(this.width()/2.0f, this.height()/2.0f, 0);
+		for(var anim : animations) {
+			anim.applyTransform(pGuiGraphics, partialTicks);
+		}
+		pose.translate(-this.width()/2.0f, -this.height()/2.0f, 0);
+
 		RenderSystem.setShaderColor(r, g, b, alpha);
 		pGuiGraphics.blitSprite(sprite, 0, 0, this.width(), this.height());
 		RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+		pose.popPose();
+
 		RenderSystem.disableBlend();
 	}
 }
