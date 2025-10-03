@@ -15,6 +15,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class HomeZone {
@@ -100,6 +101,10 @@ public class HomeZone {
 
 	public void removeDevice(ConfiguredDevice device) {
 		this.devices.removeIf(d -> d.id().equals(device.id()));
+	}
+
+	public Optional<ConfiguredDevice> getDevice(UUID deviceId) {
+		return devices.stream().filter(d -> d.id().equals(deviceId)).findFirst();
 	}
 
 	public void setDeviceName(ConfiguredDevice device, String newName) {
@@ -236,4 +241,6 @@ public class HomeZone {
 		this.devices = new ArrayList<>(newDevices);
 		return this;
 	}
+
+
 }

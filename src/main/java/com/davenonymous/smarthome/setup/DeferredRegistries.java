@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.setup;
 
+import com.davenonymous.smarthome.cards.HomeCardElementCodecRegistry;
 import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
 import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
 import com.davenonymous.smarthome.setup.content.*;
@@ -23,5 +24,7 @@ public class DeferredRegistries {
 		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS.register(modbus);
 		SensorSettingsCodecRegistry.DEFERRED_SENSOR_SETTINGS_DISPATCHER.register(modbus);
 		SensorDataCodecRegistry.DEFERRED_SENSOR_DATA_DISPATCHER.register(modbus);
+		HomeCardElementCodecRegistry.DEFERRED_HOMECARD_ELEMENT.register(modbus);
+		HomeCardElementCodecRegistry.DEFERRED_HOMECARD_ELEMENT_DISPATCHER.register(modbus);
 	}
 }

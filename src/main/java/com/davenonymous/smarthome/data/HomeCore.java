@@ -1,6 +1,8 @@
 package com.davenonymous.smarthome.data;
 
+import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.lib.DimPos;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -31,16 +33,18 @@ public class HomeCore {
 	List<HomeZone> zones;
 	DimPos serverLocation;
 	HomeSettings settings;
+	List<HomeCard> cards;
+	List<HomeDashboard> dashboards;
 
 	// internal values, not serialized
 	AABB bounds;
 	VoxelShape shape;
 
 	public HomeCore(String name, UUID owner, DimPos serverLocation) {
-		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>(), new HomeSettings());
+		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>(), new HomeSettings(), new ArrayList<>(), new ArrayList<>());
 	}
 
-	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones, HomeSettings settings) {
+	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones, HomeSettings settings, List<HomeCard> cards, List<HomeDashboard> dashboards) {
 		this.name = name;
 		this.id = id;
 		this.owner = owner;
@@ -48,6 +52,8 @@ public class HomeCore {
 		this.zones = new ArrayList<>(zones);
 		this.zones.forEach(z -> z.setHome(this));
 		this.settings = settings;
+		this.cards = new ArrayList<>(cards);
+		this.dashboards = new ArrayList<>(dashboards);
 		updateBounds();
 	}
 
@@ -60,9 +66,15 @@ public class HomeCore {
 			this.serverLocation = core.serverLocation;
 			this.zones = new ArrayList<>(core.zones);
 			this.zones.forEach(z -> z.setHome(this));
+			this.settings = core.settings;
+			this.cards = new ArrayList<>(core.cards);
+			this.dashboards = new ArrayList<>(core.dashboards);
 		} else {
 			this.name = "invalid";
 			this.zones = new ArrayList<>();
+			this.settings = new HomeSettings();
+			this.cards = new ArrayList<>();
+			this.dashboards = new ArrayList<>();
 		}
 		updateBounds();
 	}
@@ -73,6 +85,16 @@ public class HomeCore {
 			foundDevices.put(zone, zone.foundDevices());
 		}
 		return foundDevices;
+	}
+
+	public Optional<Pair<HomeZone, ConfiguredDevice>> getDevice(UUID deviceId) {
+		for(HomeZone zone : zones) {
+			var device = zone.getDevice(deviceId);
+			if(device.isPresent()) {
+				return Optional.of(Pair.of(zone, device.get()));
+			}
+		}
+		return Optional.empty();
 	}
 
 	public Map<HomeZone, List<ConfiguredDevice>> getAllDevices() {
@@ -236,6 +258,14 @@ public class HomeCore {
 		return settings;
 	}
 
+	public List<HomeCard> cards() {
+		return cards;
+	}
+
+	public List<HomeDashboard> dashboards() {
+		return dashboards;
+	}
+
 	public VoxelShape normalizedShape() {
 		if(shape.isEmpty()) {
 			return shape;
@@ -253,16 +283,20 @@ public class HomeCore {
 			DimPos.CODEC.fieldOf("location").forGetter(HomeCore::serverLocation),
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones),
-			HomeSettings.CODEC.codec().optionalFieldOf("settings", new HomeSettings()).forGetter(HomeCore::settings)
+			HomeSettings.CODEC.codec().optionalFieldOf("settings", new HomeSettings()).forGetter(HomeCore::settings),
+			HomeCard.LIST_CODEC.optionalFieldOf("cards", List.of()).forGetter(HomeCore::cards),
+			HomeDashboard.LIST_CODEC.optionalFieldOf("dashboards", List.of()).forGetter(HomeCore::dashboards)
 	).apply(instance, HomeCore::new));
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = StreamCodec.composite(
+	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = BiggerStreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, HomeCore::id,
 		UUIDUtil.STREAM_CODEC, HomeCore::owner,
 		DimPos.STREAM_CODEC, HomeCore::serverLocation,
 		ByteBufCodecs.STRING_UTF8, HomeCore::name,
 		HomeZone.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::zones,
 		HomeSettings.STREAM_CODEC, HomeCore::settings,
+		HomeCard.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::cards,
+		HomeDashboard.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::dashboards,
 		HomeCore::new
 	);
 

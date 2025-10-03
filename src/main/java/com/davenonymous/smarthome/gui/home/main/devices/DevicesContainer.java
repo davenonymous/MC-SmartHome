@@ -37,6 +37,7 @@ public class DevicesContainer extends WidgetPanel {
 
 
 	public DevicesContainer() {
+		super();
 		newDevicesBar = new NewDevicesWidget();
 		newDevicesBar.setPosition(8, 20);
 		newDevicesBar.setHeight(110);

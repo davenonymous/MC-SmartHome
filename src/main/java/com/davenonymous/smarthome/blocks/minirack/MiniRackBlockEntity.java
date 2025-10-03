@@ -71,7 +71,7 @@ public class MiniRackBlockEntity extends HomeBlockEntity {
 				existingHome.get().setServerLocation(location);
 				existingHome.get().setName(serverData.name());
 			} else {
-				data.addHome(new HomeCore(serverData.id(), serverData.owner(), location, serverData.name(), new ArrayList<>(), new HomeSettings()));
+				data.addHome(new HomeCore(serverData.id(), serverData.owner(), location, serverData.name(), new ArrayList<>(), new HomeSettings(), new ArrayList<>(), new ArrayList<>()));
 			}
 
 			data.setDirty();

@@ -64,6 +64,24 @@ public class AnnotationHelpers {
 		return clazz;
 	}
 
+	public static <T> Class<T> getAnnotatedClass(ModFileScanData.AnnotationData annotationData, Class<T> expected) throws SensorLoadException {
+		var sensorClassType = annotationData.clazz();
+		var sensorClassClassName = sensorClassType.getClassName();
+		Class<?> sensorClazz;
+		try {
+			sensorClazz = Class.forName(sensorClassClassName);
+		} catch (ClassNotFoundException e) {
+			throw new SensorLoadException("Class " + sensorClassClassName + " could not be found!", e);
+		}
+
+		if(!expected.isAssignableFrom(sensorClazz)) {
+			throw new SensorLoadException("Class " + sensorClassClassName + " does not implement the " + expected.getSimpleName() + " interface!");
+		}
+
+		//noinspection unchecked
+		return (Class<T>) sensorClazz;
+	}
+
 	public static Class<HomeSensor<?, ?>> getAnnotatedClass(ModFileScanData.AnnotationData annotationData) throws SensorLoadException {
 		var sensorClassType = annotationData.clazz();
 		var sensorClassClassName = sensorClassType.getClassName();

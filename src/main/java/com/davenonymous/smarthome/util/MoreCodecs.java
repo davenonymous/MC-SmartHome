@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
 public class MoreCodecs {
@@ -17,6 +18,17 @@ public class MoreCodecs {
 	public static final StreamCodec<FriendlyByteBuf, Axis> AXIS_STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.BYTE, AxisDirectionHelper::axisToByte,
 		AxisDirectionHelper::axisFromByte
+	);
+
+	public static final MapCodec<Vec2> VEC2_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+		Codec.FLOAT.fieldOf("x").forGetter(vec2 -> vec2.x),
+		Codec.FLOAT.fieldOf("y").forGetter(vec2 -> vec2.y)
+	).apply(instance, Vec2::new));
+
+	public static final StreamCodec<FriendlyByteBuf, Vec2> VEC2_STREAM_CODEC = StreamCodec.composite(
+		ByteBufCodecs.FLOAT, vec2 -> vec2.x,
+		ByteBufCodecs.FLOAT, vec2 -> vec2.y,
+		Vec2::new
 	);
 	public static final StreamCodec<FriendlyByteBuf, Vec3> VEC3_STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.DOUBLE, Vec3::x,

@@ -3,17 +3,15 @@ package com.davenonymous.smarthome;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.theme.Vanilla;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.DeferredRegistries;
+import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.logging.LogUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.slf4j.Logger;
 
 @Mod(SmartHome.MODID)
@@ -26,6 +24,7 @@ public class SmartHome {
 	public SmartHome(IEventBus modEventBus, ModContainer modContainer){
 		ModVisualizations.find();
 		ModSensors.find();
+		ModCardElements.find();
 
 		DeferredRegistries.register(modEventBus);
 		try {
