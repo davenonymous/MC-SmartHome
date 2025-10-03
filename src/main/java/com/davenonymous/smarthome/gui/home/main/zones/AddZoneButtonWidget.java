@@ -36,7 +36,7 @@ public class AddZoneButtonWidget extends WidgetPanel {
 
 		newZoneNameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
 		newZoneNameInput.setDrawBackground(false);
-		newZoneNameInput.nativeWidget().setHint(Component.literal(CLICK_TO_RENAME.key()));
+		newZoneNameInput.nativeWidget().setHint(Component.translatable(CLICK_TO_RENAME.key()));
 		newZoneNameInput.nativeWidget().setBordered(false);
 		newZoneNameInput.nativeWidget().setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		newZoneNameInput.addListener(

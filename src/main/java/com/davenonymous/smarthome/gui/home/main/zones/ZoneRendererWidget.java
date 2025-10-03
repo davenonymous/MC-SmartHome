@@ -130,7 +130,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 
 		var pose = guiGraphics.pose();
 		pose.pushPose();
-		pose.translate((this.width()-expectedMaxRadius)/2f, (this.height()-longestHeight)/2f, 0);
+		pose.translate((this.width()-expectedMaxRadius)/2f + 16, (this.height()-longestHeight)/2f, 0);
 		pose.scale(scaleFactor, -scaleFactor, scaleFactor);
 		pose.translate(0, -bounds.getYsize(), 0);
 		pose.translate(0, 0, 100);

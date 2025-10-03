@@ -112,7 +112,7 @@ public class SidebarButton extends WidgetPanel {
 		this.labelBackdropWidget.setX(iconWidth + 2*padding);
 		this.iconWidget.setX(padding);
 
-		this.iconWidget.setY((this.height - iconHeight) / 2);
+		this.iconWidget.setY(1+(this.height - iconHeight) / 2);
 		this.labelWidget.setY(1+(this.height - this.labelWidget.height()) / 2);
 		this.labelBackdropWidget.setY(1+(this.height - this.labelBackdropWidget.height()) / 2);
 	}

@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.datagen.I18n;
 
+import com.davenonymous.smarthome.gui.home.main.zones.ZoneSizeEditor;
 import com.davenonymous.smarthome.sensor.energy.EnergyStorage;
 import com.davenonymous.smarthome.sensor.fluid.FluidStorage;
 import com.davenonymous.smarthome.sensor.occupancy.Occupancy;
@@ -37,6 +38,9 @@ public class DGTranslations_EN extends DGBaseTranslations {
 
 		add(FluidStorage.ID, "name", "Fluid Storage");
 		add(FluidStorage.ID, "description", "Records stored fluids.");
+
+		add(ZoneSizeEditor.labelScale, "Scale");
+		add(ZoneSizeEditor.labelMove, "Move");
 	}
 
 }

@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Direction;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -137,6 +138,79 @@ public class HomeZone {
 				return;
 			}
 		}
+	}
+
+	public AABB getContractedBounds(Direction direction) {
+		return switch(direction) {
+			case UP -> bounds().setMaxY(bounds().maxY - 1);
+			case DOWN -> bounds().setMinY(bounds().minY + 1);
+			case NORTH -> bounds().setMinZ(bounds().minZ + 1);
+			case SOUTH -> bounds().setMaxZ(bounds().maxZ - 1);
+			case WEST -> bounds().setMaxX(bounds().maxX - 1);
+			case EAST -> bounds().setMinX(bounds().minX + 1);
+		};
+	}
+
+	public AABB getExpandedBounds(Direction direction) {
+		return switch(direction) {
+			case UP -> bounds().setMaxY(bounds().maxY + 1);
+			case DOWN -> bounds().setMinY(bounds().minY - 1);
+			case NORTH -> bounds().setMinZ(bounds().minZ - 1);
+			case SOUTH -> bounds().setMaxZ(bounds().maxZ + 1);
+			case WEST -> bounds().setMinX(bounds().minX - 1);
+			case EAST -> bounds().setMaxX(bounds().maxX + 1);
+		};
+	}
+
+	public AABB getMovedBounds(Direction direction) {
+		return switch(direction) {
+			case UP -> bounds().move(0, 1, 0);
+			case DOWN -> bounds().move(0, -1, 0);
+			case NORTH -> bounds().move(0, 0, -1);
+			case SOUTH -> bounds().move(0, 0, 1);
+			case WEST -> bounds().move(-1, 0, 0);
+			case EAST -> bounds().move(1, 0, 0);
+		};
+	}
+
+	public boolean canShrink(Direction direction) {
+		if(home == null) {
+			return false;
+		}
+
+		AABB contracted = getContractedBounds(direction);
+		if(contracted.getXsize() <= 0) {
+			return false;
+		}
+		if(contracted.getYsize() <= 0) {
+			return false;
+		}
+		if(contracted.getZsize() <= 0) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean canGrow(Direction direction) {
+		if(home == null) {
+			return false;
+		}
+
+		AABB expanded = getExpandedBounds(direction);
+		for(var zone : home.zones()) {
+			if(zone.id().equals(this.id())) {
+				continue;
+			}
+			if(zone.isDeleted()) {
+				continue;
+			}
+			if(zone.bounds().intersects(expanded)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static final MapCodec<HomeZone> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

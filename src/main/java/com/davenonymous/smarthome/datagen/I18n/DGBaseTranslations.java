@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.datagen.I18n;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.dynamic.ModTranslations;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,6 +21,9 @@ public abstract class DGBaseTranslations extends ModTranslations {
 		this.modid = SmartHome.MODID;
 	}
 
+	public void add(I18String label, String translation) {
+		add(label.key(), translation);
+	}
 
 	public void add(ResourceLocation id, String translation) {
 		add(id, "name", translation);

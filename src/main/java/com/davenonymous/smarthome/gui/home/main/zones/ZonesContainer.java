@@ -128,7 +128,7 @@ public class ZonesContainer extends WidgetPanel {
 		int displayWidth;
 		int detailWidth;
 		if(zoneDetail.selectedZone() != null) {
-			displayWidth = (int)(this.width() * 2 / 3f);
+			displayWidth = (int)(this.width() * (1 / 2f));
 			detailWidth = this.width() - displayWidth - 15;
 		} else {
 			displayWidth = this.width();
@@ -144,6 +144,7 @@ public class ZonesContainer extends WidgetPanel {
 		zoneButtons.setHeight(Math.max(40, zoneButtons.getTotalRealSize()));
 		zoneDetail.setDimensions(detailX, 5, detailWidth, this.height - 10);
 
+		newZoneButtons.adjustSizeToContent();
 		int newZoneButtonsWidth = Math.max(newZoneButtons.width(), displayWidth);
 		newZoneButtons.setDimensions(displayX, this.height - 42, newZoneButtonsWidth, 32);
 

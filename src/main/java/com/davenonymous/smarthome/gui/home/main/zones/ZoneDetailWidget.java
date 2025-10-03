@@ -30,6 +30,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 	private WidgetTextBox zoneDeviceLabel;
 	private WidgetSprite deleteIcon;
 	private WidgetVBox devicesList;
+	private ZoneSizeEditor zoneSizeEditor;
 
 	@I18DataGen(lang = "en_us", string = "Click to rename")
 	@I18DataGen(lang = "de_de", string = "Klicken zum Umbenennen")
@@ -42,6 +43,9 @@ public class ZoneDetailWidget extends WidgetVBox {
 	@I18DataGen(lang = "en_us", string = "Hold Ctrl + Shift and click to delete this zone")
 	@I18DataGen(lang = "de_de", string = "Halte Strg + Shift und klicke, um diese Zone zu löschen")
 	public static final I18String DELETE_ZONE = SmartHome.guiString("home.zones", "detail.delete");
+
+
+	private boolean isEditingZoneSize = false;
 
 	public ZoneDetailWidget() {
 		this.setPadding(8);
@@ -67,9 +71,22 @@ public class ZoneDetailWidget extends WidgetVBox {
 
 		zoneSize = new WidgetTextBox("", ChatFormatting.GRAY.getColor());
 		zoneSize.setFont(ModFonts.TINY);
+		zoneSize.addListener(MouseClickEvent.class, (event, widget) -> {
+			if(selectedZone == null) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+			isEditingZoneSize = !isEditingZoneSize;
+			zoneSizeEditor.setVisible(isEditingZoneSize);
+			return WidgetEventResult.HANDLED;
+		});
 		this.addContentBox(zoneSize, FlexAlign.CENTER);
 
+		zoneSizeEditor = new ZoneSizeEditor(selectedZone);
+		zoneSizeEditor.setVisible(false);
+		this.addContentBox(zoneSizeEditor, FlexAlign.CENTER);
+
 		zoneDeviceLabel = new WidgetTextBox(DEVICES_LABEL.get(), ChatFormatting.WHITE.getColor());
+		zoneDeviceLabel.setFont(ModFonts.NOKIA);
 		this.addContentBox(zoneDeviceLabel, FlexAlign.START);
 
 		devicesList = new WidgetVBox();
@@ -79,7 +96,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 		deleteIcon = new WidgetSprite(HackerNoon.Solid.trash);
 		deleteIcon.setPosition(this.width() - 10, this.height() - 10);
 		deleteIcon.setColor(0xFFAAAAAA);
-		deleteIcon.scale = 0.5f;
+		deleteIcon.setScale(0.5f);
 		deleteIcon.addListener(MouseEnterEvent.class, (event, widget) -> {
 			deleteIcon.setColor(0xFF904444);
 			return WidgetEventResult.CONTINUE_PROCESSING;
@@ -111,6 +128,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 		if(selectedZone == null) {
 			zoneSize.setText("");
 			zoneRenameInput.setValue("");
+			zoneSizeEditor.setZone(null);
 		} else {
 			zoneRenameInput.setValue(selectedZone.name());
 			zoneRenameInput.nativeWidget().moveCursorToStart(false);
@@ -119,11 +137,22 @@ public class ZoneDetailWidget extends WidgetVBox {
 			int sizeY = (int)Math.round(bounds.maxY - bounds.minY);
 			int sizeZ = (int)Math.round(bounds.maxZ - bounds.minZ);
 			zoneSize.setText(String.format("%dx%dx%d", sizeX, sizeY, sizeZ));
+			zoneSizeEditor.setZone(selectedZone);
 
 			devicesList.clear();
 			for(var device : selectedZone.foundDevices()) {
 				var deviceWidget = new WidgetTextBox(device.pos().toShortString() + " - " + I18n.get(device.state().getBlock().getDescriptionId()), 0xFFFFFF);
 				deviceWidget.setFont(ModFonts.TINY);
+				deviceWidget.autoWidth();
+				deviceWidget.autoHeight();
+				devicesList.addContentBox(deviceWidget, FlexAlign.FILL);
+			}
+
+			for(var device : selectedZone.devices()) {
+				if(device.ignored()) {
+					continue;
+				}
+				var deviceWidget = new WidgetTextBox(device.name(), ChatFormatting.GRAY.getColor());
 				deviceWidget.autoWidth();
 				deviceWidget.autoHeight();
 				devicesList.addContentBox(deviceWidget, FlexAlign.FILL);
@@ -146,6 +175,8 @@ public class ZoneDetailWidget extends WidgetVBox {
 		devicesList.setWidth(this.width() - 60);
 		devicesList.setHeight(this.height() - (zoneDeviceLabel.x() + zoneDeviceLabel.height() + 4 + 2*paddingVertical + 40));
 		deleteIcon.setPosition(this.width() - 18, this.height() - 18);
+		zoneSizeEditor.setWidth(this.width() - 20);
+		zoneSizeEditor.updateWidgetSizes();
 		this.update(null);
 	}
 

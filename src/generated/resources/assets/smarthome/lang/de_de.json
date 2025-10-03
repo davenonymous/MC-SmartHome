@@ -36,6 +36,8 @@
   "smarthome.gui.home.sidebar.settings": "Einstellungen",
   "smarthome.gui.home.sidebar.zones": "Zonen",
   "smarthome.gui.home.title": "Smart Home",
+  "smarthome.gui.home.zone.move": "Verschieben",
+  "smarthome.gui.home.zone.scale": "Skalieren",
   "smarthome.gui.home.zones.add_zones.hint": "Name eingeben",
   "smarthome.gui.home.zones.detail.delete": "Halte Strg + Shift und klicke, um diese Zone zu löschen",
   "smarthome.gui.home.zones.detail.devices": "Geräte",
