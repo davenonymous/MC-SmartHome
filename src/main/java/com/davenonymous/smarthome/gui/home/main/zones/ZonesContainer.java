@@ -76,10 +76,14 @@ public class ZonesContainer extends WidgetPanel {
 			});
 			button.addListener(MouseClickEvent.class, (event, widget) -> {
 				if(zoneDetail.selectedZone() != null && zoneDetail.selectedZone().id().equals(zone.id())) {
+					zoneDisplay.selectedZone = null;
 					zoneDetail.setSelectedZone(null);
+					updateWidgetSizes();
 					return WidgetEventResult.HANDLED;
 				}
+				zoneDisplay.selectedZone = zone;
 				zoneDetail.setSelectedZone(zone);
+				updateWidgetSizes();
 				return WidgetEventResult.HANDLED;
 			});
 			zoneButtons.addContentBox(button, FlexSizer.FlexAlign.START);
@@ -121,16 +125,28 @@ public class ZonesContainer extends WidgetPanel {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		int displayWidth = (int)(this.width() * 2 / 3f);
-		int detailWidth = this.width() - displayWidth - 15;
+		int displayWidth;
+		int detailWidth;
+		if(zoneDetail.selectedZone() != null) {
+			displayWidth = (int)(this.width() * 2 / 3f);
+			detailWidth = this.width() - displayWidth - 15;
+		} else {
+			displayWidth = this.width();
+			detailWidth = 1;
+		}
+
+
 		int displayX = 5;
 		int detailX = displayX + displayWidth + 10;
 
 		zoneDisplay.setDimensions(displayX, 5, displayWidth, this.height - 55);
 		zoneButtons.setDimensions(displayX, 5, 100, this.height - 50);
+		zoneButtons.setHeight(Math.max(40, zoneButtons.getTotalRealSize()));
 		zoneDetail.setDimensions(detailX, 5, detailWidth, this.height - 10);
 
 		int newZoneButtonsWidth = Math.max(newZoneButtons.width(), displayWidth);
 		newZoneButtons.setDimensions(displayX, this.height - 42, newZoneButtonsWidth, 32);
+
+		zoneDetail.updateWidgetSizes();
 	}
 }

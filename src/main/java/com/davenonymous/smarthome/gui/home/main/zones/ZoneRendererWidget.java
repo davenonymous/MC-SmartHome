@@ -15,6 +15,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.joml.Vector3f;
@@ -30,37 +31,20 @@ public class ZoneRendererWidget extends WidgetPanel {
 
 	Map<UUID, BoxLineCache> zoneBoxes;
 
+	public HomeZone selectedZone = null;
 	public HomeZone hoveredZone = null;
 	public RangerFinderDataComponent selectedRangeFinder;
 
 	Map<RangerFinderDataComponent, BoxLineCache> rangeFinderBoxes;
 
-	float rotX = -30;
-	float rotY = -35;
-
 	public ZoneRendererWidget() {
-		// TODO: this wants to be mouse drag instead of scrolling
-		this.addListener(MouseScrollEvent.class, (event, widget) -> {
-			if(!this.isHovered()) {
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			}
-
-			if(getGUI().isShiftDown()) {
-				rotX += (float) (event.rawScrollValue * 4d);
-				rotX = Math.max(-90, Math.min(90, rotX));
-			} else {
-				rotY += (float) (event.rawScrollValue * 4d);
-				rotY = rotY % 360;
-			}
-			return WidgetEventResult.HANDLED;
-		});
+		super();
 	}
 
 	public void refreshZoneList() {
 		if(HomeScreen.get() == null) {
 			return;
 		}
-
 
 		var selectedHome = HomeScreen.get().selectedHome;
 		if(selectedHome == null) {
@@ -133,37 +117,52 @@ public class ZoneRendererWidget extends WidgetPanel {
 
 		float scaleFactor = 8f;
 		var bounds = homeShape.bounds();
+		var center = bounds.getCenter();
+
 		var outerBounds = bounds.inflate(4/16d).inflate(4/16d, 0, 4/16d);
 		double longestSide = Math.max(outerBounds.getXsize(), outerBounds.getZsize());
-		double longestHeight = outerBounds.getYsize() * Math.sqrt(2);
-		double expectedMaxRadius = longestSide * Math.sqrt(2);
-		int zoneRenderWidth = (int) expectedMaxRadius * 16;
-		int fooX = (width()) / 2;
-		int fooY = (height()) / 2;
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(fooX - zoneRenderWidth / 4f, fooY + longestHeight / 4f, 20);
-		float shift = (float)expectedMaxRadius * 5f;
-		guiGraphics.pose().rotateAround(Axis.XP.rotationDegrees(rotX), 0, 0, 0);
-		guiGraphics.pose().rotateAround(Axis.YP.rotationDegrees(rotY), shift, 0, shift);
-		guiGraphics.pose().scale(scaleFactor, -scaleFactor, scaleFactor);
+		double longestHeight = outerBounds.getYsize() * Math.sqrt(2) * scaleFactor;
+		double expectedMaxRadius = longestSide * Math.sqrt(2) * scaleFactor;
 
-		int boundColor = ChatFormatting.DARK_GRAY.getColor() | 0x40000000;
-		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boundBoxLines.lines, boundColor, 2);
 
-		int color = ChatFormatting.YELLOW.getColor() | 0xFF000000;
-		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boxLines.lines, color, 2);
 
-		if(this.hoveredZone != null) {
+		float ticks = HomeScreen.get().renderTick() + HomeScreen.get().partialTicks();
+
+		var pose = guiGraphics.pose();
+		pose.pushPose();
+		pose.translate((this.width()-expectedMaxRadius)/2f, (this.height()-longestHeight)/2f, 0);
+		pose.scale(scaleFactor, -scaleFactor, scaleFactor);
+		pose.translate(0, -bounds.getYsize(), 0);
+		pose.translate(0, 0, 100);
+
+		pose.translate(center.x, center.y, center.z);
+
+		pose.mulPose(Axis.XP.rotationDegrees(30f));
+		pose.mulPose(Axis.YP.rotationDegrees((ticks*0.5f) % 360));
+
+		pose.translate(-center.x, -center.y, -center.z);
+
+		boolean renderRegularOutline = true;
+		if(this.hoveredZone != null || this.selectedZone != null) {
 			for(var zoneEntry : zoneBoxes.entrySet()) {
 				var zoneId = zoneEntry.getKey();
 				var zoneBox = zoneEntry.getValue();
 
-				if(zoneId.equals(hoveredZone.id())) {
+				if(hoveredZone != null && zoneId.equals(hoveredZone.id())) {
 					int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
 					BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
 				}
+
+				if(selectedZone != null && zoneId.equals(selectedZone.id())) {
+					int selectedColor = ChatFormatting.DARK_GREEN.getColor() | 0xFF000000;
+					BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
+					renderRegularOutline = false;
+				}
 			}
 		}
+
+		int color = ChatFormatting.YELLOW.getColor() | 0xDD000000;
+		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boxLines.lines, color, 2);
 
 		for(var zoneEntry : rangeFinderBoxes.entrySet()) {
 			var data = zoneEntry.getKey();
@@ -181,7 +180,10 @@ public class ZoneRendererWidget extends WidgetPanel {
 			BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
 		}
 
-		guiGraphics.pose().popPose();
+		int boundColor = ChatFormatting.DARK_GRAY.getColor() | 0x40000000;
+		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boundBoxLines.lines, boundColor, 2);
+
+		pose.popPose();
 	}
 
 }

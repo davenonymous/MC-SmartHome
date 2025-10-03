@@ -94,7 +94,6 @@ public class SensorBox extends WidgetVBox {
 						this.addContentBox(sensorWidget, FlexAlign.CENTER);
 						hasPlacedViz = true;
 					}
-					// TODO: else error widget?
 				}
 
 			}

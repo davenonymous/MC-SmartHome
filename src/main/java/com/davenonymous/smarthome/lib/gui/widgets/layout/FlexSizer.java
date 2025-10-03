@@ -80,6 +80,13 @@ public abstract class FlexSizer extends WidgetPanel {
 	}
 
 	public int getTotalRealSize() {
+		if(realBoxOffsets.isEmpty()) {
+			return (isHorizontal() ? paddingHorizontal : paddingVertical) * 2;
+		}
+		if(realBoxSize.isEmpty()) {
+			return (isHorizontal() ? paddingHorizontal : paddingVertical) * 2;
+		}
+
 		int lastOffset = realBoxOffsets.get(realBoxOffsets.size()-1) + realBoxSize.get(realBoxSize.size()-1) + (realBoxOffsets.size()-1)*spacing;
 		// Add horizontal or vertical padding to the end, depending on direction
 		return lastOffset + (isHorizontal() ? paddingHorizontal : paddingVertical);
