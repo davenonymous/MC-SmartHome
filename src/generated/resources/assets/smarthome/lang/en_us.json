@@ -25,6 +25,7 @@
   "smarthome.gui.devices.add.renameable": "Click to rename",
   "smarthome.gui.devices.add.sensors.count": "%d sensors",
   "smarthome.gui.home.cards.add_cards.hint": "Enter name",
+  "smarthome.gui.home.cards.card_settings.title": "Card Settings",
   "smarthome.gui.home.cards.element_settings.no_element_selected": "No element selected",
   "smarthome.gui.home.cards.element_settings.no_settings_available": "No settings available for this element",
   "smarthome.gui.home.cards.element_settings.select_element_hint": "Select an element to edit its settings",

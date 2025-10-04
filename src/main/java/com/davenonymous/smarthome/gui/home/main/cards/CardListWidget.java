@@ -57,7 +57,7 @@ public class CardListWidget extends WidgetVBox {
 					this.fireEvent(new CardSelectedEvent(card));
 					return WidgetEventResult.HANDLED;
 				});
-			this.addContentBox(button);
+			this.addContentBox(button, FlexAlign.START);
 			cardButtonMap.put(card, button);
 		}
 	}

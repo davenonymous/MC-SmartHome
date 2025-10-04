@@ -1,6 +1,10 @@
 package com.davenonymous.smarthome.lib.gui.configurable;
 
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,6 +22,12 @@ public class StringInputWidget extends EditBoxWidget<String> {
 		if(this.filterRegex != null) {
 			this.nativeWidget.setFilter(input -> input.matches(this.filterRegex));
 		}
+	}
+
+	public StringInputWidget setFont(ModFonts.FontSpec font) {
+		this.nativeWidget().setFormatter((s, integer) -> FormattedCharSequence.forward(s, Style.EMPTY.withFont(font.id())));
+		this.nativeWidget().setYTextOffset(font.yOffset() + 3);
+		return this;
 	}
 
 	public StringInputWidget autoWidth() {

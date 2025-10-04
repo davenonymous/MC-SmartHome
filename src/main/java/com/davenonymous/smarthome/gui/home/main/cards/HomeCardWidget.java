@@ -2,8 +2,13 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeCard;
-import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
+import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
+import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
@@ -12,9 +17,9 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.math.Axis;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
@@ -22,7 +27,9 @@ public class HomeCardWidget extends WidgetPanel {
 	HomeCard homeCard;
 	WidgetPanel contentArea;
 	WidgetSprite icon;
+
 	WidgetTextBox label;
+	StringInputWidget cardRenameInput;
 
 	WidgetHBox topBar;
 
@@ -30,8 +37,14 @@ public class HomeCardWidget extends WidgetPanel {
 	boolean editMode = false;
 
 	public HomeCardWidget(HomeCard homeCard) {
+		this(homeCard, false);
+	}
+
+	public HomeCardWidget(HomeCard homeCard, boolean editMode) {
 		super();
 		this.homeCard = homeCard;
+		this.editMode = editMode;
+
 		this.setSize(homeCard.width(), homeCard.height());
 
 		topBar = new WidgetHBox();
@@ -41,15 +54,36 @@ public class HomeCardWidget extends WidgetPanel {
 
 		icon = new WidgetSprite(homeCard.icon());
 		icon.setPosition(padding, padding);
+		if(editMode) {
+			icon.setColor(0xFFFFFFFF, ColorHelper.COLOR_ORANGE);
+		} else {
+			icon.setColor(0xFFFFFFFF, 0xFFFFFFFF);
+		}
 		topBar.addContentBox(icon, FlexSizer.FlexAlign.CENTER);
 
-		label = new WidgetTextBox(homeCard.label(), 0xFFFFFFFF);
-		label.setPosition(padding + icon.width + padding, padding);
-		label.setFont(ModFonts.SAMSUNG);
-		label.setWordWrap(true);
-		label.autoWidth(this.width - icon.width - padding * 4);
-		label.autoHeight();
-		topBar.addContentBox(label, FlexSizer.FlexAlign.CENTER);
+		if(editMode) {
+			cardRenameInput = new StringInputWidget(homeCard.label(), "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+			cardRenameInput.setWidth(this.width - icon.width - padding * 4);
+			cardRenameInput.setDrawBackground(false);
+			cardRenameInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
+			cardRenameInput.setFont(ModFonts.SAMSUNG);
+			cardRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(NewDeviceEntryWidget.CLICK_TO_RENAME.get()));
+			topBar.addContentBox(cardRenameInput, FlexSizer.FlexAlign.CENTER);
+		} else {
+			label = new WidgetTextBox(homeCard.label(), 0xFFFFFFFF);
+			label.setPosition(padding + icon.width + padding, padding);
+			if(editMode) {
+				label.setTextColor(0xFFAAAAAA);
+			} else {
+				label.setTextColor(0xFFFFFFFF);
+			}
+			label.setFont(ModFonts.SAMSUNG);
+			label.setWordWrap(true);
+			label.autoWidth(this.width - icon.width - padding * 4);
+			label.autoHeight();
+			topBar.addContentBox(label, FlexSizer.FlexAlign.CENTER);
+		}
+
 
 		this.add(topBar);
 
@@ -57,25 +91,35 @@ public class HomeCardWidget extends WidgetPanel {
 		contentArea.setPosition(padding, padding + topBar.height + padding);
 		this.add(contentArea);
 
-		updateCard();
+		updateCard(homeCard);
 	}
 
-	public HomeCardWidget setEditing(boolean editMode) {
-		this.editMode = editMode;
-		return this;
-	}
-
-	public HomeCardWidget updateCard() {
-		if(homeCard == null) {
+	public HomeCardWidget updateCard(HomeCard newCard) {
+		if(newCard == null) {
 			icon.setSprite(null);
-			label.setText("");
+			if(label != null) {
+				label.setText("");
+			}
+			if(cardRenameInput != null) {
+				cardRenameInput.setValue("");
+			}
 			contentArea.clear();
+			this.homeCard = null;
 		} else {
-			icon.setSprite(homeCard.icon());
-			label.setText(homeCard.label());
+			this.homeCard = newCard;
+			icon.setSprite(newCard.icon());
+			if(label != null) {
+				label.setText(newCard.label());
+			}
+			if(cardRenameInput != null) {
+				cardRenameInput.setValue(newCard.label());
+			}
 			contentArea.clear();
 
-			for(var element : homeCard.elements().entrySet()) {
+			this.setSize(newCard.width(), newCard.height());
+
+
+			for(var element : newCard.elements().entrySet()) {
 				var position = element.getKey();
 				var widget = element.getValue().createWidget();
 				if(widget != null) {
@@ -89,11 +133,14 @@ public class HomeCardWidget extends WidgetPanel {
 		return this;
 	}
 
+	public WidgetSprite icon() {
+		return icon;
+	}
+
 	@Override
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		contentArea.adjustSizeToContent(false);
 		this.adjustSizeToContent(false);
 	}
 

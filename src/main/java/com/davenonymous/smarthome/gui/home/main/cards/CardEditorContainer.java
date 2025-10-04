@@ -26,7 +26,7 @@ public class CardEditorContainer extends WidgetPanel {
 		existingCardButtons = new CardListWidget();
 		existingCardButtons.setPosition(padding, padding);
 		existingCardButtons.addListener(CardSelectedEvent.class, (event, widget) -> {
-			var editor = cardEditors.computeIfAbsent(event.card().id(), id -> new CardEditorWidget(event.card().createWidget()));
+			var editor = cardEditors.computeIfAbsent(event.card().id(), id -> new CardEditorWidget(event.card().createWidget(true)));
 			this.setActiveEditor(editor);
 			return WidgetEventResult.HANDLED;
 		});
@@ -77,8 +77,8 @@ public class CardEditorContainer extends WidgetPanel {
 	@Override
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
-		existingCardButtons.adjustSizeToContent();
 		existingCardButtons.setHeight(Math.max(40, existingCardButtons.getTotalRealSize()));
+		existingCardButtons.setWidth(existingCardButtons.getOrthogonalSize());
 		existingCardButtons.updateWidgetSizes();
 
 		addNewCardButton.setPosition(padding, height - addNewCardButton.height - padding);

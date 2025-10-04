@@ -26,8 +26,8 @@ public record HomeCard(UUID id, String label, ResourceLocation icon, Vec2 size, 
 		this(UUID.randomUUID(), label, HackerNoon.Solid.star, new Vec2(144, 72), Map.of(), List.of());
 	}
 
-	public HomeCardWidget createWidget() {
-		return new HomeCardWidget(this);
+	public HomeCardWidget createWidget(boolean editing) {
+		return new HomeCardWidget(this, editing);
 	}
 
 	public int width() {

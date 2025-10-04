@@ -2,7 +2,10 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.events.SpriteSelectedEvent;
+import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
 import com.davenonymous.smarthome.lib.HackerNoon;
+import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
@@ -109,7 +112,7 @@ public class CardEditorWidget extends WidgetPanel {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			setCardWidget(optCurrentCard.get().createWidget().setEditing(true));
+			setCardWidget(optCurrentCard.get().createWidget(true));
 			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
 	}
@@ -121,11 +124,12 @@ public class CardEditorWidget extends WidgetPanel {
 		return null;
 	}
 
-	public CardEditorWidget setCardWidget(HomeCardWidget cardWidget) {
-		this.remove(this.cardWidget);
+	public CardEditorWidget setCardWidget(HomeCardWidget newCardWidget) {
+		if(newCardWidget == null) {
+			if(this.cardWidget != null) {
+				this.cardWidget.setVisible(false);
+			}
 
-		this.cardWidget = cardWidget;
-		if(cardWidget == null) {
 			elementSettingsWidget.setVisible(false);
 			cardSettingsWidget.setVisible(false);
 			scaleHandle.setVisible(false);
@@ -133,14 +137,67 @@ public class CardEditorWidget extends WidgetPanel {
 			return this;
 		}
 
-		this.cardWidget.setEditing(true);
+		if(this.cardWidget == null) {
+			this.cardWidget = newCardWidget;
+			this.cardWidget.cardRenameInput.addListener(ValueChangedEvent.class, (event, widget) -> {
+				if(this.cardWidget == null) {
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				PacketDistributor.sendToServer(new SetCardSettingsPayload(
+					HomeScreen.get().selectedHome.id(),
+					card().id(),
+					this.cardWidget.cardRenameInput.getValue(),
+					card().icon(),
+					card().size()
+				));
+				return WidgetEventResult.HANDLED;
+			});
+
+			this.cardWidget.icon.addListener(MouseClickEvent.class, (event, widget) -> {
+				if(!widget.isHovered()) {
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				var selector = SpriteSelectorWidget.openAt(getMouseX(), getMouseY(), ContentAlignment.TOP_LEFT);
+				selector.addListener(MouseExitEvent.class, (event2, widget2) -> {
+					this.remove(selector);
+					return WidgetEventResult.HANDLED;
+				});
+				selector.addListener(SpriteSelectedEvent.class, (event2, widget2) -> {
+					this.remove(selector);
+					if(this.cardWidget == null) {
+						return WidgetEventResult.HANDLED;
+					}
+
+					this.cardWidget.icon.setSprite(event2.sprite());
+
+					PacketDistributor.sendToServer(new SetCardSettingsPayload(
+						HomeScreen.get().selectedHome.id(),
+						card().id(),
+						card().label(),
+						event2.sprite(),
+						card().size()
+					));
+					return WidgetEventResult.HANDLED;
+				});
+
+				this.add(selector);
+				return WidgetEventResult.HANDLED;
+			});
+
+			this.add(newCardWidget);
+		} else {
+			this.cardWidget.updateCard(newCardWidget.homeCard);
+		}
+
+		cardWidget.setVisible(true);
 		elementSettingsWidget.setVisible(true);
 		cardSettingsWidget.setVisible(true);
 		scaleHandle.setVisible(true);
 
-		cardSettingsWidget.setCard(cardWidget.homeCard);
+		cardSettingsWidget.setCard(newCardWidget.homeCard);
 
-		this.add(cardWidget);
 		updateWidgetSizes();
 		return this;
 	}

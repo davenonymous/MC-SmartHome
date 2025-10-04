@@ -40,15 +40,15 @@ public class ScissorScrollWrap extends WidgetPanel {
 					var scrollValue = Math.abs((int) Math.ceil(event.rawScrollValue));
 					if(event.up) {
 						if(horizontal) {
-							this.horizontalScroll = Math.max(0, this.horizontalScroll - scrollValue / 5f);
+							this.horizontalScroll = Math.max(0, this.horizontalScroll - scrollValue / 32f);
 						} else {
-							this.verticalScroll = Math.max(0, this.verticalScroll - scrollValue / 5f);
+							this.verticalScroll = Math.max(0, this.verticalScroll - scrollValue / 32f);
 						}
 					} else {
 						if(horizontal) {
-							this.horizontalScroll = Math.min(1, this.horizontalScroll + scrollValue / 5f);
+							this.horizontalScroll = Math.min(1, this.horizontalScroll + scrollValue / 32f);
 						} else {
-							this.verticalScroll = Math.min(1, this.verticalScroll + scrollValue / 5f);
+							this.verticalScroll = Math.min(1, this.verticalScroll + scrollValue / 32f);
 						}
 					}
 

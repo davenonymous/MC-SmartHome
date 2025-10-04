@@ -3,12 +3,11 @@ package com.davenonymous.smarthome.lib.gui.configurable;
 import com.davenonymous.smarthome.lib.gui.NativeWidgetHelper;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetNativeWidget;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EditBoxWidget<T> extends WidgetNativeWidget<EditBox> {
+public abstract class EditBoxWidget<T> extends WidgetNativeWidget<BetterEditBox> {
 	T value;
 
 	public EditBoxWidget(T value) {
@@ -25,7 +24,7 @@ public abstract class EditBoxWidget<T> extends WidgetNativeWidget<EditBox> {
 		nativeWidget.setResponder(input -> {
 			try {
 				T newValue = parseValue(input == null ? "" : input.trim());
-				if (newValue != null) {
+				if (newValue != null && !newValue.equals(this.value)) {
 					var oldValue = this.value;
 					this.value = newValue;
 					fireEvent(new ValueChangedEvent<>(oldValue, newValue));

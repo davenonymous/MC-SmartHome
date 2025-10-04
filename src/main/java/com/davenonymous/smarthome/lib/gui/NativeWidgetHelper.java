@@ -1,12 +1,13 @@
 package com.davenonymous.smarthome.lib.gui;
 
+import com.davenonymous.smarthome.lib.gui.configurable.BetterEditBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 
 public class NativeWidgetHelper {
-	public static EditBox createEditBox() {
-		var editBox = new EditBox(Minecraft.getInstance().font, 0, 0, Component.literal("wtf"));
+	public static BetterEditBox createEditBox() {
+		var editBox = new BetterEditBox(Minecraft.getInstance().font, 0, 0, Component.literal("wtf"));
 		editBox.setPosition(2, 2);
 		editBox.setMaxLength(256);
 		editBox.setEditable(true);
