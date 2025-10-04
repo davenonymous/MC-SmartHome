@@ -91,7 +91,7 @@ public class WidgetLabel extends Widget {
 		}
 
 		RenderSystem.enableScissor(getActualX() * scale - 3, bottomOffset + 2, width * scale, heightTmp);
-		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, text, 0, 0, Integer.MAX_VALUE, 9, textColor);
+		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, text, style, 0, 0, Integer.MAX_VALUE, 9, textColor);
 		RenderSystem.disableScissor();
 
 		RenderSystem.disableBlend();

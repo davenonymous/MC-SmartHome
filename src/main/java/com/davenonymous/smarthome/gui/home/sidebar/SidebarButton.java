@@ -22,7 +22,6 @@ public class SidebarButton extends WidgetPanel {
 
 	WidgetSprite iconWidget;
 	WidgetTextBox labelWidget;
-	WidgetTextBox labelBackdropWidget;
 	SidebarBadge badgeWidget;
 
 	ResourceLocation contentId;
@@ -39,15 +38,8 @@ public class SidebarButton extends WidgetPanel {
 		this.labelWidget = new WidgetTextBox(label);
 		this.labelWidget.setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		this.labelWidget.setWordWrap(true);
-		this.labelWidget.setFont(ModFonts.MONKEY_FILLED);
+		this.labelWidget.setFont(ModFonts.SAMSUNG);
 		this.add(this.labelWidget);
-
-		this.labelBackdropWidget = new WidgetTextBox(label);
-		this.labelBackdropWidget.setTextColor(ChatFormatting.WHITE.getColor());
-		this.labelBackdropWidget.setWordWrap(true);
-		this.labelBackdropWidget.setFont(ModFonts.MONKEY_OUTLINE);
-		this.labelBackdropWidget.setVisible(false);
-		this.add(this.labelBackdropWidget);
 
 		this.addListener(MouseClickEvent.class, (event, widget) -> {
 			if(event.button != 0) {
@@ -102,19 +94,15 @@ public class SidebarButton extends WidgetPanel {
 
 		this.labelWidget.autoWidth(this.width - iconWidth - padding);
 		this.labelWidget.autoHeight();
-		this.labelBackdropWidget.autoWidth(this.width - iconWidth - padding);
-		this.labelBackdropWidget.autoHeight();
 
 		var maxHeight = Math.max(iconHeight, this.labelWidget.height());
 		this.setHeight(maxHeight + 7);
 
 		this.labelWidget.setX(iconWidth + 2*padding);
-		this.labelBackdropWidget.setX(iconWidth + 2*padding);
 		this.iconWidget.setX(padding);
 
 		this.iconWidget.setY(1+(this.height - iconHeight) / 2);
 		this.labelWidget.setY(1+(this.height - this.labelWidget.height()) / 2);
-		this.labelBackdropWidget.setY(1+(this.height - this.labelBackdropWidget.height()) / 2);
 	}
 
 

@@ -61,7 +61,7 @@ public class ZonesContainer extends WidgetPanel {
 				continue;
 			}
 			var button = new WidgetTextBox(zone.name(), ChatFormatting.WHITE.getColor());
-			button.setFont(ModFonts.BASEL);
+			button.setFont(ModFonts.SAMSUNG);
 			button.autoWidth();
 			button.autoHeight();
 			button.addListener(MouseEnterEvent.class, (event, widget) -> {

@@ -1,4 +1,4 @@
-// 1.21.1	2025-09-18T16:47:41.5112598	Fonts for mod: smarthome
+// 1.21.1	2025-10-04T00:13:23.4475667	Fonts for mod: smarthome
 38fe5b5861572814ab3ec9cc6bd94aa95e52865b assets/smarthome/font/basel-accented.json
 c45724fcf37b0dfc84af5425e56bc25b9f457696 assets/smarthome/font/basel-ascii.json
 cab9ffd30d989738d15771fd4b85034299854690 assets/smarthome/font/basel-nonlatin_european.json
@@ -17,9 +17,21 @@ d8c9aaf06af1be8aaffe979a4c4626f3ac31b04c assets/smarthome/font/nano-nonlatin_eur
 466cd077dc33ba5fb7c1fddfbf742f170c792df4 assets/smarthome/font/nokia-accented.json
 37c40f5873efa4940945a09c31d586f79403db90 assets/smarthome/font/nokia-ascii.json
 c482a8eee8771e049bd6fc489b01ac92744debfb assets/smarthome/font/nokia-nonlatin_european.json
+7b78a0d44be17b2d09fd4786ff44fe376638f8a2 assets/smarthome/font/nokia2-accented.json
+aed1ba676d19cd4a24ba8a306c4cfb0487ef77c8 assets/smarthome/font/nokia2-ascii.json
+ca519a5727970358da808aa5df3dfb2244e5e348 assets/smarthome/font/nokia2-nonlatin_european.json
+521d217af5116d3a1863c3d9a0e5997bbd47dcbd assets/smarthome/font/nokia3-accented.json
+83a72f73d02476543e8933247ce9e80097bf6abb assets/smarthome/font/nokia3-ascii.json
+3b1006a36a4c914937d1bb0fe5849595cadaaf96 assets/smarthome/font/nokia3-nonlatin_european.json
 68bff531d0913da415c9cf21495e63eae0c0ad81 assets/smarthome/font/pixel-accented.json
 6dd5bc1cf6834173c3949a331221a3c2715f4d20 assets/smarthome/font/pixel-ascii.json
 0b2679ca19869ddef593cf00290d00f13400a2d0 assets/smarthome/font/pixel-nonlatin_european.json
+42225dd967f44884ea1ad7e5b55581a1464cbac2 assets/smarthome/font/receipt-accented.json
+1ac1a78d43f179b0d2f4274dae0bf5348bd9d749 assets/smarthome/font/receipt-ascii.json
+f07cc1e6f87a2f7479aa26a0c1dce5182f1ba4a1 assets/smarthome/font/receipt-nonlatin_european.json
+426c9bb4b43b60f2599bb3659c0e615ad50d4f9f assets/smarthome/font/samsung-accented.json
+bc4c1116e4bc45851ba9935121a770ac93e52b9c assets/smarthome/font/samsung-ascii.json
+f826dfe01d6dd32172d409e7a16b87aaf9be8f1b assets/smarthome/font/samsung-nonlatin_european.json
 bacd2093faa6465385fc8b8cd2fa4253ad02a56d assets/smarthome/font/tiny-accented.json
 8e45609fca9dc6e398a021b0c746765385a58ccb assets/smarthome/font/tiny-ascii.json
 e2965b534787f6095192d32c201dd56269ac7719 assets/smarthome/font/tiny-nonlatin_european.json
@@ -44,9 +56,21 @@ f2fc3ed1ae7e511177bda4b87302c6bbcbafe83f assets/smarthome/textures/font/monkey_o
 6ab41344d57a296046be723560007f93a09845aa assets/smarthome/textures/font/nokia-accented.png
 35165f644ded097d7e612c465b46d8107ac9c751 assets/smarthome/textures/font/nokia-ascii.png
 10f01e113ab00075d49fedd119399c90da200584 assets/smarthome/textures/font/nokia-nonlatin_european.png
+fb904991527a3a111b6e4b8be409250749413e12 assets/smarthome/textures/font/nokia2-accented.png
+f8ef3941be02fa2d0011c9dae069c33a111ab04a assets/smarthome/textures/font/nokia2-ascii.png
+2b0b32f0f069529cb4edf297a12c40361b59a475 assets/smarthome/textures/font/nokia2-nonlatin_european.png
+242ab26aa253361be085eb912066724a9b9586e3 assets/smarthome/textures/font/nokia3-accented.png
+287c3c475c0acfc479289f23aeec4c85a9f5b9b0 assets/smarthome/textures/font/nokia3-ascii.png
+2ee58dd8f5c6c48e6998a618e9bd8b7d6b62dbee assets/smarthome/textures/font/nokia3-nonlatin_european.png
 69719ca316a460280ff9776121b4e67bfaf197ef assets/smarthome/textures/font/pixel-accented.png
 689b5be0d5c9af3fd11f8bc2db59cecd618c2f30 assets/smarthome/textures/font/pixel-ascii.png
 924e59b7dcc16442b18d548e555417ab9113ab57 assets/smarthome/textures/font/pixel-nonlatin_european.png
+43c78411f19bb8654f5d94726401ef5e2be367d2 assets/smarthome/textures/font/receipt-accented.png
+9cbe067ca5d55b19cdedfd3dbbd7ea282a9b2284 assets/smarthome/textures/font/receipt-ascii.png
+d7648f5b8ecac1fb2a13590c1150dac6a6c5f42d assets/smarthome/textures/font/receipt-nonlatin_european.png
+ada3e545e702355d3976f654c7060d6482322809 assets/smarthome/textures/font/samsung-accented.png
+dbd2d4e4b939f259a359094766196206d377c9cd assets/smarthome/textures/font/samsung-ascii.png
+32f9fcdc02a581eb6bd1057d1b2bf371f0207bf2 assets/smarthome/textures/font/samsung-nonlatin_european.png
 2024d2110b4629130fd70ac0c6eba8925521ac5b assets/smarthome/textures/font/tiny-accented.png
 308f094171b226985c2ea51b6c0873b30d82400d assets/smarthome/textures/font/tiny-ascii.png
 7cac28010655e41882ab6e50fedae52e1807bcdb assets/smarthome/textures/font/tiny-nonlatin_european.png

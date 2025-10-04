@@ -38,9 +38,6 @@ public class DGTranslations_EN extends DGBaseTranslations {
 
 		add(FluidStorage.ID, "name", "Fluid Storage");
 		add(FluidStorage.ID, "description", "Records stored fluids.");
-
-		add(ZoneSizeEditor.labelScale, "Scale");
-		add(ZoneSizeEditor.labelMove, "Move");
 	}
 
 }

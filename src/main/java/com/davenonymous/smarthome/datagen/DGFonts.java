@@ -22,5 +22,13 @@ public class DGFonts extends FontProvider {
 		add(Path.of("assets/fonts/nokiafc22.ttf"), "nokia", 8f, 16f, 1);
 		add(Path.of("assets/fonts/monkey.ttf"), "monkey", 12f, 16f, 2);
 		add(Path.of("assets/fonts/monkey_outline.ttf"), "monkey_outline", 12f, 16f, 2);
+
+
+		add(Path.of("assets/fonts/nokia-pixel-large.otf"), "nokia2", 17f, 32f, 3);
+		add(Path.of("assets/fonts/nokia-pixel-extra-large.otf"), "nokia3", 20f, 32f, 3);
+
+		add(Path.of("assets/fonts/samsung-gt-e1270-bold.otf"), "samsung", 13f, 16f, 2);
+
+		add(Path.of("assets/fonts/state-of-the-art-receipt.otf"), "receipt", 20f, 32f, 0);
 	}
 }

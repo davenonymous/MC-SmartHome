@@ -15,6 +15,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTable;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.SetZoneAABBPayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
@@ -31,7 +32,12 @@ public class ZoneSizeEditor extends WidgetPanel {
 
 	private WidgetTable sizeTable;
 
+	@I18DataGen(lang = "en_us", string = "Scale")
+	@I18DataGen(lang = "de_de", string = "Skalieren")
 	public static final I18String labelScale = SmartHome.guiString("home.zone", "scale");
+
+	@I18DataGen(lang = "en_us", string = "Move")
+	@I18DataGen(lang = "de_de", string = "Verschieben")
 	public static final I18String labelMove = SmartHome.guiString("home.zone", "move");
 
 	int padding = 6;

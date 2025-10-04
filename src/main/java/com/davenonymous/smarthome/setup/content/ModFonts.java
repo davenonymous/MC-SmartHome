@@ -21,6 +21,11 @@ public class ModFonts {
 	public static final FontSpec NOKIA = new ModFonts.FontSpec(SmartHome.resource("nokia-ascii"), 11, 9);
 	public static final FontSpec TINY = new ModFonts.FontSpec(SmartHome.resource("tiny-ascii"), 12, 7);
 
+	public static final FontSpec NOKIA2 = new ModFonts.FontSpec(SmartHome.resource("nokia2-ascii"), 14, 16);
+	public static final FontSpec NOKIA3 = new ModFonts.FontSpec(SmartHome.resource("nokia3-ascii"), 12, 22);
+	public static final FontSpec SAMSUNG = new ModFonts.FontSpec(SmartHome.resource("samsung-ascii"), 6, 13);
+	public static final FontSpec RECEIPT = new ModFonts.FontSpec(SmartHome.resource("receipt-ascii"), 18, 16);
+
 	public record FontSpec(ResourceLocation id, int yOffset, int lineHeight) {
 	}
 }

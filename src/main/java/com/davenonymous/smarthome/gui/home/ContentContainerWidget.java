@@ -2,6 +2,8 @@ package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
+import com.davenonymous.smarthome.gui.home.main.cards.CardEditorContainer;
+import com.davenonymous.smarthome.gui.home.main.dashboard.DashboardContainer;
 import com.davenonymous.smarthome.gui.home.main.devices.DevicesContainer;
 import com.davenonymous.smarthome.gui.home.main.settings.SettingsContainer;
 import com.davenonymous.smarthome.gui.home.main.zones.ZonesContainer;
@@ -15,19 +17,25 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class ContentContainerWidget extends WidgetPanel {
-	private Map<ResourceLocation, Widget> registeredContentWidgets;
+	private Map<ResourceLocation, Supplier<Widget>> registeredContentWidgets;
+	private Map<ResourceLocation, Widget> createdContentWidgets;
 
 	private ResourceLocation activeContentId;
 	private Widget activeContentWidget;
 
+
 	public ContentContainerWidget() {
 		registeredContentWidgets = new HashMap<>();
+		createdContentWidgets = new HashMap<>();
 
-		registerContentWidget(ContentIDs.ZONES, new ZonesContainer());
-		registerContentWidget(ContentIDs.DEVICES, new DevicesContainer());
-		registerContentWidget(ContentIDs.SETTINGS, new SettingsContainer());
+		registerContentWidget(ContentIDs.ZONES, ZonesContainer::new);
+		registerContentWidget(ContentIDs.DEVICES, DevicesContainer::new);
+		registerContentWidget(ContentIDs.SETTINGS, SettingsContainer::new);
+		registerContentWidget(ContentIDs.DASHBOARDS, DashboardContainer::new);
+		registerContentWidget(ContentIDs.CARDS, CardEditorContainer::new);
 
 		this.addListener(ContentSelectionEvent.class, (event, widget) -> {
 			setActiveContentWidget(event.contentId());
@@ -35,16 +43,12 @@ public class ContentContainerWidget extends WidgetPanel {
 		});
 	}
 
-	public ContentContainerWidget registerContentWidget(ResourceLocation id, Widget widget) {
-		widget.setVisible(false);
-
-		if(registeredContentWidgets.isEmpty()) {
-			activeContentWidget = widget;
-			activeContentId = id;
-			widget.setVisible(true);
-		}
+	public ContentContainerWidget registerContentWidget(ResourceLocation id, Supplier<Widget> widget) {
+		boolean wasEmpty = registeredContentWidgets.isEmpty();
 		registeredContentWidgets.put(id, widget);
-		this.add(widget);
+		if(wasEmpty) {
+			setActiveContentWidget(id);
+		}
 		return this;
 	}
 
@@ -53,11 +57,17 @@ public class ContentContainerWidget extends WidgetPanel {
 			return this;
 		}
 
+		var contentWidget = createdContentWidgets.computeIfAbsent(id, forId -> {
+			var createdWidget = registeredContentWidgets.get(forId).get();
+			this.add(createdWidget);
+			return createdWidget;
+		});
+
 		if(activeContentWidget != null) {
 			activeContentWidget.setVisible(false);
 		}
 
-		activeContentWidget = registeredContentWidgets.get(id);
+		activeContentWidget = contentWidget;
 		activeContentId = id;
 		activeContentWidget.setVisible(true);
 
@@ -66,7 +76,7 @@ public class ContentContainerWidget extends WidgetPanel {
 	}
 
 	public void updateWidgetSizes() {
-		registeredContentWidgets.values().forEach(widget -> {
+		createdContentWidgets.values().forEach(widget -> {
 			widget.setSize(this.width-10, this.height-10);
 			widget.setPosition(5, 5);
 			widget.updateWidgetSizes();

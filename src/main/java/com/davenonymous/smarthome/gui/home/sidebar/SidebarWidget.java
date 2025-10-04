@@ -17,6 +17,8 @@ import net.minecraft.client.resources.language.I18n;
 public class SidebarWidget extends WidgetVBox {
 	SidebarButton zonesButton;
 	SidebarButton devicesButton;
+	SidebarButton dashboardsButton;
+	SidebarButton cardsButton;
 	SidebarButton settingsButton;
 
 	@I18DataGen(lang = "en_us", string = "Zones")
@@ -26,6 +28,14 @@ public class SidebarWidget extends WidgetVBox {
 	@I18DataGen(lang = "en_us", string = "Devices")
 	@I18DataGen(lang = "de_de", string = "Geräte")
 	public static final I18String DEVICES = SmartHome.guiString("home.sidebar", "devices");
+
+	@I18DataGen(lang = "en_us", string = "Dashboards")
+	@I18DataGen(lang = "de_de", string = "Dashboards")
+	public static final I18String DASHBOARDS = SmartHome.guiString("home.sidebar", "dashboards");
+
+	@I18DataGen(lang = "en_us", string = "Cards")
+	@I18DataGen(lang = "de_de", string = "Karten")
+	public static final I18String CARDS = SmartHome.guiString("home.sidebar", "cards");
 
 	@I18DataGen(lang = "en_us", string = "Settings")
 	@I18DataGen(lang = "de_de", string = "Einstellungen")
@@ -50,6 +60,14 @@ public class SidebarWidget extends WidgetVBox {
 		this.addContentBox(devicesButton);
 
 		this.addFlexBox(new Spacer(100, 1), FlexAlign.START, 1);
+
+		this.dashboardsButton = new SidebarButton(HackerNoon.Solid.table, DASHBOARDS.get());
+		this.dashboardsButton.setContentId(ContentIDs.DASHBOARDS);
+		this.addContentBox(dashboardsButton);
+
+		this.cardsButton = new SidebarButton(HackerNoon.Solid.bolt, CARDS.get());
+		this.cardsButton.setContentId(ContentIDs.CARDS);
+		this.addContentBox(cardsButton);
 
 		this.settingsButton = new SidebarButton(HackerNoon.Solid.cog, SETTINGS.get());
 		this.settingsButton.setContentId(ContentIDs.SETTINGS);

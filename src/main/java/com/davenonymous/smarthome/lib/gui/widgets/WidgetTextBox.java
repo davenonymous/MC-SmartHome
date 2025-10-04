@@ -1,11 +1,13 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -40,11 +42,16 @@ public class WidgetTextBox extends Widget {
 		}
 
 		int lineWidth = wordWrap ? width : Integer.MAX_VALUE;
-		int guessedHeight = GUIHelper.wordWrapHeight(Minecraft.getInstance().font, text, style, lineWidth, lineHeight);
+		if(this.font != null) {
+			int lines = GUIHelper.wordWrapLines(Minecraft.getInstance().font, text, style, lineWidth);
+			SmartHome.LOGGER.info("{}: {} lines for text '{}'", font.id().getPath(), lines, text);
+		}
+		int guessedHeight = GUIHelper.wordWrapHeight(Minecraft.getInstance().font, text, style, lineWidth, (int)(lineHeight * scale));
 		if(guessedHeight < 1) {
 			guessedHeight = lineHeight;
 		}
-		this.setHeight(guessedHeight);
+
+		this.setHeight(Math.round(guessedHeight * scale));
 	}
 
 	public void autoWidth() {
@@ -52,11 +59,11 @@ public class WidgetTextBox extends Widget {
 	}
 
 	public void autoWidth(int maxWidth) {
-		var guessedWidth = GUIHelper.longestWrappedLine(Minecraft.getInstance().font, FormattedText.of(text, style), maxWidth) + 2;
+		var guessedWidth = GUIHelper.longestWrappedLine(Minecraft.getInstance().font, FormattedText.of(text, style), style, (int)(maxWidth / scale)) + 2;
 		if(guessedWidth < 1) {
 			guessedWidth = 2;
 		}
-		this.setWidth(guessedWidth );
+		this.setWidth(Math.round(guessedWidth * scale));
 	}
 
 	public WidgetTextBox setStyle(Function<Style, Style> style) {
@@ -104,6 +111,27 @@ public class WidgetTextBox extends Widget {
 	}
 
 	@Override
+	public void renderExtraDebugInfo(GuiGraphics pGuiGraphics, Window window) {
+		if(this.font != null) {
+			var mcFont = Minecraft.getInstance().font;
+			String fontName = "Font: " + this.font.id().getPath();
+			pGuiGraphics.drawString(mcFont, fontName, 0, 30, 0xFF8000);
+
+			String visibleWidth = "Line Height: " + this.font.lineHeight();
+			pGuiGraphics.drawString(mcFont, visibleWidth, 0, 40, 0xFF8000);
+
+			String wrodWrapInfo = "Word Wrap: " + (this.wordWrap ? "ON" : "OFF");
+			pGuiGraphics.drawString(mcFont, wrodWrapInfo, 0, 50, 0xFF8000);
+
+			if(this.wordWrap && this.style != null) {
+				int lines = GUIHelper.wordWrapLines(mcFont, this.text, this.style, Math.round(this.width / scale));
+				String linesInfo = "Lines: " + lines;
+				pGuiGraphics.drawString(mcFont, linesInfo, 0, 60, 0xFF8000);
+			}
+		}
+	}
+
+	@Override
 	public void draw(GuiGraphics pGuiGraphics, Window window) {
 		if(text == null) {
 			return;
@@ -119,9 +147,9 @@ public class WidgetTextBox extends Widget {
 			yOffset = font.yOffset();
 		}
 
-		int lineWidth = wordWrap ? (int)(width * scale) : Integer.MAX_VALUE;
-		pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width * scale), getActualY() + (int)(height * scale));
-		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), 0, -yOffset, lineWidth, lineHeight, textColor);
+		int lineWidth = wordWrap ? Math.round(width / scale) : Integer.MAX_VALUE;
+		pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width / scale), getActualY() + (int)(height / scale));
+		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, textColor);
 		pGuiGraphics.disableScissor();
 
 		RenderSystem.disableBlend();

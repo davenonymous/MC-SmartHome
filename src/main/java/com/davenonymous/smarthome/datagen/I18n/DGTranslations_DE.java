@@ -38,11 +38,7 @@ public class DGTranslations_DE extends DGBaseTranslations {
 		add(EnergyStorage.ID, "description", "Erfasst gespeicherte Forge-Energie.");
 
 		add(FluidStorage.ID, "name", "Flüssigkeits Speicher");
-		add(FluidStorage.ID, "description", "Erfasst gespeicherte Flüssigkeiten.");
-
-
-		add(ZoneSizeEditor.labelScale, "Skalieren");
-		add(ZoneSizeEditor.labelMove, "Verschieben");
+		add(FluidStorage.ID, "description", "Erfasst gespeicherte Flüssigkeiten.");;
 	}
 
 

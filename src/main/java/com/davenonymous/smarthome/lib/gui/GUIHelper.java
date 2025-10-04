@@ -29,6 +29,7 @@ import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GUIHelper {
@@ -307,19 +308,25 @@ public class GUIHelper {
 		drawArrowHead(guiGraphics, x1, y1, x2, y2, color);
 	}
 
-	public static int longestWrappedLine(Font font, FormattedText text, int lineWidth) {
+	public static int longestWrappedLine(Font font, FormattedText text, Style style, int lineWidth) {
+		List<FormattedCharSequence> customWrap = Language.getInstance().getVisualOrder(font.getSplitter().splitLines(text, lineWidth, style));
 		int longest = 0;
-		for(FormattedCharSequence formattedcharsequence : font.split(text, lineWidth)) {
+		for(FormattedCharSequence formattedcharsequence : customWrap) {
 			longest = Math.max(longest, font.width(formattedcharsequence));
 		}
 		return longest;
 	}
 
-	public static void drawWordWrap(GuiGraphics pGuiGraphics, Font font, FormattedText text, int x, int y, int lineWidth, int lineHeight, int color) {
-		for(FormattedCharSequence formattedcharsequence : font.split(text, lineWidth)) {
+	public static void drawWordWrap(GuiGraphics pGuiGraphics, Font font, FormattedText text, Style style, int x, int y, int lineWidth, int lineHeight, int color) {
+		List<FormattedCharSequence> customWrap = Language.getInstance().getVisualOrder(font.getSplitter().splitLines(text, lineWidth, style));
+		for(FormattedCharSequence formattedcharsequence : customWrap) {
 			pGuiGraphics.drawString(font, formattedcharsequence, x, y, color, false);
 			y += lineHeight + 1;
 		}
+	}
+
+	public static int wordWrapLines(Font font, String text, Style style, int maxWidth) {
+		return Language.getInstance().getVisualOrder(font.getSplitter().splitLines(text, maxWidth, style)).size();
 	}
 
 	public static int wordWrapHeight(Font font, String text, Style style, int maxWidth, int lineHeight) {

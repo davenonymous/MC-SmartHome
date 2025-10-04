@@ -4,6 +4,7 @@ import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 
@@ -17,6 +18,7 @@ public class HeaderWidget extends WidgetHBox {
 		this.setHeight(20);
 
 		this.titleText = new WidgetTextBox(HomeScreen.TITLE.get());
+		this.titleText.setFont(ModFonts.NOKIA3);
 		this.titleText.setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		this.titleText.setWordWrap(true);
 		this.addFlexBox(this.titleText, FlexAlign.CENTER, 1);

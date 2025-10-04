@@ -9,6 +9,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.networking.actions.SetSelectedHomePayload;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -31,7 +32,7 @@ public class HomeSelectWidget extends WidgetHBox {
 
 		this.homeNameText = new WidgetTextBox("Home name");
 		this.homeNameText.setWordWrap(true);
-		//this.homeNameText.setFont(ModFonts.DOS);
+		this.homeNameText.setFont(ModFonts.SAMSUNG);
 		this.homeNameText.setTextColor(ChatFormatting.DARK_GRAY.getColor());
 		this.addContentBox(this.homeNameText, FlexAlign.CENTER);
 

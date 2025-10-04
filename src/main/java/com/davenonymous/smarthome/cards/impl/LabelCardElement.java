@@ -8,6 +8,7 @@ import com.davenonymous.smarthome.cards.annotations.HomeCardElementId;
 import com.davenonymous.smarthome.cards.annotations.HomeCardElementName;
 import com.davenonymous.smarthome.cards.annotations.HomeCardElementStreamCodec;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -23,6 +24,8 @@ public record LabelCardElement(String text, int color, boolean dropShadow) imple
 	public static final ResourceLocation ID = SmartHome.resource("card_element/text");
 
 	@HomeCardElementName
+	@I18DataGen(lang = "en_us", string = "Text")
+	@I18DataGen(lang = "de_de", string = "Text")
 	public static final I18String NAME = SmartHome.dataString("card_element.name", "text");
 
 	@HomeCardElementCodec

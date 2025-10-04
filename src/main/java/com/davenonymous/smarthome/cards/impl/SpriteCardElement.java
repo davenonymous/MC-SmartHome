@@ -9,6 +9,7 @@ import com.davenonymous.smarthome.cards.annotations.HomeCardElementName;
 import com.davenonymous.smarthome.cards.annotations.HomeCardElementStreamCodec;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -24,6 +25,8 @@ public record SpriteCardElement(ResourceLocation sprite, int color, float scale)
 	public static final ResourceLocation ID = SmartHome.resource("card_element/sprite");
 
 	@HomeCardElementName
+	@I18DataGen(lang = "en_us", string = "Icon")
+	@I18DataGen(lang = "de_de", string = "Symbol")
 	public static final I18String NAME = SmartHome.dataString("card_element.name", "sprite");
 
 	@HomeCardElementCodec

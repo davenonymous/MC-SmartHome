@@ -102,7 +102,7 @@ public final class WrappedStringTooltipComponent implements SerializableTooltipC
 
 	@Override
 	public int getWidth(Font font) {
-		return GUIHelper.longestWrappedLine(font, FormattedText.of(message, style()), maxWidth);
+		return GUIHelper.longestWrappedLine(font, FormattedText.of(message, style()), style(), maxWidth);
 	}
 
 	@Override
@@ -114,7 +114,7 @@ public final class WrappedStringTooltipComponent implements SerializableTooltipC
 			yOffset = this.font.yOffset();
 		}
 
-		GUIHelper.drawWordWrap(guiGraphics, font, FormattedText.of(message, style()), x, y-yOffset, maxWidth, lineHeight, color);
+		GUIHelper.drawWordWrap(guiGraphics, font, FormattedText.of(message, style()), style(), x, y-yOffset, maxWidth, lineHeight, color);
 	}
 
 	@Override
