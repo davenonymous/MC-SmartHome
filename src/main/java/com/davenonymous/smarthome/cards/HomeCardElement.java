@@ -10,6 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.function.Function;
 
 public interface HomeCardElement<T extends Widget> {
@@ -30,6 +31,10 @@ public interface HomeCardElement<T extends Widget> {
 	default MapCodec<? extends HomeCardElement<?>> codec() {
 		//noinspection unchecked
 		return ModCardElements.CODEC_BY_CLASS.get(this.getClass());
+	}
+
+	default List<Widget> createSettingWidgets() {
+		return List.of();
 	}
 
 	T createWidget();

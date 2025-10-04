@@ -42,10 +42,6 @@ public class WidgetTextBox extends Widget {
 		}
 
 		int lineWidth = wordWrap ? width : Integer.MAX_VALUE;
-		if(this.font != null) {
-			int lines = GUIHelper.wordWrapLines(Minecraft.getInstance().font, text, style, lineWidth);
-			SmartHome.LOGGER.info("{}: {} lines for text '{}'", font.id().getPath(), lines, text);
-		}
 		int guessedHeight = GUIHelper.wordWrapHeight(Minecraft.getInstance().font, text, style, lineWidth, (int)(lineHeight * scale));
 		if(guessedHeight < 1) {
 			guessedHeight = lineHeight;

@@ -87,6 +87,10 @@ public class HomeCore {
 		return foundDevices;
 	}
 
+	public Optional<HomeCard> getCard(UUID cardId) {
+		return cards.stream().filter(c -> c.id().equals(cardId)).findFirst();
+	}
+
 	public Optional<Pair<HomeZone, ConfiguredDevice>> getDevice(UUID deviceId) {
 		for(HomeZone zone : zones) {
 			var device = zone.getDevice(deviceId);
@@ -227,6 +231,12 @@ public class HomeCore {
 		zone.setHome(this);
 		zones.add(zone);
 		updateBounds();
+		return this;
+	}
+
+	public HomeCore addCard(HomeCard card) {
+		cards.removeIf(c -> c.id().equals(card.id()));
+		cards.add(card);
 		return this;
 	}
 
