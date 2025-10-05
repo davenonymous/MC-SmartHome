@@ -43,7 +43,7 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 
 	@HomeCardElementCodec
 	public static final MapCodec<LabelCardElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-		UUIDUtil.CODEC.fieldOf("id").forGetter(LabelCardElement::id),
+		UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(LabelCardElement::id),
 		Codec.STRING.fieldOf("text").forGetter(LabelCardElement::text),
 		Codec.INT.fieldOf("color").orElse(0xFFFFFF).forGetter(LabelCardElement::color),
 		Codec.BOOL.fieldOf("drop_shadow").orElse(true).forGetter(LabelCardElement::dropShadow)

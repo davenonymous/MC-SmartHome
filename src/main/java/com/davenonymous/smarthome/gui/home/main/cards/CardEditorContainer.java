@@ -41,6 +41,7 @@ public class CardEditorContainer extends WidgetPanel {
 
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
 			updateCardList();
+			updateWidgetSizes();
 			return WidgetEventResult.HANDLED;
 		});
 	}

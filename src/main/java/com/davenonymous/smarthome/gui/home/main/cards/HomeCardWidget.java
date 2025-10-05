@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
@@ -19,12 +20,14 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.phys.Vec2;
 
 import java.util.UUID;
 
@@ -124,17 +127,46 @@ public class HomeCardWidget extends WidgetPanel {
 			this.setSize(newCard.width(), newCard.height());
 
 			for(var elementEntry : newCard.elements().entrySet()) {
-				var elementId = elementEntry.getKey();
-				var element = elementEntry.getValue();
+				UUID elementId = elementEntry.getKey();
+				Pair<Vec2, HomeCardElement<?>> element = elementEntry.getValue();
+
 				var position = element.getFirst();
-				var widget = element.getSecond().createWidget();
-				if(widget != null) {
-					widget.setPosition((int)position.x, (int)position.y);
-					contentArea.add(widget);
+				var elementWidget = element.getSecond().createWidget();
+				if(elementWidget != null) {
+					elementWidget.setPosition((int)position.x, (int)position.y);
 
 					if(editMode) {
-						makeWidgetMovable(widget, elementId);
+						String elementIdString = elementId.toString();
+
+						elementWidget.addListener(
+							MouseDraggedEvent.class, (event, widget) -> {
+								if(getGUI().isDragging() != null) {
+									// If the GUI is already being dragged, ignore this event
+									return WidgetEventResult.CONTINUE_PROCESSING;
+								}
+
+								int newScaleHandleX = Math.round(getMouseX() - contentArea.x - (widget.width / 2f));
+								int newScaleHandleY = Math.round(getMouseY() - contentArea.y - (widget.height / 2f));
+
+								elementWidget.setPosition(
+									newScaleHandleX,
+									newScaleHandleY
+								);
+								return WidgetEventResult.CONTINUE_PROCESSING;
+							});
+
+						elementWidget.addListener(
+							MouseReleasedEvent.class, (event, widget) -> {
+								if(!elementWidget.isHovered()) {
+									return WidgetEventResult.CONTINUE_PROCESSING;
+								}
+
+								this.fireEvent(new WidgetMovedEvent(elementWidget, elementId));
+								return WidgetEventResult.HANDLED;
+							});
 					}
+
+					contentArea.add(elementWidget);
 				}
 			}
 		}
@@ -144,32 +176,7 @@ public class HomeCardWidget extends WidgetPanel {
 	}
 
 	private void makeWidgetMovable(Widget movableWidget, UUID elementId) {
-		movableWidget.addListener(
-			MouseReleasedEvent.class, (event, widget) -> {
-				if(!this.isHovered()) {
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
 
-				this.fireEvent(new WidgetMovedEvent(movableWidget, elementId));
-				return WidgetEventResult.HANDLED;
-			});
-
-		movableWidget.addListener(
-			MouseDraggedEvent.class, (event, widget) -> {
-				if(getGUI().isDragging() != null) {
-					// If the GUI is already being dragged, ignore this event
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
-
-				int newScaleHandleX = Math.round(getMouseX() - contentArea.x - (widget.width / 2f));
-				int newScaleHandleY = Math.round(getMouseY() - contentArea.y - (widget.height / 2f));
-
-				widget.setPosition(
-					newScaleHandleX,
-					newScaleHandleY
-				);
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			});
 	}
 
 	public WidgetSprite icon() {

@@ -35,12 +35,6 @@ public class AddNewCardButtonWidget extends WidgetPanel {
 		newCardNameInput.nativeWidget().setHint(Component.translatable(CLICK_TO_RENAME.key()));
 		newCardNameInput.nativeWidget().setBordered(false);
 		newCardNameInput.nativeWidget().setTextColor(ChatFormatting.DARK_GRAY.getColor());
-		newCardNameInput.addListener(
-			ValueChangedEvent.class, (event, widget) -> {
-
-				return WidgetEventResult.HANDLED;
-			});
-
 		this.add(newCardNameInput);
 
 
@@ -66,6 +60,8 @@ public class AddNewCardButtonWidget extends WidgetPanel {
 
 			PacketDistributor.sendToServer(new AddNewCardPayload(HomeScreen.get().selectedHome.id(), newCardNameInput.getValue()));
 			newCardNameInput.setValue("");
+			newCardNameInput.nativeWidget().setFocused(false);
+			newCardNameInput.nativeWidget().setHint(Component.translatable(CLICK_TO_RENAME.key()));
 			return WidgetEventResult.HANDLED;
 		});
 

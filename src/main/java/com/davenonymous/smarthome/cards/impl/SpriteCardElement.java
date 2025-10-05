@@ -40,7 +40,7 @@ public record SpriteCardElement(UUID id, ResourceLocation sprite, int color, flo
 
 	@HomeCardElementCodec
 	public static final MapCodec<SpriteCardElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-		UUIDUtil.CODEC.fieldOf("id").forGetter(SpriteCardElement::id),
+		UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(SpriteCardElement::id),
 		ResourceLocation.CODEC.fieldOf("text").forGetter(SpriteCardElement::sprite),
 		Codec.INT.optionalFieldOf("color", 0xFFFFFF).forGetter(SpriteCardElement::color),
 		Codec.FLOAT.optionalFieldOf("scale",1.0f).forGetter(SpriteCardElement::scale)

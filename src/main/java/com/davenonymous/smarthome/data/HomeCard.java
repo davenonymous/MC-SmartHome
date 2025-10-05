@@ -105,7 +105,7 @@ public record HomeCard(UUID id, String label, ResourceLocation icon, Vec2 size, 
 	);
 
 	public static final MapCodec<HomeCard> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			UUIDUtil.CODEC.fieldOf("id").forGetter(HomeCard::id),
+			UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeCard::id),
 			Codec.STRING.fieldOf("label").forGetter(HomeCard::label),
 			ResourceLocation.CODEC.fieldOf("icon").forGetter(HomeCard::icon),
 			MoreCodecs.VEC2_CODEC.codec().optionalFieldOf("size", new Vec2(144, 72)).forGetter(HomeCard::size),
