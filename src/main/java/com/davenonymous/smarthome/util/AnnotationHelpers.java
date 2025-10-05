@@ -7,6 +7,7 @@ import org.objectweb.asm.Type;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
@@ -23,6 +24,23 @@ public class AnnotationHelpers {
 		var field = fields.getFirst();
 		if(mustBeStatic && !Modifier.isStatic(field.getModifiers())) {
 			throw new SensorLoadException("Field annotated with " + annotation.getSimpleName() + " in class " + clazz.getName() + " is not static");
+		}
+
+		return field;
+	}
+
+	public static Method getSingularMethod(Class<?> clazz, Class<? extends Annotation> annotation, boolean mustBeStatic) throws SensorLoadException {
+		var methods = Arrays.stream(clazz.getDeclaredMethods()).filter(method -> method.isAnnotationPresent(annotation)).toList();
+		if(methods.isEmpty()) {
+			throw new SensorLoadException("No method annotated with " + annotation.getSimpleName() + " in class " + clazz.getName());
+		}
+		if(methods.size() > 1) {
+			throw new SensorLoadException("Multiple methods annotated with " + annotation.getSimpleName() + " in class " + clazz.getName());
+		}
+
+		var field = methods.getFirst();
+		if(mustBeStatic && !Modifier.isStatic(field.getModifiers())) {
+			throw new SensorLoadException("Method annotated with " + annotation.getSimpleName() + " in class " + clazz.getName() + " is not static");
 		}
 
 		return field;

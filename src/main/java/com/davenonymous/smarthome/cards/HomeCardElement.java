@@ -20,17 +20,17 @@ public interface HomeCardElement<T extends Widget> {
 	}
 
 	default I18String getDisplayName() {
-		return ModCardElements.NAME_BY_CLASS.get(this.getClass());
+		return ModCardElements.NAME_BY_ID.get(this.getId());
 	}
 
 	default StreamCodec<RegistryFriendlyByteBuf, ? extends HomeCardElement<?>> streamCodec() {
 		//noinspection unchecked
-		return ModCardElements.STREAM_CODEC_BY_CLASS.get(this.getClass());
+		return ModCardElements.STREAM_CODEC_BY_ID.get(this.getId());
 	}
 
 	default MapCodec<? extends HomeCardElement<?>> codec() {
 		//noinspection unchecked
-		return ModCardElements.CODEC_BY_CLASS.get(this.getClass());
+		return ModCardElements.CODEC_BY_ID.get(this.getId());
 	}
 
 	default List<Widget> createSettingWidgets() {

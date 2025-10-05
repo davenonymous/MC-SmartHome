@@ -3,10 +3,8 @@ package com.davenonymous.smarthome.cards.impl;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.HomeCardElement;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementCodec;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementId;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementName;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementStreamCodec;
+import com.davenonymous.smarthome.cards.annotations.*;
+import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
@@ -24,9 +22,21 @@ public record LabelCardElement(String text, int color, boolean dropShadow) imple
 	public static final ResourceLocation ID = SmartHome.resource("card_element/text");
 
 	@HomeCardElementName
-	@I18DataGen(lang = "en_us", string = "Text")
+	@I18DataGen(lang = "en_us", string = "Label")
 	@I18DataGen(lang = "de_de", string = "Text")
 	public static final I18String NAME = SmartHome.dataString("card_element.name", "text");
+
+	@I18DataGen(lang = "en_us", string = "New label")
+	@I18DataGen(lang = "de_de", string = "Neuer Text")
+	public static final I18String DEFAULT_LABEL = SmartHome.dataString("card_element.name", "default_label");
+
+	@HomeCardElementDefault
+	public static LabelCardElement createDefault() {
+		return new LabelCardElement(DEFAULT_LABEL.get(), 0xFFFFFFFF, false);
+	}
+
+	@HomeCardElementIcon
+	public static final ResourceLocation ICON = HackerNoon.Regular.italics;
 
 	@HomeCardElementCodec
 	public static final MapCodec<LabelCardElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

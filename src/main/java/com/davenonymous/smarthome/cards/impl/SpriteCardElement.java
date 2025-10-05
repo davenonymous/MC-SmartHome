@@ -3,10 +3,8 @@ package com.davenonymous.smarthome.cards.impl;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.cards.SmartHomeCardElement;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementCodec;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementId;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementName;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementStreamCodec;
+import com.davenonymous.smarthome.cards.annotations.*;
+import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -28,6 +26,14 @@ public record SpriteCardElement(ResourceLocation sprite, int color, float scale)
 	@I18DataGen(lang = "en_us", string = "Icon")
 	@I18DataGen(lang = "de_de", string = "Symbol")
 	public static final I18String NAME = SmartHome.dataString("card_element.name", "sprite");
+
+	@HomeCardElementIcon
+	public static final ResourceLocation ICON = HackerNoon.Regular.image;
+
+	@HomeCardElementDefault
+	public static SpriteCardElement createDefault() {
+		return new SpriteCardElement(HackerNoon.Regular.star, 0xFFFFFFFF, 0.5f);
+	}
 
 	@HomeCardElementCodec
 	public static final MapCodec<SpriteCardElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

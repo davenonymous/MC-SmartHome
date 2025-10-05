@@ -3,8 +3,9 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.SpriteSelectedEvent;
+import com.davenonymous.smarthome.gui.events.ScaleHandleResizedEvent;
+import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
-import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -17,7 +18,7 @@ public class CardEditorWidget extends WidgetPanel {
 	HomeCardWidget cardWidget = null;
 
 	private ElementSettingsWidget elementSettingsWidget;
-	private CardSettingsWidget cardSettingsWidget;
+	private CardElementsContainer cardElementsContainer;
 
 	private WidgetSprite scaleHandle;
 
@@ -30,78 +31,9 @@ public class CardEditorWidget extends WidgetPanel {
 		elementSettingsWidget.setVisible(false);
 		this.add(elementSettingsWidget);
 
-		cardSettingsWidget = new CardSettingsWidget();
-		cardSettingsWidget.setVisible(false);
-		this.add(cardSettingsWidget);
-
-		scaleHandle = new WidgetSprite(HackerNoon.Regular.expand);
-		scaleHandle.setColor(0xFFAAAAAA, 0xFFFFFFFF);
-		scaleHandle.setVisible(false);
-
-		scaleHandle.addListener(MouseEnterEvent.class, (event, widget) -> {
-			scaleHandle.setScale(1.5f);
-			scaleHandle.setPosition(
-				this.cardWidget.x() + this.cardWidget.width - scaleHandle.width / 2,
-				this.cardWidget.y() + this.cardWidget.height - scaleHandle.height / 2
-			);
-			return WidgetEventResult.HANDLED;
-		});
-
-		scaleHandle.addListener(MouseExitEvent.class, (event, widget) -> {
-			scaleHandle.setScale(1f);
-			scaleHandle.setPosition(
-				this.cardWidget.x() + this.cardWidget.width - scaleHandle.width / 2,
-				this.cardWidget.y() + this.cardWidget.height - scaleHandle.height / 2
-			);
-			return WidgetEventResult.HANDLED;
-		});
-
-		scaleHandle.addListener(MouseReleasedEvent.class, (event, widget) -> {
-			if(!scaleHandle.isHovered()) {
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			}
-			scaleHandle.setScale(1f);
-			scaleHandle.setPosition(
-				this.cardWidget.x() + this.cardWidget.width - scaleHandle.width / 2,
-				this.cardWidget.y() + this.cardWidget.height - scaleHandle.height / 2
-			);
-			PacketDistributor.sendToServer(new SetCardSettingsPayload(
-				HomeScreen.get().selectedHome.id(),
-				card().id(),
-				card().label(),
-				card().icon(),
-				new Vec2(this.cardWidget.width, this.cardWidget.height)
-			));
-			this.updateWidgetSizes();
-			return WidgetEventResult.HANDLED;
-		});
-
-		scaleHandle.addListener(
-			MouseDraggedEvent.class, (event, widget) -> {
-				if(getGUI().isDragging() != null) {
-					// If the GUI is already being dragged, ignore this event
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
-
-				if(this.cardWidget == null) {
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
-
-				int newScaleHandleX = Math.round(getMouseX() - scaleHandle.width / 2f);
-				int newScaleHandleY = Math.round(getMouseY() - scaleHandle.height / 2f);
-				var oldScaleX = scaleHandle.x();
-				var oldScaleY = scaleHandle.y();
-				scaleHandle.setPosition(newScaleHandleX, newScaleHandleY);
-
-				var extraWidth = newScaleHandleX - oldScaleX;
-				var extraHeight = newScaleHandleY - oldScaleY;
-				this.cardWidget.setWidth(this.cardWidget.width + extraWidth);
-				this.cardWidget.setHeight(this.cardWidget.height + extraHeight);
-
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			});
-
-		this.add(scaleHandle);
+		cardElementsContainer = new CardElementsContainer();
+		cardElementsContainer.setVisible(false);
+		this.add(cardElementsContainer);
 
 		this.setCardWidget(cardWidget);
 
@@ -115,6 +47,31 @@ public class CardEditorWidget extends WidgetPanel {
 			setCardWidget(optCurrentCard.get().createWidget(true));
 			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
+	}
+
+	private CardEditorWidget createScaleHandle() {
+		if(scaleHandle != null || cardWidget == null) {
+			return this;
+		}
+
+		scaleHandle = new ScaleHandle(cardWidget);
+		scaleHandle.setColor(0xFFAAAAAA, 0xFFFFFFFF);
+		scaleHandle.setVisible(false);
+
+		scaleHandle.addListener(ScaleHandleResizedEvent.class, (event, widget) -> {
+			PacketDistributor.sendToServer(new SetCardSettingsPayload(
+				HomeScreen.get().selectedHome.id(),
+				card().id(),
+				card().label(),
+				card().icon(),
+				new Vec2(event.attachedTo().width, event.attachedTo().height)
+			));
+
+			return WidgetEventResult.HANDLED;
+		});
+
+		this.add(scaleHandle);
+		return this;
 	}
 
 	public HomeCard card() {
@@ -131,8 +88,10 @@ public class CardEditorWidget extends WidgetPanel {
 			}
 
 			elementSettingsWidget.setVisible(false);
-			cardSettingsWidget.setVisible(false);
-			scaleHandle.setVisible(false);
+			cardElementsContainer.setVisible(false);
+			if(scaleHandle != null) {
+				scaleHandle.setVisible(false);
+			}
 			updateWidgetSizes();
 			return this;
 		}
@@ -187,16 +146,16 @@ public class CardEditorWidget extends WidgetPanel {
 			});
 
 			this.add(newCardWidget);
+			newCardWidget.zLevel++;
+			this.createScaleHandle();
 		} else {
 			this.cardWidget.updateCard(newCardWidget.homeCard);
 		}
 
 		cardWidget.setVisible(true);
 		elementSettingsWidget.setVisible(true);
-		cardSettingsWidget.setVisible(true);
+		cardElementsContainer.setVisible(true);
 		scaleHandle.setVisible(true);
-
-		cardSettingsWidget.setCard(newCardWidget.homeCard);
 
 		updateWidgetSizes();
 		return this;
@@ -206,7 +165,7 @@ public class CardEditorWidget extends WidgetPanel {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		cardSettingsWidget.setPosition(this.width - cardSettingsWidget.width - 4, 4);
+		cardElementsContainer.setPosition(this.width - cardElementsContainer.width - 4, 4);
 		elementSettingsWidget.setPosition(this.width - elementSettingsWidget.width - 4, this.height - elementSettingsWidget.height - 4);
 
 		if(cardWidget != null) {
@@ -221,12 +180,11 @@ public class CardEditorWidget extends WidgetPanel {
 			cardWidget.setWidth(Math.max(cardWidget.homeCard.width(), 50));
 			cardWidget.setHeight(Math.max(cardWidget.homeCard.height(), 50));
 
-			cardWidget.setPosition((this.width - cardWidget.width) / 2, (this.height - cardWidget.height) / 2);
+			cardWidget.setPosition((this.width - elementSettingsWidget.width - cardWidget.width) / 2, (this.height - cardWidget.height) / 2);
+		}
 
-			scaleHandle.setPosition(
-				cardWidget.x() + cardWidget.width - scaleHandle.width / 2,
-				cardWidget.y() + cardWidget.height - scaleHandle.height / 2
-			);
+		if(scaleHandle != null) {
+			scaleHandle.updateWidgetSizes();
 		}
 	}
 }

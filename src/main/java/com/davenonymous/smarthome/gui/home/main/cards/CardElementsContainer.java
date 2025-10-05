@@ -1,46 +1,43 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 
-public class CardSettingsWidget extends WidgetVBox {
-	HomeCard card = null;
+public class CardElementsContainer extends WidgetVBox {
+	@I18DataGen(lang = "en_us", string = "Add element")
+	@I18DataGen(lang = "de_de", string = "Element hinzufügen")
+	public static final I18String ADD_CARD_ELEMENT_TITLE = SmartHome.guiString("home.cards.elements", "title");
 
-	@I18DataGen(lang = "en_us", string = "Card Settings")
-	@I18DataGen(lang = "de_de", string = "Karten Einstellungen")
-	public static final I18String CARD_SETTINGS_TITLE = SmartHome.guiString("home.cards.card_settings", "title");
-
-	public CardSettingsWidget() {
+	public CardElementsContainer() {
 		super();
 		this.setPadding(6);
 		this.setWidth(160);
 		this.setHeight(40);
 
-		setCard(null);
-	}
-
-	public CardSettingsWidget setCard(HomeCard card) {
-		this.card = card;
-		this.clear();
-
-		var title = new WidgetTextBox(CARD_SETTINGS_TITLE.get(), 0xFFFFFFFF);
+		var title = new WidgetTextBox(ADD_CARD_ELEMENT_TITLE.get(), 0xFFFFFFFF);
 		title.setWordWrap(true);
 		title.setFont(ModFonts.SAMSUNG);
 		title.autoWidth(this.width - 16);
 		title.autoHeight();
 		this.addContentBox(title, FlexAlign.CENTER);
 
-		this.updateWidgetSizes();
+		for(var elementType : ModCardElements.getAllSorted()) {
+			ResourceLocation id = elementType.getFirst();
+			var elementChoiceWidget = new AddCardElementSelectionWidget(id);
+			this.addContentBox(elementChoiceWidget, FlexAlign.FILL);
+		}
+
 		this.adjustSizeToContent(false);
 		this.setWidth(Math.max(this.width, 160));
-		return this;
+
 	}
 
 	@Override
