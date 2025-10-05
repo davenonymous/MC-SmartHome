@@ -1,6 +1,9 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.gui.events.AddCardElementEvent;
+import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -33,6 +36,11 @@ public class CardElementsContainer extends WidgetVBox {
 			ResourceLocation id = elementType.getFirst();
 			var elementChoiceWidget = new AddCardElementSelectionWidget(id);
 			this.addContentBox(elementChoiceWidget, FlexAlign.FILL);
+
+			elementChoiceWidget.addListener(MouseClickEvent.class, (event, widget) -> {
+				this.fireEvent(new AddCardElementEvent(id));
+				return WidgetEventResult.HANDLED;
+			});
 		}
 
 		this.adjustSizeToContent(false);

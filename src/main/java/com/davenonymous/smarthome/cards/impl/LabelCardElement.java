@@ -11,13 +11,16 @@ import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.UUID;
+
 @SmartHomeCardElement
-public record LabelCardElement(String text, int color, boolean dropShadow) implements HomeCardElement<WidgetTextBox> {
+public record LabelCardElement(UUID id, String text, int color, boolean dropShadow) implements HomeCardElement<WidgetTextBox> {
 	@HomeCardElementId
 	public static final ResourceLocation ID = SmartHome.resource("card_element/text");
 
@@ -32,7 +35,7 @@ public record LabelCardElement(String text, int color, boolean dropShadow) imple
 
 	@HomeCardElementDefault
 	public static LabelCardElement createDefault() {
-		return new LabelCardElement(DEFAULT_LABEL.get(), 0xFFFFFFFF, false);
+		return new LabelCardElement(UUID.randomUUID(), DEFAULT_LABEL.get(), 0xFFFFFFFF, false);
 	}
 
 	@HomeCardElementIcon
@@ -40,13 +43,15 @@ public record LabelCardElement(String text, int color, boolean dropShadow) imple
 
 	@HomeCardElementCodec
 	public static final MapCodec<LabelCardElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			Codec.STRING.fieldOf("text").forGetter(LabelCardElement::text),
-			Codec.INT.fieldOf("color").orElse(0xFFFFFF).forGetter(LabelCardElement::color),
-			Codec.BOOL.fieldOf("drop_shadow").orElse(true).forGetter(LabelCardElement::dropShadow)
+		UUIDUtil.CODEC.fieldOf("id").forGetter(LabelCardElement::id),
+		Codec.STRING.fieldOf("text").forGetter(LabelCardElement::text),
+		Codec.INT.fieldOf("color").orElse(0xFFFFFF).forGetter(LabelCardElement::color),
+		Codec.BOOL.fieldOf("drop_shadow").orElse(true).forGetter(LabelCardElement::dropShadow)
 	).apply(instance, LabelCardElement::new));
 
 	@HomeCardElementStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, LabelCardElement> STREAM_CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, LabelCardElement::id,
 		ByteBufCodecs.STRING_UTF8, LabelCardElement::text,
 		ByteBufCodecs.INT, LabelCardElement::color,
 		ByteBufCodecs.BOOL, LabelCardElement::dropShadow,

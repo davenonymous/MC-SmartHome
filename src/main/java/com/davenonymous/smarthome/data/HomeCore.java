@@ -294,8 +294,8 @@ public class HomeCore {
 			Codec.STRING.fieldOf("name").forGetter(HomeCore::name),
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones),
 			HomeSettings.CODEC.codec().optionalFieldOf("settings", new HomeSettings()).forGetter(HomeCore::settings),
-			HomeCard.LIST_CODEC.optionalFieldOf("cards", List.of()).forGetter(HomeCore::cards),
-			HomeDashboard.LIST_CODEC.optionalFieldOf("dashboards", List.of()).forGetter(HomeCore::dashboards)
+			HomeCard.CODEC.codec().listOf().optionalFieldOf("cards", new ArrayList<>()).forGetter(HomeCore::cards),
+			HomeDashboard.CODEC.codec().listOf().optionalFieldOf("dashboards", new ArrayList<>()).forGetter(HomeCore::dashboards)
 	).apply(instance, HomeCore::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = BiggerStreamCodec.composite(

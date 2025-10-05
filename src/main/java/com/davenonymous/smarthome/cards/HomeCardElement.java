@@ -11,31 +11,34 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 
 public interface HomeCardElement<T extends Widget> {
 
-	default ResourceLocation getId() {
+	default ResourceLocation getType() {
 		return ModCardElements.ID_BY_CLASS.get(this.getClass());
 	}
 
 	default I18String getDisplayName() {
-		return ModCardElements.NAME_BY_ID.get(this.getId());
+		return ModCardElements.NAME_BY_ID.get(this.getType());
 	}
 
 	default StreamCodec<RegistryFriendlyByteBuf, ? extends HomeCardElement<?>> streamCodec() {
 		//noinspection unchecked
-		return ModCardElements.STREAM_CODEC_BY_ID.get(this.getId());
+		return ModCardElements.STREAM_CODEC_BY_ID.get(this.getType());
 	}
 
 	default MapCodec<? extends HomeCardElement<?>> codec() {
 		//noinspection unchecked
-		return ModCardElements.CODEC_BY_ID.get(this.getId());
+		return ModCardElements.CODEC_BY_ID.get(this.getType());
 	}
 
 	default List<Widget> createSettingWidgets() {
 		return List.of();
 	}
+
+	UUID id();
 
 	T createWidget();
 

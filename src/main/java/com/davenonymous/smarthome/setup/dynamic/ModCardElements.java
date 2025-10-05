@@ -43,7 +43,7 @@ public class ModCardElements {
 		return createDefault(ID_BY_CLASS.get(clazz));
 	}
 
-	public static <T> T createDefault(ResourceLocation id) {
+	public static <T extends HomeCardElement<?>> T createDefault(ResourceLocation id) {
 		Method constructor = DEFAULT_CONSTRUCTOR_BY_ID.get(id);
 		if(constructor == null) {
 			throw new IllegalArgumentException("No default constructor found for card element id: " + id);

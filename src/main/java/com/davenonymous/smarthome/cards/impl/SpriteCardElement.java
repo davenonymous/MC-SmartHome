@@ -12,13 +12,16 @@ import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.UUID;
+
 @SmartHomeCardElement
-public record SpriteCardElement(ResourceLocation sprite, int color, float scale) implements HomeCardElement<WidgetSprite> {
+public record SpriteCardElement(UUID id, ResourceLocation sprite, int color, float scale) implements HomeCardElement<WidgetSprite> {
 	@HomeCardElementId
 	public static final ResourceLocation ID = SmartHome.resource("card_element/sprite");
 
@@ -32,18 +35,20 @@ public record SpriteCardElement(ResourceLocation sprite, int color, float scale)
 
 	@HomeCardElementDefault
 	public static SpriteCardElement createDefault() {
-		return new SpriteCardElement(HackerNoon.Regular.star, 0xFFFFFFFF, 0.5f);
+		return new SpriteCardElement(UUID.randomUUID(), HackerNoon.Regular.star, 0xFFFFFFFF, 0.5f);
 	}
 
 	@HomeCardElementCodec
 	public static final MapCodec<SpriteCardElement> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-			ResourceLocation.CODEC.fieldOf("text").forGetter(SpriteCardElement::sprite),
-			Codec.INT.optionalFieldOf("color", 0xFFFFFF).forGetter(SpriteCardElement::color),
-			Codec.FLOAT.optionalFieldOf("scale",1.0f).forGetter(SpriteCardElement::scale)
+		UUIDUtil.CODEC.fieldOf("id").forGetter(SpriteCardElement::id),
+		ResourceLocation.CODEC.fieldOf("text").forGetter(SpriteCardElement::sprite),
+		Codec.INT.optionalFieldOf("color", 0xFFFFFF).forGetter(SpriteCardElement::color),
+		Codec.FLOAT.optionalFieldOf("scale",1.0f).forGetter(SpriteCardElement::scale)
 	).apply(instance, SpriteCardElement::new));
 
 	@HomeCardElementStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SpriteCardElement> STREAM_CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, SpriteCardElement::id,
 		ResourceLocation.STREAM_CODEC, SpriteCardElement::sprite,
 		ByteBufCodecs.INT, SpriteCardElement::color,
 		ByteBufCodecs.FLOAT, SpriteCardElement::scale,

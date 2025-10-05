@@ -1,18 +1,30 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
+import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.events.AddCardElementEvent;
 import com.davenonymous.smarthome.gui.events.SpriteSelectedEvent;
 import com.davenonymous.smarthome.gui.events.ScaleHandleResizedEvent;
+import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
 import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
+import com.davenonymous.smarthome.networking.actions.cards.AddCardElementPayload;
+import com.davenonymous.smarthome.networking.actions.cards.SetCardElementPositionPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardSettingsPayload;
+import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.lang.reflect.InvocationTargetException;
 
 public class CardEditorWidget extends WidgetPanel {
 	HomeCardWidget cardWidget = null;
@@ -33,6 +45,19 @@ public class CardEditorWidget extends WidgetPanel {
 
 		cardElementsContainer = new CardElementsContainer();
 		cardElementsContainer.setVisible(false);
+		cardElementsContainer.addListener(AddCardElementEvent.class, (event, widget) -> {
+			if(cardWidget == null) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
+			PacketDistributor.sendToServer(new AddCardElementPayload(
+				HomeScreen.get().selectedHome.id(),
+				card().id(),
+				event.id()
+			));
+
+			return WidgetEventResult.HANDLED;
+		});
 		this.add(cardElementsContainer);
 
 		this.setCardWidget(cardWidget);
@@ -119,6 +144,7 @@ public class CardEditorWidget extends WidgetPanel {
 				}
 
 				var selector = SpriteSelectorWidget.openAt(getMouseX(), getMouseY(), ContentAlignment.TOP_LEFT);
+				selector.zLevel++;
 				selector.addListener(MouseExitEvent.class, (event2, widget2) -> {
 					this.remove(selector);
 					return WidgetEventResult.HANDLED;
@@ -142,6 +168,22 @@ public class CardEditorWidget extends WidgetPanel {
 				});
 
 				this.add(selector);
+				return WidgetEventResult.HANDLED;
+			});
+
+			this.cardWidget.addListener(WidgetMovedEvent.class, (event, widget) -> {
+				var elementId = event.elementId();
+				var elementEntry = this.cardWidget.homeCard.elements().get(elementId);
+				if(elementEntry == null) {
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				PacketDistributor.sendToServer(new SetCardElementPositionPayload(
+					HomeScreen.get().selectedHome.id(),
+					card().id(),
+					elementId,
+					new Vec2(event.movedWidget().x, event.movedWidget().y)
+				));
 				return WidgetEventResult.HANDLED;
 			});
 
@@ -185,6 +227,37 @@ public class CardEditorWidget extends WidgetPanel {
 
 		if(scaleHandle != null) {
 			scaleHandle.updateWidgetSizes();
+		}
+	}
+
+	@Override
+	public void draw(GuiGraphics guiGraphics, Window window) {
+		super.draw(guiGraphics, window);
+
+		if(this.cardWidget == null) {
+			return;
+		}
+
+		for(Widget element : cardWidget.contentArea.children()) {
+			if(!element.isHovered()) {
+				continue;
+			}
+
+			int elementX = cardWidget.x + cardWidget.contentArea.x + element.x;
+			int elementY = cardWidget.y + cardWidget.contentArea.y + element.y;
+
+			int lineStartX = cardWidget.x + cardWidget.contentArea.x - 1;
+			int lineStartY = cardWidget.y + cardWidget.contentArea.y - 1;
+
+			var pose = guiGraphics.pose();
+			pose.pushPose();
+			pose.translate(0, 0, 300);
+			guiGraphics.vLine( elementX, lineStartY, lineStartY + cardWidget.contentArea.height, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
+			guiGraphics.vLine( elementX + element.width, lineStartY, lineStartY + cardWidget.contentArea.height, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
+			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
+			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY + element.height, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
+			pose.popPose();
+			break;
 		}
 	}
 }

@@ -2,13 +2,16 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeCard;
+import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
-import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.MouseDraggedEvent;
+import com.davenonymous.smarthome.lib.gui.event.MouseReleasedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
@@ -22,6 +25,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+
+import java.util.UUID;
 
 public class HomeCardWidget extends WidgetPanel {
 	HomeCard homeCard;
@@ -118,19 +123,53 @@ public class HomeCardWidget extends WidgetPanel {
 
 			this.setSize(newCard.width(), newCard.height());
 
-
-			for(var element : newCard.elements().entrySet()) {
-				var position = element.getKey();
-				var widget = element.getValue().createWidget();
+			for(var elementEntry : newCard.elements().entrySet()) {
+				var elementId = elementEntry.getKey();
+				var element = elementEntry.getValue();
+				var position = element.getFirst();
+				var widget = element.getSecond().createWidget();
 				if(widget != null) {
 					widget.setPosition((int)position.x, (int)position.y);
 					contentArea.add(widget);
+
+					if(editMode) {
+						makeWidgetMovable(widget, elementId);
+					}
 				}
 			}
 		}
 		updateWidgetSizes();
 		icon.setSize(12, 12);
 		return this;
+	}
+
+	private void makeWidgetMovable(Widget movableWidget, UUID elementId) {
+		movableWidget.addListener(
+			MouseReleasedEvent.class, (event, widget) -> {
+				if(!this.isHovered()) {
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				this.fireEvent(new WidgetMovedEvent(movableWidget, elementId));
+				return WidgetEventResult.HANDLED;
+			});
+
+		movableWidget.addListener(
+			MouseDraggedEvent.class, (event, widget) -> {
+				if(getGUI().isDragging() != null) {
+					// If the GUI is already being dragged, ignore this event
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				int newScaleHandleX = Math.round(getMouseX() - contentArea.x - (widget.width / 2f));
+				int newScaleHandleY = Math.round(getMouseY() - contentArea.y - (widget.height / 2f));
+
+				widget.setPosition(
+					newScaleHandleX,
+					newScaleHandleY
+				);
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			});
 	}
 
 	public WidgetSprite icon() {
@@ -140,6 +179,9 @@ public class HomeCardWidget extends WidgetPanel {
 	@Override
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
+
+		contentArea.setWidth(this.width - padding * 2);
+		contentArea.setHeight(this.height - padding * 3 - topBar.height);
 
 		this.adjustSizeToContent(false);
 	}
