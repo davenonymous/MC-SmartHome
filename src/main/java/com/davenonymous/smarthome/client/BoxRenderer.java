@@ -1,19 +1,13 @@
 package com.davenonymous.smarthome.client;
 
 
-
-import com.davenonymous.smarthome.data.HomeCore;
-import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.RenderTypeHelper;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 import java.util.Collection;
 
@@ -22,7 +16,6 @@ public class BoxRenderer {
 
 
 		var bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderSystem.disableCull();
 		RenderSystem.enableBlend();
 		var consumer = bufferSource.getBuffer(OverlayLineRenderType.forThickness(lineWidth));
 		var pose = poseStack.last();
@@ -42,7 +35,6 @@ public class BoxRenderer {
 			renderLine(pose, consumer, sx, sy, sz, dx, dy, dz, r, g, b, a, r, g, b);
         }
 		RenderSystem.disableBlend();
-		RenderSystem.enableCull();
 		bufferSource.endBatch();
     }
 

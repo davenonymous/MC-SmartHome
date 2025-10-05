@@ -4,20 +4,22 @@ import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
-import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
-import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
@@ -29,6 +31,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 	BoxLineCache boxLines;
 	BoxLineCache boundBoxLines;
 
+	Map<UUID, BoxLineCache> zoneDeviceBoxes;
 	Map<UUID, BoxLineCache> zoneBoxes;
 
 	public HomeZone selectedZone = null;
@@ -65,6 +68,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 		boundBoxLines = new BoxLineCache();
 		boundBoxLines.addShape(boundShape);
 
+		zoneDeviceBoxes = new HashMap<>();
 		zoneBoxes = new HashMap<>();
 		for(var zone : selectedHome.zones()) {
 			if(zone.isDeleted()) {
@@ -73,6 +77,24 @@ public class ZoneRendererWidget extends WidgetPanel {
 			var shape = Shapes.create(zone.bounds().move(-selectedHome.shape().bounds().minX, -selectedHome.shape().bounds().minY, -selectedHome.shape().bounds().minZ).deflate(1/16d));
 			var boxLineCache = new BoxLineCache();
 			boxLineCache.addShape(shape);
+
+			var deviceLineCache = new BoxLineCache();
+			for(var device : zone.devices()) {
+				if(device.ignored() || !device.enabled()) {
+					continue;
+				}
+				var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
+				var deviceShape = deviceBlockState.getShape(Minecraft.getInstance().level, device.pos());
+				if(deviceShape.isEmpty()) {
+					continue;
+				}
+				var movedShape = deviceShape
+					.move(device.pos().getX(), device.pos().getY(), device.pos().getZ())
+					.move((int) -selectedHome.shape().bounds().minX, (int) -selectedHome.shape().bounds().minY, (int) -selectedHome.shape().bounds().minZ);
+				deviceLineCache.addShape(movedShape);
+			}
+
+			zoneDeviceBoxes.put(zone.id(), deviceLineCache);
 			zoneBoxes.put(zone.id(), boxLineCache);
 		}
 
@@ -115,7 +137,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 			return;
 		}
 
-		float scaleFactor = 8f;
+		float scaleFactor = 12f;
 		var bounds = homeShape.bounds();
 		var center = bounds.getCenter();
 
@@ -142,24 +164,52 @@ public class ZoneRendererWidget extends WidgetPanel {
 
 		pose.translate(-center.x, -center.y, -center.z);
 
-		boolean renderRegularOutline = true;
-		if(this.hoveredZone != null || this.selectedZone != null) {
-			for(var zoneEntry : zoneBoxes.entrySet()) {
-				var zoneId = zoneEntry.getKey();
-				var zoneBox = zoneEntry.getValue();
+		for(var zoneEntry : zoneBoxes.entrySet()) {
+			var zoneId = zoneEntry.getKey();
+			var zoneBox = zoneEntry.getValue();
+			var deviceBoxLines = zoneDeviceBoxes.get(zoneId);
 
-				if(hoveredZone != null && zoneId.equals(hoveredZone.id())) {
-					int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
-					BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
+			if(hoveredZone != null && zoneId.equals(hoveredZone.id())) {
+				int selectedColor = ChatFormatting.GREEN.getColor() | 0x80000000;
+				BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
+			}
+
+			if(selectedZone != null && zoneId.equals(selectedZone.id())) {
+
+				for(var device : selectedZone.devices()) {
+					if(device.ignored() || !device.enabled()) {
+						continue;
+					}
+					var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
+
+					pose.pushPose();
+					pose.translate(device.pos().getX(), device.pos().getY(), device.pos().getZ());
+					pose.translate(-selectedZone.home().shape().bounds().minX, -selectedZone.home().shape().bounds().minY, -selectedZone.home().shape().bounds().minZ);
+
+					var bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(deviceBlockState);
+					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+					Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithAO(
+						Minecraft.getInstance().level,
+						bakedModel,
+						deviceBlockState,
+						BlockPos.ZERO,
+						pose,
+						guiGraphics.bufferSource().getBuffer(RenderType.TRANSLUCENT),
+						false, Minecraft.getInstance().level.getRandom(),
+						42,
+						OverlayTexture.NO_OVERLAY,
+						ModelData.EMPTY,
+						RenderType.TRANSLUCENT);
+					pose.popPose();
 				}
 
-				if(selectedZone != null && zoneId.equals(selectedZone.id())) {
-					int selectedColor = ChatFormatting.DARK_GREEN.getColor() | 0xFF000000;
-					BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
-					renderRegularOutline = false;
-				}
+				int selectedColor = ChatFormatting.DARK_GREEN.getColor() | 0xFF000000;
+				BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);
+			} else {
+				BoxRenderer.renderBlockOutline(guiGraphics.pose(), deviceBoxLines.lines, ColorHelper.COLOR_PURPLE, 2);
 			}
 		}
+
 
 		int color = ChatFormatting.YELLOW.getColor() | 0xDD000000;
 		BoxRenderer.renderBlockOutline(guiGraphics.pose(), boxLines.lines, color, 2);
