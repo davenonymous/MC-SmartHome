@@ -3,11 +3,13 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
+import com.davenonymous.smarthome.gui.events.CardElementSelectedEvent;
 import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
+import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseDraggedEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseReleasedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -137,6 +139,15 @@ public class HomeCardWidget extends WidgetPanel {
 
 					if(editMode) {
 						String elementIdString = elementId.toString();
+
+						elementWidget.addListener(MouseClickEvent.class, (event, widget) -> {
+							if(!elementWidget.isHovered()) {
+								return WidgetEventResult.CONTINUE_PROCESSING;
+							}
+
+							this.fireEvent(new CardElementSelectedEvent(elementWidget, elementId));
+							return WidgetEventResult.CONTINUE_PROCESSING;
+						});
 
 						elementWidget.addListener(
 							MouseDraggedEvent.class, (event, widget) -> {

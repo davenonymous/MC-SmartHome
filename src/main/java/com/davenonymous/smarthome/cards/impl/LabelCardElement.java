@@ -4,19 +4,26 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.cards.annotations.*;
+import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.HackerNoon;
+import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
+import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.UUID;
 
 @SmartHomeCardElement
@@ -65,5 +72,19 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 		textBox.autoHeight();
 		textBox.setDropShadow(dropShadow);
 		return textBox;
+	}
+
+	@Override
+	public List<Widget> createSettingWidgets() {
+		var labelInput = new StringInputWidget(text, "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		labelInput.setDrawBackground(false);
+		labelInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
+		return List.of(labelInput);
+	}
+
+	@Override
+	public LabelCardElement loadSettings(List<Widget> settingsWidgets) {
+		var labelInput = (StringInputWidget)settingsWidgets.get(0);
+		return new LabelCardElement(id, labelInput.getValue(), color, dropShadow);
 	}
 }

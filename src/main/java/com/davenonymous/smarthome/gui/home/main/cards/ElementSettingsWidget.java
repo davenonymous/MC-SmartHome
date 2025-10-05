@@ -2,6 +2,9 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
@@ -53,15 +56,19 @@ public class ElementSettingsWidget extends WidgetVBox {
 		this.addContentBox(title, FlexAlign.CENTER);
 
 		if(element != null) {
-			if(element.createSettingWidgets().isEmpty()) {
+			var settingsWidgets = element.createSettingWidgets();
+			if(settingsWidgets.isEmpty()) {
 				var label = new WidgetTextBox(NO_SETTINGS_AVAILABLE.get(), 0xFFAAAAAA);
 				label.setWordWrap(true);
 				label.autoWidth(this.width - 16);
 				label.autoHeight();
 				this.addContentBox(label, FlexAlign.CENTER);
 			} else {
-				var widgets = element.createSettingWidgets();
-				for(var w : widgets) {
+				for(var w : settingsWidgets) {
+					w.addListener(ValueChangedEvent.class, (event, widget) -> {
+						this.fireEvent(new ElementSettingsChangedEvent(element.id(), element.loadSettings(settingsWidgets)));
+						return WidgetEventResult.CONTINUE_PROCESSING;
+					});
 					this.addContentBox(w, FlexAlign.START);
 				}
 			}

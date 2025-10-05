@@ -1,12 +1,10 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.HomeScreen;
-import com.davenonymous.smarthome.gui.events.AddCardElementEvent;
-import com.davenonymous.smarthome.gui.events.SpriteSelectedEvent;
-import com.davenonymous.smarthome.gui.events.ScaleHandleResizedEvent;
-import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
+import com.davenonymous.smarthome.gui.events.*;
 import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
@@ -17,6 +15,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.networking.actions.cards.AddCardElementPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardElementPositionPayload;
+import com.davenonymous.smarthome.networking.actions.cards.SetCardElementSettingsPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardSettingsPayload;
 import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
 import com.mojang.blaze3d.platform.Window;
@@ -25,6 +24,7 @@ import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.UUID;
 
 public class CardEditorWidget extends WidgetPanel {
 	HomeCardWidget cardWidget = null;
@@ -34,6 +34,9 @@ public class CardEditorWidget extends WidgetPanel {
 
 	private WidgetSprite scaleHandle;
 
+	Widget selectedElementWidget = null;
+	UUID selectedElementId = null;
+
 	public CardEditorWidget() {
 		this(null);
 	}
@@ -41,6 +44,16 @@ public class CardEditorWidget extends WidgetPanel {
 	public CardEditorWidget(HomeCardWidget cardWidget) {
 		elementSettingsWidget = new ElementSettingsWidget();
 		elementSettingsWidget.setVisible(false);
+		elementSettingsWidget.addListener(ElementSettingsChangedEvent.class, (event, widget) -> {
+			var elementId = event.id();
+			var newData = event.newCardElement();
+			PacketDistributor.sendToServer(new SetCardElementSettingsPayload(
+				HomeScreen.get().selectedHome.id(),
+				card().id(),
+				elementId, newData
+			));
+			return WidgetEventResult.HANDLED;
+		});
 		this.add(elementSettingsWidget);
 
 		cardElementsContainer = new CardElementsContainer();
@@ -184,6 +197,17 @@ public class CardEditorWidget extends WidgetPanel {
 					elementId,
 					new Vec2(event.movedWidget().x, event.movedWidget().y)
 				));
+				return WidgetEventResult.HANDLED;
+			});
+
+			this.cardWidget.addListener(CardElementSelectedEvent.class, (event, widget) -> {
+				var elementId = event.elementId();
+				var wigget = event.elementWidget();
+
+				this.selectedElementWidget = wigget;
+				this.selectedElementId = elementId;
+				this.elementSettingsWidget.setElement(card().elements().get(elementId).getSecond());
+
 				return WidgetEventResult.HANDLED;
 			});
 

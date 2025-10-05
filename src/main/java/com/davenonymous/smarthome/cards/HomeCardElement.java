@@ -53,4 +53,8 @@ public interface HomeCardElement<T extends Widget> {
 			HomeCardElement::streamCodec,
 			Function.identity()
 		);
+
+	default HomeCardElement<T> loadSettings(List<Widget> settingsWidgets) {
+		return this;
+	}
 }
