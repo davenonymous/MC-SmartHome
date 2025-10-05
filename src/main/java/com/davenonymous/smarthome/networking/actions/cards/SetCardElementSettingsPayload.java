@@ -63,8 +63,6 @@ public record SetCardElementSettingsPayload(UUID homeId, UUID cardId, UUID eleme
 		home.addCard(newCard);
 		homes.setDirty();
 
-		Codec codec = payload.element.codec().codec();
-		SmartHome.LOGGER.info("Received change element {} settings {}", payload.elementId(), codec.encodeStart(JsonOps.INSTANCE, payload.element()).result());
 		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

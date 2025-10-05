@@ -2,7 +2,6 @@ package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
@@ -13,8 +12,8 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.networking.actions.MarkZoneAsDeletedPayload;
-import com.davenonymous.smarthome.networking.actions.SetZoneNamePayload;
+import com.davenonymous.smarthome.networking.actions.zones.MarkZoneAsDeletedPayload;
+import com.davenonymous.smarthome.networking.actions.zones.SetZoneNamePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;

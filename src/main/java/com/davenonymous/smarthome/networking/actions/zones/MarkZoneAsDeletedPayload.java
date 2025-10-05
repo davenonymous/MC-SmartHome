@@ -1,7 +1,6 @@
-package com.davenonymous.smarthome.networking.actions;
+package com.davenonymous.smarthome.networking.actions.zones;
 
 import com.davenonymous.smarthome.data.WorldSavedHomes;
-import com.davenonymous.smarthome.lib.DimPos;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
@@ -17,19 +16,18 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.UUID;
 
 @Packet
-public record SetZoneNamePayload(DimPos rackPos, UUID homeId, UUID zoneId, String name) implements LibPacketPayload {
+public record MarkZoneAsDeletedPayload(UUID homeId, UUID zone, boolean restore) implements LibPacketPayload {
 
 	@PacketCodec
-	public static final StreamCodec<RegistryFriendlyByteBuf, SetZoneNamePayload> CODEC = StreamCodec.composite(
-		DimPos.STREAM_CODEC, SetZoneNamePayload::rackPos,
-		UUIDUtil.STREAM_CODEC, SetZoneNamePayload::homeId,
-		UUIDUtil.STREAM_CODEC, SetZoneNamePayload::zoneId,
-		ByteBufCodecs.STRING_UTF8, SetZoneNamePayload::name,
-		SetZoneNamePayload::new
+	public static final StreamCodec<RegistryFriendlyByteBuf, MarkZoneAsDeletedPayload> CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, MarkZoneAsDeletedPayload::homeId,
+		UUIDUtil.STREAM_CODEC, MarkZoneAsDeletedPayload::zone,
+		ByteBufCodecs.BOOL, MarkZoneAsDeletedPayload::restore,
+		MarkZoneAsDeletedPayload::new
 	);
 
 	@PacketHandler(PacketHandler.Receiver.Server)
-	public static void handleOnServer(SetZoneNamePayload payload, IPayloadContext context) {
+	public static void handleOnServer(MarkZoneAsDeletedPayload payload, IPayloadContext context) {
 		var player = context.player();
 
 		var homes = WorldSavedHomes.get((ServerLevel) player.level());
@@ -43,13 +41,13 @@ public record SetZoneNamePayload(DimPos rackPos, UUID homeId, UUID zoneId, Strin
 			return;
 		}
 
-		var optZone = home.getZone(payload.zoneId());
+		var optZone = home.getZone(payload.zone());
 		if(optZone.isEmpty()) {
 			return;
 		}
 
 		var zone = optZone.get();
-		zone.setName(payload.name());
+		zone.setDeleted(!payload.restore());
 		homes.setDirty();
 
 		context.reply(HomeInfoPayload.get(player.getServer(), home));

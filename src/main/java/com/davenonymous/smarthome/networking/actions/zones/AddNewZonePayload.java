@@ -1,33 +1,35 @@
-package com.davenonymous.smarthome.networking.actions.cards;
+package com.davenonymous.smarthome.networking.actions.zones;
 
-import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.data.HomeCard;
+import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
+import com.davenonymous.smarthome.util.MoreCodecs;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
 @Packet
-public record AddNewCardPayload(UUID homeId, String name) implements LibPacketPayload {
+public record AddNewZonePayload(UUID homeId, AABB area, String name) implements LibPacketPayload {
 	@PacketCodec
-	public static final StreamCodec<RegistryFriendlyByteBuf, AddNewCardPayload> CODEC = StreamCodec.composite(
-		UUIDUtil.STREAM_CODEC, AddNewCardPayload::homeId,
-		ByteBufCodecs.STRING_UTF8, AddNewCardPayload::name,
-		AddNewCardPayload::new
+	public static final StreamCodec<RegistryFriendlyByteBuf, AddNewZonePayload> CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, AddNewZonePayload::homeId,
+		MoreCodecs.AABB_STREAM_CODEC, AddNewZonePayload::area,
+		ByteBufCodecs.STRING_UTF8, AddNewZonePayload::name,
+		AddNewZonePayload::new
 	);
 
 	@PacketHandler(PacketHandler.Receiver.Server)
-	public static void handleOnServer(AddNewCardPayload payload, IPayloadContext context) {
+	public static void handleOnServer(AddNewZonePayload payload, IPayloadContext context) {
 		var player = context.player();
 
 		var homes = WorldSavedHomes.get((ServerLevel) player.level());
@@ -41,8 +43,8 @@ public record AddNewCardPayload(UUID homeId, String name) implements LibPacketPa
 			return;
 		}
 
-		var card = new HomeCard(payload.name());
-		home.addCard(card);
+		var newZone = new HomeZone(payload.name(), payload.area());
+		home.addZone(newZone);
 		homes.setDirty();
 
 		context.reply(HomeInfoPayload.get(player.getServer(), home));

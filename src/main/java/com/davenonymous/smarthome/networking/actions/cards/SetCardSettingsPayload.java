@@ -60,7 +60,6 @@ public record SetCardSettingsPayload(UUID homeId, UUID cardId, String label, Res
 		home.addCard(card);
 		homes.setDirty();
 
-		SmartHome.LOGGER.info("Received request set card '{}' size to {}", payload.cardId(), payload.size());
 		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

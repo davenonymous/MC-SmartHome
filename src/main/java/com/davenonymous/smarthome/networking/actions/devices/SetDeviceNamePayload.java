@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.networking.actions;
+package com.davenonymous.smarthome.networking.actions.devices;
 
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;

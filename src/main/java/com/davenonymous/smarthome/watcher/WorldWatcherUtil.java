@@ -5,7 +5,7 @@ import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.networking.actions.AddDevicePayload;
+import com.davenonymous.smarthome.networking.actions.devices.AddDevicePayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.mojang.datafixers.util.Pair;

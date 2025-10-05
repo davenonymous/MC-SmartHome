@@ -57,7 +57,6 @@ public record SetCardElementPositionPayload(UUID homeId, UUID cardId, UUID eleme
 		home.addCard(newCard);
 		homes.setDirty();
 
-		SmartHome.LOGGER.info("Received change element {} pos {}x{}", payload.elementId(), payload.pos().x, payload.pos().y);
 		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

@@ -60,7 +60,6 @@ public record AddCardElementPayload(UUID homeId, UUID cardId, ResourceLocation e
 		home.addCard(newCard);
 		homes.setDirty();
 
-		SmartHome.LOGGER.info("Received request add card element '{}' to {}", payload.elementId(), payload.cardId());
 		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

@@ -1,15 +1,15 @@
-package com.davenonymous.smarthome.networking.actions;
+package com.davenonymous.smarthome.networking.actions.requests;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
-import com.davenonymous.smarthome.networking.VisualizationDataPayload;
+import com.davenonymous.smarthome.networking.data.VisualizationDataPayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;

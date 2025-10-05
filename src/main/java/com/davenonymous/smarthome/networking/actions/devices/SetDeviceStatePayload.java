@@ -1,6 +1,6 @@
-package com.davenonymous.smarthome.networking.actions;
+package com.davenonymous.smarthome.networking.actions.devices;
 
-import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -12,26 +12,28 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.UUID;
 
 @Packet
-public record MarkZoneAsDeletedPayload(UUID homeId, UUID zone, boolean restore) implements LibPacketPayload {
-
+public record SetDeviceStatePayload(UUID homeId, UUID zoneId, ConfiguredDevice device, boolean enabled) implements LibPacketPayload {
 	@PacketCodec
-	public static final StreamCodec<RegistryFriendlyByteBuf, MarkZoneAsDeletedPayload> CODEC = StreamCodec.composite(
-		UUIDUtil.STREAM_CODEC, MarkZoneAsDeletedPayload::homeId,
-		UUIDUtil.STREAM_CODEC, MarkZoneAsDeletedPayload::zone,
-		ByteBufCodecs.BOOL, MarkZoneAsDeletedPayload::restore,
-		MarkZoneAsDeletedPayload::new
+	public static final StreamCodec<RegistryFriendlyByteBuf, SetDeviceStatePayload> CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, SetDeviceStatePayload::homeId,
+		UUIDUtil.STREAM_CODEC, SetDeviceStatePayload::zoneId,
+		ConfiguredDevice.STREAM_CODEC, SetDeviceStatePayload::device,
+		ByteBufCodecs.BOOL, SetDeviceStatePayload::enabled,
+		SetDeviceStatePayload::new
 	);
 
 	@PacketHandler(PacketHandler.Receiver.Server)
-	public static void handleOnServer(MarkZoneAsDeletedPayload payload, IPayloadContext context) {
-		var player = context.player();
+	public static void handleOnServer(SetDeviceStatePayload payload, IPayloadContext context) {
+		ServerPlayer player = (ServerPlayer) context.player();
+		ServerLevel level = (ServerLevel) player.level();
 
-		var homes = WorldSavedHomes.get((ServerLevel) player.level());
+		var homes = WorldSavedHomes.get(level);
 		var optHome = homes.getHome(payload.homeId());
 		if(optHome.isEmpty()) {
 			return;
@@ -42,16 +44,15 @@ public record MarkZoneAsDeletedPayload(UUID homeId, UUID zone, boolean restore) 
 			return;
 		}
 
-		var optZone = home.getZone(payload.zone());
+		var optZone = home.getZone(payload.zoneId());
 		if(optZone.isEmpty()) {
 			return;
 		}
 
 		var zone = optZone.get();
-		zone.setDeleted(!payload.restore());
-		homes.setDirty();
+		zone.setDeviceState(payload.device(), payload.enabled());
 
-		SmartHome.LOGGER.info("Received request to delete zone '{}' from home {}", payload.zone, payload.homeId);
+		homes.setDirty();
 		context.reply(HomeInfoPayload.get(player.getServer(), home));
 	}
 }

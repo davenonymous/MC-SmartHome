@@ -1,13 +1,12 @@
 package com.davenonymous.smarthome.cards.impl;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.annotations.*;
-import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
+import com.davenonymous.smarthome.gui.general.WidgetToggle;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
-import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -24,6 +23,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @SmartHomeCardElement
@@ -74,17 +74,34 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 		return textBox;
 	}
 
+	private WidgetTextBox createLabel(String text) {
+		var wigget = new WidgetTextBox(text);
+		wigget.setFont(ModFonts.NOKIA);
+		wigget.autoWidth();
+		wigget.autoHeight();
+		return wigget;
+	}
+
 	@Override
 	public List<Widget> createSettingWidgets() {
+		var labelInputLabel = createLabel("Label:");
+
 		var labelInput = new StringInputWidget(text, "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
 		labelInput.setDrawBackground(false);
 		labelInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
-		return List.of(labelInput);
+
+		var colorChooserLabel = createLabel("Color:");
+
+		var dropShadowLabel = createLabel("Drop Shadow:");
+		var shadowToggle = new WidgetToggle(dropShadow);
+
+		return List.of(labelInputLabel, labelInput, colorChooserLabel, dropShadowLabel, shadowToggle);
 	}
 
 	@Override
 	public LabelCardElement loadSettings(List<Widget> settingsWidgets) {
-		var labelInput = (StringInputWidget)settingsWidgets.get(0);
-		return new LabelCardElement(id, labelInput.getValue(), color, dropShadow);
+		var labelInput = (StringInputWidget)settingsWidgets.get(1);
+		var shadowToggle = (WidgetToggle)settingsWidgets.get(5);
+		return new LabelCardElement(id, labelInput.getValue(), color, shadowToggle.getValue());
 	}
 }

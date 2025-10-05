@@ -318,9 +318,13 @@ public class GUIHelper {
 	}
 
 	public static void drawWordWrap(GuiGraphics pGuiGraphics, Font font, FormattedText text, Style style, int x, int y, int lineWidth, int lineHeight, int color) {
+		drawWordWrap(pGuiGraphics, font, text, style, x, y, lineWidth, lineHeight, color, false);
+	}
+
+	public static void drawWordWrap(GuiGraphics pGuiGraphics, Font font, FormattedText text, Style style, int x, int y, int lineWidth, int lineHeight, int color, boolean dropShadow) {
 		List<FormattedCharSequence> customWrap = Language.getInstance().getVisualOrder(font.getSplitter().splitLines(text, lineWidth, style));
 		for(FormattedCharSequence formattedcharsequence : customWrap) {
-			pGuiGraphics.drawString(font, formattedcharsequence, x, y, color, false);
+			pGuiGraphics.drawString(font, formattedcharsequence, x, y, color, dropShadow);
 			y += lineHeight + 1;
 		}
 	}

@@ -1,4 +1,4 @@
-package com.davenonymous.smarthome.networking;
+package com.davenonymous.smarthome.networking.data;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
@@ -15,7 +15,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 

@@ -19,7 +19,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.networking.actions.SetSensorStatePayload;
+import com.davenonymous.smarthome.networking.actions.devices.SetSensorStatePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.mojang.blaze3d.platform.Window;
