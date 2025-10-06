@@ -44,13 +44,18 @@ public class LineViz implements IVisualization<LineVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, LineVizSettings settings) {
-		if(data.isEmpty()) {
+	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, LineVizSettings settings) {
+		if(dataByDevice.isEmpty()) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(120, 70);
 		}
 
+		int width = 120;
+		int height = 70;
+		double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
+
 		XYChart chart = new XYChartBuilder()
-			.width(360).height(210)
+			.width(width * (int)guiScale)
+			.height(height * (int)guiScale)
 			.title("Line")
 			.build();
 
@@ -78,15 +83,19 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			.setAxisTicksLineVisible(false)
 			.setPlotGridLinesVisible(false);
 
+		var allTheData = new ArrayList<ISensorData>();
+		dataByDevice.values().forEach(map -> allTheData.addAll(map.values()));
 		SensorRange range = sensor.getRange();
 		if(range.hasMin()) {
-			styler.setYAxisMin(range.min(sensor, data.values()));
+			styler.setYAxisMin(range.min(sensor, allTheData));
 		}
 
 		if(range.hasMax()) {
-			styler.setYAxisMax(range.max(sensor, data.values()));
+			styler.setYAxisMax(range.max(sensor, allTheData));
 		}
 
+		var deviceId = dataByDevice.keySet().iterator().next();
+		var data = dataByDevice.get(deviceId);
 		styler
 			.setSeriesMarkers(new Marker[] {new None()})
 			.setChartTitleVisible(false)
@@ -115,7 +124,12 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		var seriesSettingsList = settings.series();
 		int seriesIndex = 0;
 		for(String seriesName : yData.keySet()) {
-			LineVizSeriesSettings seriesSetting = seriesSettingsList.get(seriesIndex % seriesSettingsList.size());
+			LineVizSeriesSettings seriesSetting;
+			if(seriesSettingsList.isEmpty()) {
+				seriesSetting = new LineVizSeriesSettings(ColorHelper.COLOR_CYAN, seriesName);
+			} else {
+				seriesSetting = seriesSettingsList.get(seriesIndex % seriesSettingsList.size());
+			}
 
 			List<Double> series = yData.get(seriesName);
 			chart.addSeries(seriesName, xData, series)
@@ -125,7 +139,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		}
 
 		WidgetChart<XYChart> wigget = new WidgetChart<>(chart);
-		wigget.setSize(120, 70);
+		wigget.setSize(width, height);
 		return wigget;
 	}
 }

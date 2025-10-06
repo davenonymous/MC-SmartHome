@@ -20,6 +20,7 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @SmartHomeVisualization(modid = SmartHome.MODID)
 public class GaugeViz implements IVisualization<GaugeVizSettings> {
@@ -41,10 +42,13 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, GaugeVizSettings settings) {
-		if(data.isEmpty()) {
+	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, GaugeVizSettings settings) {
+		if(dataByDevice.isEmpty()) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(120, 70);
 		}
+
+		var deviceId = dataByDevice.keySet().iterator().next();
+		var data = dataByDevice.get(deviceId);
 
 		Map.Entry<Pair<Instant, Long>, ISensorData> entry = data.sequencedEntrySet().getFirst();
 		if(entry == null) {

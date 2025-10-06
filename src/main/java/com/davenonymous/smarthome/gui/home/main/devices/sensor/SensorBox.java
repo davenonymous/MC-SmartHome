@@ -84,12 +84,12 @@ public class SensorBox extends WidgetVBox {
 		if(vizCache.contains(device.id(), sensor.id())) {
 			Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>availableVisualizations = vizCache.get(device.id(), sensor.id());
 			if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
-				var data = availableVisualizations.get(sensor.getDefaultVisualization());
+				LinkedHashMap<Pair<Instant, Long>, ISensorData> data = availableVisualizations.get(sensor.getDefaultVisualization());
 				//noinspection rawtypes
 				IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
 				if(vizImpl != null) {
 					//noinspection unchecked
-					sensorWidget = vizImpl.getWidget(data, sensor, sensor.getDefaultVisualizationSettings());
+					sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings());
 					if(sensorWidget != null) {
 						this.addContentBox(sensorWidget, FlexAlign.CENTER);
 						hasPlacedViz = true;

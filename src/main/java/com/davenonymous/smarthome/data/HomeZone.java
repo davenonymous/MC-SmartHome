@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.data;
 
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.serialization.Codec;
@@ -145,12 +146,20 @@ public class HomeZone {
 	public List<EntityId> getAllEntities() {
 		List<EntityId> entities = new LinkedList<>();
 		for(var device : devices) {
+			if(device.ignored()) {
+				continue;
+			}
+
 			var deviceId = device.id();
 			for(var sensorId : device.sensors().keySet()) {
 				entities.add(new EntityId(deviceId, sensorId));
 			}
 		}
 		return entities;
+	}
+
+	public List<ConfiguredDevice> getDevicesWithSensor(HomeSensor<?, ?> sensor) {
+		return devices.stream().filter(d -> d.sensors().containsKey(sensor.id()) && !d.ignored()).toList();
 	}
 
 	public AABB getContractedBounds(Direction direction) {

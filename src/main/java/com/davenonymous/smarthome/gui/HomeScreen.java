@@ -52,6 +52,19 @@ public class HomeScreen extends WidgetFullScreen {
 	//          (DevID, SensorId) ->     {VizID ->              [ (Timestamp, Tick) -> Data ]}
 	public Table<UUID, ResourceLocation, Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>> visualizationDataCache;
 
+	public Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevices(List<UUID> deviceIds, ResourceLocation sensorId, ResourceLocation vizId) {
+		Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> result = new HashMap<>();
+		for(var deviceId : deviceIds) {
+			if(visualizationDataCache.contains(deviceId, sensorId)) {
+				var vizMap = visualizationDataCache.get(deviceId, sensorId);
+				if(vizMap.containsKey(vizId)) {
+					result.put(deviceId, vizMap.get(vizId));
+				}
+			}
+		}
+		return result;
+	}
+
 	@I18DataGen(lang = "en_us", string = "Smart Home")
 	@I18DataGen(lang = "de_de", string = "Smart Home")
 	public static final I18String TITLE = SmartHome.guiString("home", "title");

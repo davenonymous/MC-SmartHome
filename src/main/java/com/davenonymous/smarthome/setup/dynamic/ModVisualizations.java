@@ -17,6 +17,9 @@ public class ModVisualizations {
 		return VISUALIZATIONS.get(id);
 	}
 
+	public static Map<ResourceLocation, IVisualization<?>> getAll() {
+		return VISUALIZATIONS;
+	}
 
 	public static void find() {
 		VISUALIZATIONS.clear();

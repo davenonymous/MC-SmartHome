@@ -102,6 +102,10 @@ public class ZonesContainer extends WidgetPanel {
 		for(var rangeFinderData : rangerFinderDataComponents) {
 			Widget button;
 
+			if(selectedHome.zones().stream().anyMatch(zone -> zone.bounds().equals(rangeFinderData.toAABB()))) {
+				continue;
+			}
+
 			if(rangeFinderData.toAABB() != null && selectedHome.getZoneCrossing(rangeFinderData.toAABB()) != null) {
 				button = new InvalidZoneWidget(this, rangeFinderData);
 			} else {

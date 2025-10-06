@@ -80,7 +80,7 @@ public class DevicesContainer extends WidgetPanel {
 				}
 				ResourceLocation vizId = sensor.getDefaultVisualization();
 
-				var vizPayload = new RequestVisualizationDataPayload(event.zone().home().id(), event.zone().id(), event.device(), sensorId, vizId, sensor.getDefaultVisualizationSettings());
+				var vizPayload = new RequestVisualizationDataPayload(event.zone().home().id(), event.device(), sensorId, vizId, sensor.getDefaultVisualizationSettings());
 				PacketDistributor.sendToServer(vizPayload);
 			}
 

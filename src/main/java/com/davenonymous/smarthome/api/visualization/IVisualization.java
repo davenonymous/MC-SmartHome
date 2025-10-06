@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public interface IVisualization<S extends IVisualizationSettings> {
 	ResourceLocation id();
@@ -27,5 +29,5 @@ public interface IVisualization<S extends IVisualizationSettings> {
 
 	S getDefaultSettings();
 
-	Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, S vizSettings);
+	Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> data, HomeSensor<?, ?> sensor, S vizSettings);
 }

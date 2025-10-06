@@ -35,7 +35,7 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 
 		this.addListener(
 			WidgetSizeChangeEvent.class, (event, widget) -> {
-				this.image.setSize(event.newWidth(), event.newHeight());
+				updateWidgetSizes();
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 		);
@@ -63,6 +63,12 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 			imageInBytes = baos.toByteArray();
 		}
 		return imageInBytes;
+	}
+
+	@Override
+	public void updateWidgetSizes() {
+		super.updateWidgetSizes();
+		this.image.setSize(this.width, this.height);
 	}
 
 	public void setChart(T chart) {

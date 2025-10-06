@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.data;
 
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.lib.DimPos;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
@@ -119,6 +120,14 @@ public class HomeCore {
 		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
 			configuredDevices.put(zone, zone.devices());
+		}
+		return configuredDevices;
+	}
+
+	public Map<HomeZone, List<ConfiguredDevice>> getDevicesWithSensor(HomeSensor<?, ?> sensor) {
+		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
+		for(HomeZone zone : zones) {
+			configuredDevices.put(zone, zone.getDevicesWithSensor(sensor));
 		}
 		return configuredDevices;
 	}

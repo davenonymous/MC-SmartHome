@@ -4,6 +4,7 @@ import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorWidget;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
@@ -24,28 +25,8 @@ public class SensorSelector extends WidgetPanel {
 		super();
 		this.selectedSensor = selectedSensor;
 
-		var availableSensors = HomeScreen.get().selectedHome.getAvailableSensors();
-		this.sensorChoices = new Widget[availableSensors.size()];
-		for(int iSensorIndex = 0; iSensorIndex < availableSensors.size(); iSensorIndex++) {
-			var sensorId = availableSensors.get(iSensorIndex);
-			var sensor = ModSensors.getById(sensorId);
-			var sensorWidget = new WidgetTextBox(sensor.getDisplayName().get(), 0xFFFFFFFF);
-			sensorWidget.addListener(MouseClickEvent.class, (event, widget) -> {
-				var oldSensor = this.selectedSensor;
-				this.selectedSensor = sensor;
-				this.sensorLabel.setText(this.selectedSensor.getDisplayName().get());
-				CardEditorWidget parent = this.getParentByType(CardEditorWidget.class);
-				if(parent != null) {
-					parent.remove(selector);
-					selector = null;
-					this.fireEvent(new ValueChangedEvent<>(oldSensor, this.selectedSensor));
-				}
-				return WidgetEventResult.HANDLED;
-			});
-			sensorWidget.autoWidth();
-			sensorWidget.autoHeight();
-			sensorChoices[iSensorIndex] = sensorWidget;
-		}
+		updateSensorChoices();
+
 		this.sensorLabel = new WidgetTextBox(selectedSensor.getDisplayName().get(), 0xFFFFFFFF);
 		this.sensorLabel.autoWidth();
 		this.sensorLabel.autoHeight();
@@ -68,5 +49,38 @@ public class SensorSelector extends WidgetPanel {
 
 	public HomeSensor<?, ?> selectedSensor() {
 		return selectedSensor;
+	}
+
+	private void updateSensorChoices() {
+		var availableSensors = HomeScreen.get().selectedHome.getAvailableSensors();
+		this.sensorChoices = new Widget[availableSensors.size()];
+		for(int iSensorIndex = 0; iSensorIndex < availableSensors.size(); iSensorIndex++) {
+			var sensorId = availableSensors.get(iSensorIndex);
+			var sensor = ModSensors.getById(sensorId);
+
+			var sensorWidget = new WidgetTextBox(sensor.getDisplayName().get(), 0xFFFFFFFF);
+			if(this.selectedSensor.id().equals(sensorId)) {
+				sensorWidget.setTextColor(ColorHelper.COLOR_ORANGE);
+			}
+
+			sensorWidget.addListener(MouseClickEvent.class, (event, widget) -> {
+				var oldSensor = this.selectedSensor;
+				this.selectedSensor = sensor;
+				this.sensorLabel.setText(this.selectedSensor.getDisplayName().get());
+				this.sensorLabel.autoWidth();
+				this.sensorLabel.autoHeight();
+				CardEditorWidget parent = this.getParentByType(CardEditorWidget.class);
+				if(parent != null) {
+					parent.remove(selector);
+					selector = null;
+					this.fireEvent(new ValueChangedEvent<>(oldSensor, this.selectedSensor));
+				}
+				this.updateSensorChoices();
+				return WidgetEventResult.HANDLED;
+			});
+			sensorWidget.autoWidth();
+			sensorWidget.autoHeight();
+			sensorChoices[iSensorIndex] = sensorWidget;
+		}
 	}
 }

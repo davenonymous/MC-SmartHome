@@ -109,6 +109,10 @@ public class ZoneRendererWidget extends WidgetPanel {
 			.toList();
 
 		for(var rangeFinderData : rangerFinderDataComponents) {
+			if(selectedHome.zones().stream().anyMatch(zone -> zone.bounds().equals(rangeFinderData.toAABB()))) {
+				continue;
+			}
+
 			BlockPos posA = rangeFinderData.A().offset((int) -selectedHome.shape().bounds().minX, (int) -selectedHome.shape().bounds().minY, (int) -selectedHome.shape().bounds().minZ);
 			BlockPos posB = rangeFinderData.B().offset((int) -selectedHome.shape().bounds().minX, (int) -selectedHome.shape().bounds().minY, (int) -selectedHome.shape().bounds().minZ);
 			Vector3f vecA = new Vector3f(posA.getX(), posA.getY(), posA.getZ());

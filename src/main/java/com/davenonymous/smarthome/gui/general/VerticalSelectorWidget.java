@@ -33,7 +33,7 @@ public class VerticalSelectorWidget extends WidgetPanel {
 
 	public VerticalSelectorWidget(Widget... choices) {
 		super();
-		this.setSize(120, 100);
+		this.setSize(160, 100);
 
 		int padding = 4;
 

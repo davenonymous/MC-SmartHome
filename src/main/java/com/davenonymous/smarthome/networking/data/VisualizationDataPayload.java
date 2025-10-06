@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 @Packet
-public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) implements LibPacketPayload {
+public record VisualizationDataPayload(UUID homeId, ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) implements LibPacketPayload {
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, Pair<Instant, Long>> PAIR_CODEC = StreamCodec.composite(
 		ByteBufCodecs.VAR_LONG.map(Instant::ofEpochMilli, Instant::toEpochMilli), Pair::getFirst,
@@ -31,7 +31,6 @@ public record VisualizationDataPayload(UUID homeId, UUID zoneId, ConfiguredDevic
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, VisualizationDataPayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, VisualizationDataPayload::homeId,
-		UUIDUtil.STREAM_CODEC, VisualizationDataPayload::zoneId,
 		ConfiguredDevice.STREAM_CODEC, VisualizationDataPayload::device,
 		ResourceLocation.STREAM_CODEC, VisualizationDataPayload::sensorId,
 		ResourceLocation.STREAM_CODEC, VisualizationDataPayload::vizId,

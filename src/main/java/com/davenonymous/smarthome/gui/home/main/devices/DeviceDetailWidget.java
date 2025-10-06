@@ -60,7 +60,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			updateSensorList();
+			//updateSensorList();
 			return WidgetEventResult.HANDLED;
 		});
 

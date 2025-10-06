@@ -2,8 +2,11 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
+import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.CardElementSelectedEvent;
+import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
@@ -20,6 +23,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
+import com.davenonymous.smarthome.networking.actions.requests.RequestVisualizationDataPayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Pair;
@@ -30,6 +34,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.phys.Vec2;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.UUID;
 
@@ -136,6 +141,18 @@ public class HomeCardWidget extends WidgetPanel {
 				var elementWidget = element.getSecond().createWidget();
 				if(elementWidget != null) {
 					elementWidget.setPosition((int)position.x, (int)position.y);
+
+					if(element.getSecond() instanceof VisualizationCardElement vizCardElement) {
+						for(UUID deviceId : vizCardElement.devices()) {
+							var optDevice = HomeScreen.get().selectedHome.getDevice(deviceId);
+							if(optDevice.isEmpty()) {
+								continue;
+							}
+
+							var payload = new RequestVisualizationDataPayload(HomeScreen.get().selectedHome.id(), optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings());
+							PacketDistributor.sendToServer(payload);
+						}
+					}
 
 					if(editMode) {
 						String elementIdString = elementId.toString();

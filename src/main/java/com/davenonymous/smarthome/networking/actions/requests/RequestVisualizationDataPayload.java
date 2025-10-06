@@ -32,11 +32,10 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Packet
-public record RequestVisualizationDataPayload(UUID homeId, UUID zone, ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationSettings settings)  implements LibPacketPayload {
+public record RequestVisualizationDataPayload(UUID homeId, ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationSettings settings)  implements LibPacketPayload {
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, RequestVisualizationDataPayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, RequestVisualizationDataPayload::homeId,
-		UUIDUtil.STREAM_CODEC, RequestVisualizationDataPayload::zone,
 		ConfiguredDevice.STREAM_CODEC, RequestVisualizationDataPayload::device,
 		ResourceLocation.STREAM_CODEC, RequestVisualizationDataPayload::sensorId,
 		ResourceLocation.STREAM_CODEC, RequestVisualizationDataPayload::vizId,
@@ -60,12 +59,6 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 			return;
 		}
 
-		var optZone = home.getZone(payload.zone());
-		if(optZone.isEmpty()) {
-			return;
-		}
-
-		var zone = optZone.get();
 		var device = payload.device();
 
 		IVisualization<?> viz = ModVisualizations.getById(payload.vizId);
@@ -78,16 +71,16 @@ public record RequestVisualizationDataPayload(UUID homeId, UUID zone, Configured
 		//Function<DuckDBConnection, IVisualizationData> dbFunction = sensor.getVisualizationData(zone, device, sensorSettings, viz, payload.settings);
 		VizQueryDatabaseTask.execute(dbFunction).thenAccept((vizData) -> {
 			if(vizData == null) {
-				SmartHome.LOGGER.warn("Failed to get viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
+				SmartHome.LOGGER.warn("Failed to get viz data for player='{}' home='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), device.id(), sensor.id(), payload.vizId());
 				return;
 			}
 			if(vizData.isEmpty()) {
-				SmartHome.LOGGER.info("No viz data for player='{}' home='{}' zone='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), zone.name(), device.id(), sensor.id(), payload.vizId());
+				SmartHome.LOGGER.info("No viz data for player='{}' home='{}' device='{}' sensor='{}' viz='{}'", player.getGameProfile().getName(), home.name(), device.id(), sensor.id(), payload.vizId());
 				return;
 			}
 
 			//noinspection unchecked
-			var replyPayload = new VisualizationDataPayload(zone.home().id(), zone.id(), device, payload.sensorId, payload.vizId, (LinkedHashMap<Pair<Instant, Long>, ISensorData>) vizData);
+			var replyPayload = new VisualizationDataPayload(home.id(), device, payload.sensorId, payload.vizId, (LinkedHashMap<Pair<Instant, Long>, ISensorData>) vizData);
 			context.reply(replyPayload);
 		});
 	}
