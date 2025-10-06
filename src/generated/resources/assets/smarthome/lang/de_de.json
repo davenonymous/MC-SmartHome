@@ -7,6 +7,7 @@
   "smarthome.data.card_element.name.default_label": "Neuer Text",
   "smarthome.data.card_element.name.sprite": "Symbol",
   "smarthome.data.card_element.name.text": "Text",
+  "smarthome.data.card_element.viz.label": "Visualisierung",
   "smarthome.data.columns.device": "Geräte ID",
   "smarthome.data.columns.home": "Smart Home ID",
   "smarthome.data.columns.instant": "Zeitpunkt",

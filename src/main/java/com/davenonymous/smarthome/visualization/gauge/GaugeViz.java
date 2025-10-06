@@ -5,8 +5,10 @@ import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.gui.WidgetChart;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetColorDisplay;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -40,6 +42,10 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 
 	@Override
 	public Widget getWidget(LinkedHashMap<Pair<Instant, Long>, ISensorData> data, HomeSensor<?, ?> sensor, GaugeVizSettings settings) {
+		if(data.isEmpty()) {
+			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(120, 70);
+		}
+
 		Map.Entry<Pair<Instant, Long>, ISensorData> entry = data.sequencedEntrySet().getFirst();
 		if(entry == null) {
 			return null;

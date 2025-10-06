@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.ISelectable;
 import com.davenonymous.smarthome.lib.gui.event.*;
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.joml.Vector2f;
 
 import java.util.*;

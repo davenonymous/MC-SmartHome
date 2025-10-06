@@ -7,6 +7,7 @@
   "smarthome.data.card_element.name.default_label": "New label",
   "smarthome.data.card_element.name.sprite": "Icon",
   "smarthome.data.card_element.name.text": "Label",
+  "smarthome.data.card_element.viz.label": "Visualization",
   "smarthome.data.columns.device": "Device ID",
   "smarthome.data.columns.home": "Smart Home ID",
   "smarthome.data.columns.instant": "Instant",

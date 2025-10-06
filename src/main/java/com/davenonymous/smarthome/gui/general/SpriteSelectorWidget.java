@@ -1,14 +1,10 @@
 package com.davenonymous.smarthome.gui.general;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.SpriteSelectedEvent;
 import com.davenonymous.smarthome.lib.HackerNoon;
-import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
-import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
-import com.davenonymous.smarthome.lib.gui.tooltip.BoxAlignment;
 import com.davenonymous.smarthome.lib.gui.tooltip.StringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;

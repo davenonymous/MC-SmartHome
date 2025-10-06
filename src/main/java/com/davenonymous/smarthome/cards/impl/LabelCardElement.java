@@ -23,7 +23,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @SmartHomeCardElement

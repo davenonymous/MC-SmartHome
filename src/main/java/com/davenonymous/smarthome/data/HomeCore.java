@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.data;
 
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.lib.DimPos;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -14,6 +15,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.phys.AABB;
@@ -79,6 +81,18 @@ public class HomeCore {
 		updateBounds();
 	}
 
+	public List<EntityId> getAllEntities() {
+		List<EntityId> entities = new LinkedList<>();
+		for(HomeZone zone : zones) {
+			entities.addAll(zone.getAllEntities());
+		}
+		return entities;
+	}
+
+	public List<ResourceLocation> getAvailableSensors() {
+		return getAllEntities().stream().sorted(Comparator.comparing(e -> ModSensors.getById(e.sensorId()).getDisplayName().get())).map(EntityId::sensorId).distinct().toList();
+	}
+
 	public Map<HomeZone, List<FoundDevice>> getAllFoundDevices() {
 		Map<HomeZone, List<FoundDevice>> foundDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
@@ -115,14 +129,6 @@ public class HomeCore {
 			configuredDevices.put(zone, zone.devices().stream().filter(Predicate.not(ConfiguredDevice::ignored)).toList());
 		}
 		return configuredDevices;
-	}
-
-	public Map<HomeZone, List<ConfiguredDevice>> getAllIgnoredDevices() {
-		Map<HomeZone, List<ConfiguredDevice>> ignoredDevices = new HashMap<>();
-		for(HomeZone zone : zones) {
-			ignoredDevices.put(zone, zone.devices().stream().filter(ConfiguredDevice::ignored).toList());
-		}
-		return ignoredDevices;
 	}
 
 	public ServerLevel getHomeLevel(MinecraftServer server) {

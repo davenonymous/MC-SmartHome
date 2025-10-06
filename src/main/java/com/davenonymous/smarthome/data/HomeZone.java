@@ -13,10 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class HomeZone {
 	UUID id;
@@ -143,6 +140,17 @@ public class HomeZone {
 				return;
 			}
 		}
+	}
+
+	public List<EntityId> getAllEntities() {
+		List<EntityId> entities = new LinkedList<>();
+		for(var device : devices) {
+			var deviceId = device.id();
+			for(var sensorId : device.sensors().keySet()) {
+				entities.add(new EntityId(deviceId, sensorId));
+			}
+		}
+		return entities;
 	}
 
 	public AABB getContractedBounds(Direction direction) {
