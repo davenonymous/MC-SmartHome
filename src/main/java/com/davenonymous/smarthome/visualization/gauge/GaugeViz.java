@@ -13,6 +13,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
 import org.knowm.xchart.DialChart;
 import org.knowm.xchart.DialChartBuilder;
 
@@ -42,7 +43,7 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, GaugeVizSettings settings) {
+	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, GaugeVizSettings settings, Vec2 size) {
 		if(dataByDevice.isEmpty()) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(120, 70);
 		}

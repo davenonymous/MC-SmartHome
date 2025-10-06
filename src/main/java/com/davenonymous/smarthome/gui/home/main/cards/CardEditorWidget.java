@@ -76,6 +76,10 @@ public class CardEditorWidget extends WidgetPanel {
 		this.setCardWidget(cardWidget);
 
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
+			if(!this.isVisible() || !this.areAllParentsVisible()) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
 			var optCurrentCard = HomeScreen.get().selectedHome.getCard(this.cardWidget.homeCard.id());
 			if(optCurrentCard.isEmpty()) {
 				setCardWidget(null);
@@ -264,6 +268,10 @@ public class CardEditorWidget extends WidgetPanel {
 
 		for(Widget element : cardWidget.contentArea.children()) {
 			if(!element.isHovered()) {
+				continue;
+			}
+
+			if(element instanceof ScaleHandle) {
 				continue;
 			}
 

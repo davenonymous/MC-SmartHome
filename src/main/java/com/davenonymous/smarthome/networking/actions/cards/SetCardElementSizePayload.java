@@ -17,19 +17,19 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.UUID;
 
 @Packet
-public record SetCardElementPositionPayload(UUID homeId, UUID cardId, UUID elementId, Vec2 pos) implements LibPacketPayload {
+public record SetCardElementSizePayload(UUID homeId, UUID cardId, UUID elementId, Vec2 size) implements LibPacketPayload {
 
 	@PacketCodec
-	public static final StreamCodec<RegistryFriendlyByteBuf, SetCardElementPositionPayload> CODEC = StreamCodec.composite(
-		UUIDUtil.STREAM_CODEC, SetCardElementPositionPayload::homeId,
-		UUIDUtil.STREAM_CODEC, SetCardElementPositionPayload::cardId,
-		UUIDUtil.STREAM_CODEC, SetCardElementPositionPayload::elementId,
-		MoreCodecs.VEC2_STREAM_CODEC, SetCardElementPositionPayload::pos,
-		SetCardElementPositionPayload::new
+	public static final StreamCodec<RegistryFriendlyByteBuf, SetCardElementSizePayload> CODEC = StreamCodec.composite(
+		UUIDUtil.STREAM_CODEC, SetCardElementSizePayload::homeId,
+		UUIDUtil.STREAM_CODEC, SetCardElementSizePayload::cardId,
+		UUIDUtil.STREAM_CODEC, SetCardElementSizePayload::elementId,
+		MoreCodecs.VEC2_STREAM_CODEC, SetCardElementSizePayload::size,
+		SetCardElementSizePayload::new
 	);
 
 	@PacketHandler(PacketHandler.Receiver.Server)
-	public static void handleOnServer(SetCardElementPositionPayload payload, IPayloadContext context) {
+	public static void handleOnServer(SetCardElementSizePayload payload, IPayloadContext context) {
 		var player = context.player();
 
 		var homes = WorldSavedHomes.get((ServerLevel) player.level());
@@ -49,7 +49,7 @@ public record SetCardElementPositionPayload(UUID homeId, UUID cardId, UUID eleme
 		}
 
 		var card = optCard.get();
-		var newCard = card.withElementPosition(payload.elementId(), payload.pos());
+		var newCard = card.withElementSize(payload.elementId(), payload.size());
 		home.addCard(newCard);
 		homes.setDirty();
 

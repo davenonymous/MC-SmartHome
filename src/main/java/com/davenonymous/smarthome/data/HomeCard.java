@@ -1,9 +1,9 @@
 package com.davenonymous.smarthome.data;
 
 import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.gui.home.main.cards.HomeCardWidget;
 import com.davenonymous.smarthome.lib.HackerNoon;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -15,7 +15,6 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
 
@@ -49,7 +48,25 @@ public record HomeCard(UUID id, String label, ResourceLocation icon, Vec2 size, 
 		return new HomeCard(id, label, newIcon, size, elements, entities);
 	}
 
-	public HomeCard setElementPosition(UUID elementId, Vec2 newPosition) {
+	public HomeCard withElementSize(UUID elementId, Vec2 newSize) {
+		if(!elements.containsKey(elementId)) {
+			return this;
+		}
+
+		var pair = this.elements.get(elementId);
+		var element = pair.getSecond();
+		if(!(element instanceof VisualizationCardElement vizCardElement)) {
+			return this;
+		}
+
+		var newCardElement = vizCardElement.withSize(newSize);
+		var newElements = new HashMap<>(this.elements);
+		newElements.put(elementId, Pair.of(pair.getFirst(), newCardElement));
+
+		return new HomeCard(id, label, icon, size, newElements, entities);
+	}
+
+	public HomeCard withElementPosition(UUID elementId, Vec2 newPosition) {
 		if(!elements.containsKey(elementId)) {
 			return this;
 		}

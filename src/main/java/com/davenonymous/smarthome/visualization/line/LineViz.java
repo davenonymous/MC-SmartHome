@@ -16,6 +16,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.XYStyler;
@@ -44,13 +45,13 @@ public class LineViz implements IVisualization<LineVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, LineVizSettings settings) {
+	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, LineVizSettings settings, Vec2 size) {
 		if(dataByDevice.isEmpty()) {
-			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(120, 70);
+			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize((int)size.x, (int)size.y);
 		}
 
-		int width = 120;
-		int height = 70;
+		int width = Math.max((int)size.x, 120);
+		int height = Math.max((int)size.y, 70);
 		double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
 		XYChart chart = new XYChartBuilder()

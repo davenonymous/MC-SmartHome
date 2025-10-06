@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.events.CardSelectedEvent;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;

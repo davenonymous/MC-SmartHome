@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -29,5 +30,5 @@ public interface IVisualization<S extends IVisualizationSettings> {
 
 	S getDefaultSettings();
 
-	Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> data, HomeSensor<?, ?> sensor, S vizSettings);
+	Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> data, HomeSensor<?, ?> sensor, S vizSettings, Vec2 size);
 }

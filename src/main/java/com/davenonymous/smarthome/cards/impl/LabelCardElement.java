@@ -100,7 +100,7 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 	@Override
 	public LabelCardElement loadSettings(List<Widget> settingsWidgets) {
 		var labelInput = (StringInputWidget)settingsWidgets.get(1);
-		var shadowToggle = (WidgetToggle)settingsWidgets.get(5);
+		var shadowToggle = (WidgetToggle)settingsWidgets.get(4);
 		return new LabelCardElement(id, labelInput.getValue(), color, shadowToggle.getValue());
 	}
 }

@@ -26,6 +26,7 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.time.Instant;
@@ -89,7 +90,7 @@ public class SensorBox extends WidgetVBox {
 				IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
 				if(vizImpl != null) {
 					//noinspection unchecked
-					sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings());
+					sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(), new Vec2(120, 70));
 					if(sensorWidget != null) {
 						this.addContentBox(sensorWidget, FlexAlign.CENTER);
 						hasPlacedViz = true;
