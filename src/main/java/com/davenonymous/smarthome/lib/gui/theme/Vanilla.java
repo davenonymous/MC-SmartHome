@@ -1,7 +1,9 @@
 package com.davenonymous.smarthome.lib.gui.theme;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
+import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
 
 public class Vanilla extends GuiTheme {
@@ -47,5 +49,44 @@ public class Vanilla extends GuiTheme {
 			case BUTTON_R3 -> buttonR3;
 			case BUTTON_R4 -> buttonR4;
 		};
+	}
+
+	@SuppressWarnings({"DuplicateBranchesInSwitch", "DataFlowIssue"})
+	@Override
+	public int getColor(ColorComponent component) {
+		switch(component) {
+			case TEXT_PRIMARY -> {
+				return 0xFFFFFFFF;
+			}
+			case TEXT_PRIMARY_HOVER -> {
+				return 0xFFFFFFFF;
+			}
+			case TEXT_SECONDARY -> {
+				return ChatFormatting.DARK_GRAY.getColor() | 0xFF000000;
+			}
+			case TEXT_SECONDARY_HOVER -> {
+				return ChatFormatting.GRAY.getColor() | 0xFF000000;
+			}
+			case TEXT_ACTIVE -> {
+				return ColorHelper.COLOR_ORANGE;
+			}
+			case TEXT_ACTIVE_HOVER -> {
+				return ColorHelper.COLOR_ORANGE;
+			}
+			case BUTTON_BG -> {
+				return 0x50808080;
+			}
+			case BUTTON_BG_HOVER -> {
+				return 0x404420F0;
+			}
+			case BUTTON_BG_ACTIVE -> {
+				return 0x90000000;
+			}
+			case BUTTON_BG_ACTIVE_HOVER -> {
+				return 0x804420F0;
+			}
+		}
+
+		return 0xFFFFFFFF;
 	}
 }

@@ -38,6 +38,11 @@ public class SmartHome {
 		return theme.getSprite(component);
 	}
 
+	public static int color(GuiTheme.ColorComponent component) {
+		return theme.getColor(component);
+	}
+
+
 	public static ResourceLocation resource(String path) {
 		return ResourceLocation.fromNamespaceAndPath(MODID, path);
 	}

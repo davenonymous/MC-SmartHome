@@ -19,11 +19,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.None;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -95,17 +99,35 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			styler.setYAxisMax(range.max(sensor, allTheData));
 		}
 
+		Font myFont = null;
+		try {
+			var fonts = Font.createFonts(Path.of("../assets/fonts/samsung-gt-e1270-bold.otf").toFile());
+			myFont = fonts[0].deriveFont(13.0f * (float)guiScale * 0.5f);
+		} catch (FontFormatException e) {
+		} catch (IOException e) {
+		}
+
 		var deviceId = dataByDevice.keySet().iterator().next();
 		var data = dataByDevice.get(deviceId);
 		styler
 			.setSeriesMarkers(new Marker[] {new None()})
 			.setChartTitleVisible(false)
 			.setPlotBorderVisible(false)
-			.setLegendVisible(false)
+			.setLegendVisible(true)
+			.setLegendBackgroundColor(new Color(1, 1, 1, 0))
+			.setLegendLayout(Styler.LegendLayout.Horizontal)
+			.setLegendPosition(Styler.LegendPosition.OutsideS)
+			.setLegendBorderColor(new Color(1, 1, 1, 0))
+			.setLegendSeriesLineLength(5)
 			.setPlotBackgroundColor(new Color(1, 1, 1, 0))
 			.setChartBackgroundColor(new Color(1, 1, 1, 0))
 			.setChartFontColor(new Color(ChatFormatting.WHITE.getColor(), false))
 			.setChartPadding(0);
+
+		if(myFont != null) {
+			styler.setLegendFont(myFont);
+			styler.setAxisTickLabelsFont(myFont);
+		}
 
 		List<Long> xData = new ArrayList<>();
 		Map<String, List<Double>> yData = new HashMap<>();

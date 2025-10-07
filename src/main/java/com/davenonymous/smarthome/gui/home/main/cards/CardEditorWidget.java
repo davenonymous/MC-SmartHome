@@ -236,7 +236,7 @@ public class CardEditorWidget extends WidgetPanel {
 		super.updateWidgetSizes();
 
 		cardElementsContainer.setPosition(this.width - cardElementsContainer.width - 4, 4);
-		elementSettingsWidget.setPosition(this.width - elementSettingsWidget.width - 4, this.height - elementSettingsWidget.height - 4);
+		elementSettingsWidget.setPosition(this.width - elementSettingsWidget.width - 4, cardElementsContainer.y + cardElementsContainer.height + 4);
 
 		if(cardWidget != null) {
 			//cardWidget.adjustSizeToContent(false);

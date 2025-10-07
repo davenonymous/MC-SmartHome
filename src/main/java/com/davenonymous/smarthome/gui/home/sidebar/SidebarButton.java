@@ -12,7 +12,6 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
@@ -25,18 +24,19 @@ public class SidebarButton extends WidgetPanel {
 	SidebarBadge badgeWidget;
 
 	ResourceLocation contentId;
+	boolean active = false;
 
 	public SidebarButton(ResourceLocation icon, String label) {
 		this.setSize(120, 20);
 		this.icon = icon;
 		this.label = label;
 
-		this.iconWidget = new WidgetSprite(icon, ChatFormatting.DARK_GRAY.getColor() | 0xFF000000);
+		this.iconWidget = new WidgetSprite(icon, SmartHome.color(GuiTheme.ColorComponent.TEXT_SECONDARY));
 		this.iconWidget.setSize(12, 12);
 		this.add(this.iconWidget);
 
 		this.labelWidget = new WidgetTextBox(label);
-		this.labelWidget.setTextColor(ChatFormatting.DARK_GRAY.getColor());
+		this.labelWidget.setTextColor(SmartHome.color(GuiTheme.ColorComponent.TEXT_SECONDARY));
 		this.labelWidget.setWordWrap(true);
 		this.labelWidget.setFont(ModFonts.SAMSUNG);
 		this.add(this.labelWidget);
@@ -54,7 +54,28 @@ public class SidebarButton extends WidgetPanel {
 			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
 
+		this.addListener(ContentSelectionEvent.class, (event, widget) -> {
+			this.setActive(event.contentId().equals(this.contentId));
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+
 		updateWidgetSizes();
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public SidebarButton setActive(boolean active) {
+		this.active = active;
+		if(active) {
+			this.labelWidget.setTextColor(SmartHome.color(GuiTheme.ColorComponent.TEXT_ACTIVE));
+			this.iconWidget.setColor(SmartHome.color(GuiTheme.ColorComponent.TEXT_ACTIVE));
+		} else {
+			this.labelWidget.setTextColor(SmartHome.color(GuiTheme.ColorComponent.TEXT_SECONDARY));
+			this.iconWidget.setColor(SmartHome.color(GuiTheme.ColorComponent.TEXT_SECONDARY) | 0xFF000000);
+		}
+		return this;
 	}
 
 	public SidebarButton setBadge(String text, String description, int badgeColor, int textColor) {
@@ -109,9 +130,17 @@ public class SidebarButton extends WidgetPanel {
 	@Override
 	public void draw(GuiGraphics guiGraphics, Window window) {
 		if(isHovered()) {
-			guiGraphics.fill(0, 0, this.width(), this.height(), 0x404420F0);
+			if(isActive()) {
+				guiGraphics.fill(0, 0, this.width(), this.height(), SmartHome.color(GuiTheme.ColorComponent.BUTTON_BG_ACTIVE_HOVER));
+			} else {
+				guiGraphics.fill(0, 0, this.width(), this.height(), SmartHome.color(GuiTheme.ColorComponent.BUTTON_BG_HOVER));
+			}
 		} else {
-			guiGraphics.fill(0, 0, this.width(), this.height(), 0x50808080);
+			if(isActive()) {
+				guiGraphics.fill(0, 0, this.width(), this.height(), SmartHome.color(GuiTheme.ColorComponent.BUTTON_BG_ACTIVE));
+			} else {
+				guiGraphics.fill(0, 0, this.width(), this.height(), SmartHome.color(GuiTheme.ColorComponent.BUTTON_BG));
+			}
 		}
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.BUTTON_BORDER), 0, 0, this.width, this.height);

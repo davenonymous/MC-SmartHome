@@ -52,6 +52,7 @@ public class SidebarWidget extends WidgetVBox {
 
 		this.zonesButton = new SidebarButton(HackerNoon.Solid.home, ZONES.get());
 		this.zonesButton.setContentId(ContentIDs.ZONES);
+		this.zonesButton.setActive(true);
 		this.addContentBox(zonesButton);
 
 		this.devicesButton = new SidebarButton(HackerNoon.Solid.retroCamera, DEVICES.get());

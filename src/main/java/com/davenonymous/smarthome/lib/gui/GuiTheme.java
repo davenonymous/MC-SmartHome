@@ -28,7 +28,24 @@ public abstract class GuiTheme {
 		}
 	}
 
+	public enum ColorComponent {
+		TEXT_PRIMARY,
+		TEXT_PRIMARY_HOVER,
+
+		TEXT_SECONDARY,
+		TEXT_SECONDARY_HOVER,
+
+		TEXT_ACTIVE,
+		TEXT_ACTIVE_HOVER,
+
+		BUTTON_BG,
+		BUTTON_BG_HOVER,
+		BUTTON_BG_ACTIVE,
+		BUTTON_BG_ACTIVE_HOVER,
+	}
+
 	public abstract ResourceLocation getSprite(SpriteComponent component);
 
+	public abstract int getColor(ColorComponent component);
 
 }
