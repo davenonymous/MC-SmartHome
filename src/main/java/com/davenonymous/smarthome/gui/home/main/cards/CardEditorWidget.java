@@ -9,6 +9,7 @@ import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
+import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -24,6 +25,7 @@ import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CardEditorWidget extends WidgetPanel {
@@ -267,27 +269,40 @@ public class CardEditorWidget extends WidgetPanel {
 		}
 
 		for(Widget element : cardWidget.contentArea.children()) {
-			if(!element.isHovered()) {
-				continue;
-			}
-
 			if(element instanceof ScaleHandle) {
 				continue;
 			}
 
-			int elementX = cardWidget.x + cardWidget.contentArea.x + element.x;
-			int elementY = cardWidget.y + cardWidget.contentArea.y + element.y;
+			Optional<Integer> highlightColor = Optional.empty();
+			if(element.isHovered()) {
+				highlightColor = Optional.of(SmartHome.color(GuiTheme.ColorComponent.TEXT_ACTIVE));
+			}
+
+			// TODO: This doesn't work as we are replacing the complete card widget and the selected element Widget does not exist anymore.
+			if(element == selectedElementWidget) {
+				highlightColor = Optional.of(SmartHome.color(GuiTheme.ColorComponent.BUTTON_BG_ACTIVE_HOVER));
+			}
+
+			if(highlightColor.isEmpty()) {
+				continue;
+			}
+
+			int color = highlightColor.get();
+			int elementX = cardWidget.x + cardWidget.contentArea.x + element.x - 2;
+			int elementY = cardWidget.y + cardWidget.contentArea.y + element.y - 2;
 
 			int lineStartX = cardWidget.x + cardWidget.contentArea.x - 1;
 			int lineStartY = cardWidget.y + cardWidget.contentArea.y - 1;
 
+
 			var pose = guiGraphics.pose();
 			pose.pushPose();
-			pose.translate(0, 0, 300);
-			guiGraphics.vLine( elementX, lineStartY, lineStartY + cardWidget.contentArea.height, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
-			guiGraphics.vLine( elementX + element.width, lineStartY, lineStartY + cardWidget.contentArea.height, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
-			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
-			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY + element.height, ColorHelper.COLOR_ORANGE & 0x88FFFFFF);
+			pose.translate(0, 0, 10);
+			guiGraphics.vLine( elementX, lineStartY, lineStartY + cardWidget.contentArea.height, color & 0x88FFFFFF);
+			guiGraphics.vLine( elementX + element.width + 4, lineStartY, lineStartY + cardWidget.contentArea.height, color & 0x88FFFFFF);
+			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY, color & 0x88FFFFFF);
+			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY + element.height + 4, color & 0x88FFFFFF);
+			guiGraphics.fill(elementX, elementY, elementX + element.width + 4, elementY + element.height + 4, color & 0x22FFFFFF);
 			pose.popPose();
 			break;
 		}

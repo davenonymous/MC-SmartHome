@@ -107,7 +107,7 @@ public class HomeCardWidget extends WidgetPanel {
 		this.add(topBar);
 
 		contentArea = new WidgetPanel();
-		contentArea.setPosition(padding, padding + topBar.height + padding);
+		contentArea.setPosition(0, topBar.height);
 		this.add(contentArea);
 
 		updateCard(homeCard);
@@ -236,8 +236,8 @@ public class HomeCardWidget extends WidgetPanel {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		contentArea.setWidth(this.width - padding * 2);
-		contentArea.setHeight(this.height - padding * 3 - topBar.height);
+		contentArea.setWidth(this.width);
+		contentArea.setHeight(this.height - topBar.height);
 
 		this.adjustSizeToContent(false);
 	}
