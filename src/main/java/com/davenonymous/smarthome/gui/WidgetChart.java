@@ -2,10 +2,13 @@ package com.davenonymous.smarthome.gui;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.DynamicImageResources;
+import com.davenonymous.smarthome.lib.gui.event.MouseMoveEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.event.WidgetSizeChangeEvent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetImage;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
+import com.davenonymous.smarthome.visualization.line.LineViz;
+import net.minecraft.client.Minecraft;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.internal.chartpart.Chart;
 
@@ -14,6 +17,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Optional;
 
 public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
@@ -39,6 +44,21 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 		);
+
+		this.addListener(MouseMoveEvent.class, (event, widget) -> {
+			// Forward mouse move events to the chart
+			if(!this.isHovered() || this.chart == null || !this.areAllParentsVisible()) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+
+			var chartX = chart.getChartXFromCoordinate((int) (getMouseX() * Minecraft.getInstance().getWindow().getGuiScale()));
+			var chartY = chart.getChartYFromCoordinate((int) (getMouseY() * Minecraft.getInstance().getWindow().getGuiScale()));
+			var instant = Instant.ofEpochMilli((long)chartX).atZone(ZoneId.systemDefault());
+
+			// TODO: Show tooltip with time and value, maybe even search for nearby lines and show their values?
+
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
 
 		this.add(image);
 	}

@@ -2,60 +2,42 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.lib.gui.event.MouseEnterEvent;
-import com.davenonymous.smarthome.lib.gui.event.MouseExitEvent;
-import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.GUIHelper;
+import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 
-import java.awt.*;
+public class WidgetColorSelect extends WidgetWithChoiceValue<Integer> {
 
-public class WidgetColorSelect extends WidgetWithChoiceValue<Color> {
-	public boolean hovered = false;
-
-	protected static final ResourceLocation BUTTON_TEXTURES = SmartHome.resource("textures/gui/widgets.png");
+	public WidgetColorSelect(int selected) {
+		this();
+		if(!choices.contains(selected)) {
+			choices.add(selected);
+		}
+		this.setValue(selected);
+	}
 
 	public WidgetColorSelect() {
-		this.setHeight(20);
-		this.setWidth(20);
+		this.setHeight(10);
+		this.setWidth(10);
 
-		this.addListener(
-			MouseEnterEvent.class, (event, widget) -> {
-				((WidgetColorSelect) widget).hovered = true;
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			}
-		);
-		this.addListener(
-			MouseExitEvent.class, (event, widget) -> {
-				((WidgetColorSelect) widget).hovered = false;
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			}
-		);
+		for(var color : DyeColor.values()) {
+			this.addChoice(color.getTextColor() | 0xFF000000);
+		}
 
+		this.setValue(DyeColor.ORANGE.getTextColor());
 		this.addClickListener();
 	}
 
 	@Override
 	public void draw(GuiGraphics pGuiGraphics, Window window) {
-        /*
-        screen.getMinecraft().getTextureManager().bindTexture(BUTTON_TEXTURES);
+		super.draw(pGuiGraphics, window);
 
-        float[] colors = this.getValue().getRGBColorComponents(null);
-        RenderSystem.color4f(colors[0], colors[1], colors[2], hovered ? 0.7F : 1.0F);
-
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.translatef(0.0f, 0.0f, 2.0f);
-
-        if(hovered) {
-            GuiUtils.drawTexturedModalRect(0, 0, 0, 46 + 2 * 20, width / 2, height, 0.0f);
-            GuiUtils.drawTexturedModalRect(width / 2, 0, 200 - width / 2, 46 + 2 * 20, width / 2, height, 0.0f);
-        } else {
-            GuiUtils.drawTexturedModalRect(0, 0, 0, 46 + 1 * 20, width / 2, height, 0.0f);
-            GuiUtils.drawTexturedModalRect(width / 2, 0, 200 - width / 2, 46 + 1 * 20, width / 2, height, 0.0f);
-        }
-         */
+		int activeColor = this.getValue() != null ? this.getValue() : 0xFFFFFFFF;
+		GUIHelper.setShaderColor(activeColor);
+		pGuiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WIDGET_DOT), 0, 0, this.width, this.height);
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 	}
 }

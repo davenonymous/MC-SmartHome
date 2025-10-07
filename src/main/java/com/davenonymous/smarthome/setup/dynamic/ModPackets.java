@@ -18,6 +18,7 @@ import java.io.InvalidClassException;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +26,8 @@ import java.util.Map;
 @EventBusSubscriber(modid = SmartHome.MODID)
 public class ModPackets {
 	public static Map<String, CustomPacketPayload.Type<CustomPacketPayload>> TYPE_BY_CLASS = new HashMap<>();
+
+	public static boolean DEBUG_PACKETS = false;
 
 	@SubscribeEvent
 	public static void register(final RegisterPayloadHandlersEvent event) {
@@ -96,8 +99,24 @@ public class ModPackets {
 	private static IPayloadHandler createHandler(Method method) {
 		return (customPacketPayload, iPayloadContext) -> {
 			try {
+				if(DEBUG_PACKETS) {
+					SmartHome.LOGGER.debug("Invoking packet handler: {}.{}()", method.getDeclaringClass().getSimpleName(), method.getName());
+					for(var field : customPacketPayload.getClass().getDeclaredFields()) {
+						if(Modifier.isStatic(field.getModifiers())) {
+							continue;
+						}
+
+						var accessor = customPacketPayload.getClass().getDeclaredMethod(field.getName());
+						var value = accessor.invoke(customPacketPayload);
+						SmartHome.LOGGER.debug("  {} {} = {}", field.getType().getSimpleName(), field.getName(), value);
+					}
+					SmartHome.LOGGER.debug("done");
+				}
 				method.invoke(null, customPacketPayload, iPayloadContext);
-			} catch (IllegalAccessException | InvocationTargetException ignored) {
+			} catch (IllegalAccessException | InvocationTargetException e) {
+				SmartHome.LOGGER.error("Failed to handle packet {}", customPacketPayload.getClass().getName(), e);
+			} catch (NoSuchMethodException e) {
+				SmartHome.LOGGER.error("Could not find value accessor for {}", customPacketPayload.getClass().getName(), e);
 			}
 		};
 	}

@@ -4,7 +4,6 @@ import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
-import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
@@ -13,15 +12,12 @@ import com.davenonymous.smarthome.lib.gui.event.MouseEnterEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseExitEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
-import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetColorSelect;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTable;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
-import com.davenonymous.smarthome.networking.actions.devices.SetDeviceNamePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
-import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import net.minecraft.ChatFormatting;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +56,7 @@ public class SeriesSettingsWidget extends WidgetVBox {
 
 			String columnDisplayName = column.label().get(); //I18n.get(column.translationKey());
 			LineVizSeriesSettings seriesSettings;
-			if(series == null) {
+			if(series == null || series.get(column.name()) == null) {
 				seriesSettings = new LineVizSeriesSettings(false, ColorHelper.COLOR_CYAN, columnDisplayName);
 			} else {
 				seriesSettings = series.get(column.name());
@@ -86,15 +82,19 @@ public class SeriesSettingsWidget extends WidgetVBox {
 			var toggle = new WidgetToggle(seriesSettings.enabled());
 			toggle.addListener(ValueChangedEvent.class, (event, widget) -> this.fireEvent(event));
 
+			var colorSelect = new WidgetColorSelect(seriesSettings.color());
+			colorSelect.addListener(ValueChangedEvent.class, (event, widget) -> this.fireEvent(event));
+
 			columnByRow.put(tableRow, column);
 			seriesTable.add(0, tableRow, new CellData(seriesLabel, ContentAlignment.MIDDLE_LEFT));
 			seriesTable.add(1, tableRow, toggle);
+			seriesTable.add(2, tableRow, new CellData(colorSelect, ContentAlignment.MIDDLE_CENTER));
 			tableRow++;
 
 			totalHeight += Math.max(seriesLabel.height(), toggle.height()) + seriesTable.paddingVertical();
 		}
 
-		seriesTable.setHeight(totalHeight + seriesTable.paddingVertical() + 20);
+		seriesTable.setHeight(totalHeight + seriesTable.paddingVertical() + 8);
 
 		this.addContentBox(seriesTable);
 		this.setHeight(this.getTotalRealSize());
@@ -113,18 +113,20 @@ public class SeriesSettingsWidget extends WidgetVBox {
 		for(int row = 0; row < seriesTable.getRowCount(); row++) {
 			var labelCell = seriesTable.get(0, row);
 			var toggleCell = seriesTable.get(1, row);
-			if(labelCell == null || toggleCell == null) {
+			var colorCell = seriesTable.get(2, row);
+			if(labelCell == null || toggleCell == null || colorCell == null) {
 				continue;
 			}
 
 			var column = columnByRow.get(row);
 			var labelWidget = (StringInputWidget)labelCell.widget();
 			var toggleWidget = (WidgetToggle)toggleCell.widget();
+			var colorWidget = (WidgetColorSelect)colorCell.widget();
 
 			String columnName = labelWidget.getValue();
 			boolean enabled = toggleWidget.getValue();
 
-			result.put(column.name(), new LineVizSeriesSettings(enabled, ColorHelper.COLOR_CYAN, columnName));
+			result.put(column.name(), new LineVizSeriesSettings(enabled, colorWidget.getValue(), columnName));
 		}
 		return result;
 	}

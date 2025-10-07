@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -13,7 +14,9 @@ import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.phys.Vec2;
 
 public class ElementSettingsWidget extends WidgetVBox {
 
@@ -42,6 +45,16 @@ public class ElementSettingsWidget extends WidgetVBox {
 		this.setHeight(40);
 
 		setElement(null);
+	}
+
+	public ElementSettingsWidget rebuild(HomeCard card) {
+		Pair<Vec2, HomeCardElement<?>> newElement = card.elements().get(this.element.id());
+		if(newElement == null || newElement.getSecond() == null) {
+			setElement(null);
+			return this;
+		}
+
+		return setElement(newElement.getSecond());
 	}
 
 	public ElementSettingsWidget setElement(HomeCardElement<?> element) {

@@ -222,6 +222,7 @@ public class CardEditorWidget extends WidgetPanel {
 			this.createScaleHandle();
 		} else {
 			this.cardWidget.updateCard(newCardWidget.homeCard);
+			this.elementSettingsWidget.rebuild(newCardWidget.homeCard);
 		}
 
 		cardWidget.setVisible(true);

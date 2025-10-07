@@ -24,8 +24,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
+import org.jetbrains.annotations.NotNull;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.internal.chartpart.Annotation;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.Marker;
@@ -40,6 +42,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 
 @SmartHomeVisualization
 public class LineViz implements IVisualization<LineVizSettings> {
@@ -85,19 +88,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault());
 				return formatter.format(instant);
 			})
-			.setyAxisTickLabelsFormattingFunction(val -> {
-				var units = List.of("","k","M","G","T","P","E");
-				double v = val;
-				int unitIndex = 0;
-				while(Math.abs(v) >= 1000.0 && unitIndex < units.size()-1) {
-					v /= 1000.0;
-					unitIndex++;
-				}
-				if(unitIndex > 0) {
-					return String.format("%.1f%s", v, units.get(unitIndex));
-				}
-				return String.format("%.0f", v);
-			})
+			.setyAxisTickLabelsFormattingFunction(LineViz::formatKMGT)
 			.setAxisTicksLineVisible(false)
 			.setPlotGridLinesVisible(false);
 
@@ -130,7 +121,8 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			.setLegendLayout(Styler.LegendLayout.Horizontal)
 			.setLegendPosition(Styler.LegendPosition.OutsideS)
 			.setLegendBorderColor(new Color(1, 1, 1, 0))
-			.setLegendSeriesLineLength(5)
+			.setLegendSeriesLineLength(10)
+			.setLegendPadding(20)
 			.setPlotBackgroundColor(new Color(1, 1, 1, 0))
 			.setChartBackgroundColor(new Color(1, 1, 1, 0))
 			.setChartFontColor(new Color(ChatFormatting.WHITE.getColor(), false))
@@ -147,7 +139,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		for(UUID deviceId : seriesSettingsList.keySet()) {
 			var data = dataByDevice.get(deviceId);
 			var deviceSeriesSettings = seriesSettingsList.get(deviceId);
-			if(data.isEmpty()) {
+			if(data == null || data.isEmpty()) {
 				continue;
 			}
 
@@ -180,8 +172,10 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			for(String columnName : yData.keySet()) {
 				LineVizSeriesSettings seriesSetting = deviceSeriesSettings.get(columnName);
 
-				chart.addSeries(seriesSetting.label(), xData, yData.get(columnName))
+				var series = chart.addSeries(seriesSetting.label(), xData, yData.get(columnName))
 					.setLineColor(new Color(seriesSetting.color(), false));
+
+				series.setLineStyle(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{3.0f, 3.0f}, 0));
 				seriesCount++;
 			}
 		}
@@ -192,6 +186,20 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		WidgetChart<XYChart> wigget = new WidgetChart<>(chart);
 		wigget.setSize(width, height);
 		return wigget;
+	}
+
+	public static @NotNull String formatKMGT(double val) {
+		var units = List.of("", "k", "M", "G", "T", "P", "E");
+		double v = val;
+		int unitIndex = 0;
+		while(Math.abs(v) >= 1000.0 && unitIndex < units.size() - 1) {
+			v /= 1000.0;
+			unitIndex++;
+		}
+		if(unitIndex > 0) {
+			return String.format("%.1f%s", v, units.get(unitIndex));
+		}
+		return String.format("%.0f", v);
 	}
 
 	@Override
