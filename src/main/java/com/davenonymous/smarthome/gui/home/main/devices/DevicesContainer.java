@@ -18,6 +18,8 @@ import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.List;
+
 public class DevicesContainer extends WidgetPanel {
 	public WidgetTextBox newDevicesLabel;
 	public NewDevicesWidget newDevicesBar;

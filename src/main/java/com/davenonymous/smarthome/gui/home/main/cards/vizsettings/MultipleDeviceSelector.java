@@ -14,18 +14,17 @@ import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.mojang.datafixers.util.Pair;
 
 import java.util.*;
 
-public class DeviceSelector extends WidgetPanel {
+public class MultipleDeviceSelector extends WidgetPanel {
 	Map<UUID, ConfiguredDevice> selectedDevices;
 
 	List<Widget> deviceChoices;
 	WidgetTextBox deviceLabel;
 	VerticalSelectorWidget selector;
 
-	public DeviceSelector(List<UUID> selectedDevices, HomeSensor<?, ?> sensor) {
+	public MultipleDeviceSelector(List<UUID> selectedDevices, HomeSensor<?, ?> sensor) {
 		super();
 		var home = HomeScreen.get().selectedHome;
 		this.selectedDevices = new HashMap<>();

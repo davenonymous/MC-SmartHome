@@ -8,10 +8,10 @@ import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import net.minecraft.client.resources.language.I18n;
 
@@ -30,7 +30,7 @@ public class VisualizationSelector extends WidgetPanel {
 
 		updateVisualizationChoices();
 
-		this.vizLabel = new WidgetTextBox(I18n.get(selectedVisualization.nameTranslationKey()), 0xFFFFFFFF);
+		this.vizLabel = new WidgetTextBox(selectedVisualization.getDisplayName().get(), 0xFFFFFFFF);
 		this.vizLabel.autoWidth();
 		this.vizLabel.autoHeight();
 		this.vizLabel.addListener(
@@ -58,20 +58,22 @@ public class VisualizationSelector extends WidgetPanel {
 
 		var availableVizs = ModVisualizations.getAll();
 		this.vizChoices = new Widget[availableVizs.keySet().size()];
-		var vizList = availableVizs.keySet().stream().sorted(Comparator.comparing(id -> I18n.get(availableVizs.get(id).nameTranslationKey()), Comparator.naturalOrder())).toList();
+		var vizList = availableVizs.keySet().stream().sorted(Comparator.comparing(id -> I18n.get(availableVizs.get(id).getDisplayName().get()), Comparator.naturalOrder())).toList();
 		int iVizIndex = 0;
 		for(var vizId : vizList) {
 			var viz = availableVizs.get(vizId);
 
-			var vizWidget = new WidgetTextBox(I18n.get(viz.nameTranslationKey()), 0xFFFFFFFF);
-			if(this.selectedVisualization.id().equals(vizId)) {
+			var vizWidget = new WidgetTextBox(viz.getDisplayName().get(), 0xFFFFFFFF);
+			if(this.selectedVisualization.getType().equals(vizId)) {
 				vizWidget.setTextColor(ColorHelper.COLOR_ORANGE);
 			}
+
+			vizWidget.setTooltipElements(WrappedStringTooltipComponent.orange(viz.getDescription().get()));
 
 			vizWidget.addListener(MouseClickEvent.class, (event, widget) -> {
 				var oldSensor = this.selectedVisualization;
 				this.selectedVisualization = viz;
-				this.vizLabel.setText(I18n.get(this.selectedVisualization.nameTranslationKey()));
+				this.vizLabel.setText(I18n.get(this.selectedVisualization.getDisplayName().get()));
 				this.vizLabel.autoWidth();
 				this.vizLabel.autoHeight();
 				CardEditorWidget parent = this.getParentByType(CardEditorWidget.class);

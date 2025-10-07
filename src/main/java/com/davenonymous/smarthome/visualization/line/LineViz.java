@@ -5,13 +5,19 @@ import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
+import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.WidgetChart;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetColorDisplay;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.util.DateHelper;
+import com.davenonymous.smarthome.visualization.annotations.VisualizationDescription;
+import com.davenonymous.smarthome.visualization.annotations.VisualizationId;
+import com.davenonymous.smarthome.visualization.annotations.VisualizationName;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -36,16 +42,22 @@ import java.util.List;
 
 @SmartHomeVisualization(modid = SmartHome.MODID)
 public class LineViz implements IVisualization<LineVizSettings> {
+	@VisualizationId
 	public static final ResourceLocation ID = SmartHome.resource("visualization/line");
+
+	@VisualizationName
+	@I18DataGen(lang = "en_us", string = "Line Chart")
+	@I18DataGen(lang = "de_de", string = "Liniendiagramm")
+	public static final I18String NAME = SmartHome.guiString("visualization.line", "name");
+
+	@VisualizationDescription
+	@I18DataGen(lang = "en_us", string = "Shows historical data as a line chart.")
+	@I18DataGen(lang = "de_de", string = "Zeigt den Datenverlauf als Liniendiagramm an.")
+	public static final I18String DESC = SmartHome.guiString("visualization.line", "description");
 
 	@Override
 	public LineVizSettings getDefaultSettings() {
 		return new LineVizSettings(List.of());
-	}
-
-	@Override
-	public ResourceLocation id() {
-		return ID;
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package com.davenonymous.smarthome.api.visualization;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
+import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
@@ -13,15 +15,16 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface IVisualization<S extends IVisualizationSettings> {
-	ResourceLocation id();
-	default String nameTranslationKey() {
-		var dotted = id().getPath().replaceAll("/", ".");
-		return id().getNamespace() + "." + dotted + ".name";
+	default ResourceLocation getType() {
+		return ModVisualizations.ID_BY_CLASS.get(this.getClass());
 	}
 
-	default String descriptionTranslationKey() {
-		var dotted = id().getPath().replaceAll("/", ".");
-		return id().getNamespace() + "." + dotted + ".description";
+	default I18String getDisplayName() {
+		return ModVisualizations.NAME_BY_ID.get(this.getType());
+	}
+
+	default I18String getDescription() {
+		return ModVisualizations.DESC_BY_ID.get(this.getType());
 	}
 
 	default boolean requiresHistory() {

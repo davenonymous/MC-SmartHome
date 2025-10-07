@@ -7,7 +7,7 @@ import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.annotations.*;
 import com.davenonymous.smarthome.gui.HomeScreen;
-import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.DeviceSelector;
+import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.MultipleDeviceSelector;
 import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.SensorSelector;
 import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.VisualizationSelector;
 import com.davenonymous.smarthome.lib.HackerNoon;
@@ -114,19 +114,19 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 		var sensor = ModSensors.getById(sensorId);
 		result.add(new SensorSelector(sensor));
 
-		result.add(createLabel("Devices:"));
-		result.add(new DeviceSelector(devices, sensor));
-
 		result.add(createLabel("Type:"));
 		result.add(new VisualizationSelector(ModVisualizations.getById(vizId)));
+
+		result.add(createLabel("Devices:"));
+		result.add(new MultipleDeviceSelector(devices, sensor));
 		return result;
 	}
 
 	@Override
 	public VisualizationCardElement loadSettings(List<Widget> settingsWidgets) {
 		var sensorSelector = (SensorSelector)settingsWidgets.get(1);
-		var deviceSelector = (DeviceSelector)settingsWidgets.get(3);
+		var deviceSelector = (MultipleDeviceSelector)settingsWidgets.get(3);
 		var vizSelector = (VisualizationSelector)settingsWidgets.get(5);
-		return new VisualizationCardElement(id, vizSelector.selectedVisualization().id(), sensorSelector.selectedSensor().id(), deviceSelector.selectedDevices().keySet().stream().toList(), vizSettings, size);
+		return new VisualizationCardElement(id, vizSelector.selectedVisualization().getType(), sensorSelector.selectedSensor().id(), deviceSelector.selectedDevices().keySet().stream().toList(), vizSettings, size);
 	}
 }

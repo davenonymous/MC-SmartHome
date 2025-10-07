@@ -55,6 +55,9 @@ public class HomeCardWidget extends WidgetPanel {
 	int padding = 8;
 	boolean editMode = false;
 
+	private int relativeClickX = 0;
+	private int relativeClickY = 0;
+
 	public HomeCardWidget(HomeCard homeCard) {
 		this(homeCard, false);
 	}
@@ -183,6 +186,9 @@ public class HomeCardWidget extends WidgetPanel {
 								return WidgetEventResult.CONTINUE_PROCESSING;
 							}
 
+							this.relativeClickX = getMouseX() - contentArea.x - elementWidget.x;
+							this.relativeClickY = getMouseY() - contentArea.y - elementWidget.y;
+
 							this.fireEvent(new CardElementSelectedEvent(elementWidget, elementId));
 							return WidgetEventResult.CONTINUE_PROCESSING;
 						});
@@ -194,8 +200,11 @@ public class HomeCardWidget extends WidgetPanel {
 									return WidgetEventResult.CONTINUE_PROCESSING;
 								}
 
-								int newScaleHandleX = Math.round(getMouseX() - contentArea.x - (widget.width / 2f));
-								int newScaleHandleY = Math.round(getMouseY() - contentArea.y - (widget.height / 2f));
+								int mouseX = getMouseX() - contentArea.x;
+								int mouseY = getMouseY() - contentArea.y;
+
+								int newScaleHandleX = Math.round(getMouseX() - contentArea.x - relativeClickX);
+								int newScaleHandleY = Math.round(getMouseY() - contentArea.y - relativeClickY);
 
 								elementWidget.setPosition(
 									newScaleHandleX,

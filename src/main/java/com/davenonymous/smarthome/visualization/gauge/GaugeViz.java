@@ -9,6 +9,11 @@ import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetColorDisplay;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.visualization.annotations.VisualizationDescription;
+import com.davenonymous.smarthome.visualization.annotations.VisualizationId;
+import com.davenonymous.smarthome.visualization.annotations.VisualizationName;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
@@ -25,16 +30,22 @@ import java.util.UUID;
 
 @SmartHomeVisualization(modid = SmartHome.MODID)
 public class GaugeViz implements IVisualization<GaugeVizSettings> {
+	@VisualizationId
 	public static final ResourceLocation ID = SmartHome.resource("visualization/gauge");
+
+	@VisualizationName
+	@I18DataGen(lang = "en_us", string = "Gauge")
+	@I18DataGen(lang = "de_de", string = "Messuhr")
+	public static final I18String NAME = SmartHome.guiString("visualization.gauge", "name");
+
+	@VisualizationDescription
+	@I18DataGen(lang = "en_us", string = "Shows current value as a gauge.")
+	@I18DataGen(lang = "de_de", string = "Zeigt den aktuellen Wert als Ausschlag in einer Messuhr an.")
+	public static final I18String DESC = SmartHome.guiString("visualization.gauge", "description");
 
 	@Override
 	public GaugeVizSettings getDefaultSettings() {
 		return new GaugeVizSettings(0.0, 100.0, GaugeVizSettings.DEFAULT_THRESHOLDS);
-	}
-
-	@Override
-	public ResourceLocation id() {
-		return ID;
 	}
 
 	@Override
