@@ -25,32 +25,29 @@ public class AddCardElementSelectionWidget extends WidgetHBox {
 		this.setHeight(32);
 		this.setSpacing(6);
 
-		icon = new WidgetSprite(ModCardElements.ICON_BY_ID.get(elementId));
-		icon.setColor(normalColor);
+		var self = this;
+		icon = new WidgetSprite(ModCardElements.ICON_BY_ID.get(elementId)) {
+			@Override
+			public boolean isHovered() {
+				return self.isHovered();
+			}
+		};
+		icon.setColor(normalColor, hoverColor);
 		icon.setScale(0.5f);
 		this.addContentBox(icon, FlexAlign.CENTER);
 
-		label = new WidgetTextBox(ModCardElements.NAME_BY_ID.get(elementId).get(), normalColor);
+		label = new WidgetTextBox(ModCardElements.NAME_BY_ID.get(elementId).get(), normalColor, hoverColor) {
+			@Override
+			public boolean isHovered() {
+				return self.isHovered();
+			}
+		};
 		//label.setFont(ModFonts.NOKIA);
 		label.autoWidth();
 		label.autoHeight();
 		this.addContentBox(label, FlexAlign.END);
 
 		this.adjustSizeToContent();
-
-		this.addListener(
-			MouseEnterEvent.class, (event, widget) -> {
-				icon.setColor(hoverColor);
-				label.setTextColor(hoverColor);
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			});
-
-		this.addListener(
-			MouseExitEvent.class, (event, widget) -> {
-				icon.setColor(normalColor);
-				label.setTextColor(normalColor);
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			});
 	}
 
 }

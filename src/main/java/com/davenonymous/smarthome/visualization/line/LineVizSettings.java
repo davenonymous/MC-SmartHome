@@ -1,33 +1,59 @@
 package com.davenonymous.smarthome.visualization.line;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualizationSettings;
+import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsCodec;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsId;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsStreamCodec;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.List;
+import java.util.*;
 
 @SmartHomeVisualizationSettings
-public record LineVizSettings(List<LineVizSeriesSettings> series) implements IVisualizationSettings {
+public record LineVizSettings(Map<UUID, Map<String, LineVizSeriesSettings>> series) implements IVisualizationSettings {
 	@VisualizationSettingsId
 	public static final ResourceLocation ID = SmartHome.resource("visualization_settings/line");
 
 	@VisualizationSettingsCodec
 	public static final MapCodec<LineVizSettings> CODEC = RecordCodecBuilder.mapCodec(inst -> inst.group(
-		LineVizSeriesSettings.CODEC.codec().listOf().fieldOf("seriesColors").forGetter(LineVizSettings::series)
+		Codec.unboundedMap(UUIDUtil.STRING_CODEC, Codec.unboundedMap(Codec.STRING, LineVizSeriesSettings.CODEC.codec())).optionalFieldOf("series", Map.of()).forGetter(LineVizSettings::series)
 	).apply(inst, LineVizSettings::new));
 
 	@VisualizationSettingsStreamCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, LineVizSettings> STREAM_CODEC = StreamCodec.composite(
-		LineVizSeriesSettings.STREAM_CODEC.apply(ByteBufCodecs.list()), LineVizSettings::series,
+		ByteBufCodecs.map(HashMap::new, UUIDUtil.STREAM_CODEC, ByteBufCodecs.map(HashMap::new, ByteBufCodecs.STRING_UTF8, LineVizSeriesSettings.STREAM_CODEC)), LineVizSettings::series,
 		LineVizSettings::new
 	);
+
+	@Override
+	public List<Widget> createSettingsWidgets(HomeSensor<?, ?> sensor, List<UUID> devices) {
+		List<Widget> result = new ArrayList<>();
+		for(UUID deviceId : devices) {
+			var optDevice = HomeScreen.get().selectedHome.getDevice(deviceId);
+			if(optDevice.isEmpty()) {
+				continue;
+			}
+			var deviceInfo = optDevice.get();
+			var zone = deviceInfo.getFirst();
+			var device = deviceInfo.getSecond();
+
+			var settingsWidget = new SeriesSettingsWidget(device, sensor, series.get(deviceId));
+			result.add(settingsWidget);
+
+		}
+		return result;
+	}
 }

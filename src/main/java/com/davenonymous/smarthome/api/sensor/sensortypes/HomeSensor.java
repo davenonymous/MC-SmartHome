@@ -4,6 +4,7 @@ import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
+import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.api.sensor.DBHandler;
 import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
@@ -20,10 +21,7 @@ import org.duckdb.DuckDBConnection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
@@ -34,19 +32,20 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 		return LineViz.ID;
 	}
 
-	default IVisualizationSettings getDefaultVisualizationSettings() {
+	default IVisualizationSettings getDefaultVisualizationSettings(ConfiguredDevice device) {
 		var colors = IVisualizationSettings.defaultColors();
-		List<LineVizSeriesSettings> seriesSettings = new ArrayList<>();
+		Map<String, LineVizSeriesSettings> result = new HashMap<>();
+
 		for(var column : getColumns()) {
 			if(!column.type().isNumeric()) {
 				continue;
 			}
 
-			var series = new LineVizSeriesSettings(colors.next(), column.translationKey());
-			seriesSettings.add(series);
+			var series = new LineVizSeriesSettings(true, colors.next(), column.label().get());
+			result.put(column.name(), series);
 		}
 
-		return new LineVizSettings(seriesSettings);
+		return new LineVizSettings(Map.of(device.id(), result));
 	}
 
 	default boolean isGeneric() {
@@ -94,6 +93,11 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 			throw new IndexOutOfBoundsException("Column index " + index + " is out of bounds for sensor " + id() + " with " + sensorList.size() + " columns");
 		}
 		return sensorList.get(index);
+	}
+
+	default SensorColumn getColumn(String name) {
+		List<SensorColumn> sensorList = ModSensors.SENSOR_COLUMNS.getOrDefault(id(), List.of());
+		return sensorList.stream().filter(c -> c.name().equals(name)).findFirst().orElse(null);
 	}
 
 	default ResourceLocation getTableName() {

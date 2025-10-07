@@ -139,11 +139,11 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 		List<SensorColumn> columns = new ArrayList<>();
 
-		columns.add(SensorColumn.timestamp("instant", INSTANT_COLUMN_NAME.key()));
-		columns.add(SensorColumn.ubigint("tick", TICK_COLUMN_NAME.key()));
-		columns.add(SensorColumn.uuid("home", HOME_COLUMN_NAME.key()));
-		columns.add(SensorColumn.uuid("zone", ZONE_COLUMN_NAME.key()));
-		columns.add(SensorColumn.uuid("device", DEVICE_COLUMN_NAME.key()));
+		columns.add(SensorColumn.timestamp("instant", INSTANT_COLUMN_NAME));
+		columns.add(SensorColumn.ubigint("tick", TICK_COLUMN_NAME));
+		columns.add(SensorColumn.uuid("home", HOME_COLUMN_NAME));
+		columns.add(SensorColumn.uuid("zone", ZONE_COLUMN_NAME));
+		columns.add(SensorColumn.uuid("device", DEVICE_COLUMN_NAME));
 		columns.addAll(sensor.getColumns());
 
 		String columnSpecs = columns.stream()

@@ -79,7 +79,7 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 			.title("Gauge")
 			.build();
 
-		chart.addSeries(I18n.get(column.translationKey()), (value - settings.min()) / settings.max(), I18n.get(column.translationKey()));
+		chart.addSeries(column.label().get(), (value - settings.min()) / settings.max(), column.label().get());
 
 		// TODO: a lot of these need to be moved to viz settings
 		chart.getStyler()

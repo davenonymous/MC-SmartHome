@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.visualization.line;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
@@ -57,7 +58,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 
 	@Override
 	public LineVizSettings getDefaultSettings() {
-		return new LineVizSettings(List.of());
+		return new LineVizSettings(Map.of());
 	}
 
 	@Override
@@ -119,8 +120,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		} catch (IOException e) {
 		}
 
-		var deviceId = dataByDevice.keySet().iterator().next();
-		var data = dataByDevice.get(deviceId);
+
 		styler
 			.setSeriesMarkers(new Marker[] {new None()})
 			.setChartTitleVisible(false)
@@ -141,40 +141,71 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			styler.setAxisTickLabelsFont(myFont);
 		}
 
-		List<Long> xData = new ArrayList<>();
-		Map<String, List<Double>> yData = new HashMap<>();
-		data.forEach((date, sensorData) ->{
-			xData.add(date.getFirst().toEpochMilli());
-			for(var column : sensor.getColumns()) {
-				if(!column.type().isNumeric()) {
-					continue;
+		Map<UUID, Map<String, LineVizSeriesSettings>> seriesSettingsList = settings.series();
+
+		int seriesCount = 0;
+		for(UUID deviceId : seriesSettingsList.keySet()) {
+			var data = dataByDevice.get(deviceId);
+			var deviceSeriesSettings = seriesSettingsList.get(deviceId);
+			if(data.isEmpty()) {
+				continue;
+			}
+
+			List<Long> xData = new ArrayList<>();
+			Map<String, List<Double>> yData = new HashMap<>();
+			data.forEach((date, sensorData) ->{
+				xData.add(date.getFirst().toEpochMilli());
+
+				for(var columnName : deviceSeriesSettings.keySet()) {
+					var vizSettings = deviceSeriesSettings.get(columnName);
+					if(!vizSettings.enabled()) {
+						continue;
+					}
+
+					SensorColumn column = sensor.getColumn(columnName);
+					if(column == null) {
+						continue;
+					}
+					if(!column.type().isNumeric()) {
+						continue;
+					}
+
+
+					var list = yData.computeIfAbsent(columnName, k -> new ArrayList<>());
+					var value = sensor.valueFromData(HomeSensor.cast(sensorData), column);
+					list.add(value);
 				}
-				var columnName = column.name();
-				var list = yData.computeIfAbsent(columnName, k -> new ArrayList<>());
-				var value = sensor.valueFromData(HomeSensor.cast(sensorData), column);
-				list.add(value);
+			});
+
+			for(String columnName : yData.keySet()) {
+				LineVizSeriesSettings seriesSetting = deviceSeriesSettings.get(columnName);
+
+				chart.addSeries(seriesSetting.label(), xData, yData.get(columnName))
+					.setLineColor(new Color(seriesSetting.color(), false));
+				seriesCount++;
 			}
-		});
-
-		var seriesSettingsList = settings.series();
-		int seriesIndex = 0;
-		for(String seriesName : yData.keySet()) {
-			LineVizSeriesSettings seriesSetting;
-			if(seriesSettingsList.isEmpty()) {
-				seriesSetting = new LineVizSeriesSettings(ColorHelper.COLOR_CYAN, seriesName);
-			} else {
-				seriesSetting = seriesSettingsList.get(seriesIndex % seriesSettingsList.size());
-			}
-
-			List<Double> series = yData.get(seriesName);
-			chart.addSeries(seriesName, xData, series)
-				.setLineColor(new Color(seriesSetting.color(), false));
-
-			seriesIndex++;
 		}
 
+		if(seriesCount == 0) {
+			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(width, height);
+		}
 		WidgetChart<XYChart> wigget = new WidgetChart<>(chart);
 		wigget.setSize(width, height);
 		return wigget;
+	}
+
+	@Override
+	public LineVizSettings loadSettings(List<Widget> settingsWidgets) {
+		Map<UUID, Map<String, LineVizSeriesSettings>> series = new HashMap<>();
+		for(var widget : settingsWidgets) {
+			if(!(widget instanceof SeriesSettingsWidget seriesWidget)) {
+				continue;
+			}
+
+			var device = seriesWidget.device;
+			series.put(device.id(), seriesWidget.currentSettings());
+		}
+
+		return new LineVizSettings(series);
 	}
 }

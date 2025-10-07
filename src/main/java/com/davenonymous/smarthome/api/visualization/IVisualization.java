@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec2;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,4 +35,8 @@ public interface IVisualization<S extends IVisualizationSettings> {
 	S getDefaultSettings();
 
 	Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> data, HomeSensor<?, ?> sensor, S vizSettings, Vec2 size);
+
+	default S loadSettings(List<Widget> settingsWidgets) {
+		return getDefaultSettings();
+	}
 }

@@ -91,7 +91,7 @@ public class SensorBox extends WidgetVBox {
 				IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
 				if(vizImpl != null) {
 					//noinspection unchecked
-					sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(), new Vec2(120, 70));
+					sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(device), new Vec2(120, 70));
 					if(sensorWidget != null) {
 						this.addContentBox(sensorWidget, FlexAlign.CENTER);
 						hasPlacedViz = true;

@@ -35,7 +35,7 @@ public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffS
 	@SensorName
 	@I18DataGen(lang = "en_us", string = "Energy Storage")
 	@I18DataGen(lang = "de_de", string = "Energielager")
-	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor", "energy_storage");
+	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor.energy_storage", "name");
 
 	public static final BlockCapability<IEnergyStorage, @Nullable Direction> ENERGY = Capabilities.EnergyStorage.BLOCK;
 

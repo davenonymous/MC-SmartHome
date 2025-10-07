@@ -30,7 +30,7 @@ public class VisualizationSelector extends WidgetPanel {
 
 		updateVisualizationChoices();
 
-		this.vizLabel = new WidgetTextBox(selectedVisualization.getDisplayName().get(), 0xFFFFFFFF);
+		this.vizLabel = new WidgetTextBox(selectedVisualization.getDisplayName().get(), 0xFFFFFFFF, ColorHelper.COLOR_ORANGE);
 		this.vizLabel.autoWidth();
 		this.vizLabel.autoHeight();
 		this.vizLabel.addListener(

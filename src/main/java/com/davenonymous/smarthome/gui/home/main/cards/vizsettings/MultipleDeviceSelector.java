@@ -85,7 +85,7 @@ public class MultipleDeviceSelector extends WidgetPanel {
 
 		}
 
-		this.deviceLabel = new WidgetTextBox(selectedDevicesName(), 0xFFFFFFFF);
+		this.deviceLabel = new WidgetTextBox(selectedDevicesName(), 0xFFFFFFFF, ColorHelper.COLOR_ORANGE);
 		this.deviceLabel.setWordWrap(true);
 		this.deviceLabel.autoWidth(155);
 		this.deviceLabel.autoHeight();

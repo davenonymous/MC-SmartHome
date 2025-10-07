@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
+import com.davenonymous.smarthome.sensor.annotation.SensorDataColumnLabel;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,6 +14,22 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public record ZoneLightLevelData(short minLevel, short maxLevel, double avgLevel) implements ISensorData {
+
+	@SensorDataColumnLabel("minLevel")
+	@I18DataGen(lang = "en_us", string = "Minimum")
+	@I18DataGen(lang = "de_de", string = "Minimum")
+	public static final I18String MIN_COLUMN = SmartHome.dataString("sensor.block_light.column", "min_level");
+
+	@SensorDataColumnLabel("maxLevel")
+	@I18DataGen(lang = "en_us", string = "Maximum")
+	@I18DataGen(lang = "de_de", string = "Maximum")
+	public static final I18String MAX_COLUMN = SmartHome.dataString("sensor.block_light.column", "max_level");
+
+	@SensorDataColumnLabel("avgLevel")
+	@I18DataGen(lang = "en_us", string = "Average")
+	@I18DataGen(lang = "de_de", string = "Durchschnitt")
+	public static final I18String AVG_COLUMN = SmartHome.dataString("sensor.block_light.column", "avg_level");
+
 	public ZoneLightLevelData(int minLevel, int maxLevel, double avgLevel) {
 		this((short)minLevel, (short)maxLevel, avgLevel);
 	}

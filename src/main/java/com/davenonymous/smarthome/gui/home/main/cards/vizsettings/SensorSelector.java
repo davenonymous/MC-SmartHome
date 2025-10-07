@@ -27,7 +27,7 @@ public class SensorSelector extends WidgetPanel {
 
 		updateSensorChoices();
 
-		this.sensorLabel = new WidgetTextBox(selectedSensor.getDisplayName().get(), 0xFFFFFFFF);
+		this.sensorLabel = new WidgetTextBox(selectedSensor.getDisplayName().get(), 0xFFFFFFFF, ColorHelper.COLOR_ORANGE);
 		this.sensorLabel.autoWidth();
 		this.sensorLabel.autoHeight();
 		this.sensorLabel.addListener(

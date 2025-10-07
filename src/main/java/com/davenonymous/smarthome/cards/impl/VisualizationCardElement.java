@@ -119,6 +119,9 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 
 		result.add(createLabel("Devices:"));
 		result.add(new MultipleDeviceSelector(devices, sensor));
+
+		result.addAll(vizSettings.createSettingsWidgets(sensor, devices));
+
 		return result;
 	}
 
@@ -127,6 +130,11 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 		var sensorSelector = (SensorSelector)settingsWidgets.get(1);
 		var deviceSelector = (MultipleDeviceSelector)settingsWidgets.get(5);
 		var vizSelector = (VisualizationSelector)settingsWidgets.get(3);
-		return new VisualizationCardElement(id, vizSelector.selectedVisualization().getType(), sensorSelector.selectedSensor().id(), deviceSelector.selectedDevices().keySet().stream().toList(), vizSettings, size);
+
+		var sensor = sensorSelector.selectedSensor();
+		var viz = vizSelector.selectedVisualization();
+		var newVizSettings = viz.loadSettings(settingsWidgets);
+
+		return new VisualizationCardElement(id, vizSelector.selectedVisualization().getType(), sensorSelector.selectedSensor().id(), deviceSelector.selectedDevices().keySet().stream().toList(), newVizSettings, size);
 	}
 }

@@ -2,8 +2,6 @@ package com.davenonymous.smarthome.visualization;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
-import com.davenonymous.smarthome.visualization.gauge.GaugeVizSettings;
-import com.davenonymous.smarthome.visualization.line.LineVizSettings;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.network.RegistryFriendlyByteBuf;

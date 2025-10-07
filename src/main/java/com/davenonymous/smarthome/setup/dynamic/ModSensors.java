@@ -11,6 +11,7 @@ import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
 import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
+import com.davenonymous.smarthome.sensor.annotation.SensorDataColumnLabel;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -84,6 +85,30 @@ public class ModSensors {
 			var settingsClassSimpleName = settingsClazz.getSimpleName();
 			var settingsClassSnakeCaseName = snakeCase(settingsClassSimpleName);
 
+			Map<String, I18String> columnLabels = new HashMap<>();
+			for(var field : dataClazz.getDeclaredFields()) {
+				if(!Modifier.isStatic(field.getModifiers())) {
+					continue;
+				}
+
+				if(!field.isAnnotationPresent(SensorDataColumnLabel.class)) {
+					continue;
+				}
+
+				if(!I18String.class.isAssignableFrom(field.getType())) {
+					SmartHome.LOGGER.error("Sensor class {} has @SensorDataColumnLabel, but not on type I18String: {} {}", annotationData.clazz().getClassName(), field.getName(), field.getType().getName());
+					return;
+				}
+
+				var columnLabelAnnotation = field.getAnnotation(SensorDataColumnLabel.class);
+				var columnNameForLabel = columnLabelAnnotation.value();
+				try {
+					I18String columnLabel = (I18String) field.get(null);
+					columnLabels.put(columnNameForLabel, columnLabel);
+				} catch (IllegalAccessException e) {
+				}
+			}
+
 			List<SensorColumn> columns = new ArrayList<>();
 			int colIndex = 0;
 			for(var field : dataClazz.getDeclaredFields()) {
@@ -93,14 +118,16 @@ public class ModSensors {
 
 				var columnType = SensorColumnType.byValueClass(field.getType());
 				if(columnType == null) {
-					SmartHome.LOGGER.error("Sensor class {} has data class with field of unsupported type: {} {}", annotationData.clazz().getClassName(), field.getName(), field.getType().getName());
-					return;
+					throw new RuntimeException("Sensor class " + annotationData.clazz().getClassName() + " has data class with field of unsupported type: " + field.getName() + " " + field.getType().getName());
+				}
+
+				var columnLabel = columnLabels.get(field.getName());
+				if(columnLabel == null) {
+					throw new RuntimeException("Sensor class " + annotationData.clazz().getClassName() + " has data class with field without @SensorDataColumnLabel: " + field.getName() + " " + field.getType().getName());
 				}
 
 				var snakeCaseName = snakeCase(field.getName());
-				String translationKey = SmartHome.MODID + ".sensor." + sensorClassSnakeCaseName + ".column." + snakeCaseName;
-
-				var column = new SensorColumn(colIndex++, snakeCaseName, translationKey, columnType);
+				var column = new SensorColumn(colIndex++, snakeCaseName, columnLabel, columnType);
 				columns.add(column);
 			}
 
@@ -141,9 +168,9 @@ public class ModSensors {
 				DEFAULT_SETTINGS_BY_CLASS.put(sensorClazz, defaultSettings);
 
 
-				SmartHome.LOGGER.info("Found sensor: {} for mod: {}", sensorId, modid);
+				SmartHome.LOGGER.info("Found sensor: {} (mod: {})", sensorId, modid);
 				for(var col : columns) {
-					SmartHome.LOGGER.info("  Column: {} ({}) Type: {}", col.name(), col.translationKey(), col.type().sqlType());
+					SmartHome.LOGGER.info("  Column: {} Type: {}", col.name(), col.type().sqlType());
 				}
 				SENSOR_COLUMNS.put(sensorId, columns);
 			} catch (Exception e) {

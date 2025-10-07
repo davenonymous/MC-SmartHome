@@ -1,9 +1,11 @@
 package com.davenonymous.smarthome.visualization.gauge;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualizationSettings;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsCodec;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsId;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsStreamCodec;
@@ -16,7 +18,9 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @SmartHomeVisualizationSettings
 public record GaugeVizSettings(double min, double max, Map<Double, Integer> colorThresholds) implements IVisualizationSettings {
@@ -42,5 +46,10 @@ public record GaugeVizSettings(double min, double max, Map<Double, Integer> colo
 
 	public GaugeVizSettings(int min, int max) {
 		this((double)min, (double)max, DEFAULT_THRESHOLDS);
+	}
+
+	@Override
+	public List<Widget> createSettingsWidgets(HomeSensor<?, ?> sensor, List<UUID> devices) {
+		return List.of();
 	}
 }

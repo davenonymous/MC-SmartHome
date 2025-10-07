@@ -16,21 +16,26 @@ import java.util.function.Function;
 
 public class WidgetTextBox extends Widget {
 	private String text;
-	private int textColor = 0xFFFFFF;
+	private int textColor = 0xFFFFFFF;
+	private int hoverColor = 0xFFFFFFF;
 	private boolean dropShadow = false;
 	private boolean wordWrap = false;
 	protected Style style = Style.EMPTY;
 	private ModFonts.FontSpec font;
 
 	public WidgetTextBox(String text) {
-		this.text = text;
-		this.setWidth(100);
-		this.setHeight(9);
+		this(text, 0xFFFFFFFF, 0xFFFFFFFF);
 	}
 
 	public WidgetTextBox(String text, int textColor) {
+		this(text, textColor, textColor);
+	}
+
+	public WidgetTextBox(String text, int textColor, int hoverColor) {
+		super();
 		this.text = text;
 		this.textColor = textColor;
+		this.hoverColor = hoverColor;
 		this.setWidth(100);
 		this.setHeight(9);
 	}
@@ -91,6 +96,9 @@ public class WidgetTextBox extends Widget {
 	}
 
 	public void setTextColor(int textColor) {
+		if(this.textColor == hoverColor) {
+			this.hoverColor = textColor;
+		}
 		this.textColor = textColor;
 	}
 
@@ -143,9 +151,14 @@ public class WidgetTextBox extends Widget {
 			yOffset = font.yOffset();
 		}
 
+		int color = textColor;
+		if(isHovered()) {
+			color = hoverColor;
+		}
+
 		int lineWidth = wordWrap ? Math.round(width / scale) : Integer.MAX_VALUE;
 		pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width / scale), getActualY() + (int)(height / scale));
-		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, textColor, dropShadow);
+		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, color, dropShadow);
 		pGuiGraphics.disableScissor();
 
 		RenderSystem.disableBlend();
