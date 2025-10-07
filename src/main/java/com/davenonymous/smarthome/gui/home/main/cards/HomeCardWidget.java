@@ -200,9 +200,6 @@ public class HomeCardWidget extends WidgetPanel {
 									return WidgetEventResult.CONTINUE_PROCESSING;
 								}
 
-								int mouseX = getMouseX() - contentArea.x;
-								int mouseY = getMouseY() - contentArea.y;
-
 								int newScaleHandleX = Math.round(getMouseX() - contentArea.x - relativeClickX);
 								int newScaleHandleY = Math.round(getMouseY() - contentArea.y - relativeClickY);
 

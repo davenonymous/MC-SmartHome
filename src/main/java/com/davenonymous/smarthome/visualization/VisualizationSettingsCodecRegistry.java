@@ -26,15 +26,6 @@ public class VisualizationSettingsCodecRegistry {
 	public static final Registry<StreamCodec<? super RegistryFriendlyByteBuf, ? extends IVisualizationSettings>> VIZ_SETTINGS_DISPATCHER = new RegistryBuilder<>(VisualizationSettingsCodecRegistry.VIZ_SETTINGS_DISPATCHER_KEY).sync(true).create();
 	public static final DeferredRegister<StreamCodec<? super RegistryFriendlyByteBuf, ? extends IVisualizationSettings>> DEFERRED_VIZ_SETTINGS_DISPATCHER = DeferredRegister.create(VisualizationSettingsCodecRegistry.VIZ_SETTINGS_DISPATCHER, SmartHome.MODID);
 
-	static {
-		DEFERRED_VIZ_SETTINGS.register("gauge", () -> GaugeVizSettings.CODEC);
-		DEFERRED_VIZ_SETTINGS_DISPATCHER.register("gauge", () -> GaugeVizSettings.STREAM_CODEC);
-
-		DEFERRED_VIZ_SETTINGS.register("line_chart", () -> LineVizSettings.CODEC);
-		DEFERRED_VIZ_SETTINGS_DISPATCHER.register("line_chart", () -> LineVizSettings.STREAM_CODEC);
-	}
-
-
 	@SubscribeEvent
 	static void newRegistry(NewRegistryEvent event) {
 		event.register(VisualizationSettingsCodecRegistry.VIZ_SETTINGS_SERIALIZERS);

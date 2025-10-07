@@ -125,8 +125,8 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 	@Override
 	public VisualizationCardElement loadSettings(List<Widget> settingsWidgets) {
 		var sensorSelector = (SensorSelector)settingsWidgets.get(1);
-		var deviceSelector = (MultipleDeviceSelector)settingsWidgets.get(3);
-		var vizSelector = (VisualizationSelector)settingsWidgets.get(5);
+		var deviceSelector = (MultipleDeviceSelector)settingsWidgets.get(5);
+		var vizSelector = (VisualizationSelector)settingsWidgets.get(3);
 		return new VisualizationCardElement(id, vizSelector.selectedVisualization().getType(), sensorSelector.selectedSensor().id(), deviceSelector.selectedDevices().keySet().stream().toList(), vizSettings, size);
 	}
 }

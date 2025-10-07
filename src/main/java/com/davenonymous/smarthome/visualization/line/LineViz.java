@@ -40,7 +40,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
-@SmartHomeVisualization(modid = SmartHome.MODID)
+@SmartHomeVisualization
 public class LineViz implements IVisualization<LineVizSettings> {
 	@VisualizationId
 	public static final ResourceLocation ID = SmartHome.resource("visualization/line");

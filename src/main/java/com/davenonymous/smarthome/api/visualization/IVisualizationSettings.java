@@ -2,6 +2,8 @@ package com.davenonymous.smarthome.api.visualization;
 
 import com.davenonymous.smarthome.lib.gui.CircularPointedArrayList;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
+import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
+import com.davenonymous.smarthome.setup.dynamic.ModVisualizationSettings;
 import com.davenonymous.smarthome.visualization.VisualizationSettingsCodecRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -9,16 +11,27 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.function.Function;
 
 public interface IVisualizationSettings {
-	MapCodec<? extends IVisualizationSettings> type();
-	StreamCodec<RegistryFriendlyByteBuf, ? extends IVisualizationSettings> streamCodec();
+	default ResourceLocation getType() {
+		return ModVisualizationSettings.ID_BY_CLASS.get(this.getClass());
+	}
+
+	default MapCodec<? extends IVisualizationSettings> codec() {
+		//noinspection unchecked
+		return ModVisualizationSettings.CODEC_BY_ID.get(this.getType());
+	}
+	default StreamCodec<RegistryFriendlyByteBuf, ? extends IVisualizationSettings> streamCodec() {
+		//noinspection unchecked
+		return ModVisualizationSettings.STREAMCODEC_BY_ID.get(this.getType());
+	}
 
 	Codec<IVisualizationSettings> CODEC = VisualizationSettingsCodecRegistry.VIZ_SETTINGS_SERIALIZERS.byNameCodec() // Gets Codec<MapCodec<? extends ExampleObject>>
 		.dispatch(
-			IVisualizationSettings::type, // Get the codec from the specific object
+			IVisualizationSettings::codec, // Get the codec from the specific object
 			Function.identity() // Get the codec from the registry
     );
 

@@ -28,7 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@SmartHomeVisualization(modid = SmartHome.MODID)
+@SmartHomeVisualization
 public class GaugeViz implements IVisualization<GaugeVizSettings> {
 	@VisualizationId
 	public static final ResourceLocation ID = SmartHome.resource("visualization/gauge");

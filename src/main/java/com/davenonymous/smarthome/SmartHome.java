@@ -6,6 +6,7 @@ import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.setup.DeferredRegistries;
 import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.setup.dynamic.ModVisualizationSettings;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -22,6 +23,7 @@ public class SmartHome {
 	public static GuiTheme theme = new Vanilla();
 
 	public SmartHome(IEventBus modEventBus, ModContainer modContainer){
+		ModVisualizationSettings.find();
 		ModVisualizations.find();
 		ModSensors.find();
 		ModCardElements.find();
