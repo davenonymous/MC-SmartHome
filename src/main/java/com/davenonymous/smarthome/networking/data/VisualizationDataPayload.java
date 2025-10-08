@@ -1,8 +1,11 @@
 package com.davenonymous.smarthome.networking.data;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
@@ -20,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.UUID;
 
 @Packet
-public record VisualizationDataPayload(UUID homeId, ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) implements LibPacketPayload {
+public record VisualizationDataPayload(ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) implements LibPacketPayload {
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, Pair<Instant, Long>> PAIR_CODEC = StreamCodec.composite(
 		ByteBufCodecs.VAR_LONG.map(Instant::ofEpochMilli, Instant::toEpochMilli), Pair::getFirst,
@@ -30,7 +33,6 @@ public record VisualizationDataPayload(UUID homeId, ConfiguredDevice device, Res
 
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, VisualizationDataPayload> CODEC = StreamCodec.composite(
-		UUIDUtil.STREAM_CODEC, VisualizationDataPayload::homeId,
 		ConfiguredDevice.STREAM_CODEC, VisualizationDataPayload::device,
 		ResourceLocation.STREAM_CODEC, VisualizationDataPayload::sensorId,
 		ResourceLocation.STREAM_CODEC, VisualizationDataPayload::vizId,
@@ -40,15 +42,17 @@ public record VisualizationDataPayload(UUID homeId, ConfiguredDevice device, Res
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(VisualizationDataPayload payload, IPayloadContext context) {
+		ClientCache.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
+
 		var homeScreen = HomeScreen.get();
 		if(homeScreen == null) {
 			return;
 		}
 
-		if(homeScreen.selectedHome == null || !homeScreen.selectedHome.id().equals(payload.homeId())) {
+		if(homeScreen.selectedHome == null) {
 			return;
 		}
 
-		homeScreen.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
+		homeScreen.getOrCreateGui().fireEvent(new VisualizationDataUpdatedEvent(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data()));
 	}
 }

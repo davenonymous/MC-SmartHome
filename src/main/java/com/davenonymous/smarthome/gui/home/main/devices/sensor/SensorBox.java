@@ -5,7 +5,6 @@ import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.Animations;
@@ -19,6 +18,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.actions.devices.SetSensorStatePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
@@ -31,7 +31,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -74,31 +73,28 @@ public class SensorBox extends WidgetVBox {
 		}
 		headerBox.adjustSizeToContent();
 
-		var vizCache = HomeScreen.get().visualizationDataCache;
-		var dataCache = HomeScreen.get().sensorDataCache.get(device.id());
 
+		var dataCache = ClientCache.getDeviceData(device.id());
 		if(dataCache != null && dataCache.containsKey(sensor.id())) {
 			var sensorData = dataCache.get(sensor.id());
 
 		}
 
 		boolean hasPlacedViz = false;
-		if(vizCache.contains(device.id(), sensor.id())) {
-			Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>availableVisualizations = vizCache.get(device.id(), sensor.id());
-			if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
-				LinkedHashMap<Pair<Instant, Long>, ISensorData> data = availableVisualizations.get(sensor.getDefaultVisualization());
-				//noinspection rawtypes
-				IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
-				if(vizImpl != null) {
-					//noinspection unchecked
-					sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(device), new Vec2(120, 70));
-					if(sensorWidget != null) {
-						this.addContentBox(sensorWidget, FlexAlign.CENTER);
-						hasPlacedViz = true;
-					}
+		Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>availableVisualizations = ClientCache.getVizMap(device.id(), sensor.id());
+		if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
+			LinkedHashMap<Pair<Instant, Long>, ISensorData> data = availableVisualizations.get(sensor.getDefaultVisualization());
+			//noinspection rawtypes
+			IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
+			if(vizImpl != null) {
+				//noinspection unchecked
+				sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(device), new Vec2(120, 70));
+				if(sensorWidget != null) {
+					this.addContentBox(sensorWidget, FlexAlign.CENTER);
+					hasPlacedViz = true;
 				}
-
 			}
+
 		}
 
 		if(!hasPlacedViz && dataCache != null) {

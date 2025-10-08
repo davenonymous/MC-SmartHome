@@ -21,6 +21,7 @@ public class DGTranslations_DE extends DGBaseTranslations {
 
 		add(ModBlocks.DASHBOARD.get(), "Dashboard");
 		add(ModBlocks.MINI_RACK.get(), "Mini-Rack");
+		add(ModBlocks.PROJECTOR.get(), "Projektor");
 		add(ModItems.SERVER_ITEM.get(), "Smart Home Server");
 		add(ModItems.IRDA_ITEM.get(), "IrDA Transceiver");
 		add(ModItems.RANGE_FINDER_ITEM.get(), "Laser Reichweiten Sucher");

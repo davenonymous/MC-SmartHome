@@ -28,6 +28,21 @@ public record HomeCard(UUID id, String label, ResourceLocation icon, Vec2 size, 
 		return new HomeCardWidget(this, editing);
 	}
 
+	public List<EntityId> requiredEntities() {
+		List<EntityId> req = new ArrayList<>();
+		for(var pair : elements.values()) {
+			HomeCardElement<?> element = pair.getSecond();
+			if(element instanceof VisualizationCardElement vizCardElement) {
+				var sensorId = vizCardElement.sensorId();
+				for(UUID device : vizCardElement.devices()) {
+					req.add(new EntityId(device, sensorId));
+				}
+			}
+		}
+
+		return req;
+	}
+
 	public int width() {
 		return (int)size.x;
 	}

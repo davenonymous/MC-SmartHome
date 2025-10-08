@@ -5,6 +5,8 @@ import com.davenonymous.smarthome.blocks.minirack.MiniRackBlock;
 import com.davenonymous.smarthome.blocks.minirack.MiniRackBlockEntity;
 import com.davenonymous.smarthome.blocks.dashboard.DashboardBlock;
 import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.blocks.projector.ProjectorBlock;
+import com.davenonymous.smarthome.blocks.projector.ProjectorBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -34,6 +36,18 @@ public class ModBlocks {
 
 	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<DashboardBlock>> DASHBOARD_BLOCK_TYPE = BLOCK_TYPES.register(
 		DASHBOARD_ID, () -> BlockBehaviour.simpleCodec(DashboardBlock::new));
+
+
+	public static final String PROJECTOR_ID = "projector";
+	public static final DeferredBlock<Block> PROJECTOR = BLOCKS.register(
+		PROJECTOR_ID, () -> new ProjectorBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+
+	public static final Supplier<BlockEntityType<ProjectorBlockEntity>> PROJECTOR_ENTITY = BLOCK_ENTITIES.register(
+		PROJECTOR_ID, () -> BlockEntityType.Builder.of(ProjectorBlockEntity::new, PROJECTOR.get()).build(null));
+
+	public static final DeferredHolder<MapCodec<? extends Block>, MapCodec<ProjectorBlock>> PROJECTOR_BLOCK_TYPE = BLOCK_TYPES.register(
+		PROJECTOR_ID, () -> BlockBehaviour.simpleCodec(ProjectorBlock::new));
+
 
 
 	public static final String MINI_RACK_ID = "mini_rack";

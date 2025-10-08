@@ -30,6 +30,10 @@ public class DGBlockStates extends BlockStateProvider {
 		ownDirectionalBlock(ModBlocks.DASHBOARD.get(), dashboardModel);
 		simpleBlockItem(ModBlocks.DASHBOARD.get(), dashboardModel);
 
+		var projectorModel = new ModelFile.ExistingModelFile(SmartHome.resource("block/mini_projector"), this.exFileHelper);
+		ownDirectionalBlock(ModBlocks.PROJECTOR.get(), projectorModel);
+		simpleBlockItem(ModBlocks.PROJECTOR.get(), projectorModel);
+
 		miniRackBlock();
 
 		itemModels().basicItem(ModItems.IRDA_ITEM.get());

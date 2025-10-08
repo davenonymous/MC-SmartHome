@@ -32,6 +32,8 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(HomeInfoPayload payload, IPayloadContext context) {
+		ClientCache.addHomeInfo(payload.home(), payload.worldInfo());
+
 		var mc = Minecraft.getInstance();
 		if(mc.screen instanceof HomeScreen homeScreen) {
 			var home = payload.home();

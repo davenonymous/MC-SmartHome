@@ -30,6 +30,7 @@ public class DGBlockLoot extends BlockLootSubProvider {
 	protected void generate() {
 		createCopyComponentsBlockEntityTable(ModBlocks.DASHBOARD.get());
 		createCopyComponentsBlockEntityTable(ModBlocks.MINI_RACK.get());
+		createCopyComponentsBlockEntityTable(ModBlocks.PROJECTOR.get());
 	}
 
 	protected void createCopyComponentsBlockEntityTable(Block block) {

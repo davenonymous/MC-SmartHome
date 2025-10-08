@@ -3,7 +3,6 @@ package com.davenonymous.smarthome.gui;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
-import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -21,9 +20,8 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
-import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -47,23 +45,8 @@ public class HomeScreen extends WidgetFullScreen {
 	public List<HomeCore> ownedHomes;
 	public HomeWorldInfo homeWorldInfo;
 
-	public Map<UUID, Map<ResourceLocation, ISensorData>> sensorDataCache;
 
-	//          (DevID, SensorId) ->     {VizID ->              [ (Timestamp, Tick) -> Data ]}
-	public Table<UUID, ResourceLocation, Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>> visualizationDataCache;
 
-	public Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevices(List<UUID> deviceIds, ResourceLocation sensorId, ResourceLocation vizId) {
-		Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> result = new HashMap<>();
-		for(var deviceId : deviceIds) {
-			if(visualizationDataCache.contains(deviceId, sensorId)) {
-				var vizMap = visualizationDataCache.get(deviceId, sensorId);
-				if(vizMap.containsKey(vizId)) {
-					result.put(deviceId, vizMap.get(vizId));
-				}
-			}
-		}
-		return result;
-	}
 
 	@I18DataGen(lang = "en_us", string = "Smart Home")
 	@I18DataGen(lang = "de_de", string = "Smart Home")
@@ -71,8 +54,6 @@ public class HomeScreen extends WidgetFullScreen {
 
 	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
 		super(Component.translatable(TITLE.key()));
-		this.sensorDataCache = new HashMap<>();
-		this.visualizationDataCache = TreeBasedTable.create();
 		this.ownedHomes = ownedHomes;
 		this.homeWorldInfo = homeWorldInfo;
 
@@ -99,27 +80,6 @@ public class HomeScreen extends WidgetFullScreen {
 		}
 
 		return null;
-	}
-
-	public void setDeviceSensors(ConfiguredDevice device) {
-
-	}
-
-	public void setSensorData(UUID deviceId, Map<ResourceLocation, ISensorData> data) {
-		sensorDataCache.put(deviceId, new HashMap<>(data));
-		if(gui != null) {
-			gui.fireEvent(new SensorDataUpdatedEvent(deviceId, data));
-		}
-	}
-
-	public void setVisualizationData(UUID deviceId, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) {
-		if(!visualizationDataCache.contains(deviceId, sensorId)) {
-			visualizationDataCache.put(deviceId, sensorId, new HashMap<>());
-		}
-		visualizationDataCache.get(deviceId, sensorId).put(vizId, data);
-		if(gui != null) {
-			gui.fireEvent(new VisualizationDataUpdatedEvent(deviceId, sensorId, vizId, data));
-		}
 	}
 
 	@Override

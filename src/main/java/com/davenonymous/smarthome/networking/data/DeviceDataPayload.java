@@ -3,6 +3,8 @@ package com.davenonymous.smarthome.networking.data;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.events.SensorDataUpdatedEvent;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
@@ -32,6 +34,8 @@ public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice devic
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(DeviceDataPayload payload, IPayloadContext context) {
+		ClientCache.setSensorData(payload.device.id(), payload.data());
+
 		var homeScreen = HomeScreen.get();
 		if(homeScreen == null) {
 			return;
@@ -41,6 +45,6 @@ public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice devic
 			return;
 		}
 
-		homeScreen.setSensorData(payload.device.id(), payload.data());
+		homeScreen.getOrCreateGui().fireEvent(new SensorDataUpdatedEvent(payload.device.id(), payload.data()));
 	}
 }

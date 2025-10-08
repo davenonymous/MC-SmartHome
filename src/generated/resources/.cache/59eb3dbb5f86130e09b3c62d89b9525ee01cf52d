@@ -1,3 +1,4 @@
-// 1.21.1	2025-09-17T18:57:14.5470815	Loot Tables
+// 1.21.1	2025-10-08T16:02:36.9228121	Loot Tables
 ba51199e4ba680735898ac0b8900c56e96214123 data/smarthome/loot_table/blocks/dashboard.json
 da6be44e457ae4f08267cfe04c2faba241c1fcfb data/smarthome/loot_table/blocks/mini_rack.json
+b889739faaa2447796e19f2fa7c4d71dc82814bb data/smarthome/loot_table/blocks/projector.json

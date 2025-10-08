@@ -34,7 +34,11 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(OpenHomeScreenPayload payload, IPayloadContext context) {
-		ClientCache.INSTANCE.ownedHomes = payload.homes();
+		var home = payload.homes().stream().filter(h -> h.id().equals(payload.selectedHome())).findFirst().orElse(null);
+		if(home == null) {
+			return;
+		}
+		ClientCache.addHomeInfo(home, payload.worldInfo());
 
 		var mc = Minecraft.getInstance();
 		if(mc.screen instanceof HomeScreen homeScreen) {
@@ -42,7 +46,6 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 			return;
 		}
 
-		var home = payload.homes().stream().filter(h -> h.id().equals(payload.selectedHome())).findFirst().orElse(null);
 		WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
 
 		Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome(), payload.homes(), payload.worldInfo()));

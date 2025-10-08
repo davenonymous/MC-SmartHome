@@ -1,6 +1,7 @@
 {
   "block.smarthome.dashboard": "Dashboard",
   "block.smarthome.mini_rack": "Mini Rack",
+  "block.smarthome.projector": "Projector",
   "item.smarthome.irda_transceiver": "IrDA Transceiver",
   "item.smarthome.range_finder": "Laser Range Finder",
   "item.smarthome.server": "Smart Home Server",

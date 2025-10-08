@@ -15,6 +15,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.sensor.energy.EnergyStorage;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
@@ -87,7 +88,7 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 
 		//noinspection unchecked
 		return viz.getWidget(
-			HomeScreen.get().dataByDevices(devices, sensorId, vizId),
+			ClientCache.dataByDevices(devices, sensorId, vizId),
 			ModSensors.getById(sensorId),
 			vizSettings,
 			size

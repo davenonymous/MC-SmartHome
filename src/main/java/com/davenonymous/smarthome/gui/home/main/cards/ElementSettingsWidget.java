@@ -48,6 +48,10 @@ public class ElementSettingsWidget extends WidgetVBox {
 	}
 
 	public ElementSettingsWidget rebuild(HomeCard card) {
+		if(this.element == null) {
+			return this;
+		}
+
 		Pair<Vec2, HomeCardElement<?>> newElement = card.elements().get(this.element.id());
 		if(newElement == null || newElement.getSecond() == null) {
 			setElement(null);

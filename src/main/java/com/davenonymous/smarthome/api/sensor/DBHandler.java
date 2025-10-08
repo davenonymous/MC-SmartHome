@@ -80,7 +80,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 				"otherCols := ["+otherColumns+"]" +
 			");";
 
-			SmartHome.LOGGER.info("Executing sensor data query: {}", statement);
+			// SmartHome.LOGGER.info("Executing sensor data query: {}", statement);
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {
 				PreparedStatement prepped = connection.prepareStatement(statement);
@@ -93,7 +93,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 					values.put(Pair.of(instant, tick), data);
 				}
-				SmartHome.LOGGER.info("Queried {} sensor data points for device {}", values.size(), deviceId);
+				// SmartHome.LOGGER.info("Queried {} sensor data points for device {}", values.size(), deviceId);
 			} catch (SQLException e) {
 				SmartHome.LOGGER.error("Failed to query sensor data for device {}", deviceId, e);
 			}

@@ -25,11 +25,13 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardElementPositionPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardElementSizePayload;
 import com.davenonymous.smarthome.networking.actions.requests.RequestVisualizationDataPayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
@@ -151,12 +153,12 @@ public class HomeCardWidget extends WidgetPanel {
 
 					if(element.getSecond() instanceof VisualizationCardElement vizCardElement) {
 						for(UUID deviceId : vizCardElement.devices()) {
-							var optDevice = HomeScreen.get().selectedHome.getDevice(deviceId);
+							var optDevice = ClientCache.getConfiguredDevice(deviceId);
 							if(optDevice.isEmpty()) {
 								continue;
 							}
 
-							var payload = new RequestVisualizationDataPayload(HomeScreen.get().selectedHome.id(), optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings());
+							var payload = new RequestVisualizationDataPayload(optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings());
 							PacketDistributor.sendToServer(payload);
 						}
 
@@ -250,11 +252,26 @@ public class HomeCardWidget extends WidgetPanel {
 
 	@Override
 	public void draw(GuiGraphics guiGraphics, Window window) {
+		if(Minecraft.getInstance().screen == null) {
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 2);
+			RenderSystem.setShaderColor(0.6f, 0.8f, 1, .8f);
+		}
+		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
 		guiGraphics.fill(3, 3, width()-3, height()-3, 0x88000000);
 
+		if(Minecraft.getInstance().screen == null) {
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, -2);
+			RenderSystem.setShaderColor(1, 1, 1, 1f);
+		}
+
 		super.draw(guiGraphics, window);
 
+		if(Minecraft.getInstance().screen == null) {
+			guiGraphics.pose().popPose();
+		}
 		if(editMode) {
 			var font = Minecraft.getInstance().font;
 			var widthText = FormattedCharSequence.forward(this.width() + "px", Style.EMPTY.withFont(ModFonts.SAMSUNG.id()));

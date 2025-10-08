@@ -157,9 +157,15 @@ public class WidgetTextBox extends Widget {
 		}
 
 		int lineWidth = wordWrap ? Math.round(width / scale) : Integer.MAX_VALUE;
-		pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width / scale), getActualY() + (int)(height / scale));
+		if(Minecraft.getInstance().screen != null) {
+			pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width / scale), getActualY() + (int)(height / scale));
+		} else {
+			pGuiGraphics.pose().translate(0, 0, -2);
+		}
 		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, color, dropShadow);
-		pGuiGraphics.disableScissor();
+		if(Minecraft.getInstance().screen != null) {
+			pGuiGraphics.disableScissor();
+		}
 
 		RenderSystem.disableBlend();
 		pGuiGraphics.pose().popPose();

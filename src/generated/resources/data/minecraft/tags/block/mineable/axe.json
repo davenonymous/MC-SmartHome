@@ -1,6 +1,7 @@
 {
   "values": [
     "smarthome:dashboard",
-    "smarthome:mini_rack"
+    "smarthome:mini_rack",
+    "smarthome:projector"
   ]
 }
