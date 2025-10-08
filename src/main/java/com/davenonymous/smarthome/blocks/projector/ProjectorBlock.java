@@ -14,6 +14,7 @@ import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.davenonymous.smarthome.networking.data.VisualizationDataPayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.watcher.VizQueryDatabaseTask;
+import com.google.common.collect.Table;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,12 +24,15 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -42,6 +46,11 @@ import java.util.UUID;
 import java.util.function.Function;
 
 public class ProjectorBlock extends FacingBaseBlock implements EntityBlock {
+
+
+	private static Table<AttachFace, Direction, VoxelShape> SHAPES = calculateShapes(Shapes.box(0, 0, 0, 1, 1/8f, 1/8f));
+
+
 
 	public ProjectorBlock(Properties properties) {
 		super(properties);
@@ -156,12 +165,11 @@ public class ProjectorBlock extends FacingBaseBlock implements EntityBlock {
 
 	@Override
 	public VoxelShape getShape(Direction facing, AttachFace attachFace) {
-		Direction direction = facing;
-		if(attachFace== AttachFace.CEILING) {
-			direction = Direction.DOWN;
-		} else if(attachFace== AttachFace.FLOOR) {
-			direction = Direction.UP;
-		}
+		return SHAPES.get(attachFace, facing);
+	}
+
+	@Override
+	protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
 		return Shapes.block();
 	}
 

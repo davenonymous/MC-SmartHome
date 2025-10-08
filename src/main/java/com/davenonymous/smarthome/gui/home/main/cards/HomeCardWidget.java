@@ -259,6 +259,10 @@ public class HomeCardWidget extends WidgetPanel {
 		}
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
+
+		if(Minecraft.getInstance().screen == null) {
+			guiGraphics.pose().translate(0, 0, -2);
+		}
 		guiGraphics.fill(3, 3, width()-3, height()-3, 0x88000000);
 
 		if(Minecraft.getInstance().screen == null) {

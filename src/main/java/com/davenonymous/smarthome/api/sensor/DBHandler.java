@@ -78,6 +78,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 			  	"deviceId := '"+deviceId+"', " +
 			  	"numericCols := ["+numericColumns+"]," +
 				"otherCols := ["+otherColumns+"]" +
+				", groupBySeconds := 5, maxResults := 200" +
 			");";
 
 			// SmartHome.LOGGER.info("Executing sensor data query: {}", statement);

@@ -12,18 +12,19 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.level.block.Blocks;
-import net.neoforged.neoforge.network.PacketDistributor;
-import org.lwjgl.opengl.GL11;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<ProjectorBlockEntity> {
-	public ProjectorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
-		SmartHome.LOGGER.info("ProjectorBlockEntityRenderer initialized");
-	}
+	private Map<UUID, Widget> cardWidgets;
+	private Map<UUID, Long> widgetUpdateTimes = new HashMap<>();
 
-	private Widget deleteMe = null;
+	public ProjectorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
+		this.cardWidgets = new HashMap<>();
+		this.widgetUpdateTimes = new HashMap<>();
+	}
 
 	@Override
 	public void render(ProjectorBlockEntity projector, float partialTicks, PoseStack pose, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
@@ -53,28 +54,39 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<Project
 		GuiGraphics guigraphics = new GuiGraphics(Minecraft.getInstance(), (MultiBufferSource.BufferSource) bufferSource);
 		guigraphics.pose().pushPose();
 		guigraphics.pose().mulPose(pose.last().pose());
-		guigraphics.pose().scale(1/16f, 1/16f, 1/16f);
-		guigraphics.pose().translate(0, 16, 0);
-		guigraphics.pose().scale(1/16f, 1/16f, 1/16f);
-		guigraphics.pose().scale(1.5f, 1.5f, 1.5f);
+		guigraphics.pose().scale(1/256f, 1/256f, 1/256f);
+
+		int cardWidth = card.width();
+		int cardHeight = card.height();
+
+		int wantedSize = 256;
+		float scaleFactor = Math.min((float)wantedSize / cardWidth, (float)wantedSize / cardHeight);
+		guigraphics.pose().scale(scaleFactor, scaleFactor, scaleFactor);
+
+		if(cardWidth > cardHeight) {
+			int yOffset = (wantedSize - (int)(cardHeight * scaleFactor)) / 2;
+			guigraphics.pose().translate(0, yOffset, 0);
+		} else {
+			int xOffset = (wantedSize - (int)(cardWidth * scaleFactor)) / 2;
+			guigraphics.pose().translate(xOffset, 0, 0);
+		}
+		guigraphics.pose().translate(cardWidth, cardHeight + 32, 264);
+
 		guigraphics.pose().mulPose(Axis.XP.rotationDegrees(180));
 		guigraphics.pose().mulPose(Axis.YP.rotationDegrees(180));
-		if(deleteMe == null || projector.getLevel().getGameTime() % 100 == 0) {
-			deleteMe = card.createWidget(false);
+		long lastUpdate = widgetUpdateTimes.getOrDefault(cardId, 0L);
+		long gameTick = projector.getLevel().getGameTime();
+		boolean needsUpdate = gameTick % 100 == 0 && lastUpdate != gameTick;
+		if(!cardWidgets.containsKey(cardId) ||  needsUpdate) {
+			var cardWidget = card.createWidget(false);
+			cardWidgets.put(cardId, cardWidget);
+			widgetUpdateTimes.put(cardId, gameTick);
 		}
 
-		//pose.pushPose();
-		//pose.mulPose(RenderSystem.getModelViewMatrix());
-		//pose.scale(16.0f, -16.0f, 16.0f);
-		//pose.translate(projector.getBlockPos().getX() + 0.5, projector.getBlockPos().getY() + 1.0, projector.getBlockPos().getZ() + 0.5);
-		//pose.mulPose(RenderSystem.getProjectionMatrix());
-		//deleteMe.draw(guigraphics, Minecraft.getInstance().getWindow());
-
-		//pose.translate(0, 2, 0);
+		RenderSystem.enableDepthTest();
+		cardWidgets.get(cardId).draw(guigraphics, Minecraft.getInstance().getWindow());
 		RenderSystem.disableDepthTest();
-		deleteMe.draw(guigraphics, Minecraft.getInstance().getWindow());
 
-		//pose.popPose();
 		guigraphics.pose().popPose();
 	}
 }
