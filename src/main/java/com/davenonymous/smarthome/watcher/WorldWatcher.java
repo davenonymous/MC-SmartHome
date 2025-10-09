@@ -3,6 +3,8 @@ package com.davenonymous.smarthome.watcher;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.config.ServerConfig;
+import com.davenonymous.smarthome.data.EntityId;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
@@ -17,7 +19,9 @@ import org.duckdb.DuckDBConnection;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class WorldWatcher {
@@ -26,9 +30,14 @@ public class WorldWatcher {
 	private ServerLevel overworld;
 	protected long lastUpdateTick = 0;
 
+	private Map<EntityId, ISensorData> entityLastSeenData;
+	private Map<EntityId, Long> entityLastUpdated = new HashMap<>();
+
 	public WorldWatcher(MinecraftServer server) {
 		this.server = server;
 		this.overworld = server.overworld();
+		this.entityLastSeenData = new HashMap<>();
+		this.entityLastUpdated = new HashMap<>();
 	}
 
 	public List<Consumer<DuckDBConnection>> processHomes() {
@@ -98,8 +107,20 @@ public class WorldWatcher {
 					}
 
 					if(data != null) {
+						var entityId = new EntityId(device.id(), sensor.id());
+						var gameTime = homeLevel.getGameTime();
+						if(ServerConfig.insertSparse && entityLastSeenData.containsKey(entityId)) {
+							var oldData = entityLastSeenData.get(entityId);
+							if(oldData.equals(data) && (gameTime - entityLastUpdated.get(entityId) < ServerConfig.sparseTickRate)) {
+								// No change in data, skip
+								continue;
+							}
+						}
+
 						var handler = ModSensors.DB_HANDLERS.get(sensor.id());
-						homeConsumers.add(handler.insertValues(homeLevel.getGameTime(), home.id(), zone.id(), device.id(), data));
+						homeConsumers.add(handler.insertValues(gameTime, home.id(), zone.id(), device.id(), data));
+						entityLastSeenData.put(entityId, data);
+						entityLastUpdated.put(entityId, gameTime);
 					}
 				}
 

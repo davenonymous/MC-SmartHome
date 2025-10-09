@@ -10,16 +10,18 @@ public class ServerConfig {
 	public static ModConfigSpec.IntValue MIN_SENSOR_TICK_RATE;
 	public static ModConfigSpec.ConfigValue<String> DATABASE_PATH;
 	public static ModConfigSpec.BooleanValue DROP_SENSORS_IN_FAVOR_OF_TPS;
+	public static ModConfigSpec.BooleanValue INSERT_SPARSE;
+	public static ModConfigSpec.IntValue SPARSE_TICK_RATE;
 
 	public static int displayDataUpdateRate = 100;
 	public static int taskQueueSize = 32;
 	public static int minSensorTickRate = 1;
 	public static String databasePath = "smarthome.duckdb";
 	public static boolean dropSensorsInFavorOfTPS = true;
+	public static boolean insertSparse = true;
+	public static int sparseTickRate = 200;
 
 	public ServerConfig(ModConfigSpec.Builder builder) {
-		// builder.push("server");
-
 		DISPLAY_DATA_REFRESH_RATE = builder
 			.comment("How often in-world displays get sent new data (in ticks). Lower values mean more frequent updates but can impact performance.")
 			.translation(displayDataUpdateRateName.key())
@@ -47,7 +49,16 @@ public class ServerConfig {
 			.translation(dropSensorsInFavorOfTPSName.key())
 			.define("dropSensorsInFavorOfTPS", true);
 
-		// builder.pop();
+		INSERT_SPARSE = builder
+			.comment("If true, sensor data will be inserted in a sparse manner, skipping sensor readings that have no changes.")
+			.translation(insertSparseName.key())
+			.define("insertSparse", true);
+
+		SPARSE_TICK_RATE = builder
+			.comment("When inserting sparse data, this defines the minimum tick rate between two identical sensor readings to still insert the data.")
+			.translation(sparseTickRateName.key())
+			.defineInRange("sparseTickRate", 200, 1, 20 * 60 * 60);
+
 	}
 
 
@@ -57,6 +68,8 @@ public class ServerConfig {
 		minSensorTickRate = MIN_SENSOR_TICK_RATE.get();
 		databasePath = DATABASE_PATH.get();
 		dropSensorsInFavorOfTPS = DROP_SENSORS_IN_FAVOR_OF_TPS.get();
+		insertSparse = INSERT_SPARSE.get();
+		sparseTickRate = SPARSE_TICK_RATE.get();
 	}
 
 	@I18DataGen(lang = "en_us", string = "In-world display data update rate")
@@ -99,4 +112,20 @@ public class ServerConfig {
 	@I18DataGen(lang = "en_us", string = "If true, sensors data will not be updated if the server TPS is struggling. This means that some sensor data might be missing in favor of server performance.")
 	@I18DataGen(lang = "de_de", string = "Wenn aktiviert, werden Sensordaten nicht aktualisiert, falls die Server-Tickrate in Probleme kommen würde. Das bedeutet, dass zugunsten der Serverleistung einige Sensordaten fehlen könnten.")
 	public static final I18String dropSensorsInFavorOfTPSDesc = I18String.config("server", "drop_sensors_in_favor_of_tps.tooltip");
+
+	@I18DataGen(lang = "en_us", string = "Insert sparse data")
+	@I18DataGen(lang = "de_de", string = "Daten spärlich einfügen")
+	public static final I18String insertSparseName = I18String.config("server", "insert_sparse");
+
+	@I18DataGen(lang = "en_us", string = "If true, sensor data will be inserted in a sparse manner, skipping sensor readings that have no changes.")
+	@I18DataGen(lang = "de_de", string = "Wenn aktiviert, werden Sensordaten spärlich eingefügt, wobei Sensormessungen ohne Änderungen übersprungen werden.")
+	public static final I18String insertSparseDesc = I18String.config("server", "insert_sparse.tooltip");
+
+	@I18DataGen(lang = "en_us", string = "Sparse tick rate")
+	@I18DataGen(lang = "de_de", string = "Spärliche Tickrate")
+	public static final I18String sparseTickRateName = I18String.config("server", "sparse_tick_rate");
+
+	@I18DataGen(lang = "en_us", string = "When inserting sparse data, this defines the minimum tick rate between two identical sensor readings to still insert the data.")
+	@I18DataGen(lang = "de_de", string = "Beim Einfügen spärlicher Daten definiert dies die minimale Tickrate zwischen zwei identischen Sensormessungen, um die Daten dennoch einzufügen.")
+	public static final I18String sparseTickRateDesc = I18String.config("server", "sparse_tick_rate.tooltip");
 }
