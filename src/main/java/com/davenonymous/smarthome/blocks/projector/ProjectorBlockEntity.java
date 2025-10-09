@@ -1,31 +1,42 @@
 package com.davenonymous.smarthome.blocks.projector;
 
+import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
+import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
+import com.davenonymous.smarthome.data.*;
+import com.davenonymous.smarthome.lib.HackerNoon;
+import com.davenonymous.smarthome.lib.gui.Animations;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
+import com.davenonymous.smarthome.networking.ClientCache;
+import com.davenonymous.smarthome.networking.HomeInfoPayload;
+import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
+import com.davenonymous.smarthome.networking.data.VisualizationDataPayload;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.watcher.VizQueryDatabaseTask;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.AttachFace;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.shapes.BooleanOp;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.*;
 
 public class ProjectorBlockEntity extends HomeBlockEntity {
 	private UUID selectedCard;
 
+	// These are client-side only!
+	private static Map<UUID, Widget> cardWidgets = new HashMap<>();
+	private static Map<UUID, Long> cardUpdateTimes = new HashMap<>();
+
 	public ProjectorBlockEntity(BlockPos pos, BlockState blockState) {
 		super(ModBlocks.PROJECTOR_ENTITY.get(), pos, blockState);
-
 	}
 
 	public UUID selectedCard() {
@@ -56,5 +67,124 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 		if(selectedCard != null) {
 			tag.putUUID("card", selectedCard);
 		}
+	}
+
+	public void clientTick(Level level, BlockPos blockPos, BlockState blockState) {
+		long gameTick = getLevel().getGameTime();
+		boolean needsUpdate = gameTick % 100 == 0;
+
+		Pair<HomeCore, HomeWorldInfo> optHome = ClientCache.INSTANCE.homeCache.get(home());
+		if(optHome == null) {
+			return;
+		}
+
+		var home = optHome.getFirst();
+		for(var card : home.cards()) {
+			long lastUpdate = cardUpdateTimes.computeIfAbsent(card.id(), k -> gameTick + level.getRandom().nextInt(100));
+			if(lastUpdate > gameTick - 100) {
+				continue;
+			}
+
+			if(needsUpdate || !cardWidgets.containsKey(card.id())) {
+				var cardWidget = card.createWidget(false);
+				cardWidgets.put(card.id(), cardWidget);
+				cardUpdateTimes.put(card.id(), gameTick);
+			}
+		}
+	}
+
+	public void serverTick(ServerLevel level, BlockPos blockPos, BlockState blockState) {
+		long gameTick = getLevel().getGameTime();
+		boolean needsUpdate = gameTick % 60 == 0;
+		if(!needsUpdate) {
+			return;
+		}
+
+		WorldSavedHomes data = WorldSavedHomes.get(level);
+
+		UUID homeId = this.home();
+		if(homeId == null) {
+			var homes = data.getPlayerHomes(this.ownerUUID());
+			if(!homes.isEmpty()) {
+				homeId = homes.getFirst().id();
+				this.setHome(homeId);
+				this.setChanged();
+			}
+		}
+
+		if(homeId == null) {
+			homeId = HomeBlockEntity.emptyUUID;
+		}
+
+		var optHome = data.getHome(homeId);
+		if(optHome.isEmpty()) {
+			return;
+		}
+
+		HomeCore home = optHome.get();
+		if(home.cards().isEmpty()) {
+			return;
+		}
+
+		var cardId = this.selectedCard();
+		if(cardId == null || home.getCard(cardId).isEmpty()) {
+			cardId = home.cards().getFirst().id();
+			this.setSelectedCard(cardId);
+		}
+
+		var optCard = home.getCard(cardId);
+		if(optCard.isEmpty()) {
+			return;
+		}
+
+		//var worldInfo = HomeWorldInfo.create(home.getHomeLevel(level.getServer()), home);
+		var card = optCard.get();
+		for(var entityRef : card.requiredEntities()) {
+			var deviceId = entityRef.deviceId();
+			var optDevice = home.getDevice(deviceId);
+			if(optDevice.isEmpty()) {
+				continue;
+			}
+			var sensor = ModSensors.getById(entityRef.sensorId());
+			Pair<HomeZone, ConfiguredDevice> device = optDevice.get();
+
+			List<VisualizationCardElement> vizElements = card.elements().values().stream()
+				.map(Pair::getSecond)
+				.filter(element -> element instanceof VisualizationCardElement)
+				.map(element -> (VisualizationCardElement)element).toList();
+
+			PacketDistributor.sendToPlayersNear(level, null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 64, new HomeInfoPayload(home, new HomeWorldInfo(Map.of())));
+
+			for(var vizCardElement : vizElements) {
+				var dbHandler = ModSensors.DB_HANDLERS.get(sensor.id());
+				var dbFunction = dbHandler.getValues(deviceId, 0, level.getGameTime());
+
+				var vizId = vizCardElement.vizId();
+				VizQueryDatabaseTask.execute(dbFunction).thenAccept((vizData) -> {
+					if(vizData == null) {
+						SmartHome.LOGGER.warn("Failed to get viz data for home='{}' device='{}' sensor='{}' viz='{}'", home.name(), deviceId, sensor.id(), vizId);
+						return;
+					}
+					if(vizData.isEmpty()) {
+						SmartHome.LOGGER.info("No viz data for home='{}' device='{}' sensor='{}' viz='{}'", home.name(), deviceId, sensor.id(), vizId);
+						return;
+					}
+
+					//noinspection unchecked
+					var replyPayload = new VisualizationDataPayload(device.getSecond(), sensor.id(), vizId, (LinkedHashMap<Pair<Instant, Long>, ISensorData>) vizData);
+					PacketDistributor.sendToPlayersNear(level, null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 64, replyPayload);
+				});
+			}
+		}
+	}
+
+	public Widget getCardWidget(HomeCard card) {
+		if(cardWidgets.containsKey(card.id())) {
+			return cardWidgets.get(card.id());
+		}
+
+		var spinner = new WidgetSprite(HackerNoon.Regular.spinner);
+		spinner.addAnimation(Animations.spin(true, 2f));
+		return spinner;
 	}
 }

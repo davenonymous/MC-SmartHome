@@ -78,6 +78,7 @@ public class DatabaseWorker extends Thread {
 			while(isRunning) {
 				DatabaseTask task = taskQueue.take();
 				if(task == WorldWatcherPool.POISON_PILL) {
+					LOGGER.info("Received poison pill, exiting world watcher loop");
 					break;
 				}
 				task.setConnection(connection);

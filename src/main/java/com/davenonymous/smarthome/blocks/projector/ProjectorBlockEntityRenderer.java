@@ -1,10 +1,7 @@
 package com.davenonymous.smarthome.blocks.projector;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.base.FacingBaseBlock;
 import com.davenonymous.smarthome.data.HomeCore;
-import com.davenonymous.smarthome.lib.gui.CellData;
-import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.networking.ClientCache;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,17 +14,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<ProjectorBlockEntity> {
-	private Map<UUID, Widget> cardWidgets;
-	private Map<UUID, Long> widgetUpdateTimes = new HashMap<>();
+
 
 	public ProjectorBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
-		this.cardWidgets = new HashMap<>();
-		this.widgetUpdateTimes = new HashMap<>();
+
 	}
 
 	@Override
@@ -84,8 +77,6 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<Project
 			from = from.getClockWise();
 		}
 
-
-
 		float scaleFactor = Math.min((float)wantedSize / cardWidth, (float)wantedSize / cardHeight);
 		guigraphics.pose().translate(0, -32, 0);
 		guigraphics.pose().scale(scaleFactor, scaleFactor, 1);
@@ -99,17 +90,10 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<Project
 			guigraphics.pose().translate(0, -192, 0);
 		}
 
-		long lastUpdate = widgetUpdateTimes.getOrDefault(cardId, 0L);
-		long gameTick = projector.getLevel().getGameTime();
-		boolean needsUpdate = gameTick % 100 == 0 && lastUpdate != gameTick;
-		if(!cardWidgets.containsKey(cardId) ||  needsUpdate) {
-			var cardWidget = card.createWidget(false);
-			cardWidgets.put(cardId, cardWidget);
-			widgetUpdateTimes.put(cardId, gameTick);
-		}
+		var widget = projector.getCardWidget(card);
 
 		RenderSystem.enableDepthTest();
-		cardWidgets.get(cardId).draw(guigraphics, Minecraft.getInstance().getWindow());
+		widget.draw(guigraphics, Minecraft.getInstance().getWindow());
 		RenderSystem.disableDepthTest();
 
 		guigraphics.pose().popPose();

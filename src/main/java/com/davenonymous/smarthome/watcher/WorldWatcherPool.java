@@ -47,7 +47,7 @@ public class WorldWatcherPool {
 
 	@SubscribeEvent
 	public static void onServerStart(ServerStartingEvent event) {
-		taskQueue = new LinkedBlockingQueue<>();
+		taskQueue = new LinkedBlockingQueue<>(32);
 		instance = new WorldWatcher(event.getServer());
 		var path = event.getServer().getWorldPath(LevelResource.ROOT).resolve("smarthome.duckdb");
 		databaseWorker = new DatabaseWorker(path, taskQueue);
@@ -60,14 +60,20 @@ public class WorldWatcherPool {
 			return;
 		}
 
-		List<Consumer<DuckDBConnection>> databaseActions = instance.processHomes();
-		for(var action : databaseActions) {
-			new ActionDatabaseTask(action).enqueue(taskQueue);
+		if(event.hasTime() && taskQueue.remainingCapacity() > 0) {
+			List<Consumer<DuckDBConnection>> databaseActions = instance.processHomes();
+			for(var action : databaseActions) {
+				new ActionDatabaseTask(action).enqueue(taskQueue);
+			}
+		} else {
+			SmartHome.LOGGER.debug("Skipping world watcher on tick without time");
 		}
+
 	}
 
 	@SubscribeEvent
 	public static void onServerStop(ServerStoppingEvent event) {
+		SmartHome.LOGGER.info("Shutting down SmartHome database worker. Remaining tasks: {}", taskQueue.size());
 		taskQueue.offer(POISON_PILL);
 		instance = null;
 	}

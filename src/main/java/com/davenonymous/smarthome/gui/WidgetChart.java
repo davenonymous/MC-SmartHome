@@ -7,7 +7,7 @@ import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.event.WidgetSizeChangeEvent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetImage;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
-import com.davenonymous.smarthome.visualization.line.LineViz;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.internal.chartpart.Chart;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 	private T chart;
@@ -94,19 +95,22 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 	public void setChart(T chart) {
 		this.chart = chart;
 
-		try {
-			// TODO: Clear the images from the texture manager!
-			byte[] imageBytes = getBitmapBytes(this.chart, BitmapEncoder.BitmapFormat.PNG);
-			Optional<DynamicImageResources.DynTexture> loadedImage = DynamicImageResources.getImage("xchart_" + id, imageBytes);
-			if(loadedImage.isPresent()) {
-				this.loadedImage = loadedImage.get();
+		CompletableFuture.runAsync(() -> {
+			try {
+				byte[] imageBytes = getBitmapBytes(this.chart, BitmapEncoder.BitmapFormat.PNG);
+				Optional<DynamicImageResources.DynTexture> loadedImage = DynamicImageResources.getImage("xchart_" + id, imageBytes);
+				if(loadedImage.isEmpty()) {
+					return;
+				}
 
+				this.loadedImage = loadedImage.get();
 				image.setImage(this.loadedImage.resource());
 				image.setTextureSize(this.loadedImage.image().getWidth(), this.loadedImage.image().getHeight());
 				image.setVisible(true);
+
+			} catch (IOException e) {
+				SmartHome.LOGGER.warn("Failed to read image from xchart: {}", e.toString());
 			}
-		} catch (IOException e) {
-			SmartHome.LOGGER.warn("Failed to read image from xchart: {}", e.toString());
-		}
+		}, Util.backgroundExecutor());
 	}
 }
