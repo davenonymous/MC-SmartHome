@@ -121,7 +121,7 @@ public class WidgetSprite extends Widget {
 		float partialTicks = 0f;
 		var screen = Minecraft.getInstance().screen;
 		if(screen == null) {
-			partialTicks = RenderSystem.getShaderGameTime();
+			partialTicks = Minecraft.getInstance().level.getGameTime() + RenderSystem.getShaderGameTime();
 		} else if(screen instanceof WidgetScreen widgetScreen) {
 			partialTicks = widgetScreen.partialTicks() + widgetScreen.renderTick();
 		} else if(screen instanceof WidgetContainerScreen<?> widgetScreen) {

@@ -266,7 +266,6 @@ public class HomeCardWidget extends WidgetPanel {
 		guiGraphics.fill(3, 3, width()-3, height()-3, 0x88000000);
 
 		if(Minecraft.getInstance().screen == null) {
-			guiGraphics.pose().pushPose();
 			guiGraphics.pose().translate(0, 0, -2);
 			RenderSystem.setShaderColor(1, 1, 1, 1f);
 		}

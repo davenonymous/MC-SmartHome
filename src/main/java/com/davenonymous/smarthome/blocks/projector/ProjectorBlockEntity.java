@@ -7,6 +7,7 @@ import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.config.ClientConfig;
 import com.davenonymous.smarthome.config.ServerConfig;
 import com.davenonymous.smarthome.data.*;
+import com.davenonymous.smarthome.gui.home.main.cards.LoadingWidget;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.Animations;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
@@ -194,8 +195,6 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 			return cardWidgets.get(card.id());
 		}
 
-		var spinner = new WidgetSprite(HackerNoon.Regular.cloudDownload);
-		spinner.setSize(128, 128);
-		return spinner;
+		return new LoadingWidget(card.width(), card.height());
 	}
 }

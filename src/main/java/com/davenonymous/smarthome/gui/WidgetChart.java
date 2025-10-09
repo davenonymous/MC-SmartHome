@@ -94,6 +94,7 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 
 	public void setChart(T chart) {
 		this.chart = chart;
+		image.setVisible(false);
 
 		CompletableFuture.runAsync(() -> {
 			try {
