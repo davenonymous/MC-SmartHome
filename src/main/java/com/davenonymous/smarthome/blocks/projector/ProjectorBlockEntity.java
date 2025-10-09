@@ -4,6 +4,8 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
+import com.davenonymous.smarthome.config.ClientConfig;
+import com.davenonymous.smarthome.config.ServerConfig;
 import com.davenonymous.smarthome.data.*;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.Animations;
@@ -34,6 +36,9 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 	// These are client-side only!
 	private static Map<UUID, Widget> cardWidgets = new HashMap<>();
 	private static Map<UUID, Long> cardUpdateTimes = new HashMap<>();
+
+	// These are server-side only!
+	private static Map<UUID, Long> vizDataUpdateTimes = new HashMap<>();
 
 	public ProjectorBlockEntity(BlockPos pos, BlockState blockState) {
 		super(ModBlocks.PROJECTOR_ENTITY.get(), pos, blockState);
@@ -71,7 +76,7 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 
 	public void clientTick(Level level, BlockPos blockPos, BlockState blockState) {
 		long gameTick = getLevel().getGameTime();
-		boolean needsUpdate = gameTick % 100 == 0;
+		boolean needsUpdate = gameTick % ClientConfig.displayRefreshRate == 0;
 
 		Pair<HomeCore, HomeWorldInfo> optHome = ClientCache.INSTANCE.homeCache.get(home());
 		if(optHome == null) {
@@ -80,8 +85,8 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 
 		var home = optHome.getFirst();
 		for(var card : home.cards()) {
-			long lastUpdate = cardUpdateTimes.computeIfAbsent(card.id(), k -> gameTick + level.getRandom().nextInt(100));
-			if(lastUpdate > gameTick - 100) {
+			long lastUpdate = cardUpdateTimes.computeIfAbsent(card.id(), k -> gameTick + level.getRandom().nextInt(ClientConfig.displayRefreshRate));
+			if(lastUpdate > gameTick - ClientConfig.displayRefreshRate) {
 				continue;
 			}
 
@@ -95,7 +100,7 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 
 	public void serverTick(ServerLevel level, BlockPos blockPos, BlockState blockState) {
 		long gameTick = getLevel().getGameTime();
-		boolean needsUpdate = gameTick % 60 == 0;
+		boolean needsUpdate = gameTick % ServerConfig.displayDataUpdateRate == 0;
 		if(!needsUpdate) {
 			return;
 		}
@@ -151,15 +156,21 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 			List<VisualizationCardElement> vizElements = card.elements().values().stream()
 				.map(Pair::getSecond)
 				.filter(element -> element instanceof VisualizationCardElement)
+				.filter(homeCardElement -> vizDataUpdateTimes.computeIfAbsent(homeCardElement.id(), k -> 0L) < gameTick - ServerConfig.displayDataUpdateRate)
 				.map(element -> (VisualizationCardElement)element).toList();
+
+			if(vizElements.isEmpty()) {
+				continue;
+			}
 
 			PacketDistributor.sendToPlayersNear(level, null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 64, new HomeInfoPayload(home, new HomeWorldInfo(Map.of())));
 
+			var dbHandler = ModSensors.DB_HANDLERS.get(sensor.id());
+			var dbFunction = dbHandler.getValues(deviceId, 0, level.getGameTime());
 			for(var vizCardElement : vizElements) {
-				var dbHandler = ModSensors.DB_HANDLERS.get(sensor.id());
-				var dbFunction = dbHandler.getValues(deviceId, 0, level.getGameTime());
 
 				var vizId = vizCardElement.vizId();
+				vizDataUpdateTimes.put(vizCardElement.id(), gameTick);
 				VizQueryDatabaseTask.execute(dbFunction).thenAccept((vizData) -> {
 					if(vizData == null) {
 						SmartHome.LOGGER.warn("Failed to get viz data for home='{}' device='{}' sensor='{}' viz='{}'", home.name(), deviceId, sensor.id(), vizId);
@@ -183,8 +194,8 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 			return cardWidgets.get(card.id());
 		}
 
-		var spinner = new WidgetSprite(HackerNoon.Regular.spinner);
-		spinner.addAnimation(Animations.spin(true, 2f));
+		var spinner = new WidgetSprite(HackerNoon.Regular.cloudDownload);
+		spinner.setSize(128, 128);
 		return spinner;
 	}
 }

@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.zones;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.CellData;
@@ -33,11 +32,11 @@ public class ZoneSizeEditor extends WidgetPanel {
 
 	@I18DataGen(lang = "en_us", string = "Scale")
 	@I18DataGen(lang = "de_de", string = "Skalieren")
-	public static final I18String labelScale = SmartHome.guiString("home.zone", "scale");
+	public static final I18String labelScale = I18String.gui("home.zone", "scale");
 
 	@I18DataGen(lang = "en_us", string = "Move")
 	@I18DataGen(lang = "de_de", string = "Verschieben")
-	public static final I18String labelMove = SmartHome.guiString("home.zone", "move");
+	public static final I18String labelMove = I18String.gui("home.zone", "move");
 
 	int padding = 6;
 	public ZoneSizeEditor(HomeZone zone) {

@@ -6,7 +6,6 @@ import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.annotations.*;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.mojang.serialization.Codec;
@@ -28,7 +27,7 @@ public record SpriteCardElement(UUID id, ResourceLocation sprite, int color, flo
 	@HomeCardElementName
 	@I18DataGen(lang = "en_us", string = "Icon")
 	@I18DataGen(lang = "de_de", string = "Symbol")
-	public static final I18String NAME = SmartHome.dataString("card_element.name", "sprite");
+	public static final I18String NAME = I18String.data("card_element.name", "sprite");
 
 	@HomeCardElementIcon
 	public static final ResourceLocation ICON = HackerNoon.Regular.image;

@@ -6,16 +6,13 @@ import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.WidgetChart;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetColorDisplay;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.util.DateHelper;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationDescription;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationId;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationName;
@@ -27,14 +24,11 @@ import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.NotNull;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.internal.chartpart.Annotation;
 import org.knowm.xchart.style.Styler;
-import org.knowm.xchart.style.XYStyler;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.None;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -42,7 +36,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
-import java.util.function.Function;
 
 @SmartHomeVisualization
 public class LineViz implements IVisualization<LineVizSettings> {
@@ -52,12 +45,12 @@ public class LineViz implements IVisualization<LineVizSettings> {
 	@VisualizationName
 	@I18DataGen(lang = "en_us", string = "Line Chart")
 	@I18DataGen(lang = "de_de", string = "Liniendiagramm")
-	public static final I18String NAME = SmartHome.guiString("visualization.line", "name");
+	public static final I18String NAME = I18String.gui("visualization.line", "name");
 
 	@VisualizationDescription
 	@I18DataGen(lang = "en_us", string = "Shows historical data as a line chart.")
 	@I18DataGen(lang = "de_de", string = "Zeigt den Datenverlauf als Liniendiagramm an.")
-	public static final I18String DESC = SmartHome.guiString("visualization.line", "description");
+	public static final I18String DESC = I18String.gui("visualization.line", "description");
 
 	@Override
 	public LineVizSettings getDefaultSettings() {

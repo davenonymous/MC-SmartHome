@@ -39,21 +39,6 @@ public class WorldWatcherUtil {
 			.query((Function<DuckDBConnection, ISensorData>) sensor.getDBHandler().getLatestValue(device.id()));
 	}
 
-	public static <U extends ISensorData> CompletableFuture<LinkedHashMap<Pair<Instant, Long>, ?>> getSensorHistory(ConfiguredDevice device, ResourceLocation sensorId, long start, long end) {
-		//noinspection unchecked
-		HomeSensor<U, ?> sensor = (HomeSensor<U, ?>) ModSensors.getById(sensorId);
-		if(sensor == null) {
-			return CompletableFuture.completedFuture(null);
-		}
-
-		return getSensorHistory(device, sensor, start, end);
-	}
-
-	private static <U extends ISensorData> CompletableFuture<LinkedHashMap<Pair<Instant, Long>, ?>> getSensorHistory(ConfiguredDevice device, HomeSensor<U, ?> sensor, long start, long end) {
-		return WorldWatcherPool
-			.fullQuery(sensor.getDBHandler().getValues(device.id(), start, end));
-	}
-
 	public static List<BlockPos> getBlocksInAABBStream(AABB box) {
 		int minX = (int)Math.floor(box.minX);
 		int minY = (int)Math.floor(box.minY);

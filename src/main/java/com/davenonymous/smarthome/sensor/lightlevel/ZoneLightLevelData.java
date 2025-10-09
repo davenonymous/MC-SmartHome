@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.sensor.lightlevel;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
@@ -18,17 +17,17 @@ public record ZoneLightLevelData(short minLevel, short maxLevel, double avgLevel
 	@SensorDataColumnLabel("minLevel")
 	@I18DataGen(lang = "en_us", string = "Minimum")
 	@I18DataGen(lang = "de_de", string = "Minimum")
-	public static final I18String MIN_COLUMN = SmartHome.dataString("sensor.block_light.column", "min_level");
+	public static final I18String MIN_COLUMN = I18String.data("sensor.block_light.column", "min_level");
 
 	@SensorDataColumnLabel("maxLevel")
 	@I18DataGen(lang = "en_us", string = "Maximum")
 	@I18DataGen(lang = "de_de", string = "Maximum")
-	public static final I18String MAX_COLUMN = SmartHome.dataString("sensor.block_light.column", "max_level");
+	public static final I18String MAX_COLUMN = I18String.data("sensor.block_light.column", "max_level");
 
 	@SensorDataColumnLabel("avgLevel")
 	@I18DataGen(lang = "en_us", string = "Average")
 	@I18DataGen(lang = "de_de", string = "Durchschnitt")
-	public static final I18String AVG_COLUMN = SmartHome.dataString("sensor.block_light.column", "avg_level");
+	public static final I18String AVG_COLUMN = I18String.data("sensor.block_light.column", "avg_level");
 
 	public ZoneLightLevelData(int minLevel, int maxLevel, double avgLevel) {
 		this((short)minLevel, (short)maxLevel, avgLevel);
@@ -62,13 +61,13 @@ public record ZoneLightLevelData(short minLevel, short maxLevel, double avgLevel
 
 	@I18DataGen(lang = "en_us", string = "Minimum Zone Light Level")
 	@I18DataGen(lang = "de_de", string = "Minimale Zonen-Lichtstärke")
-	public static final I18String MIN_SENSOR_COLUMN = SmartHome.dataString("sensor.block_light", "min_zone_light");
+	public static final I18String MIN_SENSOR_COLUMN = I18String.data("sensor.block_light", "min_zone_light");
 
 	@I18DataGen(lang = "en_us", string = "Maximum Zone Light Level")
 	@I18DataGen(lang = "de_de", string = "Maximale Zonen-Lichtstärke")
-	public static final I18String MAX_SENSOR_COLUMN = SmartHome.dataString("sensor.block_light", "max_zone_light");
+	public static final I18String MAX_SENSOR_COLUMN = I18String.data("sensor.block_light", "max_zone_light");
 
 	@I18DataGen(lang = "en_us", string = "Average Zone Light Level")
 	@I18DataGen(lang = "de_de", string = "Durchschnittliche Zonen-Lichtstärke")
-	public static final I18String AVG_SENSOR_COLUMN = SmartHome.dataString("sensor.block_light", "avg_zone_light");
+	public static final I18String AVG_SENSOR_COLUMN = I18String.data("sensor.block_light", "avg_zone_light");
 }

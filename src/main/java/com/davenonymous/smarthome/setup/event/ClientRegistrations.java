@@ -2,22 +2,49 @@ package com.davenonymous.smarthome.setup.event;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.projector.ProjectorBlockEntityRenderer;
+import com.davenonymous.smarthome.config.ServerConfig;
 import com.davenonymous.smarthome.items.IHudRenderer;
 import com.davenonymous.smarthome.items.IWorldRenderer;
 import com.davenonymous.smarthome.particles.ModelParticleProvider;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import com.davenonymous.smarthome.setup.content.ModParticles;
+import com.davenonymous.smarthome.watcher.ActionDatabaseTask;
+import com.davenonymous.smarthome.watcher.VizQueryDatabaseTask;
+import com.davenonymous.smarthome.watcher.WorldWatcherPool;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.util.debugchart.LocalSampleLogger;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @EventBusSubscriber(modid = SmartHome.MODID, value = Dist.CLIENT)
 public class ClientRegistrations {
+
+	@SubscribeEvent
+	public static void onDebugScreen(CustomizeGuiOverlayEvent.DebugText event) {
+		if(WorldWatcherPool.taskQueue == null) {
+			return;
+		}
+
+		var left = event.getLeft();
+		left.add("SmartHome Database Queue: " + WorldWatcherPool.taskQueue.size() + "/" + ServerConfig.taskQueueSize);
+	}
+
+	@SubscribeEvent
+	public static void onClientSetup(FMLClientSetupEvent event) {
+		SmartHome.CONTAINER.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+	}
+
 	@SubscribeEvent
 	public static void onScreenOpen(ScreenEvent.Opening event) {
 		if(event.getScreen() instanceof TitleScreen) {

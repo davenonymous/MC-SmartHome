@@ -1,13 +1,9 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.events.SensorDataUpdatedEvent;
-import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.home.ContentContainerWidget;
 import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.gui.home.NoHomesWidget;
@@ -20,15 +16,11 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
-import java.time.Instant;
 import java.util.*;
 
 public class HomeScreen extends WidgetFullScreen {
@@ -50,7 +42,7 @@ public class HomeScreen extends WidgetFullScreen {
 
 	@I18DataGen(lang = "en_us", string = "Smart Home")
 	@I18DataGen(lang = "de_de", string = "Smart Home")
-	public static final I18String TITLE = SmartHome.guiString("home", "title");
+	public static final I18String TITLE = I18String.gui("home", "title");
 
 	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
 		super(Component.translatable(TITLE.key()));

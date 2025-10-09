@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.sidebar;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.home.ContentIDs;
 import com.davenonymous.smarthome.lib.HackerNoon;
@@ -12,7 +11,6 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 
 public class SidebarWidget extends WidgetVBox {
 	SidebarButton zonesButton;
@@ -23,27 +21,27 @@ public class SidebarWidget extends WidgetVBox {
 
 	@I18DataGen(lang = "en_us", string = "Zones")
 	@I18DataGen(lang = "de_de", string = "Zonen")
-	public static final I18String ZONES = SmartHome.guiString("home.sidebar", "zones");
+	public static final I18String ZONES = I18String.gui("home.sidebar", "zones");
 
 	@I18DataGen(lang = "en_us", string = "Devices")
 	@I18DataGen(lang = "de_de", string = "Geräte")
-	public static final I18String DEVICES = SmartHome.guiString("home.sidebar", "devices");
+	public static final I18String DEVICES = I18String.gui("home.sidebar", "devices");
 
 	@I18DataGen(lang = "en_us", string = "Dashboards")
 	@I18DataGen(lang = "de_de", string = "Dashboards")
-	public static final I18String DASHBOARDS = SmartHome.guiString("home.sidebar", "dashboards");
+	public static final I18String DASHBOARDS = I18String.gui("home.sidebar", "dashboards");
 
 	@I18DataGen(lang = "en_us", string = "Cards")
 	@I18DataGen(lang = "de_de", string = "Karten")
-	public static final I18String CARDS = SmartHome.guiString("home.sidebar", "cards");
+	public static final I18String CARDS = I18String.gui("home.sidebar", "cards");
 
 	@I18DataGen(lang = "en_us", string = "Settings")
 	@I18DataGen(lang = "de_de", string = "Einstellungen")
-	public static final I18String SETTINGS = SmartHome.guiString("home.sidebar", "settings");
+	public static final I18String SETTINGS = I18String.gui("home.sidebar", "settings");
 
 	@I18DataGen(lang = "en_us", string = "New devices found: %d")
 	@I18DataGen(lang = "de_de", string = "Neue Geräte gefunden: %d")
-	public static final I18String NEW_DEVICES = SmartHome.guiString("home.sidebar", "devices.badge");
+	public static final I18String NEW_DEVICES = I18String.gui("home.sidebar", "devices.badge");
 
 	public SidebarWidget(HomeScreen screen) {
 		this.setWidth(120);

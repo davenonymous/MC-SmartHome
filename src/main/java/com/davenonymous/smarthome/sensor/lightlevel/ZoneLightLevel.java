@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.sensor.lightlevel;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -12,7 +11,6 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
 import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.OnOffSettings;
-import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -32,7 +30,7 @@ public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSetti
 	@SensorName
 	@I18DataGen(lang = "en_us", string = "Block Light Level")
 	@I18DataGen(lang = "de_de", string = "Block Lichtstärke")
-	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor", "block_light");
+	public static final I18String SENSOR_NAME = I18String.data("sensor", "block_light");
 
 	@Override
 	public OnOffSettings getDefaultSettings() {

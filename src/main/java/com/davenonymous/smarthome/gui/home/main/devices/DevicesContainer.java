@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.table.ConfiguredDevicesTable;
@@ -18,8 +17,6 @@ import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.List;
-
 public class DevicesContainer extends WidgetPanel {
 	public WidgetTextBox newDevicesLabel;
 	public NewDevicesWidget newDevicesBar;
@@ -31,11 +28,11 @@ public class DevicesContainer extends WidgetPanel {
 
 	@I18DataGen(lang = "en_us", string = "New Devices")
 	@I18DataGen(lang = "de_de", string = "Neue Geräte")
-	public static final I18String NEW_DEVICES = SmartHome.guiString("home.devices", "label.new_devices");
+	public static final I18String NEW_DEVICES = I18String.gui("home.devices", "label.new_devices");
 
 	@I18DataGen(lang = "en_us", string = "Configured Devices")
 	@I18DataGen(lang = "de_de", string = "Konfigurierte Geräte")
-	public static final I18String CONFIGURED_DEVICES = SmartHome.guiString("home.devices", "label.configured_devices");
+	public static final I18String CONFIGURED_DEVICES = I18String.gui("home.devices", "label.configured_devices");
 
 
 	public DevicesContainer() {

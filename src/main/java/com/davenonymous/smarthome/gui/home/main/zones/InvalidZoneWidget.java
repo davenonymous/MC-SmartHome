@@ -21,11 +21,11 @@ public class InvalidZoneWidget extends WidgetPanel {
 
 	@I18DataGen(lang = "en_us", string = "The Range Finder area intersects with an existing zone")
 	@I18DataGen(lang = "de_de", string = "Der Bereich des Entfernungsmessers überschneidet sich mit einer bestehenden Zone")
-	public static final I18String RANGE_FINDER_INTERSECTS = SmartHome.guiString("home.zones", "range_finder.intersects");
+	public static final I18String RANGE_FINDER_INTERSECTS = I18String.gui("home.zones", "range_finder.intersects");
 
 	@I18DataGen(lang = "en_us", string = "Invalid")
 	@I18DataGen(lang = "de_de", string = "Ungültig")
-	public static final I18String INVALID_ZONE = SmartHome.guiString("home.zones", "label.invalid_zone");
+	public static final I18String INVALID_ZONE = I18String.gui("home.zones", "label.invalid_zone");
 
 	public InvalidZoneWidget(ZonesContainer parent, RangerFinderDataComponent rangeFinderData) {
 		this.setWidth(100);

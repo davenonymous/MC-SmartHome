@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.sensor.energy;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -18,12 +17,12 @@ public record EnergyStorageData(long energyStored, long maxEnergyStored) impleme
 	@SensorDataColumnLabel("energyStored")
 	@I18DataGen(lang = "en_us", string = "Stored")
 	@I18DataGen(lang = "de_de", string = "Vorhanden")
-	public static final I18String ENERGY_STORED = SmartHome.dataString("sensor.energy_storage.column", "stored");
+	public static final I18String ENERGY_STORED = I18String.data("sensor.energy_storage.column", "stored");
 
 	@SensorDataColumnLabel("maxEnergyStored")
 	@I18DataGen(lang = "en_us", string = "Capacity")
 	@I18DataGen(lang = "de_de", string = "Kapazität")
-	public static final I18String MAX_ENERGY_STORED = SmartHome.dataString("sensor.energy_storage.column", "capacity");
+	public static final I18String MAX_ENERGY_STORED = I18String.data("sensor.energy_storage.column", "capacity");
 
 	@Override
 	public Object[] columnValues() {

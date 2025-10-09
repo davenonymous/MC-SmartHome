@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.devices.table;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -36,27 +35,27 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 
 	@I18DataGen(lang = "en_us", string = "Device")
 	@I18DataGen(lang = "de_de", string = "Gerät")
-	public static final I18String HEADER_DEVICE = SmartHome.guiString("home.devices.table", "header.device");
+	public static final I18String HEADER_DEVICE = I18String.gui("home.devices.table", "header.device");
 
 	@I18DataGen(lang = "en_us", string = "Position")
 	@I18DataGen(lang = "de_de", string = "Position")
-	public static final I18String HEADER_POSITION = SmartHome.guiString("home.devices.table", "header.position");
+	public static final I18String HEADER_POSITION = I18String.gui("home.devices.table", "header.position");
 
 	@I18DataGen(lang = "en_us", string = "State")
 	@I18DataGen(lang = "de_de", string = "Status")
-	public static final I18String HEADER_STATE = SmartHome.guiString("home.devices.table", "header.state");
+	public static final I18String HEADER_STATE = I18String.gui("home.devices.table", "header.state");
 
 	@I18DataGen(lang = "en_us", string = "Sensors")
 	@I18DataGen(lang = "de_de", string = "Sensoren")
-	public static final I18String HEADER_SENSORS = SmartHome.guiString("home.devices.table", "header.sensors");
+	public static final I18String HEADER_SENSORS = I18String.gui("home.devices.table", "header.sensors");
 
 	@I18DataGen(lang = "en_us", string = "The device is missing (block removed?)")
 	@I18DataGen(lang = "de_de", string = "Das Gerät fehlt (Block entfernt?)")
-	public static final I18String MISSING_DEVICE_TOOLTIP = SmartHome.guiString("home.devices.table", "tooltip.missing_device");
+	public static final I18String MISSING_DEVICE_TOOLTIP = I18String.gui("home.devices.table", "tooltip.missing_device");
 
 	@I18DataGen(lang = "en_us", string = "-")
 	@I18DataGen(lang = "de_de", string = "-")
-	public static final I18String NO_SENSORS = SmartHome.guiString("smarthome.sensors", "no_sensors");
+	public static final I18String NO_SENSORS = I18String.gui("smarthome.sensors", "no_sensors");
 
 	public ConfiguredDevicesTable() {
 		super();

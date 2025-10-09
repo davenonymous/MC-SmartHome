@@ -33,11 +33,11 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 	@HomeCardElementName
 	@I18DataGen(lang = "en_us", string = "Label")
 	@I18DataGen(lang = "de_de", string = "Text")
-	public static final I18String NAME = SmartHome.dataString("card_element.name", "text");
+	public static final I18String NAME = I18String.data("card_element.name", "text");
 
 	@I18DataGen(lang = "en_us", string = "New label")
 	@I18DataGen(lang = "de_de", string = "Neuer Text")
-	public static final I18String DEFAULT_LABEL = SmartHome.dataString("card_element.name", "default_label");
+	public static final I18String DEFAULT_LABEL = I18String.data("card_element.name", "default_label");
 
 	@HomeCardElementDefault
 	public static LabelCardElement createDefault() {

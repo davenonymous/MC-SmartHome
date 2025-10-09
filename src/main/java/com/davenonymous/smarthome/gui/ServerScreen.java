@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.items.ServerContainer;
 import com.davenonymous.smarthome.items.ServerDataComponent;
 import com.davenonymous.smarthome.items.ServerItem;
@@ -27,7 +26,7 @@ public class ServerScreen extends WidgetContainerScreen<ServerContainer> {
 
 	@I18DataGen(lang = "en_us", string = "Name your smart home:")
 	@I18DataGen(lang = "de_de", string = "Benennen Sie Ihr Smart Home:")
-	public static final I18String HOME_NAME = SmartHome.guiString("server", "name_label");
+	public static final I18String HOME_NAME = I18String.gui("server", "name_label");
 
 	public ServerScreen(ServerContainer container, Inventory inv, Component name) {
 		super(container, inv, name);

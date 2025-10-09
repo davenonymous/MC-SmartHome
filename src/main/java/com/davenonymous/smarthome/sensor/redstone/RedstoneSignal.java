@@ -15,7 +15,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -30,7 +29,7 @@ public class RedstoneSignal implements BlockSensor<RedstoneSignalData, OnOffSett
 	@SensorName
 	@I18DataGen(lang = "en_us", string = "Redstone Signal")
 	@I18DataGen(lang = "de_de", string = "Redstone Signal")
-	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor", "redstone_signal");
+	public static final I18String SENSOR_NAME = I18String.data("sensor", "redstone_signal");
 
 	@Override
 	public OnOffSettings getDefaultSettings() {

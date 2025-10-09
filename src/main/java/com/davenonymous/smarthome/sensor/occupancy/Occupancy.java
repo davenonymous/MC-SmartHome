@@ -1,7 +1,6 @@
 package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -11,7 +10,6 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
 import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.OnOffSettings;
-import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import com.davenonymous.smarthome.setup.content.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -32,7 +30,7 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 	@SensorName
 	@I18DataGen(lang = "en_us", string = "Occupancy")
 	@I18DataGen(lang = "de_de", string = "Anwesenheit")
-	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor", "occupancy");
+	public static final I18String SENSOR_NAME = I18String.data("sensor", "occupancy");
 
 	@Override
 	public boolean isMultiRow() {

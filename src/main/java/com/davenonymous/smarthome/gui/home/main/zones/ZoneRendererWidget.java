@@ -179,33 +179,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 			}
 
 			if(selectedZone != null && zoneId.equals(selectedZone.id())) {
-
-				for(var device : selectedZone.devices()) {
-					if(device.ignored() || !device.enabled()) {
-						continue;
-					}
-					var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
-
-					pose.pushPose();
-					pose.translate(device.pos().getX(), device.pos().getY(), device.pos().getZ());
-					pose.translate(-selectedZone.home().shape().bounds().minX, -selectedZone.home().shape().bounds().minY, -selectedZone.home().shape().bounds().minZ);
-
-					var bakedModel = Minecraft.getInstance().getBlockRenderer().getBlockModel(deviceBlockState);
-					RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-					Minecraft.getInstance().getBlockRenderer().getModelRenderer().tesselateWithAO(
-						Minecraft.getInstance().level,
-						bakedModel,
-						deviceBlockState,
-						BlockPos.ZERO,
-						pose,
-						guiGraphics.bufferSource().getBuffer(RenderType.TRANSLUCENT),
-						false, Minecraft.getInstance().level.getRandom(),
-						42,
-						OverlayTexture.NO_OVERLAY,
-						ModelData.EMPTY,
-						RenderType.TRANSLUCENT);
-					pose.popPose();
-				}
+				BoxRenderer.renderBlockOutline(guiGraphics.pose(), deviceBoxLines.lines, ColorHelper.COLOR_PURPLE, 2);
 
 				int selectedColor = ChatFormatting.DARK_GREEN.getColor() | 0xFF000000;
 				BoxRenderer.renderBlockOutline(guiGraphics.pose(), zoneBox.lines, selectedColor, 3);

@@ -1,13 +1,11 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -22,19 +20,19 @@ public class ElementSettingsWidget extends WidgetVBox {
 
 	@I18DataGen(lang = "en_us", string = "No element selected")
 	@I18DataGen(lang = "de_de", string = "Kein Element ausgewählt")
-	public static final I18String NO_ELEMENT_SELECTED = SmartHome.guiString("home.cards.element_settings", "no_element_selected");
+	public static final I18String NO_ELEMENT_SELECTED = I18String.gui("home.cards.element_settings", "no_element_selected");
 
 	@I18DataGen(lang = "en_us", string = "Select an element to edit its settings")
 	@I18DataGen(lang = "de_de", string = "Wähle ein Element, um dessen Einstellungen zu bearbeiten")
-	public static final I18String SELECT_ELEMENT_HINT = SmartHome.guiString("home.cards.element_settings", "select_element_hint");
+	public static final I18String SELECT_ELEMENT_HINT = I18String.gui("home.cards.element_settings", "select_element_hint");
 
 	@I18DataGen(lang = "en_us", string = "No settings available for this element")
 	@I18DataGen(lang = "de_de", string = "Keine Einstellungen für dieses Element verfügbar")
-	public static final I18String NO_SETTINGS_AVAILABLE = SmartHome.guiString("home.cards.element_settings", "no_settings_available");
+	public static final I18String NO_SETTINGS_AVAILABLE = I18String.gui("home.cards.element_settings", "no_settings_available");
 
 	@I18DataGen(lang = "en_us", string = "Element Settings")
 	@I18DataGen(lang = "de_de", string = "Element Einstellungen")
-	public static final I18String ELEMENT_SETTINGS_TITLE = SmartHome.guiString("home.cards.element_settings", "title");
+	public static final I18String ELEMENT_SETTINGS_TITLE = I18String.gui("home.cards.element_settings", "title");
 
 	HomeCardElement<?> element = null;
 

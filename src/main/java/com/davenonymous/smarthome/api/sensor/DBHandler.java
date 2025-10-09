@@ -161,21 +161,21 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 	@I18DataGen(lang = "en_us", string = "Instant")
 	@I18DataGen(lang = "de_de", string = "Zeitpunkt")
-	public static final I18String INSTANT_COLUMN_NAME = SmartHome.dataString("columns", "instant");
+	public static final I18String INSTANT_COLUMN_NAME = I18String.data("columns", "instant");
 
 	@I18DataGen(lang = "en_us", string = "Tick")
 	@I18DataGen(lang = "de_de", string = "Tick")
-	public static final I18String TICK_COLUMN_NAME = SmartHome.dataString("columns", "tick");
+	public static final I18String TICK_COLUMN_NAME = I18String.data("columns", "tick");
 
 	@I18DataGen(lang = "en_us", string = "Smart Home ID")
 	@I18DataGen(lang = "de_de", string = "Smart Home ID")
-	public static final I18String HOME_COLUMN_NAME = SmartHome.dataString("columns", "home");
+	public static final I18String HOME_COLUMN_NAME = I18String.data("columns", "home");
 
 	@I18DataGen(lang = "en_us", string = "Zone ID")
 	@I18DataGen(lang = "de_de", string = "Zonen ID")
-	public static final I18String ZONE_COLUMN_NAME = SmartHome.dataString("columns", "zone");
+	public static final I18String ZONE_COLUMN_NAME = I18String.data("columns", "zone");
 
 	@I18DataGen(lang = "en_us", string = "Device ID")
 	@I18DataGen(lang = "de_de", string = "Geräte ID")
-	public static final I18String DEVICE_COLUMN_NAME = SmartHome.dataString("columns", "device");
+	public static final I18String DEVICE_COLUMN_NAME = I18String.data("columns", "device");
 }

@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.settings;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeSettings;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
@@ -21,31 +20,31 @@ public class SettingsContainer extends WidgetPanel {
 
 	@I18DataGen(lang = "en_us", string = "General")
 	@I18DataGen(lang = "de_de", string = "Allgemein")
-	public static final I18String BOX_TITLE = SmartHome.guiString("settings", "general");
+	public static final I18String BOX_TITLE = I18String.gui("settings", "general");
 
 	@I18DataGen(lang = "en_us", string = "Automatically enable new devices")
 	@I18DataGen(lang = "de_de", string = "Neue Geräte automatisch aktivieren")
-	public static final I18String AUTO_ENABLE_NEW_DEVICES = SmartHome.guiString("settings", "auto_enable_new_devices");
+	public static final I18String AUTO_ENABLE_NEW_DEVICES = I18String.gui("settings", "auto_enable_new_devices");
 
 	@I18DataGen(lang = "en_us", string = "When you add a newly found device to one of your zones, it and all non-generic sensors it provides will be enabled immediately.")
 	@I18DataGen(lang = "de_de", string = "Wenn Sie ein neu gefundenes Gerät zu einer Ihrer Zonen hinzufügen, wird es und alle nicht generischen Sensoren, die es bereitstellt, sofort aktiviert.")
-	public static final I18String AUTO_ENABLE_NEW_DEVICES_DESCRIPTION = SmartHome.guiString("settings", "auto_enable_new_devices_description");
+	public static final I18String AUTO_ENABLE_NEW_DEVICES_DESCRIPTION = I18String.gui("settings", "auto_enable_new_devices_description");
 
 	@I18DataGen(lang = "en_us", string = "Automatically ignore new generic devices")
 	@I18DataGen(lang = "de_de", string = "Neue generische Geräte automatisch ignorieren")
-	public static final I18String AUTO_IGNORE_GENERIC_ONLY_DEVICES = SmartHome.guiString("settings", "auto_ignore_generic_only_devices");
+	public static final I18String AUTO_IGNORE_GENERIC_ONLY_DEVICES = I18String.gui("settings", "auto_ignore_generic_only_devices");
 
 	@I18DataGen(lang = "en_us", string = "When a new device has been found that only provides generic sensors, it will be automatically added to the list of ignored devices.")
 	@I18DataGen(lang = "de_de", string = "Wenn ein neues Gerät gefunden wurde, das nur generische Sensoren bereitstellt, wird es automatisch zur Liste der ignorierten Geräte hinzugefügt.")
-	public static final I18String AUTO_IGNORE_GENERIC_ONLY_DEVICES_DESCRIPTION = SmartHome.guiString("settings", "auto_ignore_generic_only_devices_description");
+	public static final I18String AUTO_IGNORE_GENERIC_ONLY_DEVICES_DESCRIPTION = I18String.gui("settings", "auto_ignore_generic_only_devices_description");
 
 	@I18DataGen(lang = "en_us", string = "Rename blocks when renaming devices")
 	@I18DataGen(lang = "de_de", string = "Blöcke beim Umbenennen von Geräten umbenennen")
-	public static final I18String RENAME_BLOCKS_TO_DEVICE_NAMES = SmartHome.guiString("settings", "rename_blocks_to_device_names");
+	public static final I18String RENAME_BLOCKS_TO_DEVICE_NAMES = I18String.gui("settings", "rename_blocks_to_device_names");
 
 	@I18DataGen(lang = "en_us", string = "Blocks that can have a custom name will automatically be renamed to match their device name.")
 	@I18DataGen(lang = "de_de", string = "Blöcke, die einen benutzerdefinierten Namen haben können, werden automatisch umbenannt, um mit ihrem Gerätenamen übereinzustimmen.")
-	public static final I18String RENAME_BLOCKS_TO_DEVICE_NAMES_DESCRIPTION = SmartHome.guiString("settings", "rename_blocks_to_device_names_description");
+	public static final I18String RENAME_BLOCKS_TO_DEVICE_NAMES_DESCRIPTION = I18String.gui("settings", "rename_blocks_to_device_names_description");
 
 	public SettingsContainer() {
 		generalBox = new SettingsBox(BOX_TITLE.get());

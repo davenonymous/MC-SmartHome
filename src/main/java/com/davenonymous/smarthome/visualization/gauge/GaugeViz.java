@@ -16,7 +16,6 @@ import com.davenonymous.smarthome.visualization.annotations.VisualizationId;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationName;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import org.knowm.xchart.DialChart;
@@ -36,12 +35,12 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 	@VisualizationName
 	@I18DataGen(lang = "en_us", string = "Gauge")
 	@I18DataGen(lang = "de_de", string = "Messuhr")
-	public static final I18String NAME = SmartHome.guiString("visualization.gauge", "name");
+	public static final I18String NAME = I18String.gui("visualization.gauge", "name");
 
 	@VisualizationDescription
 	@I18DataGen(lang = "en_us", string = "Shows current value as a gauge.")
 	@I18DataGen(lang = "de_de", string = "Zeigt den aktuellen Wert als Ausschlag in einer Messuhr an.")
-	public static final I18String DESC = SmartHome.guiString("visualization.gauge", "description");
+	public static final I18String DESC = I18String.gui("visualization.gauge", "description");
 
 	@Override
 	public GaugeVizSettings getDefaultSettings() {

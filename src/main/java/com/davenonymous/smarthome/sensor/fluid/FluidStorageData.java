@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.sensor.fluid;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -18,17 +17,17 @@ public record FluidStorageData(String fluidId, long stored, long capacity) imple
 	@SensorDataColumnLabel("fluidId")
 	@I18DataGen(lang = "en_us", string = "Fluid")
 	@I18DataGen(lang = "de_de", string = "Flüssigkeit")
-	public static final I18String FLUID_ID = SmartHome.dataString("sensor.fluid_storage.column", "fluid");
+	public static final I18String FLUID_ID = I18String.data("sensor.fluid_storage.column", "fluid");
 
 	@SensorDataColumnLabel("stored")
 	@I18DataGen(lang = "en_us", string = "Stored")
 	@I18DataGen(lang = "de_de", string = "Vorhanden")
-	public static final I18String FLUID_STORED = SmartHome.dataString("sensor.fluid_storage.column", "stored");
+	public static final I18String FLUID_STORED = I18String.data("sensor.fluid_storage.column", "stored");
 
 	@SensorDataColumnLabel("capacity")
 	@I18DataGen(lang = "en_us", string = "Capacity")
 	@I18DataGen(lang = "de_de", string = "Kapazität")
-	public static final I18String FLUID_CAPACITY = SmartHome.dataString("sensor.fluid_storage.column", "capacity");
+	public static final I18String FLUID_CAPACITY = I18String.data("sensor.fluid_storage.column", "capacity");
 
 	@Override
 	public Object[] columnValues() {

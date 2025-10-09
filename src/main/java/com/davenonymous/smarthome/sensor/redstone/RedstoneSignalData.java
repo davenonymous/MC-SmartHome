@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.sensor.redstone;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -18,12 +17,12 @@ public record RedstoneSignalData(int outputLevel, int maxNeighborLevel) implemen
 	@SensorDataColumnLabel("outputLevel")
 	@I18DataGen(lang = "en_us", string = "Output")
 	@I18DataGen(lang = "de_de", string = "Ausgang")
-	public static final I18String OUTPUT_COLUMN = SmartHome.dataString("sensor.redstone_signal.column", "output_level");
+	public static final I18String OUTPUT_COLUMN = I18String.data("sensor.redstone_signal.column", "output_level");
 
 	@SensorDataColumnLabel("maxNeighborLevel")
 	@I18DataGen(lang = "en_us", string = "Input")
 	@I18DataGen(lang = "de_de", string = "Eingang")
-	public static final I18String MAX_NEIGHBOR_COLUMN = SmartHome.dataString("sensor.redstone_signal.column", "max_neighbor_level");
+	public static final I18String MAX_NEIGHBOR_COLUMN = I18String.data("sensor.redstone_signal.column", "max_neighbor_level");
 
 	@Override
 	public Object[] columnValues() {

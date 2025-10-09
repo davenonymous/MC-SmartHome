@@ -33,15 +33,15 @@ public class ZoneDetailWidget extends WidgetVBox {
 
 	@I18DataGen(lang = "en_us", string = "Click to rename")
 	@I18DataGen(lang = "de_de", string = "Klicken zum Umbenennen")
-	public static final I18String RENAMABLE_ZONE = SmartHome.guiString("home.zones", "detail.renameable");
+	public static final I18String RENAMABLE_ZONE = I18String.gui("home.zones", "detail.renameable");
 
 	@I18DataGen(lang = "en_us", string = "Devices")
 	@I18DataGen(lang = "de_de", string = "Geräte")
-	public static final I18String DEVICES_LABEL = SmartHome.guiString("home.zones", "detail.devices");
+	public static final I18String DEVICES_LABEL = I18String.gui("home.zones", "detail.devices");
 
 	@I18DataGen(lang = "en_us", string = "Hold Ctrl + Shift and click to delete this zone")
 	@I18DataGen(lang = "de_de", string = "Halte Strg + Shift und klicke, um diese Zone zu löschen")
-	public static final I18String DELETE_ZONE = SmartHome.guiString("home.zones", "detail.delete");
+	public static final I18String DELETE_ZONE = I18String.gui("home.zones", "detail.delete");
 
 
 	private boolean isEditingZoneSize = false;

@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.sensor.occupancy;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
@@ -19,37 +18,37 @@ public record OccupancyData(int id, String name, String type, String category, d
 	@SensorDataColumnLabel("id")
 	@I18DataGen(lang = "en_us", string = "ID")
 	@I18DataGen(lang = "de_de", string = "ID")
-	public static final I18String ID = SmartHome.dataString("sensor.occupancy.column", "id");
+	public static final I18String ID = I18String.data("sensor.occupancy.column", "id");
 
 	@SensorDataColumnLabel("name")
 	@I18DataGen(lang = "en_us", string = "Name")
 	@I18DataGen(lang = "de_de", string = "Name")
-	public static final I18String NAME = SmartHome.dataString("sensor.occupancy.column", "name");
+	public static final I18String NAME = I18String.data("sensor.occupancy.column", "name");
 
 	@SensorDataColumnLabel("type")
 	@I18DataGen(lang = "en_us", string = "Type")
 	@I18DataGen(lang = "de_de", string = "Typ")
-	public static final I18String TYPE = SmartHome.dataString("sensor.occupancy.column", "type");
+	public static final I18String TYPE = I18String.data("sensor.occupancy.column", "type");
 
 	@SensorDataColumnLabel("category")
 	@I18DataGen(lang = "en_us", string = "Category")
 	@I18DataGen(lang = "de_de", string = "Kategorie")
-	public static final I18String CATEGORY = SmartHome.dataString("sensor.occupancy.column", "category");
+	public static final I18String CATEGORY = I18String.data("sensor.occupancy.column", "category");
 
 	@SensorDataColumnLabel("x")
 	@I18DataGen(lang = "en_us", string = "X")
 	@I18DataGen(lang = "de_de", string = "X")
-	public static final I18String X = SmartHome.dataString("sensor.occupancy.column", "x");
+	public static final I18String X = I18String.data("sensor.occupancy.column", "x");
 
 	@SensorDataColumnLabel("y")
 	@I18DataGen(lang = "en_us", string = "Y")
 	@I18DataGen(lang = "de_de", string = "Y")
-	public static final I18String Y = SmartHome.dataString("sensor.occupancy.column", "y");
+	public static final I18String Y = I18String.data("sensor.occupancy.column", "y");
 
 	@SensorDataColumnLabel("z")
 	@I18DataGen(lang = "en_us", string = "Z")
 	@I18DataGen(lang = "de_de", string = "Z")
-	public static final I18String Z = SmartHome.dataString("sensor.occupancy.column", "z");
+	public static final I18String Z = I18String.data("sensor.occupancy.column", "z");
 
 	@Override
 	public Object[] columnValues() {

@@ -6,7 +6,6 @@ import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.cards.SmartHomeCardElement;
 import com.davenonymous.smarthome.cards.annotations.*;
-import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.MultipleDeviceSelector;
 import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.SensorSelector;
 import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.VisualizationSelector;
@@ -43,7 +42,7 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 	@HomeCardElementName
 	@I18DataGen(lang = "en_us", string = "Visualization")
 	@I18DataGen(lang = "de_de", string = "Visualisierung")
-	public static final I18String NAME = SmartHome.dataString("card_element.viz", "label");
+	public static final I18String NAME = I18String.data("card_element.viz", "label");
 
 	@HomeCardElementDefault
 	public static VisualizationCardElement createDefault() {

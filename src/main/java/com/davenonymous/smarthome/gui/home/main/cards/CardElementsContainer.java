@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.gui.events.AddCardElementEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -17,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 public class CardElementsContainer extends WidgetVBox {
 	@I18DataGen(lang = "en_us", string = "Add element")
 	@I18DataGen(lang = "de_de", string = "Element hinzufügen")
-	public static final I18String ADD_CARD_ELEMENT_TITLE = SmartHome.guiString("home.cards.elements", "title");
+	public static final I18String ADD_CARD_ELEMENT_TITLE = I18String.gui("home.cards.elements", "title");
 
 	public CardElementsContainer() {
 		super();

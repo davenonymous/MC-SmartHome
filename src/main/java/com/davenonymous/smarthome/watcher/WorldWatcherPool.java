@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.watcher;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.config.ServerConfig;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,9 +14,11 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import org.duckdb.DuckDBConnection;
 
+import java.nio.file.Path;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -47,9 +50,9 @@ public class WorldWatcherPool {
 
 	@SubscribeEvent
 	public static void onServerStart(ServerStartingEvent event) {
-		taskQueue = new LinkedBlockingQueue<>(32);
+		taskQueue = new LinkedBlockingQueue<>(ServerConfig.taskQueueSize);
 		instance = new WorldWatcher(event.getServer());
-		var path = event.getServer().getWorldPath(LevelResource.ROOT).resolve("smarthome.duckdb");
+		var path = event.getServer().getWorldPath(LevelResource.ROOT).resolve(Path.of(ServerConfig.databasePath));
 		databaseWorker = new DatabaseWorker(path, taskQueue);
 		databaseWorker.start();
 	}
@@ -60,15 +63,32 @@ public class WorldWatcherPool {
 			return;
 		}
 
-		if(event.hasTime() && taskQueue.remainingCapacity() > 0) {
-			List<Consumer<DuckDBConnection>> databaseActions = instance.processHomes();
-			for(var action : databaseActions) {
-				new ActionDatabaseTask(action).enqueue(taskQueue);
-			}
-		} else {
-			SmartHome.LOGGER.debug("Skipping world watcher on tick without time");
+		if(event.getServer().getTickCount() - instance.lastUpdateTick < ServerConfig.minSensorTickRate) {
+			return;
 		}
 
+		if(ServerConfig.dropSensorsInFavorOfTPS && !event.hasTime()) {
+			SmartHome.LOGGER.debug("Skipping sensor update on tick without remaining time");
+			return;
+		}
+
+		if(taskQueue.remainingCapacity() <= 0) {
+			SmartHome.LOGGER.debug("Skipping sensor update, too many tasks in the queue already ({} / {}):", taskQueue.size(), ServerConfig.taskQueueSize);
+			Map<Class<?>, Integer> taskCounts = new LinkedHashMap<>();
+			for(var task : taskQueue) {
+				taskCounts.put(task.getClass(), taskCounts.getOrDefault(task.getClass(), 0) + 1);
+			}
+			for(var entry : taskCounts.entrySet()) {
+				SmartHome.LOGGER.trace(" - {}: {}", entry.getKey().getSimpleName(), entry.getValue());
+			}
+			return;
+		}
+
+		instance.lastUpdateTick = event.getServer().getTickCount();
+		List<Consumer<DuckDBConnection>> databaseActions = instance.processHomes();
+		for(var action : databaseActions) {
+			new ActionDatabaseTask(action).enqueue(taskQueue);
+		}
 	}
 
 	@SubscribeEvent

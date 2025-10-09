@@ -27,7 +27,7 @@ public class AddZoneButtonWidget extends WidgetPanel {
 
 	@I18DataGen(lang = "en_us", string = "Enter name")
 	@I18DataGen(lang = "de_de", string = "Name eingeben")
-	public static final I18String CLICK_TO_RENAME = SmartHome.guiString("home.zones", "add_zones.hint");
+	public static final I18String CLICK_TO_RENAME = I18String.gui("home.zones", "add_zones.hint");
 
 
 	public AddZoneButtonWidget(ZonesContainer parent, RangerFinderDataComponent rangeFinderData) {

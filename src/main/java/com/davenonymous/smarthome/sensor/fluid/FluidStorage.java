@@ -12,7 +12,6 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorId;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorName;
 import com.davenonymous.smarthome.api.sensor.annotations.SmartHomeSensor;
 import com.davenonymous.smarthome.api.sensor.settings.SidedOnOffSettings;
-import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +38,7 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	@SensorName
 	@I18DataGen(lang = "en_us", string = "Fluid Storage")
 	@I18DataGen(lang = "de_de", string = "Flüssigkeitslager")
-	public static final I18String SENSOR_NAME = SmartHome.dataString("sensor", "fluid_storage");
+	public static final I18String SENSOR_NAME = I18String.data("sensor", "fluid_storage");
 
 	@Override
 	public SidedOnOffSettings getDefaultSettings() {

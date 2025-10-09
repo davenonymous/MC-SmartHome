@@ -37,23 +37,23 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 
 	@I18DataGen(lang = "en_us", string = "Click to rename")
 	@I18DataGen(lang = "de_de", string = "Klicken zum Umbenennen")
-	public static final I18String CLICK_TO_RENAME = SmartHome.guiString("devices", "add.renameable");
+	public static final I18String CLICK_TO_RENAME = I18String.gui("devices", "add.renameable");
 
 	@I18DataGen(lang = "en_us", string = "%d sensors")
 	@I18DataGen(lang = "de_de", string = "%d Sensoren")
-	public static final I18String SENSORS_COUNT = SmartHome.guiString("devices", "add.sensors.count");
+	public static final I18String SENSORS_COUNT = I18String.gui("devices", "add.sensors.count");
 
 	@I18DataGen(lang = "en_us", string = "Add device")
 	@I18DataGen(lang = "de_de", string = "Gerät hinzufügen")
-	public static final I18String ADD_DEVICE = SmartHome.guiString("devices", "add.add_device");
+	public static final I18String ADD_DEVICE = I18String.gui("devices", "add.add_device");
 
 	@I18DataGen(lang = "en_us", string = "Ignore device")
 	@I18DataGen(lang = "de_de", string = "Gerät ignorieren")
-	public static final I18String IGNORE_DEVICE = SmartHome.guiString("devices", "add.ignore_device");
+	public static final I18String IGNORE_DEVICE = I18String.gui("devices", "add.ignore_device");
 
 	@I18DataGen(lang = "en_us", string = "Ignored devices can still be added later from the settings menu.")
 	@I18DataGen(lang = "de_de", string = "Ignorierte Geräte können später über das Einstellungsmenü hinzugefügt werden.")
-	public static final I18String IGNORE_DEVICE_HINT = SmartHome.guiString("devices", "add.ignore_device.hint");
+	public static final I18String IGNORE_DEVICE_HINT = I18String.gui("devices", "add.ignore_device.hint");
 
 	public NewDeviceEntryWidget(HomeZone zone, FoundDevice device) {
 		this.setSize(100, 100);
