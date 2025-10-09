@@ -24,20 +24,19 @@ import java.util.concurrent.CompletableFuture;
 
 public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 	private T chart;
+	private int texId;
 
 	private WidgetImage image;
 	private DynamicImageResources.DynTexture loadedImage;
 
-	public WidgetChart(T chart) {
-		this();
+	public WidgetChart(int texId, T chart) {
+		this(texId);
 		this.setChart(chart);
 	}
 
-	public WidgetChart() {
+	public WidgetChart(int texId) {
 		super();
-		this.image = new WidgetImage();
-		this.image.setPosition(0, 0);
-		this.image.setVisible(false);
+		this.texId = texId;
 
 		this.addListener(
 			WidgetSizeChangeEvent.class, (event, widget) -> {
@@ -60,8 +59,6 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 
 			return WidgetEventResult.CONTINUE_PROCESSING;
 		});
-
-		this.add(image);
 	}
 
 	public static <T extends Chart<?, ?>> BufferedImage getBufferedImage(T chart) {
@@ -89,29 +86,42 @@ public class WidgetChart<T extends Chart<?, ?>> extends WidgetPanel {
 	@Override
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
-		this.image.setSize(this.width, this.height);
+		if(this.image != null) {
+			this.image.setSize(this.width, this.height);
+		}
 	}
 
 	public void setChart(T chart) {
 		this.chart = chart;
-		image.setVisible(false);
 
-		CompletableFuture.runAsync(() -> {
+
+		CompletableFuture.supplyAsync(() -> {
 			try {
 				byte[] imageBytes = getBitmapBytes(this.chart, BitmapEncoder.BitmapFormat.PNG);
-				Optional<DynamicImageResources.DynTexture> loadedImage = DynamicImageResources.getImage("xchart_" + id, imageBytes);
+				return imageBytes;
+			} catch (IOException e) {
+				SmartHome.LOGGER.warn("Failed to read image from xchart: {}", e.toString());
+			}
+			return null;
+		}, Util.backgroundExecutor()).thenAccept(bytes -> {
+			Minecraft.getInstance().tell(() -> {
+				Optional<DynamicImageResources.DynTexture> loadedImage = DynamicImageResources.getImage("xchart_" + texId, bytes);
 				if(loadedImage.isEmpty()) {
 					return;
 				}
 
 				this.loadedImage = loadedImage.get();
-				image.setImage(this.loadedImage.resource());
-				image.setTextureSize(this.loadedImage.image().getWidth(), this.loadedImage.image().getHeight());
-				image.setVisible(true);
+				if(image != null) {
+					this.remove(this.image);
+				}
+				this.image = new WidgetImage(this.loadedImage);
+				this.image.setPosition(0, 0);
+				this.image.setVisible(true);
+				this.image.setTextureSize(this.loadedImage.image().getWidth(), this.loadedImage.image().getHeight());
+				this.image.setSize(this.width, this.height);
+				this.add(this.image);
+			});
+		});
 
-			} catch (IOException e) {
-				SmartHome.LOGGER.warn("Failed to read image from xchart: {}", e.toString());
-			}
-		}, Util.backgroundExecutor());
 	}
 }

@@ -34,17 +34,19 @@ public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice devic
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(DeviceDataPayload payload, IPayloadContext context) {
-		ClientCache.setSensorData(payload.device.id(), payload.data());
+		context.enqueueWork(() -> {
+			ClientCache.setSensorData(payload.device.id(), payload.data());
 
-		var homeScreen = HomeScreen.get();
-		if(homeScreen == null) {
-			return;
-		}
+			var homeScreen = HomeScreen.get();
+			if(homeScreen == null) {
+				return;
+			}
 
-		if(homeScreen.selectedHome == null || !homeScreen.selectedHome.id().equals(payload.homeId())) {
-			return;
-		}
+			if(homeScreen.selectedHome == null || !homeScreen.selectedHome.id().equals(payload.homeId())) {
+				return;
+			}
 
-		homeScreen.getOrCreateGui().fireEvent(new SensorDataUpdatedEvent(payload.device.id(), payload.data()));
+			homeScreen.getOrCreateGui().fireEvent(new SensorDataUpdatedEvent(payload.device.id(), payload.data()));
+		});
 	}
 }

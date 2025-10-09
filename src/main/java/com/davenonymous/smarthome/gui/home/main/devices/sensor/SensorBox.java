@@ -24,6 +24,7 @@ import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModVisualizations;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
@@ -32,6 +33,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class SensorBox extends WidgetVBox {
@@ -47,7 +49,7 @@ public class SensorBox extends WidgetVBox {
 
 		var headerBox = new WidgetHBox();
 		headerBox.setSize(400, 400);
-		headerBox.setPadding(0);
+		headerBox.setPadding(2);
 		headerBox.setSpacing(4);
 		this.addContentBox(headerBox, FlexAlign.START);
 
@@ -59,7 +61,7 @@ public class SensorBox extends WidgetVBox {
 		label.setTooltipElements(WrappedStringTooltipComponent.orange(description));
 		headerBox.addContentBox(label, FlexAlign.START);
 
-		headerBox.addFlexBox(new Spacer(1, 8), FlexAlign.START, 1);
+		headerBox.addFlexBox(new Spacer(1, 8), FlexAlign.CENTER, 1);
 		Optional<SensorSettings> optSettings = device.getSettings(sensor.id());
 		if(optSettings.isPresent()) {
 			SensorSettings settings = optSettings.get();
@@ -69,26 +71,31 @@ public class SensorBox extends WidgetVBox {
 					PacketDistributor.sendToServer(new SetSensorStatePayload(zone.home().id(), zone.id(), device, sensor.id(), toggle.getValue()));
 					return WidgetEventResult.CONTINUE_PROCESSING;
 				});
-			headerBox.addContentBox(toggle, FlexAlign.END);
+			headerBox.addContentBox(toggle, FlexAlign.CENTER);
 		}
 		headerBox.adjustSizeToContent();
 
 
-		var dataCache = ClientCache.getDeviceData(device.id());
-		if(dataCache != null && dataCache.containsKey(sensor.id())) {
-			var sensorData = dataCache.get(sensor.id());
 
-		}
+
+
+		double scale = Minecraft.getInstance().getWindow().getGuiScale();
+		if(scale < 1) scale = 1;
+		if(scale > 3) scale = 3;
+
+		int targetWidth = (int) (460 / scale);
+		int targetHeight = (int) (400 / scale);
 
 		boolean hasPlacedViz = false;
 		Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>>availableVisualizations = ClientCache.getVizMap(device.id(), sensor.id());
-		if(availableVisualizations != null && availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
+		if(availableVisualizations.containsKey(sensor.getDefaultVisualization())) {
 			LinkedHashMap<Pair<Instant, Long>, ISensorData> data = availableVisualizations.get(sensor.getDefaultVisualization());
 			//noinspection rawtypes
 			IVisualization vizImpl = ModVisualizations.getById(sensor.getDefaultVisualization());
 			if(vizImpl != null) {
+				int texId = Math.abs(Objects.hash(sensor.id(), device.id()));
 				//noinspection unchecked
-				sensorWidget = vizImpl.getWidget(Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(device), new Vec2(120, 70));
+				sensorWidget = vizImpl.getWidget(texId, Map.of(device.id(), data), sensor, sensor.getDefaultVisualizationSettings(device), new Vec2(targetWidth-10, targetHeight-30));
 				if(sensorWidget != null) {
 					this.addContentBox(sensorWidget, FlexAlign.CENTER);
 					hasPlacedViz = true;
@@ -97,7 +104,8 @@ public class SensorBox extends WidgetVBox {
 
 		}
 
-		if(!hasPlacedViz && dataCache != null) {
+		if(!hasPlacedViz) {
+			var dataCache = ClientCache.getDeviceData(device.id());
 			if(dataCache.containsKey(sensor.id())) {
 				var sensorData = dataCache.get(sensor.id());
 				var value = new WidgetTextBox(sensorData.displayString());
@@ -123,8 +131,15 @@ public class SensorBox extends WidgetVBox {
 		this.update(null);
 		this.adjustSizeToContent();
 
-		this.setWidth(Math.max(130, Math.max(this.sensorWidget.width(), label.width() + 20) + 10));
-		this.setHeight(Math.max(100, this.height()));
+		// scale 1 -> 460x400
+		// scale 2 -> 230x200
+		// scale 3 -> 130x100
+		// ...
+
+
+
+		this.setWidth(Math.max(targetWidth, Math.max(this.sensorWidget.width(), label.width() + 20) + 10));
+		this.setHeight(Math.max(targetHeight, this.height()));
 	}
 
 	@Override

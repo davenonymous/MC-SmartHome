@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorDescription;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -31,6 +32,11 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 	@I18DataGen(lang = "en_us", string = "Occupancy")
 	@I18DataGen(lang = "de_de", string = "Anwesenheit")
 	public static final I18String SENSOR_NAME = I18String.data("sensor", "occupancy");
+
+	@SensorDescription
+	@I18DataGen(lang = "en_us", string = "Detects living entities present in a zone.")
+	@I18DataGen(lang = "de_de", string = "Erfasst Lebewesen, die sich in einer Zone befinden.")
+	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor", "occupancy_description");
 
 	@Override
 	public boolean isMultiRow() {

@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.sensor.redstone;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorDescription;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -30,6 +31,11 @@ public class RedstoneSignal implements BlockSensor<RedstoneSignalData, OnOffSett
 	@I18DataGen(lang = "en_us", string = "Redstone Signal")
 	@I18DataGen(lang = "de_de", string = "Redstone Signal")
 	public static final I18String SENSOR_NAME = I18String.data("sensor", "redstone_signal");
+
+	@SensorDescription
+	@I18DataGen(lang = "en_us", string = "Measures the redstone signal strength of a block.")
+	@I18DataGen(lang = "de_de", string = "Misst die Redstone-Signalstärke eines Blocks.")
+	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor", "redstone_signal_description");
 
 	@Override
 	public OnOffSettings getDefaultSettings() {

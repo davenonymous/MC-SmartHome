@@ -4,7 +4,6 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
@@ -49,25 +48,23 @@ public class WidgetPanel extends Widget {
 			}
 		);
 
-		this.addListener(
-			VisibilityChangedEvent.class, (event, widget1) -> {
-				if(Minecraft.getInstance().player == null) {
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
-
-				if(this.getGUI() == null) {
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
-
-				if(this.getGUI().getContainer() == null) {
-					return WidgetEventResult.CONTINUE_PROCESSING;
-				}
-
-				// TODO: Reimplement sending of goggleMode slots
-				// Networking.sendEnabledSlotsMessage(this.getGUI().getContainer().slots);
-				return WidgetEventResult.CONTINUE_PROCESSING;
-			}
-		);
+//		this.addListener(
+//			VisibilityChangedEvent.class, (event, widget1) -> {
+//				if(Minecraft.getInstance().player == null) {
+//					return WidgetEventResult.CONTINUE_PROCESSING;
+//				}
+//
+//				if(this.getGUI() == null) {
+//					return WidgetEventResult.CONTINUE_PROCESSING;
+//				}
+//
+//				if(this.getGUI().getContainer() == null) {
+//					return WidgetEventResult.CONTINUE_PROCESSING;
+//				}
+//
+//				return WidgetEventResult.CONTINUE_PROCESSING;
+//			}
+//		);
 
 		// Pass click events along to the children, shift click position accordingly
 		this.addListener(
@@ -156,6 +153,9 @@ public class WidgetPanel extends Widget {
 	}
 
 	public void clear() {
+		for(Widget child : this.children) {
+			child.fireEvent(new WidgetRemovedEvent(child));
+		}
 		this.children.clear();
 		this.previouslyHovered.clear();
 	}
@@ -167,6 +167,7 @@ public class WidgetPanel extends Widget {
 	}
 
 	public void remove(Widget widget) {
+		widget.fireEvent(new WidgetRemovedEvent(widget));
 		children.remove(widget);
 	}
 

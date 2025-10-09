@@ -32,6 +32,7 @@ import net.minecraft.world.phys.Vec2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @SmartHomeCardElement
@@ -87,6 +88,7 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 
 		//noinspection unchecked
 		return viz.getWidget(
+			Math.abs(Objects.hash(vizId, sensorId, id)),
 			ClientCache.dataByDevices(devices, sensorId, vizId),
 			ModSensors.getById(sensorId),
 			vizSettings,

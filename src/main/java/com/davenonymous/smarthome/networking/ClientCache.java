@@ -9,6 +9,8 @@ import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.util.*;
@@ -34,7 +36,7 @@ public class ClientCache {
 		return Optional.empty();
 	}
 
-	public static Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevices(List<UUID> deviceIds, ResourceLocation sensorId, ResourceLocation vizId) {
+	public static @NotNull Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevices(List<UUID> deviceIds, ResourceLocation sensorId, ResourceLocation vizId) {
 		Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> result = new HashMap<>();
 		for(var deviceId : deviceIds) {
 			var vizMap = getVizMap(deviceId, sensorId);
@@ -45,21 +47,22 @@ public class ClientCache {
 		return result;
 	}
 
-	public static ISensorData getSensorData(UUID deviceId, ResourceLocation sensorId) {
+	public static @Nullable ISensorData getSensorData(UUID deviceId, ResourceLocation sensorId) {
 		if(!INSTANCE.sensorDataCache.containsKey(deviceId)) {
 			return null;
 		}
 		return INSTANCE.sensorDataCache.get(deviceId).get(sensorId);
 	}
 
-	public static Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>> getVizMap(UUID deviceId, ResourceLocation sensorId) {
+	public static @NotNull Map<ResourceLocation, LinkedHashMap<Pair<Instant, Long>, ISensorData>> getVizMap(UUID deviceId, ResourceLocation sensorId) {
 		if(!INSTANCE.visualizationDataCache.contains(deviceId, sensorId)) {
 			return Collections.emptyMap();
 		}
+		//noinspection DataFlowIssue
 		return INSTANCE.visualizationDataCache.get(deviceId, sensorId);
 	}
 
-	public static Map<ResourceLocation, ISensorData> getDeviceData(UUID deviceId) {
+	public static @NotNull Map<ResourceLocation, ISensorData> getDeviceData(UUID deviceId) {
 		if(!INSTANCE.sensorDataCache.containsKey(deviceId)) {
 			return Collections.emptyMap();
 		}

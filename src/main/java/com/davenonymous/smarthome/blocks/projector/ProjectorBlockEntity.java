@@ -10,6 +10,7 @@ import com.davenonymous.smarthome.data.*;
 import com.davenonymous.smarthome.gui.home.main.cards.LoadingWidget;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.Animations;
+import com.davenonymous.smarthome.lib.gui.event.WidgetRemovedEvent;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.networking.ClientCache;
@@ -91,8 +92,13 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 				continue;
 			}
 
-			if(needsUpdate || !cardWidgets.containsKey(card.id())) {
+			boolean isNew = !cardWidgets.containsKey(card.id());
+			if(needsUpdate || isNew) {
 				var cardWidget = card.createWidget(false);
+				if(!isNew) {
+					var oldWidget = cardWidgets.get(card.id());
+					oldWidget.fireEvent(new WidgetRemovedEvent(oldWidget));
+				}
 				cardWidgets.put(card.id(), cardWidget);
 				cardUpdateTimes.put(card.id(), gameTick);
 			}

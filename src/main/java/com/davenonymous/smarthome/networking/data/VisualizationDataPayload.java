@@ -42,17 +42,20 @@ public record VisualizationDataPayload(ConfiguredDevice device, ResourceLocation
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(VisualizationDataPayload payload, IPayloadContext context) {
-		ClientCache.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
+		context.enqueueWork(() -> {
+			ClientCache.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
 
-		var homeScreen = HomeScreen.get();
-		if(homeScreen == null) {
-			return;
-		}
+			var homeScreen = HomeScreen.get();
+			if(homeScreen == null) {
+				return;
+			}
 
-		if(homeScreen.selectedHome == null) {
-			return;
-		}
+			if(homeScreen.selectedHome == null) {
+				return;
+			}
 
-		homeScreen.getOrCreateGui().fireEvent(new VisualizationDataUpdatedEvent(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data()));
+			homeScreen.getOrCreateGui().fireEvent(new VisualizationDataUpdatedEvent(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data()));
+		});
+
 	}
 }

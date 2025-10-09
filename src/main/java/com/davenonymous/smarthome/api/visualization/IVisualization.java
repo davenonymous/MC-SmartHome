@@ -34,7 +34,7 @@ public interface IVisualization<S extends IVisualizationSettings> {
 
 	S getDefaultSettings();
 
-	Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> data, HomeSensor<?, ?> sensor, S vizSettings, Vec2 size);
+	Widget getWidget(int texId, Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> data, HomeSensor<?, ?> sensor, S vizSettings, Vec2 size);
 
 	default S loadSettings(List<Widget> settingsWidgets) {
 		return getDefaultSettings();

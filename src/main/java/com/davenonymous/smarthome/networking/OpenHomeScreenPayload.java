@@ -38,16 +38,18 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 		if(home == null) {
 			return;
 		}
-		ClientCache.addHomeInfo(home, payload.worldInfo());
+		context.enqueueWork(() -> {
+			ClientCache.addHomeInfo(home, payload.worldInfo());
 
-		var mc = Minecraft.getInstance();
-		if(mc.screen instanceof HomeScreen homeScreen) {
-			homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
-			return;
-		}
+			var mc = Minecraft.getInstance();
+			if(mc.screen instanceof HomeScreen homeScreen) {
+				homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
+				return;
+			}
 
-		WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
+			WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
 
-		Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome(), payload.homes(), payload.worldInfo()));
+			Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome(), payload.homes(), payload.worldInfo()));
+		});
 	}
 }

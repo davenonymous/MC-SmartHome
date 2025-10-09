@@ -69,8 +69,7 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 	}
 
 	default I18String getDescription() {
-		// TODO: implement description annotation
-		return ModSensors.NAME_BY_CLASS.get(this.getClass());
+		return ModSensors.DESCRIPTION_BY_CLASS.get(this.getClass());
 	}
 
 	default T getDefaultSettings() {

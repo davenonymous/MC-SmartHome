@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.sensor.fluid;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorColumn;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorDescription;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -39,6 +40,11 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	@I18DataGen(lang = "en_us", string = "Fluid Storage")
 	@I18DataGen(lang = "de_de", string = "Flüssigkeitslager")
 	public static final I18String SENSOR_NAME = I18String.data("sensor", "fluid_storage");
+
+	@SensorDescription
+	@I18DataGen(lang = "en_us", string = "Measures the fluid stored in a block.")
+	@I18DataGen(lang = "de_de", string = "Misst die in einem Block gespeicherte Flüssigkeit.")
+	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor", "fluid_storage_description");
 
 	@Override
 	public SidedOnOffSettings getDefaultSettings() {

@@ -2,6 +2,9 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 
 
 import com.davenonymous.smarthome.lib.gui.DynamicImageResources;
+import com.davenonymous.smarthome.lib.gui.event.CloseScreenEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.event.WidgetRemovedEvent;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
@@ -28,6 +31,16 @@ public class WidgetImage extends Widget {
 		this.image = logo.resource();
 		this.textureWidth = logo.image().getWidth();
 		this.textureHeight = logo.image().getHeight();
+
+		this.addListener(CloseScreenEvent.class, (event, widget) -> {
+			logo.unload();
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+
+		this.addListener(WidgetRemovedEvent.class, (event, widget) -> {
+			logo.unload();
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
 	}
 
 	public WidgetImage setTextureSize(float width, float height) {

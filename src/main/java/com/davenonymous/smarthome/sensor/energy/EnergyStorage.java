@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.sensor.energy;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorDescription;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -35,6 +36,11 @@ public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffS
 	@I18DataGen(lang = "en_us", string = "Energy Storage")
 	@I18DataGen(lang = "de_de", string = "Energielager")
 	public static final I18String SENSOR_NAME = I18String.data("sensor.energy_storage", "name");
+
+	@SensorDescription
+	@I18DataGen(lang = "en_us", string = "Measures the energy stored in a block.")
+	@I18DataGen(lang = "de_de", string = "Misst die in einem Block gespeicherte Energie.")
+	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor.energy_storage", "description");
 
 	public static final BlockCapability<IEnergyStorage, @Nullable Direction> ENERGY = Capabilities.EnergyStorage.BLOCK;
 

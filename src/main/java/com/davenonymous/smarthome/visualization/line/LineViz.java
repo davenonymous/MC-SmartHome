@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.NotNull;
+import org.knowm.xchart.AnnotationText;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.Styler;
@@ -58,7 +59,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, LineVizSettings settings, Vec2 size) {
+	public Widget getWidget(int texId, Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, LineVizSettings settings, Vec2 size) {
 		if(dataByDevice.isEmpty()) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize((int)size.x, (int)size.y);
 		}
@@ -121,7 +122,9 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			.setChartFontColor(new Color(ChatFormatting.WHITE.getColor(), false))
 			.setChartPadding(0);
 
+
 		if(myFont != null) {
+			styler.setAnnotationTextFont(myFont);
 			styler.setLegendFont(myFont);
 			styler.setAxisTickLabelsFont(myFont);
 		}
@@ -165,10 +168,16 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			for(String columnName : yData.keySet()) {
 				LineVizSeriesSettings seriesSetting = deviceSeriesSettings.get(columnName);
 
+				var latestValue = yData.get(columnName).getLast();
+				var latestDate = xData.getLast();
+				var screenX = chart.getScreenXFromChart(latestDate);
+				var screenY = chart.getScreenYFromChart(latestValue);
 				var series = chart.addSeries(seriesSetting.label(), xData, yData.get(columnName))
 					.setLineColor(new Color(seriesSetting.color(), false));
 
 				series.setLineStyle(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{3.0f, 3.0f}, 0));
+
+				chart.addAnnotation(new AnnotationText("Hello", chart.getWidth() * 0.5f, chart.getHeight() * 0.5, false));
 				seriesCount++;
 			}
 		}
@@ -176,7 +185,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		if(seriesCount == 0) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(width, height);
 		}
-		WidgetChart<XYChart> wigget = new WidgetChart<>(chart);
+		WidgetChart<XYChart> wigget = new WidgetChart<>(texId, chart);
 		wigget.setSize(width, height);
 		return wigget;
 	}

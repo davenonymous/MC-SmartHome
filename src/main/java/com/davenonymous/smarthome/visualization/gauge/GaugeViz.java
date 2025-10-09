@@ -53,7 +53,7 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 	}
 
 	@Override
-	public Widget getWidget(Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, GaugeVizSettings settings, Vec2 size) {
+	public Widget getWidget(int texId, Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, GaugeVizSettings settings, Vec2 size) {
 		if(dataByDevice.isEmpty()) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(120, 70);
 		}
@@ -102,7 +102,7 @@ public class GaugeViz implements IVisualization<GaugeVizSettings> {
 			.setChartPadding(0);
 
 
-		WidgetChart<DialChart> wigget = new WidgetChart<>(chart);
+		WidgetChart<DialChart> wigget = new WidgetChart<>(texId, chart);
 		wigget.setSize(120, 70);
 		return wigget;
 	}

@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.sensor.lightlevel;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.SensorRange;
+import com.davenonymous.smarthome.api.sensor.annotations.SensorDescription;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -28,9 +29,14 @@ public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSetti
 	public static final ResourceLocation SENSOR_ID = SmartHome.resource("sensor/block_light");
 
 	@SensorName
-	@I18DataGen(lang = "en_us", string = "Block Light Level")
-	@I18DataGen(lang = "de_de", string = "Block Lichtstärke")
+	@I18DataGen(lang = "en_us", string = "Light Level")
+	@I18DataGen(lang = "de_de", string = "Lichtstärke")
 	public static final I18String SENSOR_NAME = I18String.data("sensor", "block_light");
+
+	@SensorDescription
+	@I18DataGen(lang = "en_us", string = "Measures the light level in a zone.")
+	@I18DataGen(lang = "de_de", string = "Misst die Lichtstärke in einer Zone.")
+	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor", "block_light_description");
 
 	@Override
 	public OnOffSettings getDefaultSettings() {

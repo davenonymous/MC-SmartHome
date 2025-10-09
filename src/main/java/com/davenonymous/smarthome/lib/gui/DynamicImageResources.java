@@ -24,11 +24,22 @@ import java.util.Map;
 import java.util.Optional;
 
 public class DynamicImageResources {
-	public record DynTexture(ResourceLocation resource, NativeImage image) {
+	private static Map<String, DynTexture> dynTextures = new HashMap<>();
+
+	public record DynTexture(ResourceLocation resource, NativeImage image) implements AutoCloseable {
+		public void unload() {
+			SmartHome.LOGGER.info("Unloading dynamic texture: {}", resource);
+			image.close();
+			var tm = Minecraft.getInstance().getTextureManager();
+			tm.release(resource);
+		}
+
+		@Override
+		public void close() throws Exception {
+			this.unload();
+		}
 	}
 
-	private static Map<String, DynTexture> modLogos = new HashMap<>();
-	private static Map<String, DynTexture> dynTextures = new HashMap<>();
 
 	public static Optional<DynTexture> uploadImage(String id, NativeImage image) {
 		if(image == null) {
@@ -38,9 +49,11 @@ public class DynamicImageResources {
 		TextureManager tm = Minecraft.getInstance().getTextureManager();
 		if(dynTextures.containsKey(id)) {
 			SmartHome.LOGGER.info("Replacing existing dynamic texture with id: {}", id);
-			tm.release(dynTextures.get(id).resource());
-			dynTextures.get(id).image().close();
-			dynTextures.remove(id);
+			//tm.release(dynTextures.get(id).resource());
+//			dynTextures.get(id).image().close();
+//			dynTextures.remove(id);
+		} else {
+			SmartHome.LOGGER.info("Uploading new dynamic texture with id: {}", id);
 		}
 
 		ResourceLocation resource = tm.register(
@@ -65,19 +78,8 @@ public class DynamicImageResources {
 			bb.rewind();
 
 			var logo = NativeImage.read(bb);
-			TextureManager tm = Minecraft.getInstance().getTextureManager();
-			ResourceLocation resource = tm.register(
-				"modimage_" + path.hashCode(), new DynamicTexture(logo) {
-					public void upload() {
-						this.bind();
-						NativeImage td = this.getPixels();
-						this.getPixels().upload(0, 0, 0, 0, 0, td.getWidth(), td.getHeight(), false, false, false, false);
-						//this.getPixels().close();
-					}
-				}
-			);
-
-			return Optional.of(new DynTexture(resource, logo));
+			MemoryUtil.memFree(bb);
+			return uploadImage(path, logo);
 		} catch (Exception e) {
 			SmartHome.LOGGER.warn("Failed to read image from {}: {}", path, e);
 		}
@@ -89,18 +91,7 @@ public class DynamicImageResources {
 	public static Optional<DynTexture> getImage(Path path, InputStream inputStream) {
 		try {
 			var logo = NativeImage.read(inputStream);
-			TextureManager tm = Minecraft.getInstance().getTextureManager();
-			ResourceLocation resource = tm.register(
-				"modimage_" + path.toString(), new DynamicTexture(logo) {
-					public void upload() {
-						this.bind();
-						NativeImage td = this.getPixels();
-						this.getPixels().upload(0, 0, 0, 0, 0, td.getWidth(), td.getHeight(), false, false, false, false);
-					}
-				}
-			);
-
-			return Optional.of(new DynTexture(resource, logo));
+			return uploadImage(path.toString(), logo);
 		} catch (IOException e) {
 			SmartHome.LOGGER.warn("Failed to read image from {}: {}", path, e);
 		}
@@ -108,48 +99,4 @@ public class DynamicImageResources {
 		return Optional.empty();
 	}
 
-	public static Optional<DynTexture> getModLogo(IModInfo modInfo) {
-		String modId = modInfo.getModId();
-		if(modLogos.containsKey(modId)) {
-			return Optional.of(modLogos.get(modId));
-		}
-
-		Optional<String> logoFile = modInfo.getLogoFile();
-		if(logoFile.isEmpty()) {
-			return Optional.empty();
-		}
-
-		Optional<Pack.ResourcesSupplier> optPack = ResourcePackLoader.getPackFor(modInfo.getModId());
-		if(optPack.isEmpty()) {
-			return Optional.empty();
-		}
-
-		Pack.ResourcesSupplier resourcePack = optPack.get();
-		TextureManager tm = Minecraft.getInstance().getTextureManager();
-
-		try(PackResources packResources = resourcePack.openPrimary(new PackLocationInfo("mod/" + modInfo.getModId(), Component.empty(), PackSource.BUILT_IN, Optional.empty()))) {
-			NativeImage logo = null;
-			IoSupplier<InputStream> logoResource = packResources.getRootResource(logoFile.get().split("[/\\\\]"));
-			if(logoResource != null) {
-				logo = NativeImage.read(logoResource.get());
-			}
-
-			if(logo != null) {
-				ResourceLocation resource = tm.register(
-					"modlogo_" + modInfo.getModId(), new DynamicTexture(logo) {
-						public void upload() {
-							this.bind();
-							NativeImage td = this.getPixels();
-							this.getPixels().upload(0, 0, 0, 0, 0, td.getWidth(), td.getHeight(), modInfo.getLogoBlur(), false, false, false);
-						}
-					}
-				);
-
-				modLogos.put(modId, new DynTexture(resource, logo));
-			}
-		} catch (IllegalArgumentException | IOException var11) {
-		}
-
-		return Optional.ofNullable(modLogos.get(modId));
-	}
 }

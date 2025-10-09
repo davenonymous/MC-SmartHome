@@ -32,21 +32,23 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(HomeInfoPayload payload, IPayloadContext context) {
-		ClientCache.addHomeInfo(payload.home(), payload.worldInfo());
+		context.enqueueWork(() -> {
+			ClientCache.addHomeInfo(payload.home(), payload.worldInfo());
 
-		var mc = Minecraft.getInstance();
-		if(mc.screen instanceof HomeScreen homeScreen) {
-			var home = payload.home();
-			homeScreen.ownedHomes.removeIf(h -> h.id().equals(home.id()));
-			homeScreen.ownedHomes.add(home);
+			var mc = Minecraft.getInstance();
+			if(mc.screen instanceof HomeScreen homeScreen) {
+				var home = payload.home();
+				homeScreen.ownedHomes.removeIf(h -> h.id().equals(home.id()));
+				homeScreen.ownedHomes.add(home);
 
-			if(homeScreen.selectedHome != null && homeScreen.selectedHome.id().equals(home.id())) {
-				homeScreen.selectedHome = home;
+				if(homeScreen.selectedHome != null && homeScreen.selectedHome.id().equals(home.id())) {
+					homeScreen.selectedHome = home;
+				}
+
+				WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
+
+				homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
 			}
-
-			WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
-
-			homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
-		}
+		});
 	}
 }

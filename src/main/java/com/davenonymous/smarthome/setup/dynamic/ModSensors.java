@@ -36,6 +36,7 @@ public class ModSensors {
 
 	public static Map<Class<?>, ResourceLocation> ID_BY_CLASS = new HashMap<>();
 	public static Map<Class<?>, I18String> NAME_BY_CLASS = new HashMap<>();
+	public static Map<Class<?>, I18String> DESCRIPTION_BY_CLASS = new HashMap<>();
 
 	public static Map<Class<?>, MapCodec> SETTINGS_CODEC_BY_CLASS = new HashMap<>();
 	public static Map<Class<?>, StreamCodec> SETTINGS_STREAM_CODEC_BY_CLASS = new HashMap<>();
@@ -73,6 +74,7 @@ public class ModSensors {
 
 			ResourceLocation sensorId = AnnotationHelpers.getSingularFieldData(sensorClazz, SensorId.class, ResourceLocation.class);
 			I18String sensorName = AnnotationHelpers.getSingularFieldData(sensorClazz, SensorName.class, I18String.class);
+			I18String sensorDescription = AnnotationHelpers.getSingularFieldData(sensorClazz, SensorDescription.class, I18String.class);
 			SensorSettings defaultSettings = AnnotationHelpers.getSingularFieldData(settingsClazz, SensorSettingsDefault.class, SensorSettings.class);
 
 			MapCodec settingsCodec = AnnotationHelpers.getSingularFieldData(settingsClazz, SensorSettingsCodec.class, MapCodec.class);
@@ -137,6 +139,7 @@ public class ModSensors {
 				DB_HANDLERS.put(sensorId, new DBHandler<>(sensor));
 				ID_BY_CLASS.put(sensorClazz, sensorId);
 				NAME_BY_CLASS.put(sensorClazz, sensorName);
+				DESCRIPTION_BY_CLASS.put(sensorClazz, sensorDescription);
 
 				if(!registeredSettingsCodecs.contains(settingsClassSnakeCaseName)) {
 					SmartHome.LOGGER.info("Registering sensor settings codec for {} as {}", settingsClazz.getSimpleName(), settingsClassSnakeCaseName);
