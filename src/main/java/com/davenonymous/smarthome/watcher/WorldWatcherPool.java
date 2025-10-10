@@ -54,6 +54,9 @@ public class WorldWatcherPool {
 		instance = new WorldWatcher(event.getServer());
 		var path = event.getServer().getWorldPath(LevelResource.ROOT).resolve(Path.of(ServerConfig.databasePath));
 		databaseWorker = new DatabaseWorker(path, taskQueue);
+		databaseWorker.setUncaughtExceptionHandler((thread, throwable) -> {
+			SmartHome.LOGGER.error("Uncaught exception in database worker thread", throwable);
+		});
 		databaseWorker.start();
 	}
 

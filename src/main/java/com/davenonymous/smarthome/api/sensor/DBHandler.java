@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.api.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.data.TimeRange;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
@@ -12,7 +13,7 @@ import org.slf4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.Instant;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -61,7 +62,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 		};
 	}
 
-	public Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> getValues(UUID deviceId, long startTick, long endTick) {
+	public Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> getValues(UUID deviceId, TimeRange timeRange) {
 		return connection -> {
 			String numericColumns = sensor.getColumns().stream()
 				.filter(sensorColumn -> sensorColumn.type().isNumeric())
@@ -73,15 +74,20 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 				.map(column -> "'" + column.name() + "'")
 				.collect(Collectors.joining(", "));
 
+			LocalDateTime startTime = LocalDateTime.ofInstant(timeRange.from(), ZoneId.systemDefault());
+			LocalDateTime endTime = LocalDateTime.ofInstant(timeRange.to(), ZoneId.systemDefault());
+
 			String statement = "select * from avgVizData(" +
 				"tblName := '"+getTableName()+"', " +
 			  	"deviceId := '"+deviceId+"', " +
 			  	"numericCols := ["+numericColumns+"]," +
-				"otherCols := ["+otherColumns+"]" +
-				", groupBySeconds := 5, maxResults := 200" +
+				"otherCols := ["+otherColumns+"]," +
+				"startTime := "+startTime.toEpochSecond(ZoneOffset.UTC)*1000+", " +
+				"endTime := "+endTime.toEpochSecond(ZoneOffset.UTC)*1000+", " +
+				"groupBySeconds := 5, maxResults := 200" +
 			");";
 
-			// SmartHome.LOGGER.info("Executing sensor data query: {}", statement);
+			SmartHome.LOGGER.trace("Executing sensor data query: {}", statement);
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {
 				// TODO: Caching the prepared statement would shave ~33% off the query time
@@ -97,7 +103,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 				}
 				// SmartHome.LOGGER.info("Queried {} sensor data points for device {}", values.size(), deviceId);
 			} catch (SQLException e) {
-				SmartHome.LOGGER.error("Failed to query sensor data for device {}", deviceId, e);
+				SmartHome.LOGGER.error("Failed to query sensor data for device {}, query was >> {}", deviceId, statement, e);
 			}
 
 			return values;
@@ -137,7 +143,8 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 		Statement stmt = db.createStatement();
 
 		StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ");
-		sb.append(sensor.getTableName().getNamespace()).append("_").append(sensor.getTableName().getPath());
+		var tableName = sensor.getTableName().getNamespace() + "_" + sensor.getTableName().getPath();
+		sb.append(tableName);
 
 		List<SensorColumn> columns = new ArrayList<>();
 
@@ -152,7 +159,9 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 			.map(c -> c.name() + " " + c.type().sqlType())
 			.collect(Collectors.joining(","));
 
-		sb.append("(").append(columnSpecs).append(")");
+		sb.append("(").append(columnSpecs).append(");");
+
+		sb.append("CREATE INDEX IF NOT EXISTS ixDeviceId ON ").append(tableName).append(" (device);");
 
 		stmt.execute(sb.toString());
 		stmt.close();

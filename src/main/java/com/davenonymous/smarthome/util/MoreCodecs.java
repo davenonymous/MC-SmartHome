@@ -4,6 +4,7 @@ import com.mojang.math.Axis;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -11,8 +12,14 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
+import java.time.Instant;
+
 public class MoreCodecs {
 
+	public static final Codec<Instant> INSTANT_CODEC = Codec.LONG.xmap(Instant::ofEpochMilli, Instant::toEpochMilli);
+
+	public static final StreamCodec<ByteBuf, Instant> INSTANT_STREAM_CODEC =
+		ByteBufCodecs.VAR_LONG.map(Instant::ofEpochMilli, Instant::toEpochMilli);
 
 	public static final Codec<Axis> AXIS_CODEC = Codec.BYTE.xmap(AxisDirectionHelper::axisFromByte, AxisDirectionHelper::axisToByte);
 	public static final StreamCodec<FriendlyByteBuf, Axis> AXIS_STREAM_CODEC = StreamCodec.composite(
@@ -36,6 +43,7 @@ public class MoreCodecs {
 		ByteBufCodecs.DOUBLE, Vec3::z,
 		Vec3::new
 	);
+
 	public static final MapCodec<AABB> AABB_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 		Codec.DOUBLE.fieldOf("minX").forGetter(aabb -> aabb.minX),
 		Codec.DOUBLE.fieldOf("minY").forGetter(aabb -> aabb.minY),

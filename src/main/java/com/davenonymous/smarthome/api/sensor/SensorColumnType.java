@@ -32,6 +32,7 @@ public enum SensorColumnType implements StringRepresentable {
 
 	JSON(15, "json", false, "JSON"),
 	STRING(16, "string", false, "TEXT"),
+	TIMESTAMP_WITH_TIMEZONE(17, "timestamptz", false, "TIMESTAMPTZ")
 	;
 
 

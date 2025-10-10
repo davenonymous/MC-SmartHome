@@ -28,7 +28,7 @@ public class DynamicImageResources {
 
 	public record DynTexture(ResourceLocation resource, NativeImage image) implements AutoCloseable {
 		public void unload() {
-			SmartHome.LOGGER.info("Unloading dynamic texture: {}", resource);
+			SmartHome.LOGGER.trace("Unloading dynamic texture: {}", resource);
 			image.close();
 			var tm = Minecraft.getInstance().getTextureManager();
 			tm.release(resource);
@@ -48,12 +48,9 @@ public class DynamicImageResources {
 
 		TextureManager tm = Minecraft.getInstance().getTextureManager();
 		if(dynTextures.containsKey(id)) {
-			SmartHome.LOGGER.info("Replacing existing dynamic texture with id: {}", id);
-			//tm.release(dynTextures.get(id).resource());
-//			dynTextures.get(id).image().close();
-//			dynTextures.remove(id);
+			SmartHome.LOGGER.trace("Replacing existing dynamic texture with id: {}", id);
 		} else {
-			SmartHome.LOGGER.info("Uploading new dynamic texture with id: {}", id);
+			SmartHome.LOGGER.trace("Uploading new dynamic texture with id: {}", id);
 		}
 
 		ResourceLocation resource = tm.register(

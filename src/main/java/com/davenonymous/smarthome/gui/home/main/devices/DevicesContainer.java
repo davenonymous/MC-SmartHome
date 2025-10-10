@@ -1,5 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
+import com.davenonymous.smarthome.data.TimeRange;
+import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.table.ConfiguredDevicesTable;
@@ -79,7 +81,7 @@ public class DevicesContainer extends WidgetPanel {
 				}
 				ResourceLocation vizId = sensor.getDefaultVisualization();
 
-				var vizPayload = new RequestVisualizationDataPayload(event.device(), sensorId, vizId, sensor.getDefaultVisualizationSettings(event.device()));
+				var vizPayload = new RequestVisualizationDataPayload(event.device(), sensorId, vizId, sensor.getDefaultVisualizationSettings(event.device()), new TimeRange(TimeRangeEnum.LAST_6_HOURS));
 				PacketDistributor.sendToServer(vizPayload);
 			}
 

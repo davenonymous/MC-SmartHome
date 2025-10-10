@@ -37,17 +37,19 @@ public class DatabaseWorker extends Thread {
 	}
 
 	private void createMacros() {
-		String statement = "CREATE OR REPLACE MACRO avgVizData(tblName := NULL, deviceId := NULL, numericCols := NULL, otherCols := NULL, groupBySeconds := 30, maxResults := 1000) AS TABLE\n" +
+		String statement = "CREATE OR REPLACE MACRO avgVizData(tblName := NULL, deviceId := NULL, numericCols := NULL, otherCols := NULL, startTime := NULL, endTime := NULL, groupBySeconds := 10, maxResults := 200) AS TABLE\n" +
 			"SELECT * FROM query(\n" +
 			"    FORMAT(\n" +
-			"        'SELECT avg(instant) as instant, max(tick) as tick, device, round(tick / {}) AS entryNum, {}{}{} FROM {} WHERE device = ''{}'' GROUP BY entryNum, device ORDER BY instant DESC LIMIT {}',\n" +
+			"        'SELECT avg(instant) as instant, max(tick) as tick, device, round(tick / {}) AS entryNum, {}{}{} FROM {} TABLESAMPLE reservoir({} ROWS) REPEATABLE(1337) WHERE instant > make_timestamp_ms({}) AND instant <= make_timestamp_ms({}) AND device = ''{}'' GROUP BY entryNum, device ORDER BY instant DESC ',\n" +
 			"        20 * groupBySeconds,\n" +
 			"        if(length(otherCols) > 0, array_to_string_comma_default(list_transform(otherCols, lambda c: format('first({}) AS {}', c, c))), ''),\n" +
 			"        if(length(otherCols) > 0 and length(numericCols) > 0, ', ', ''),\n" +
 			"        if(length(numericCols) > 0, array_to_string_comma_default(list_transform(numericCols, lambda c: format('avg({}) AS {}', c, c))), ''),        \n" +
 			"        tblName,\n" +
-			"        deviceId,\n" +
-			"        maxResults\n" +
+			"        maxResults,\n" +
+			"        startTime,\n" +
+			"        endTime,\n" +
+			"        deviceId\n" +
 			"    )\n" +
 			");";
 

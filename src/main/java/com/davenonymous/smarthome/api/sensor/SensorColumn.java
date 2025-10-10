@@ -85,6 +85,10 @@ public record SensorColumn(int index, String name, I18String label, SensorColumn
 		return new SensorColumn(name, translationKey, SensorColumnType.TIMESTAMP);
 	}
 
+	public static SensorColumn timestampWithZone(String name, I18String translationKey) {
+		return new SensorColumn(name, translationKey, SensorColumnType.TIMESTAMP_WITH_TIMEZONE);
+	}
+
 	public static SensorColumn date(String name, I18String translationKey) {
 		return new SensorColumn(name, translationKey, SensorColumnType.DATE);
 	}

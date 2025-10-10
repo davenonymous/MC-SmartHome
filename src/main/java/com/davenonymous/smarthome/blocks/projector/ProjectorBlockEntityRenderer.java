@@ -56,7 +56,8 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<Project
 		int cardWidth = card.width();
 		int cardHeight = card.height();
 
-		int wantedSize = 256;
+		int wantedWidth = 256;
+		int wantedHeight = 256 - 3*16;
 
 
 		var blockState = projector.getBlockState();
@@ -77,7 +78,7 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<Project
 			from = from.getClockWise();
 		}
 
-		float scaleFactor = Math.min((float)wantedSize / cardWidth, (float)wantedSize / cardHeight);
+		float scaleFactor = Math.min((float)wantedWidth / cardWidth, (float)wantedHeight / cardHeight);
 		guigraphics.pose().translate(0, -32, 0);
 		guigraphics.pose().scale(scaleFactor, scaleFactor, 1);
 		guigraphics.pose().translate(-cardWidth / 2f, -cardHeight, 96f);

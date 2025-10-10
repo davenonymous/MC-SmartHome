@@ -1,9 +1,13 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.blocks.projector.ProjectorBlockEntity;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
+import com.davenonymous.smarthome.data.TimeRange;
+import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.events.CardElementSelectedEvent;
 import com.davenonymous.smarthome.gui.events.ScaleHandleResizedEvent;
@@ -39,6 +43,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -158,8 +163,18 @@ public class HomeCardWidget extends WidgetPanel {
 								continue;
 							}
 
-							var payload = new RequestVisualizationDataPayload(optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings());
-							PacketDistributor.sendToServer(payload);
+							if(Minecraft.getInstance().screen != null && HomeScreen.get() != null) {
+								TimeRange timeRange = new TimeRange(TimeRangeEnum.LAST_6_HOURS);
+								BlockEntity openingEntity = HomeScreen.get().blockEntity;
+								if(openingEntity instanceof DashboardBlockEntity dashy) {
+									timeRange = dashy.timeRange();
+								}
+								if(openingEntity instanceof ProjectorBlockEntity projector) {
+									timeRange = projector.timeRange();
+								}
+								var payload = new RequestVisualizationDataPayload(optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings(), timeRange);
+								PacketDistributor.sendToServer(payload);
+							}
 						}
 
 						if(editMode) {
