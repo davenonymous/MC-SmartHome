@@ -8,10 +8,9 @@ import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.data.TimeRange;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.CardElementSelectedEvent;
 import com.davenonymous.smarthome.gui.events.ScaleHandleResizedEvent;
-import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
 import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
@@ -30,7 +29,6 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.networking.ClientCache;
-import com.davenonymous.smarthome.networking.actions.cards.SetCardElementPositionPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardElementSizePayload;
 import com.davenonymous.smarthome.networking.actions.requests.RequestVisualizationDataPayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
@@ -163,9 +161,9 @@ public class HomeCardWidget extends WidgetPanel {
 								continue;
 							}
 
-							if(Minecraft.getInstance().screen != null && HomeScreen.get() != null) {
+							if(Minecraft.getInstance().screen != null && DashboardScreen.get() != null) {
 								TimeRange timeRange = new TimeRange(TimeRangeEnum.LAST_6_HOURS);
-								BlockEntity openingEntity = HomeScreen.get().blockEntity;
+								BlockEntity openingEntity = DashboardScreen.get().blockEntity;
 								if(openingEntity instanceof DashboardBlockEntity dashy) {
 									timeRange = dashy.timeRange();
 								}
@@ -181,7 +179,7 @@ public class HomeCardWidget extends WidgetPanel {
 							var scaleHandler = new ScaleHandle(elementWidget);
 							scaleHandler.addListener(ScaleHandleResizedEvent.class, (event, widget) -> {
 								PacketDistributor.sendToServer(new SetCardElementSizePayload(
-									HomeScreen.get().selectedHome.id(),
+									DashboardScreen.get().selectedHome.id(),
 									this.homeCard.id(),
 									elementId,
 									new Vec2(event.attachedTo().width, event.attachedTo().height)

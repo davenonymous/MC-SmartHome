@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.home;
 
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -22,7 +22,7 @@ public class NoHomesWidget extends WidgetPanel {
 	@I18DataGen(lang = "de_de", string = "Baue einen Mini-Rack und platzieren einen Smart Home-Server darin, um loszulegen.")
 	public static final I18String NO_HOMES_HINT = I18String.gui("home", "no_homes.hint");
 
-	public NoHomesWidget(HomeScreen homeScreen) {
+	public NoHomesWidget(DashboardScreen dashboardScreen) {
 		this.setWidth(150);
 		this.setHeight(300);
 

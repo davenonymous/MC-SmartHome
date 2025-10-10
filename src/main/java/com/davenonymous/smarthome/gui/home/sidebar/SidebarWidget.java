@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.home.sidebar;
 
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.home.ContentIDs;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
@@ -43,7 +43,7 @@ public class SidebarWidget extends WidgetVBox {
 	@I18DataGen(lang = "de_de", string = "Neue Geräte gefunden: %d")
 	public static final I18String NEW_DEVICES = I18String.gui("home.sidebar", "devices.badge");
 
-	public SidebarWidget(HomeScreen screen) {
+	public SidebarWidget(DashboardScreen screen) {
 		this.setWidth(120);
 		this.setPadding(1);
 		this.setSpacing(4);
@@ -79,12 +79,12 @@ public class SidebarWidget extends WidgetVBox {
 	}
 
 	private void updateNewDeviceCount() {
-		if(HomeScreen.get() == null) {
+		if(DashboardScreen.get() == null) {
 			this.devicesButton.clearBadge();
 			return;
 		}
 
-		var home = HomeScreen.get().selectedHome;
+		var home = DashboardScreen.get().selectedHome;
 		if(home == null) {
 			this.devicesButton.clearBadge();
 			return;

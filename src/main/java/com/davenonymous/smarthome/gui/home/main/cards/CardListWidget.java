@@ -2,7 +2,7 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeCard;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.CardSelectedEvent;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
@@ -36,11 +36,11 @@ public class CardListWidget extends WidgetVBox {
 		this.clear();
 		cardButtonMap.clear();
 
-		if(HomeScreen.get() == null) {
+		if(DashboardScreen.get() == null) {
 			return;
 		}
 
-		var selectedHome = HomeScreen.get().selectedHome;
+		var selectedHome = DashboardScreen.get().selectedHome;
 		if(selectedHome == null) {
 			return;
 		}

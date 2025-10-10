@@ -1,9 +1,8 @@
 package com.davenonymous.smarthome.networking.data;
 
-import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
 import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -11,7 +10,6 @@ import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -20,7 +18,6 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.time.Instant;
 import java.util.LinkedHashMap;
-import java.util.UUID;
 
 @Packet
 public record VisualizationDataPayload(ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, LinkedHashMap<Pair<Instant, Long>, ISensorData> data) implements LibPacketPayload {
@@ -45,7 +42,7 @@ public record VisualizationDataPayload(ConfiguredDevice device, ResourceLocation
 		context.enqueueWork(() -> {
 			ClientCache.setVisualizationData(payload.device().id(), payload.sensorId(), payload.vizId(), payload.data());
 
-			var homeScreen = HomeScreen.get();
+			var homeScreen = DashboardScreen.get();
 			if(homeScreen == null) {
 				return;
 			}

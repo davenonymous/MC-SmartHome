@@ -4,10 +4,8 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualizationSettings;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsCodec;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsId;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsStreamCodec;
@@ -42,7 +40,7 @@ public record LineVizSettings(Map<UUID, Map<String, LineVizSeriesSettings>> seri
 	public List<Widget> createSettingsWidgets(HomeSensor<?, ?> sensor, List<UUID> devices) {
 		List<Widget> result = new ArrayList<>();
 		for(UUID deviceId : devices) {
-			var optDevice = HomeScreen.get().selectedHome.getDevice(deviceId);
+			var optDevice = DashboardScreen.get().selectedHome.getDevice(deviceId);
 			if(optDevice.isEmpty()) {
 				continue;
 			}

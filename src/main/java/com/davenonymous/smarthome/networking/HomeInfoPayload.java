@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.networking;
 
 import com.davenonymous.smarthome.data.HomeCore;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -36,18 +36,18 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 			ClientCache.addHomeInfo(payload.home(), payload.worldInfo());
 
 			var mc = Minecraft.getInstance();
-			if(mc.screen instanceof HomeScreen homeScreen) {
+			if(mc.screen instanceof DashboardScreen dashboardScreen) {
 				var home = payload.home();
-				homeScreen.getMenu().ownedHomes.removeIf(h -> h.id().equals(home.id()));
-				homeScreen.getMenu().ownedHomes.add(home);
+				dashboardScreen.getMenu().ownedHomes.removeIf(h -> h.id().equals(home.id()));
+				dashboardScreen.getMenu().ownedHomes.add(home);
 
-				if(homeScreen.selectedHome != null && homeScreen.selectedHome.id().equals(home.id())) {
-					homeScreen.selectedHome = home;
+				if(dashboardScreen.selectedHome != null && dashboardScreen.selectedHome.id().equals(home.id())) {
+					dashboardScreen.selectedHome = home;
 				}
 
 				WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
 
-				homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
+				dashboardScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
 			}
 		});
 	}

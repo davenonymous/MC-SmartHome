@@ -24,7 +24,7 @@ import net.minecraft.world.entity.player.Inventory;
 import java.util.List;
 import java.util.Map;
 
-public class HomeScreen extends WidgetContainerFullScreen<DashboardContainer> {
+public class DashboardScreen extends WidgetContainerFullScreen<DashboardContainer> {
 	WidgetVBox mainLayout;
 	HeaderWidget headerLayout;
 	WidgetHBox contentLayout;
@@ -44,7 +44,7 @@ public class HomeScreen extends WidgetContainerFullScreen<DashboardContainer> {
 	@I18DataGen(lang = "de_de", string = "Smart Home")
 	public static final I18String TITLE = I18String.gui("home", "title");
 
-	public HomeScreen(DashboardContainer container, Inventory inv, Component name) {
+	public DashboardScreen(DashboardContainer container, Inventory inv, Component name) {
 		super(container, inv, Component.translatable(TITLE.key()));
 		this.blockEntity = container.getBlockEntity();
 		this.renderTitle = false;
@@ -61,10 +61,10 @@ public class HomeScreen extends WidgetContainerFullScreen<DashboardContainer> {
 		}
 	}
 
-	public static HomeScreen get() {
+	public static DashboardScreen get() {
 		var mc = Minecraft.getInstance();
-		if(mc.screen instanceof HomeScreen homeScreen) {
-			return homeScreen;
+		if(mc.screen instanceof DashboardScreen dashboardScreen) {
+			return dashboardScreen;
 		}
 
 		return null;

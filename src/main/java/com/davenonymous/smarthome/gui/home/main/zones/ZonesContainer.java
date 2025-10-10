@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.home.main.zones;
 
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -46,11 +46,11 @@ public class ZonesContainer extends WidgetPanel {
 	public void refreshZoneList() {
 		zoneDisplay.refreshZoneList();
 
-		if(HomeScreen.get() == null) {
+		if(DashboardScreen.get() == null) {
 			return;
 		}
 
-		var selectedHome = HomeScreen.get().selectedHome;
+		var selectedHome = DashboardScreen.get().selectedHome;
 		if(selectedHome == null) {
 			return;
 		}

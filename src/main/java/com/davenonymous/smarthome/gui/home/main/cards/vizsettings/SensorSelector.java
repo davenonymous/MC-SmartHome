@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.cards.vizsettings;
 
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
@@ -52,7 +52,7 @@ public class SensorSelector extends WidgetPanel {
 	}
 
 	private void updateSensorChoices() {
-		var availableSensors = HomeScreen.get().selectedHome.getAvailableSensors();
+		var availableSensors = DashboardScreen.get().selectedHome.getAvailableSensors();
 		this.sensorChoices = new Widget[availableSensors.size()];
 		for(int iSensorIndex = 0; iSensorIndex < availableSensors.size(); iSensorIndex++) {
 			var sensorId = availableSensors.get(iSensorIndex);

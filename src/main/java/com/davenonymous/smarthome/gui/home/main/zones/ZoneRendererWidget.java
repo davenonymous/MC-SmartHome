@@ -2,24 +2,20 @@ package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.client.BoxRenderer;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.particles.util.BoxLineCache;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import org.joml.Vector3f;
 
 import java.util.HashMap;
@@ -45,11 +41,11 @@ public class ZoneRendererWidget extends WidgetPanel {
 	}
 
 	public void refreshZoneList() {
-		if(HomeScreen.get() == null) {
+		if(DashboardScreen.get() == null) {
 			return;
 		}
 
-		var selectedHome = HomeScreen.get().selectedHome;
+		var selectedHome = DashboardScreen.get().selectedHome;
 		if(selectedHome == null) {
 			return;
 		}
@@ -83,7 +79,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 				if(device.ignored() || !device.enabled()) {
 					continue;
 				}
-				var deviceBlockState = HomeScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
+				var deviceBlockState = DashboardScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
 				var deviceShape = deviceBlockState.getShape(Minecraft.getInstance().level, device.pos());
 				if(deviceShape.isEmpty()) {
 					continue;
@@ -152,7 +148,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 
 
 
-		float ticks = HomeScreen.get().renderTick() + HomeScreen.get().partialTicks();
+		float ticks = DashboardScreen.get().renderTick() + DashboardScreen.get().partialTicks();
 
 		var pose = guiGraphics.pose();
 		pose.pushPose();
@@ -201,7 +197,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 				selectedColor = ChatFormatting.GOLD.getColor() | 0xFF000000;
 			}
 
-			if(data.toAABB() != null && HomeScreen.get().selectedHome.getZoneCrossing(data.toAABB()) != null) {
+			if(data.toAABB() != null && DashboardScreen.get().selectedHome.getZoneCrossing(data.toAABB()) != null) {
 				selectedColor = ChatFormatting.RED.getColor() | 0x80000000;
 			}
 

@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
@@ -68,7 +68,7 @@ public class AddZoneButtonWidget extends WidgetPanel {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			PacketDistributor.sendToServer(new AddNewZonePayload(HomeScreen.get().selectedHome.id(), rangeFinderData.toAABB(), newZoneNameInput.getValue()));
+			PacketDistributor.sendToServer(new AddNewZonePayload(DashboardScreen.get().selectedHome.id(), rangeFinderData.toAABB(), newZoneNameInput.getValue()));
 			return WidgetEventResult.HANDLED;
 		});
 

@@ -2,7 +2,7 @@ package com.davenonymous.smarthome.gui.home.main.devices;
 
 import com.davenonymous.smarthome.data.TimeRange;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.table.ConfiguredDevicesTable;
 import com.davenonymous.smarthome.gui.home.main.devices.table.DeviceTableContainer;
@@ -42,7 +42,7 @@ public class DevicesContainer extends WidgetPanel {
 		newDevicesBar = new NewDevicesWidget();
 		newDevicesBar.setPosition(8, 20);
 		newDevicesBar.setHeight(110);
-		newDevicesBar.updateDevices(HomeScreen.get().getAllNewDevices());
+		newDevicesBar.updateDevices(DashboardScreen.get().getAllNewDevices());
 		this.add(newDevicesBar);
 
 		newDevicesLabel = new WidgetTextBox(NEW_DEVICES.get());
@@ -100,7 +100,7 @@ public class DevicesContainer extends WidgetPanel {
 		this.add(deviceDetail);
 
 		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
-			newDevicesBar.updateDevices(HomeScreen.get().getAllNewDevices());
+			newDevicesBar.updateDevices(DashboardScreen.get().getAllNewDevices());
 			configuredDevicesTable.updateDevices();
 			updateWidgetSizes();
 			return WidgetEventResult.CONTINUE_PROCESSING;

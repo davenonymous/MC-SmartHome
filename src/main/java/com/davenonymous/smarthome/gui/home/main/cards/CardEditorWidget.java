@@ -1,13 +1,11 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.*;
 import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
-import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.*;
@@ -18,13 +16,11 @@ import com.davenonymous.smarthome.networking.actions.cards.AddCardElementPayload
 import com.davenonymous.smarthome.networking.actions.cards.SetCardElementPositionPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardElementSettingsPayload;
 import com.davenonymous.smarthome.networking.actions.cards.SetCardSettingsPayload;
-import com.davenonymous.smarthome.setup.dynamic.ModCardElements;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,7 +46,7 @@ public class CardEditorWidget extends WidgetPanel {
 			var elementId = event.id();
 			var newData = event.newCardElement();
 			PacketDistributor.sendToServer(new SetCardElementSettingsPayload(
-				HomeScreen.get().selectedHome.id(),
+				DashboardScreen.get().selectedHome.id(),
 				card().id(),
 				elementId, newData
 			));
@@ -66,7 +62,7 @@ public class CardEditorWidget extends WidgetPanel {
 			}
 
 			PacketDistributor.sendToServer(new AddCardElementPayload(
-				HomeScreen.get().selectedHome.id(),
+				DashboardScreen.get().selectedHome.id(),
 				card().id(),
 				event.id()
 			));
@@ -82,7 +78,7 @@ public class CardEditorWidget extends WidgetPanel {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			var optCurrentCard = HomeScreen.get().selectedHome.getCard(this.cardWidget.homeCard.id());
+			var optCurrentCard = DashboardScreen.get().selectedHome.getCard(this.cardWidget.homeCard.id());
 			if(optCurrentCard.isEmpty()) {
 				setCardWidget(null);
 				return WidgetEventResult.CONTINUE_PROCESSING;
@@ -104,7 +100,7 @@ public class CardEditorWidget extends WidgetPanel {
 
 		scaleHandle.addListener(ScaleHandleResizedEvent.class, (event, widget) -> {
 			PacketDistributor.sendToServer(new SetCardSettingsPayload(
-				HomeScreen.get().selectedHome.id(),
+				DashboardScreen.get().selectedHome.id(),
 				card().id(),
 				card().label(),
 				card().icon(),
@@ -148,7 +144,7 @@ public class CardEditorWidget extends WidgetPanel {
 				}
 
 				PacketDistributor.sendToServer(new SetCardSettingsPayload(
-					HomeScreen.get().selectedHome.id(),
+					DashboardScreen.get().selectedHome.id(),
 					card().id(),
 					this.cardWidget.cardRenameInput.getValue(),
 					card().icon(),
@@ -177,7 +173,7 @@ public class CardEditorWidget extends WidgetPanel {
 					this.cardWidget.icon.setSprite(event2.sprite());
 
 					PacketDistributor.sendToServer(new SetCardSettingsPayload(
-						HomeScreen.get().selectedHome.id(),
+						DashboardScreen.get().selectedHome.id(),
 						card().id(),
 						card().label(),
 						event2.sprite(),
@@ -198,7 +194,7 @@ public class CardEditorWidget extends WidgetPanel {
 				}
 
 				PacketDistributor.sendToServer(new SetCardElementPositionPayload(
-					HomeScreen.get().selectedHome.id(),
+					DashboardScreen.get().selectedHome.id(),
 					card().id(),
 					elementId,
 					new Vec2(event.movedWidget().x, event.movedWidget().y)

@@ -3,7 +3,7 @@ package com.davenonymous.smarthome.gui.home.main.cards.vizsettings;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
@@ -26,7 +26,7 @@ public class MultipleDeviceSelector extends WidgetPanel {
 
 	public MultipleDeviceSelector(List<UUID> selectedDevices, HomeSensor<?, ?> sensor) {
 		super();
-		var home = HomeScreen.get().selectedHome;
+		var home = DashboardScreen.get().selectedHome;
 		this.selectedDevices = new HashMap<>();
 		for(var deviceId : selectedDevices) {
 			var device = home.getDevice(deviceId);
@@ -37,7 +37,7 @@ public class MultipleDeviceSelector extends WidgetPanel {
 			this.selectedDevices.put(deviceId, device.get().getSecond());
 		}
 
-		Map<HomeZone, List<ConfiguredDevice>> availableDevices = HomeScreen.get().selectedHome.getDevicesWithSensor(sensor);
+		Map<HomeZone, List<ConfiguredDevice>> availableDevices = DashboardScreen.get().selectedHome.getDevicesWithSensor(sensor);
 		this.deviceChoices = new ArrayList<>();
 
 		List<HomeZone> sortedZones = new ArrayList<>(availableDevices.keySet());

@@ -2,7 +2,7 @@ package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorContainer;
 import com.davenonymous.smarthome.gui.home.main.dashboard.DashboardContainer;
@@ -41,7 +41,7 @@ public class ContentContainerWidget extends WidgetPanel {
 
 		this.addListener(ContentSelectionEvent.class, (event, widget) -> {
 			setActiveContentWidget(event.contentId());
-			if(HomeScreen.get().blockEntity instanceof DashboardBlockEntity dashy) {
+			if(DashboardScreen.get().blockEntity instanceof DashboardBlockEntity dashy) {
 				// TODO: Send payload to server, request change of default home screen page
 			}
 			return WidgetEventResult.CONTINUE_PROCESSING;

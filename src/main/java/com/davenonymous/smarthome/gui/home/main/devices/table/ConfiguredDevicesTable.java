@@ -3,7 +3,7 @@ package com.davenonymous.smarthome.gui.home.main.devices.table;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
 import com.davenonymous.smarthome.gui.general.BlockStateWidget;
 import com.davenonymous.smarthome.gui.general.HoverableWidgetTable;
@@ -135,7 +135,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 		this.clear();
 		devices.clear();
 
-		this.home = HomeScreen.get().selectedHome;
+		this.home = DashboardScreen.get().selectedHome;
 		if(this.home == null) {
 			return;
 		}
@@ -156,7 +156,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 			var positionCell = new TextCell(zone.name(), device.pos().toShortString());
 			this.add(2, row, new CellData(positionCell, ContentAlignment.MIDDLE_LEFT, true));
 
-			var deviceBlockState = HomeScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
+			var deviceBlockState = DashboardScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
 			if(deviceBlockState == null) {
 				var sprite = new WidgetSprite(HackerNoon.Solid.exclamation);
 				sprite.setColor(ColorHelper.COLOR_ERRORED.getRGB());

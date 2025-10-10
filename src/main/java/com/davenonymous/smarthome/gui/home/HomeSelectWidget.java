@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.home;
 
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
@@ -52,7 +52,7 @@ public class HomeSelectWidget extends WidgetHBox {
 	}
 
 	public void buttonHandler(boolean prev) {
-		var screen = HomeScreen.get();
+		var screen = DashboardScreen.get();
 		if(screen == null) {
 			return;
 		}
@@ -90,18 +90,18 @@ public class HomeSelectWidget extends WidgetHBox {
 	}
 
 	public void updateWidgetContent() {
-		if(HomeScreen.get() == null) {
+		if(DashboardScreen.get() == null) {
 			return;
 		}
 
-		var hasHomes = HomeScreen.get().getMenu().ownedHomes != null && !HomeScreen.get().getMenu().ownedHomes.isEmpty();
+		var hasHomes = DashboardScreen.get().getMenu().ownedHomes != null && !DashboardScreen.get().getMenu().ownedHomes.isEmpty();
 		this.setVisible(hasHomes);
 
 		if(hasHomes) {
-			var home = HomeScreen.get().selectedHome;
+			var home = DashboardScreen.get().selectedHome;
 			this.homeNameText.setText(home.name());
 
-			var multipleHomes = HomeScreen.get().getMenu().ownedHomes.size() > 1;
+			var multipleHomes = DashboardScreen.get().getMenu().ownedHomes.size() > 1;
 			this.prevButton.setVisible(multipleHomes);
 			this.nextButton.setVisible(multipleHomes);
 		}

@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
@@ -58,7 +58,7 @@ public class AddNewCardButtonWidget extends WidgetPanel {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			PacketDistributor.sendToServer(new AddNewCardPayload(HomeScreen.get().selectedHome.id(), newCardNameInput.getValue()));
+			PacketDistributor.sendToServer(new AddNewCardPayload(DashboardScreen.get().selectedHome.id(), newCardNameInput.getValue()));
 			newCardNameInput.setValue("");
 			newCardNameInput.nativeWidget().setFocused(false);
 			newCardNameInput.nativeWidget().setHint(Component.translatable(CLICK_TO_RENAME.key()));

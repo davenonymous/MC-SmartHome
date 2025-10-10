@@ -2,7 +2,7 @@ package com.davenonymous.smarthome.networking.data;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.SensorDataUpdatedEvent;
 import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -37,7 +37,7 @@ public record DeviceDataPayload(UUID homeId, UUID zoneId, ConfiguredDevice devic
 		context.enqueueWork(() -> {
 			ClientCache.setSensorData(payload.device.id(), payload.data());
 
-			var homeScreen = HomeScreen.get();
+			var homeScreen = DashboardScreen.get();
 			if(homeScreen == null) {
 				return;
 			}

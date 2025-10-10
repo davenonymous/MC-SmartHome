@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.settings;
 
 import com.davenonymous.smarthome.data.HomeSettings;
-import com.davenonymous.smarthome.gui.HomeScreen;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -51,7 +51,7 @@ public class SettingsContainer extends WidgetPanel {
 		generalBox.setPosition(5, 5);
 		this.add(generalBox);
 
-		var home = HomeScreen.get().selectedHome;
+		var home = DashboardScreen.get().selectedHome;
 		if(home == null) {
 			return;
 		}
