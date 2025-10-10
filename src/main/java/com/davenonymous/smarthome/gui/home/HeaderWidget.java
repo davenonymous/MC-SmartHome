@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.gui.home;
 import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
@@ -11,6 +12,7 @@ import net.minecraft.client.resources.language.I18n;
 public class HeaderWidget extends WidgetHBox {
 	WidgetTextBox titleText;
 	HomeSelectWidget homeSelect;
+	TimeRangeWidget timeRangeWidget;
 
 	public HeaderWidget(HomeScreen homeScreen) {
 		this.setSpacing(2);
@@ -23,7 +25,12 @@ public class HeaderWidget extends WidgetHBox {
 		this.titleText.setWordWrap(true);
 		this.addFlexBox(this.titleText, FlexAlign.CENTER, 1);
 
-		this.addFlexBox(new Widget(), FlexAlign.CENTER, 1);
+		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
+
+		this.timeRangeWidget = new TimeRangeWidget();
+		this.addFlexBox(this.timeRangeWidget, FlexAlign.CENTER, 1);
+
+		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
 
 		this.homeSelect = new HomeSelectWidget();
 		this.addFlexBox(this.homeSelect, FlexAlign.CENTER, 1);

@@ -57,12 +57,12 @@ public class HomeSelectWidget extends WidgetHBox {
 			return;
 		}
 
-		var hasHomes = screen.ownedHomes != null && !screen.ownedHomes.isEmpty();
+		var hasHomes = screen.getMenu().ownedHomes != null && !screen.getMenu().ownedHomes.isEmpty();
 		if(!hasHomes) {
 			return;
 		}
 
-		var homes = screen.ownedHomes;
+		var homes = screen.getMenu().ownedHomes;
 		if(homes.size() < 2) {
 			return;
 		}
@@ -94,14 +94,14 @@ public class HomeSelectWidget extends WidgetHBox {
 			return;
 		}
 
-		var hasHomes = HomeScreen.get().ownedHomes != null && !HomeScreen.get().ownedHomes.isEmpty();
+		var hasHomes = HomeScreen.get().getMenu().ownedHomes != null && !HomeScreen.get().getMenu().ownedHomes.isEmpty();
 		this.setVisible(hasHomes);
 
 		if(hasHomes) {
 			var home = HomeScreen.get().selectedHome;
 			this.homeNameText.setText(home.name());
 
-			var multipleHomes = HomeScreen.get().ownedHomes.size() > 1;
+			var multipleHomes = HomeScreen.get().getMenu().ownedHomes.size() > 1;
 			this.prevButton.setVisible(multipleHomes);
 			this.nextButton.setVisible(multipleHomes);
 		}

@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardContainer;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;
@@ -9,21 +10,21 @@ import com.davenonymous.smarthome.gui.home.HeaderWidget;
 import com.davenonymous.smarthome.gui.home.NoHomesWidget;
 import com.davenonymous.smarthome.gui.home.sidebar.SidebarWidget;
 import com.davenonymous.smarthome.lib.gui.GUI;
-import com.davenonymous.smarthome.lib.gui.WidgetFullScreen;
+import com.davenonymous.smarthome.lib.gui.WidgetContainerFullScreen;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Inventory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-public class HomeScreen extends WidgetFullScreen {
+public class HomeScreen extends WidgetContainerFullScreen<DashboardContainer> {
 	WidgetVBox mainLayout;
 	HeaderWidget headerLayout;
 	WidgetHBox contentLayout;
@@ -33,9 +34,8 @@ public class HomeScreen extends WidgetFullScreen {
 	ContentContainerWidget contentContainerWidget;
 
 	public HomeCore selectedHome;
-	public HomeBlockEntity blockEntity;
-	public List<HomeCore> ownedHomes;
-	public HomeWorldInfo homeWorldInfo;
+	public DashboardBlockEntity blockEntity;
+
 
 
 
@@ -44,24 +44,20 @@ public class HomeScreen extends WidgetFullScreen {
 	@I18DataGen(lang = "de_de", string = "Smart Home")
 	public static final I18String TITLE = I18String.gui("home", "title");
 
-	public HomeScreen(BlockPos pos, UUID selectedHomeId, List<HomeCore> ownedHomes, HomeWorldInfo homeWorldInfo) {
-		super(Component.translatable(TITLE.key()));
-		this.ownedHomes = ownedHomes;
-		this.homeWorldInfo = homeWorldInfo;
+	public HomeScreen(DashboardContainer container, Inventory inv, Component name) {
+		super(container, inv, Component.translatable(TITLE.key()));
+		this.blockEntity = container.getBlockEntity();
+		this.renderTitle = false;
+		this.renderInventoryTitle = false;
 
-		if(Minecraft.getInstance().level.getBlockEntity(pos) instanceof HomeBlockEntity hbe) {
-			this.blockEntity = hbe;
-		}
-
-		for(var home : ownedHomes) {
-			if(home.id().equals(selectedHomeId)) {
+		for(var home : container.ownedHomes) {
+			if(home.id().equals(blockEntity.home())) {
 				this.selectedHome = home;
 				break;
 			}
 		}
-
-		if(this.selectedHome == null && !ownedHomes.isEmpty()) {
-			this.selectedHome = ownedHomes.getFirst();
+		if(this.selectedHome == null && !container.ownedHomes.isEmpty()) {
+			this.selectedHome = container.ownedHomes.getFirst();
 		}
 	}
 
@@ -108,7 +104,7 @@ public class HomeScreen extends WidgetFullScreen {
 
 		updateWidgetSizes();
 
-		if(this.ownedHomes.isEmpty()) {
+		if(this.menu.ownedHomes.isEmpty()) {
 			contentLayout.addFlexBox(new Widget(), 1);
 			contentLayout.addFlexBox(noHomesWidget, FlexSizer.FlexAlign.CENTER, 2);
 			contentLayout.addFlexBox(new Widget(), 1);

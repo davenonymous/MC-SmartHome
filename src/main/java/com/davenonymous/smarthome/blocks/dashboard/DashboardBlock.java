@@ -11,10 +11,13 @@ import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +29,7 @@ import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -91,7 +94,6 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 		if(optHome.isPresent()) {
 			var home = optHome.get();
 			WorldWatcherUtil.updateDevicesInHome(level.getServer(), home);
-
 			for(var zone : home.zones()) {
 				List<ConfiguredDevice> newDeviceList = new ArrayList<>();
 				for(var device : zone.devices()) {
@@ -119,7 +121,12 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 			worldInfo = HomeWorldInfo.create((ServerLevel) level, home);
 		}
 
-		PacketDistributor.sendToPlayer(serverPlayer, new OpenHomeScreenPayload(pos, homeId, data.getPlayerHomes(entity.ownerUUID()), worldInfo));
+		var extraData = new OpenHomeScreenPayload(data.getPlayerHomes(entity.ownerUUID()), worldInfo);
+		player.openMenu(this.getMenuProvider(state, level, pos), registryFriendlyByteBuf -> {
+			registryFriendlyByteBuf.writeBlockPos(pos);
+			OpenHomeScreenPayload.CODEC.encode(registryFriendlyByteBuf, extraData);
+		});
+
 		return InteractionResult.SUCCESS_NO_ITEM_USED;
 	}
 
@@ -137,5 +144,13 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 	@Override
 	public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
 		return new DashboardBlockEntity(blockPos, blockState);
+	}
+
+	@Override
+	protected @NotNull MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+		return new SimpleMenuProvider(
+			(id, inventory, player) -> new DashboardContainer(id, pos, inventory, player),
+			Component.translatable("block.smarthome.dashboard")
+		);
 	}
 }

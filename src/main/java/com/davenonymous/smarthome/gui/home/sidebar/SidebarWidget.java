@@ -79,6 +79,11 @@ public class SidebarWidget extends WidgetVBox {
 	}
 
 	private void updateNewDeviceCount() {
+		if(HomeScreen.get() == null) {
+			this.devicesButton.clearBadge();
+			return;
+		}
+
 		var home = HomeScreen.get().selectedHome;
 		if(home == null) {
 			this.devicesButton.clearBadge();

@@ -38,8 +38,8 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 			var mc = Minecraft.getInstance();
 			if(mc.screen instanceof HomeScreen homeScreen) {
 				var home = payload.home();
-				homeScreen.ownedHomes.removeIf(h -> h.id().equals(home.id()));
-				homeScreen.ownedHomes.add(home);
+				homeScreen.getMenu().ownedHomes.removeIf(h -> h.id().equals(home.id()));
+				homeScreen.getMenu().ownedHomes.add(home);
 
 				if(homeScreen.selectedHome != null && homeScreen.selectedHome.id().equals(home.id())) {
 					homeScreen.selectedHome = home;

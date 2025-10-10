@@ -83,7 +83,7 @@ public class ZoneRendererWidget extends WidgetPanel {
 				if(device.ignored() || !device.enabled()) {
 					continue;
 				}
-				var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
+				var deviceBlockState = HomeScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
 				var deviceShape = deviceBlockState.getShape(Minecraft.getInstance().level, device.pos());
 				if(deviceShape.isEmpty()) {
 					continue;

@@ -156,7 +156,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 			var positionCell = new TextCell(zone.name(), device.pos().toShortString());
 			this.add(2, row, new CellData(positionCell, ContentAlignment.MIDDLE_LEFT, true));
 
-			var deviceBlockState = HomeScreen.get().homeWorldInfo.blockStates().get(device.pos());
+			var deviceBlockState = HomeScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
 			if(deviceBlockState == null) {
 				var sprite = new WidgetSprite(HackerNoon.Solid.exclamation);
 				sprite.setColor(ColorHelper.COLOR_ERRORED.getRGB());

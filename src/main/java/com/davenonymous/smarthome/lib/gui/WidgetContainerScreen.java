@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.lib.gui;
 
 
 import com.davenonymous.smarthome.lib.gui.event.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -24,10 +25,12 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 	public WidgetContainerScreen(T container, Inventory inv, Component name) {
 		super(container, inv, name);
 
-		this.gui = createGUI();
-		this.gui.setVisible(true);
-		this.imageWidth = gui.width;
-		this.imageHeight = gui.height;
+		Minecraft.getInstance().tell(() -> {
+			this.gui = createGUI();
+			this.gui.setVisible(true);
+			this.imageWidth = gui.width;
+			this.imageHeight = gui.height;
+		});
 	}
 
 	public WidgetContainerScreen<T> setCustomTitle(Component customTitle) {
@@ -37,9 +40,12 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 
 	protected abstract GUI createGUI();
 
-	public void recreateGUI() {
-		this.gui = createGUI();
-		this.gui.setVisible(true);
+	public GUI getOrCreateGui() {
+		if(gui == null) {
+			this.gui = createGUI();
+			this.gui.setVisible(true);
+		}
+		return gui;
 	}
 
 	@Override

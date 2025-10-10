@@ -86,7 +86,7 @@ public class WorldWatcherUtil {
 		home.setFoundDevices(result);
 	}
 
-	// Client-Side only!
+	// Client-Side only! Only the client will now how to name a new device!
 	public static void autoIgnoreGenericOnlyDevices(HomeCore home) {
 		if(home != null && home.settings().autoIgnoreGenericOnlyDevices()) {
 			for(var zone : home.getAllFoundDevices().keySet()) {

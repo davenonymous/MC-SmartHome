@@ -23,6 +23,11 @@ public abstract class WidgetScreen extends Screen {
 	protected WidgetScreen(Component title) {
 		super(title);
 		this.window = Minecraft.getInstance().getWindow();
+
+		Minecraft.getInstance().tell(() -> {
+			this.gui = createGUI();
+			this.gui.setVisible(true);
+		});
 	}
 
 	public Window window() {

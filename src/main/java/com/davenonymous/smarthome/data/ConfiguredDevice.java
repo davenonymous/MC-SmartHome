@@ -21,8 +21,8 @@ import java.util.UUID;
 
 public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored, Map<ResourceLocation, SensorSettings> sensors) {
 
-	public ConfiguredDevice(BlockPos pos, String deviceId, ResourceLocation blockId, boolean enabled, boolean ignored) {
-		this(UUID.randomUUID(), pos, deviceId, blockId, enabled, ignored, Map.of());
+	public ConfiguredDevice(BlockPos pos, String name, ResourceLocation blockId, boolean enabled, boolean ignored) {
+		this(UUID.randomUUID(), pos, name, blockId, enabled, ignored, Map.of());
 	}
 
 

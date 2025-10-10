@@ -1,7 +1,9 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.blocks.dashboard.DashboardContainer;
 import com.davenonymous.smarthome.blocks.minirack.MiniRackContainer;
+import com.davenonymous.smarthome.gui.HomeScreen;
 import com.davenonymous.smarthome.gui.MiniRackScreen;
 import com.davenonymous.smarthome.gui.ServerScreen;
 import com.davenonymous.smarthome.items.ServerContainer;
@@ -25,6 +27,10 @@ public class ModContainers {
 		)
 	);
 
+	public static final Supplier<MenuType<DashboardContainer>> DASHBOARD_CONTAINER = CONTAINERS.register(
+		"dashboard", resourceLocation -> IMenuTypeExtension.create(DashboardContainer::new)
+	);
+
 	public static final Supplier<MenuType<ServerContainer>> SERVER_CONTAINER = CONTAINERS.register(
 		"server", resourceLocation -> IMenuTypeExtension.create(
 			(i, inventory, registryFriendlyByteBuf) -> new ServerContainer(i, inventory, inventory.player)
@@ -33,6 +39,7 @@ public class ModContainers {
 
 	@SubscribeEvent
 	public static void attachScreens(RegisterMenuScreensEvent event) {
+		event.register(DASHBOARD_CONTAINER.get(), HomeScreen::new);
 		event.register(MINI_RACK_CONTAINER.get(), MiniRackScreen::new);
 		event.register(SERVER_CONTAINER.get(), ServerScreen::new);
 	}

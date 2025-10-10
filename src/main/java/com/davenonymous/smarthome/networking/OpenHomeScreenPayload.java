@@ -21,12 +21,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Packet
-public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCore> homes, HomeWorldInfo worldInfo) implements LibPacketPayload {
+public record OpenHomeScreenPayload(List<HomeCore> homes, HomeWorldInfo worldInfo) implements LibPacketPayload {
 
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, OpenHomeScreenPayload> CODEC = StreamCodec.composite(
-		BlockPos.STREAM_CODEC, OpenHomeScreenPayload::pos,
-		UUIDUtil.STREAM_CODEC, OpenHomeScreenPayload::selectedHome,
 		HomeCore.STREAM_CODEC.apply(ByteBufCodecs.list()), OpenHomeScreenPayload::homes,
 		HomeWorldInfo.STREAM_CODEC, OpenHomeScreenPayload::worldInfo,
 		OpenHomeScreenPayload::new
@@ -34,22 +32,6 @@ public record OpenHomeScreenPayload(BlockPos pos, UUID selectedHome, List<HomeCo
 
 	@PacketHandler(PacketHandler.Receiver.Client)
 	public static void handleOnClient(OpenHomeScreenPayload payload, IPayloadContext context) {
-		var home = payload.homes().stream().filter(h -> h.id().equals(payload.selectedHome())).findFirst().orElse(null);
-		if(home == null) {
-			return;
-		}
-		context.enqueueWork(() -> {
-			ClientCache.addHomeInfo(home, payload.worldInfo());
 
-			var mc = Minecraft.getInstance();
-			if(mc.screen instanceof HomeScreen homeScreen) {
-				homeScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
-				return;
-			}
-
-			WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
-
-			Minecraft.getInstance().setScreen(new HomeScreen(payload.pos(), payload.selectedHome(), payload.homes(), payload.worldInfo()));
-		});
 	}
 }
