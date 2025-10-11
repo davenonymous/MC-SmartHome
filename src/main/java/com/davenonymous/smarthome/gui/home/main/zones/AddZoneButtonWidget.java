@@ -34,7 +34,7 @@ public class AddZoneButtonWidget extends WidgetPanel {
 		this.setWidth(100);
 		this.setHeight(32);
 
-		newZoneNameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		newZoneNameInput = new StringInputWidget("", ModFonts.SAFE_FONT_CHARS);
 		newZoneNameInput.setDrawBackground(false);
 		newZoneNameInput.nativeWidget().setHint(Component.translatable(CLICK_TO_RENAME.key()));
 		newZoneNameInput.nativeWidget().setBordered(false);

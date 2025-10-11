@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.lib.gui;
 
 
 import com.davenonymous.smarthome.lib.gui.event.*;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -109,6 +110,11 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
 		if(gui.fireEvent(new KeyPressedEvent(keyCode, scanCode, modifiers)) == WidgetEventResult.CONTINUE_PROCESSING) {
+			InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
+			if(Minecraft.getInstance().options.keyInventory.isActiveAndMatches(mouseKey)) {
+				return true;
+			}
+
 			return super.keyPressed(keyCode, scanCode, modifiers);
 		}
 		return false;

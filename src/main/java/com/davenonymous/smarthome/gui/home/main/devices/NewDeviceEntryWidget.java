@@ -58,7 +58,7 @@ public class NewDeviceEntryWidget extends WidgetPanel {
 	public NewDeviceEntryWidget(HomeZone zone, FoundDevice device) {
 		this.setSize(100, 100);
 
-		deviceName = new StringInputWidget(I18n.get(device.state().getBlock().getDescriptionId()), "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		deviceName = new StringInputWidget(I18n.get(device.state().getBlock().getDescriptionId()), ModFonts.SAFE_FONT_CHARS);
 		deviceName.setDrawBackground(false);
 		deviceName.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
 		deviceName.setTooltipElements(WrappedStringTooltipComponent.orange(CLICK_TO_RENAME.get()));

@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 public abstract class EditBoxWidget<T> extends WidgetNativeWidget<BetterEditBox> {
 	T value;
 
+	boolean changeOnFocusLost = false;
+
 	public EditBoxWidget(T value) {
 		super(NativeWidgetHelper.createEditBox());
 		this.value = value;
@@ -22,6 +24,9 @@ public abstract class EditBoxWidget<T> extends WidgetNativeWidget<BetterEditBox>
 			nativeWidget.setFilter(input -> input.matches(mustMatchRegex()));
 		}
 		nativeWidget.setResponder(input -> {
+			if(changeOnFocusLost) {
+				return;
+			}
 			try {
 				T newValue = parseValue(input == null ? "" : input.trim());
 				if (newValue != null && !newValue.equals(this.value)) {
@@ -33,6 +38,26 @@ public abstract class EditBoxWidget<T> extends WidgetNativeWidget<BetterEditBox>
 				// Ignore invalid input
 			}
 		});
+		nativeWidget.setFocusResponder(editBoxFocused -> {
+			if(!changeOnFocusLost || editBoxFocused) {
+				return;
+			}
+			try {
+				T newValue = parseValue(nativeWidget().getValue().trim());
+				if (newValue != null && !newValue.equals(this.value)) {
+					var oldValue = this.value;
+					this.value = newValue;
+					fireEvent(new ValueChangedEvent<>(oldValue, newValue));
+				}
+			} catch (Exception e) {
+				// Ignore invalid input
+			}
+		});
+	}
+
+	public EditBoxWidget<T> setChangeOnFocusLost(boolean changeOnFocusLost) {
+		this.changeOnFocusLost = changeOnFocusLost;
+		return this;
 	}
 
 	public void setValue(T value) {

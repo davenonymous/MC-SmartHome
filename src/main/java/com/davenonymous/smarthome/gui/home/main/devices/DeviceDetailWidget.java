@@ -15,6 +15,7 @@ import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.networking.actions.devices.SetDeviceNamePayload;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
@@ -34,7 +35,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 		this.setPaddingVertical(4);
 		this.setSpacing(10);
 
-		deviceRenameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		deviceRenameInput = new StringInputWidget("", ModFonts.SAFE_FONT_CHARS);
 		deviceRenameInput.setHeight(12);
 		deviceRenameInput.setDrawBackground(false);
 		deviceRenameInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());

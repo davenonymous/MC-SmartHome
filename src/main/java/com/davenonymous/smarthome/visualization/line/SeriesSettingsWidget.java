@@ -63,7 +63,7 @@ public class SeriesSettingsWidget extends WidgetVBox {
 			}
 
 			//var seriesLabel = createColumnLabel(seriesSettings.label());
-			var seriesLabel = new StringInputWidget(seriesSettings.label(), "[a-zA-Z0-9äöüÄÖÜß_ -!?+:/\\@#$%^&*()]*");
+			var seriesLabel = new StringInputWidget(seriesSettings.label(), ModFonts.SAFE_FONT_CHARS);
 			seriesLabel.setWidth(80);
 			seriesLabel.setHeight(11);
 			seriesLabel.setDrawBackground(false);

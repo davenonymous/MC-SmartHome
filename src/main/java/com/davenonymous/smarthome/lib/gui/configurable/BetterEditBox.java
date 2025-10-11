@@ -15,8 +15,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
+
 public class BetterEditBox extends EditBox {
 	private int yTextOffset;
+	private Consumer<Boolean> focusResponder;
 
 	public BetterEditBox(Font font, int width, int height, Component message) {
 		super(font, width, height, message);
@@ -28,6 +31,18 @@ public class BetterEditBox extends EditBox {
 
 	public BetterEditBox(Font font, int x, int y, int width, int height, Component message) {
 		super(font, x, y, width, height, message);
+	}
+
+	public void setFocusResponder(Consumer<Boolean> focusResponder) {
+		this.focusResponder = focusResponder;
+	}
+
+	@Override
+	public void setFocused(boolean focused) {
+		super.setFocused(focused);
+		if(this.focusResponder != null) {
+			this.focusResponder.accept(focused);
+		}
 	}
 
 	@Override

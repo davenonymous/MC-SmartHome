@@ -43,6 +43,7 @@ public class Widget implements ISelectable {
 	public boolean renderDebugOutlines = false;
 	Widget parent;
 
+	Map<String, Object> userData = new HashMap<>();
 
 	int actualTooltipWidth = 0;
 
@@ -110,6 +111,16 @@ public class Widget implements ISelectable {
 		return CompletableFuture.runAsync(() -> runnable.accept((T) this), Util.backgroundExecutor());
 	}
 
+
+	public Widget setUserData(String key, Object value) {
+		userData.put(key, value);
+		return this;
+	}
+
+	public <T> T getUserData(String key) {
+		//noinspection unchecked
+		return (T)userData.get(key);
+	}
 
 	public Widget setActualTooltipWidth(int actualTooltipWidth) {
 		this.actualTooltipWidth = actualTooltipWidth;

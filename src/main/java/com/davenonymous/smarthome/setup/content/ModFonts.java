@@ -31,6 +31,8 @@ public class ModFonts {
 
 	public static final Map<ResourceLocation, FontSpec> ALL_FONTS;
 	public static final Map<String, ResourceLocation> CHOOSABLE_FONTS;
+
+	public static final String SAFE_FONT_CHARS = "[a-zA-Z0-9äöüÄÖÜß_ .,\\-!?+:/\\@#$%^&*()]*";
 	static {
 		ALL_FONTS = new HashMap<>();
 		ALL_FONTS.put(PIXEL.id(), PIXEL);

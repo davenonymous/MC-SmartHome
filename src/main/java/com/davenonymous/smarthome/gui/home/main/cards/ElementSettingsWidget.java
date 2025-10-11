@@ -1,8 +1,11 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
+import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;
+import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
@@ -81,6 +84,12 @@ public class ElementSettingsWidget extends WidgetVBox {
 			} else {
 				for(var w : settingsWidgets) {
 					w.addListener(ValueChangedEvent.class, (event, widget) -> {
+						var loadedSettings = element.loadSettings(settingsWidgets);
+						if(loadedSettings == null) {
+							SmartHome.LOGGER.warn("Element {} returned null from loadSettings, ignoring", element.id());
+							return WidgetEventResult.CONTINUE_PROCESSING;
+						}
+
 						this.fireEvent(new ElementSettingsChangedEvent(element.id(), element.loadSettings(settingsWidgets)));
 						return WidgetEventResult.CONTINUE_PROCESSING;
 					});
@@ -102,6 +111,10 @@ public class ElementSettingsWidget extends WidgetVBox {
 		this.adjustSizeToContent(false);
 		this.setWidth(Math.max(this.width, 160));
 		return this;
+	}
+
+	public HomeCardElement<?> element() {
+		return element;
 	}
 
 	@Override

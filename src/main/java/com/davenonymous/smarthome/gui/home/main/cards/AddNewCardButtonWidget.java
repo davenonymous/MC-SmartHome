@@ -11,6 +11,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.cards.AddNewCardPayload;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,7 +31,7 @@ public class AddNewCardButtonWidget extends WidgetPanel {
 		this.setWidth(100);
 		this.setHeight(32);
 
-		newCardNameInput = new StringInputWidget("", "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		newCardNameInput = new StringInputWidget("", ModFonts.SAFE_FONT_CHARS);
 		newCardNameInput.setDrawBackground(false);
 		newCardNameInput.nativeWidget().setHint(Component.translatable(CLICK_TO_RENAME.key()));
 		newCardNameInput.nativeWidget().setBordered(false);

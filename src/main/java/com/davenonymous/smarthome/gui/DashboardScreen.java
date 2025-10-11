@@ -21,6 +21,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class DashboardScreen extends WidgetContainerFullScreen<DashboardContaine
 	public HomeCore selectedHome;
 	public DashboardBlockEntity blockEntity;
 
-
+	private Map<String, Object> screenState;
 
 
 
@@ -46,6 +47,7 @@ public class DashboardScreen extends WidgetContainerFullScreen<DashboardContaine
 
 	public DashboardScreen(DashboardContainer container, Inventory inv, Component name) {
 		super(container, inv, Component.translatable(TITLE.key()));
+		this.screenState = new HashMap<>();
 		this.blockEntity = container.getBlockEntity();
 		this.renderTitle = false;
 		this.renderInventoryTitle = false;
@@ -60,6 +62,17 @@ public class DashboardScreen extends WidgetContainerFullScreen<DashboardContaine
 			this.selectedHome = container.ownedHomes.getFirst();
 		}
 	}
+
+	public <T> T getScreenState(String key) {
+		//noinspection unchecked
+		return (T)screenState.get(key);
+	}
+
+	public <T> void setScreenState(String key, T value) {
+		screenState.put(key, value);
+	}
+
+
 
 	public static DashboardScreen get() {
 		var mc = Minecraft.getInstance();

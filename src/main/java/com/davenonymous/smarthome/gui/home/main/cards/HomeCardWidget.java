@@ -9,15 +9,13 @@ import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.CardElementSelectedEvent;
 import com.davenonymous.smarthome.gui.events.ScaleHandleResizedEvent;
 import com.davenonymous.smarthome.gui.events.WidgetMovedEvent;
+import com.davenonymous.smarthome.gui.events.WidgetScaledEvent;
 import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
-import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
-import com.davenonymous.smarthome.lib.gui.event.MouseDraggedEvent;
-import com.davenonymous.smarthome.lib.gui.event.MouseReleasedEvent;
-import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
+import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
@@ -51,13 +49,15 @@ public class HomeCardWidget extends WidgetPanel {
 	WidgetTextBox label;
 	StringInputWidget cardRenameInput;
 
-	WidgetHBox topBar;
+	WidgetPanel topBar;
 
 	int padding = 8;
 	boolean editMode = false;
 
 	private int relativeClickX = 0;
 	private int relativeClickY = 0;
+	private int oldSizeX = 0;
+	private int oldSizeY = 0;
 
 	public HomeCardWidget(HomeCard homeCard) {
 		this(homeCard, false);
@@ -70,10 +70,8 @@ public class HomeCardWidget extends WidgetPanel {
 
 		this.setSize(homeCard.width(), homeCard.height());
 
-		topBar = new WidgetHBox();
+		topBar = new WidgetPanel();
 		topBar.setSize(homeCard.width(), 28);
-		topBar.setPaddingHorizontal(padding);
-		topBar.setPaddingVertical(4);
 
 		icon = new WidgetSprite(homeCard.icon());
 		icon.setPosition(padding, padding);
@@ -82,19 +80,21 @@ public class HomeCardWidget extends WidgetPanel {
 		} else {
 			icon.setColor(0xFFFFFFFF, 0xFFFFFFFF);
 		}
-		topBar.addContentBox(icon, FlexSizer.FlexAlign.CENTER);
+		topBar.add(icon);
+
 
 		if(editMode) {
-			cardRenameInput = new StringInputWidget(homeCard.label(), "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+			cardRenameInput = new StringInputWidget(homeCard.label(), ModFonts.SAFE_FONT_CHARS);
+			cardRenameInput.setPosition(padding + icon.width, padding);
 			cardRenameInput.setWidth(this.width - icon.width - padding * 4);
 			cardRenameInput.setDrawBackground(false);
 			cardRenameInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
 			cardRenameInput.setFont(ModFonts.SAMSUNG);
 			cardRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(NewDeviceEntryWidget.CLICK_TO_RENAME.get()));
-			topBar.addContentBox(cardRenameInput, FlexSizer.FlexAlign.CENTER);
+			topBar.add(cardRenameInput);
 		} else {
 			label = new WidgetTextBox(homeCard.label(), 0xFFFFFFFF);
-			label.setPosition(padding + icon.width + padding, padding);
+			label.setPosition(padding + icon.width, padding);
 			if(editMode) {
 				label.setTextColor(0xFFAAAAAA);
 			} else {
@@ -104,11 +104,15 @@ public class HomeCardWidget extends WidgetPanel {
 			label.setWordWrap(true);
 			label.autoWidth(this.width - icon.width - padding * 4);
 			label.autoHeight();
-			topBar.addContentBox(label, FlexSizer.FlexAlign.CENTER);
+			topBar.add(label);
 		}
 
 
 		this.add(topBar);
+		if(Minecraft.getInstance().screen == null) {
+			topBar.zLevel -= 2;
+			icon.zLevel -= 2;
+		}
 
 		contentArea = new WidgetPanel();
 		contentArea.setPosition(0, topBar.height);
@@ -147,8 +151,10 @@ public class HomeCardWidget extends WidgetPanel {
 
 				var position = element.getFirst();
 				var elementWidget = element.getSecond().createWidget();
+				elementWidget.zLevel -= 4;
 				if(elementWidget != null) {
 					elementWidget.setPosition((int) position.x, (int) position.y);
+					elementWidget.setUserData("element_id", elementId);
 
 					if(element.getSecond() instanceof VisualizationCardElement vizCardElement) {
 						for(UUID deviceId : vizCardElement.devices()) {
@@ -163,25 +169,6 @@ public class HomeCardWidget extends WidgetPanel {
 								PacketDistributor.sendToServer(payload);
 							}
 						}
-
-						if(editMode) {
-							var scaleHandler = new ScaleHandle(elementWidget);
-							scaleHandler.addListener(
-								ScaleHandleResizedEvent.class, (event, widget) -> {
-									PacketDistributor.sendToServer(new SetCardElementSizePayload(
-										DashboardScreen.get().selectedHome.id(),
-										this.homeCard.id(),
-										elementId,
-										new Vec2(event.attachedTo().width, event.attachedTo().height)
-									));
-									return WidgetEventResult.HANDLED;
-								}
-							);
-							contentArea.add(scaleHandler);
-							scaleHandler.updateWidgetSizes();
-
-
-						}
 					}
 
 					if(editMode) {
@@ -193,9 +180,12 @@ public class HomeCardWidget extends WidgetPanel {
 									return WidgetEventResult.CONTINUE_PROCESSING;
 								}
 
+								getGUI().setDragging(elementWidget);
 								this.relativeClickX = getMouseX() - contentArea.x - elementWidget.x;
 								this.relativeClickY = getMouseY() - contentArea.y - elementWidget.y;
-
+								this.oldSizeX = elementWidget.width;
+								this.oldSizeY = elementWidget.height;
+								DashboardScreen.get().setScreenState("card_widget_selected_element", elementId);
 								this.fireEvent(new CardElementSelectedEvent(elementWidget, elementId));
 								return WidgetEventResult.CONTINUE_PROCESSING;
 							}
@@ -203,18 +193,30 @@ public class HomeCardWidget extends WidgetPanel {
 
 						elementWidget.addListener(
 							MouseDraggedEvent.class, (event, widget) -> {
-								if(getGUI().isDragging() != null) {
+								if(getGUI().isDragging() != elementWidget) {
 									// If the GUI is already being dragged, ignore this event
 									return WidgetEventResult.CONTINUE_PROCESSING;
 								}
 
-								int newScaleHandleX = Math.round(getMouseX() - contentArea.x - relativeClickX);
-								int newScaleHandleY = Math.round(getMouseY() - contentArea.y - relativeClickY);
+								if(!elementWidget.isHovered()) {
+									return WidgetEventResult.CONTINUE_PROCESSING;
+								}
 
-								elementWidget.setPosition(
-									newScaleHandleX,
-									newScaleHandleY
-								);
+								if(event.button() == 0) {
+									int newPosX = Math.round(getMouseX() - contentArea.x - relativeClickX);
+									int newPosY = Math.round(getMouseY() - contentArea.y - relativeClickY);
+
+									elementWidget.setPosition(
+										newPosX,
+										newPosY
+									);
+								} else if(event.button() == 1) {
+									// scaling with right mouse button
+									int relMouseX = Math.round(getMouseX() - contentArea.x - relativeClickX);
+									int relMouseY = Math.round(getMouseY() - contentArea.y - relativeClickY);
+									elementWidget.setSize(oldSizeX + relMouseX, oldSizeY + relMouseY);
+									elementWidget.updateWidgetSizes();
+								}
 								return WidgetEventResult.CONTINUE_PROCESSING;
 							}
 						);
@@ -225,7 +227,12 @@ public class HomeCardWidget extends WidgetPanel {
 									return WidgetEventResult.CONTINUE_PROCESSING;
 								}
 
-								this.fireEvent(new WidgetMovedEvent(elementWidget, elementId));
+								if(event.button == 0) {
+									this.fireEvent(new WidgetMovedEvent(elementWidget, elementId));
+								} else if(event.button == 1) {
+									this.fireEvent(new WidgetScaledEvent(elementWidget, elementId));
+								}
+								getGUI().setDragging(null);
 								return WidgetEventResult.HANDLED;
 							}
 						);
@@ -267,15 +274,17 @@ public class HomeCardWidget extends WidgetPanel {
 		}
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
-
 		if(Minecraft.getInstance().screen == null) {
 			guiGraphics.pose().translate(0, 0, -2);
 		}
 		guiGraphics.fill(3, 3, width() - 3, height() - 3, 0x88000000);
 
+
 		if(Minecraft.getInstance().screen == null) {
 			guiGraphics.pose().translate(0, 0, -2);
 			RenderSystem.setShaderColor(1, 1, 1, 1f);
+		} else {
+			guiGraphics.pose().translate(0, 0, 4);
 		}
 
 		super.draw(guiGraphics, window);

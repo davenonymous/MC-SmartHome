@@ -6,18 +6,22 @@ import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.*;
 import com.davenonymous.smarthome.gui.general.ScaleHandle;
 import com.davenonymous.smarthome.gui.general.SpriteSelectorWidget;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
+import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
-import com.davenonymous.smarthome.networking.actions.cards.AddCardElementPayload;
-import com.davenonymous.smarthome.networking.actions.cards.SetCardElementPositionPayload;
-import com.davenonymous.smarthome.networking.actions.cards.SetCardElementSettingsPayload;
-import com.davenonymous.smarthome.networking.actions.cards.SetCardSettingsPayload;
+import com.davenonymous.smarthome.networking.actions.cards.*;
+import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Style;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -202,6 +206,22 @@ public class CardEditorWidget extends WidgetPanel {
 				return WidgetEventResult.HANDLED;
 			});
 
+			this.cardWidget.addListener(WidgetScaledEvent.class, (event, widget) -> {
+				var elementId = event.elementId();
+				var elementEntry = this.cardWidget.homeCard.elements().get(elementId);
+				if(elementEntry == null) {
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				PacketDistributor.sendToServer(new SetCardElementSizePayload(
+					DashboardScreen.get().selectedHome.id(),
+					card().id(),
+					elementId,
+					new Vec2(event.elementWidget().width(), event.elementWidget().height())
+				));
+				return WidgetEventResult.HANDLED;
+			});
+
 			this.cardWidget.addListener(CardElementSelectedEvent.class, (event, widget) -> {
 				var elementId = event.elementId();
 				var wigget = event.elementWidget();
@@ -272,12 +292,12 @@ public class CardEditorWidget extends WidgetPanel {
 
 			Optional<Integer> highlightColor = Optional.empty();
 			if(element.isHovered()) {
-				highlightColor = Optional.of(SmartHome.color(GuiTheme.ColorComponent.TEXT_ACTIVE));
-			}
-
-			// TODO: This doesn't work as we are replacing the complete card widget and the selected element Widget does not exist anymore.
-			if(element == selectedElementWidget) {
-				highlightColor = Optional.of(SmartHome.color(GuiTheme.ColorComponent.BUTTON_BG_ACTIVE_HOVER));
+				highlightColor = Optional.of(SmartHome.color(GuiTheme.ColorComponent.TEXT_PRIMARY));
+			} else {
+				UUID elementId = element.getUserData("element_id");
+				if(elementId != null && elementSettingsWidget.element() != null && elementId.equals(elementSettingsWidget.element().id())) {
+					highlightColor = Optional.of(SmartHome.color(GuiTheme.ColorComponent.TEXT_ACTIVE_HOVER));
+				}
 			}
 
 			if(highlightColor.isEmpty()) {
@@ -291,17 +311,36 @@ public class CardEditorWidget extends WidgetPanel {
 			int lineStartX = cardWidget.x + cardWidget.contentArea.x - 1;
 			int lineStartY = cardWidget.y + cardWidget.contentArea.y - 1;
 
+			int thickColor = highlightColor.get() & 0x88FFFFFF;
+			int thinColor  = highlightColor.get() & 0x22FFFFFF;
 
 			var pose = guiGraphics.pose();
 			pose.pushPose();
 			pose.translate(0, 0, 10);
-			guiGraphics.vLine( elementX, lineStartY, lineStartY + cardWidget.contentArea.height, color & 0x88FFFFFF);
-			guiGraphics.vLine( elementX + element.width + 4, lineStartY, lineStartY + cardWidget.contentArea.height, color & 0x88FFFFFF);
-			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY, color & 0x88FFFFFF);
-			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY + element.height + 4, color & 0x88FFFFFF);
-			guiGraphics.fill(elementX, elementY, elementX + element.width + 4, elementY + element.height + 4, color & 0x22FFFFFF);
+			guiGraphics.vLine( elementX, lineStartY, lineStartY + cardWidget.contentArea.height, thickColor);
+			guiGraphics.vLine( elementX + element.width + 4, lineStartY, lineStartY + cardWidget.contentArea.height, thickColor);
+			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY, thickColor);
+			guiGraphics.hLine(lineStartX, lineStartX + cardWidget.contentArea.width, elementY + element.height + 4, thickColor);
+			guiGraphics.fill(elementX, elementY, elementX + element.width + 4, elementY + element.height + 4, thinColor);
+
+			var font = Minecraft.getInstance().font;
+			var posTextString = "@" + element.x() + "x" + element.y() + " " + element.width + "x" + element.height + "px";
+			var posText = FormattedCharSequence.forward(posTextString, Style.EMPTY.withFont(ModFonts.TINY.id()));
+
+			int posTestPositionX = elementX + 2;
+			if(element.width() < font.width(posText) + 4) {
+				posTestPositionX = elementX + element.width + 6;
+			}
+
+			guiGraphics.drawString(
+				font,
+				posText,
+				posTestPositionX,
+				elementY - 20,
+				thickColor, false
+			);
+
 			pose.popPose();
-			break;
 		}
 	}
 }

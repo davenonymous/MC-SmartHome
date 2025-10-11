@@ -85,22 +85,17 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 	public List<Widget> createSettingWidgets() {
 		var labelInputLabel = createLabel("Label:");
 
-		var labelInput = new StringInputWidget(text, "[a-zA-Z0-9_ -!?+:/\\@#$%^&*()]*");
+		var labelInput = new StringInputWidget(text, ModFonts.SAFE_FONT_CHARS);
+		labelInput.setChangeOnFocusLost(true);
 		labelInput.setDrawBackground(false);
 		labelInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
 
-		var colorChooserLabel = createLabel("Color:");
-
-		var dropShadowLabel = createLabel("Drop Shadow:");
-		var shadowToggle = new WidgetToggle(dropShadow);
-
-		return List.of(labelInputLabel, labelInput, colorChooserLabel, dropShadowLabel, shadowToggle);
+		return List.of(labelInputLabel, labelInput);
 	}
 
 	@Override
 	public LabelCardElement loadSettings(List<Widget> settingsWidgets) {
 		var labelInput = (StringInputWidget)settingsWidgets.get(1);
-		var shadowToggle = (WidgetToggle)settingsWidgets.get(4);
-		return new LabelCardElement(id, labelInput.getValue(), color, shadowToggle.getValue());
+		return new LabelCardElement(id, labelInput.getValue(), color, false);
 	}
 }

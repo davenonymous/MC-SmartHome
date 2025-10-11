@@ -11,6 +11,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ public class CardListWidget extends WidgetVBox {
 	private Map<HomeCard, CardSelectionWidget> cardButtonMap;
 	private HomeCard selectedCard = null;
 
+	private static final String STATE_SELECTED_CARD = "card_list_widget.selected_card";
 
 	public CardListWidget() {
 		super();
@@ -45,18 +47,22 @@ public class CardListWidget extends WidgetVBox {
 			return;
 		}
 
-		for(var card : selectedHome.cards()) {
+		var cardsByName = selectedHome.cards().stream().sorted(Comparator.comparing(HomeCard::label, Comparator.naturalOrder())).toList();
+		for(var card : cardsByName) {
 			var button = new CardSelectionWidget(card);
 			button.addListener(
 				MouseClickEvent.class, (event, widget) -> {
-					if(selectedCard != null && cardButtonMap.containsKey(selectedCard)) {
-						cardButtonMap.get(selectedCard).setActive(false);
-					}
+					cardButtonMap.values().forEach(b -> b.setActive(false));
 					button.setActive(true);
 					selectedCard = card;
+					DashboardScreen.get().setScreenState(STATE_SELECTED_CARD, card);
 					this.fireEvent(new CardSelectedEvent(card));
 					return WidgetEventResult.HANDLED;
 				});
+			HomeCard initialSelectedCard = DashboardScreen.get().getScreenState(STATE_SELECTED_CARD);
+			if(DashboardScreen.get().getScreenState(STATE_SELECTED_CARD) != null && initialSelectedCard.id().equals(card.id())) {
+				button.setActive(true);
+			}
 			this.addContentBox(button, FlexAlign.START);
 			cardButtonMap.put(card, button);
 		}
