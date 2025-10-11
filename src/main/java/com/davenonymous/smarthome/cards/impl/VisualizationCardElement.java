@@ -79,8 +79,6 @@ public record VisualizationCardElement(UUID id, ResourceLocation vizId, Resource
 		//noinspection rawtypes
 		IVisualization viz = ModVisualizations.getById(vizId);
 
-		// TODO: continue here.
-		// we need a different way to create the widget from the viz.
 		IVisualizationSettings vizSettings = this.vizSettings;
 		if(!viz.getDefaultSettings().getClass().equals(vizSettings.getClass())) {
 			vizSettings = viz.getDefaultSettings();

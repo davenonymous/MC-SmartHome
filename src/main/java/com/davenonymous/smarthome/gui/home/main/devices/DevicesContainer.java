@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.gui.home.main.devices;
 
-import com.davenonymous.smarthome.data.TimeRange;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.DeviceSelectionEvent;
@@ -14,8 +13,8 @@ import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.requests.RequestDeviceDataPayload;
 import com.davenonymous.smarthome.networking.actions.requests.RequestVisualizationDataPayload;
-import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -81,7 +80,7 @@ public class DevicesContainer extends WidgetPanel {
 				}
 				ResourceLocation vizId = sensor.getDefaultVisualization();
 
-				var vizPayload = new RequestVisualizationDataPayload(event.device(), sensorId, vizId, sensor.getDefaultVisualizationSettings(event.device()), new TimeRange(TimeRangeEnum.LAST_6_HOURS));
+				var vizPayload = new RequestVisualizationDataPayload(event.device(), sensorId, vizId, sensor.getDefaultVisualizationSettings(event.device()), DashboardScreen.get().selectedHome.timeRange());
 				PacketDistributor.sendToServer(vizPayload);
 			}
 

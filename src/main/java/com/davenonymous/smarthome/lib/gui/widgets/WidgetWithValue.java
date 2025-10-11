@@ -24,11 +24,6 @@ public class WidgetWithValue<T> extends Widget implements IValueProvider<T> {
 		this.fireEvent(new ValueChangedEvent<T>(tmpVal, this.value));
 	}
 
-	public void valueChanged(T oldValue, T newValue) {
-		this.value = newValue;
-		this.fireEvent(new ValueChangedEvent<T>(oldValue, this.value));
-	}
-
 	@Override
 	public void setId(ResourceLocation id) {
 		this.id = id;

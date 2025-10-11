@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.blocks.minirack;
 import com.davenonymous.smarthome.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeSettings;
+import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.items.ServerDataComponent;
 import com.davenonymous.smarthome.lib.DimPos;
@@ -71,7 +72,7 @@ public class MiniRackBlockEntity extends HomeBlockEntity {
 				existingHome.get().setServerLocation(location);
 				existingHome.get().setName(serverData.name());
 			} else {
-				data.addHome(new HomeCore(serverData.id(), serverData.owner(), location, serverData.name(), new ArrayList<>(), new HomeSettings(), new ArrayList<>(), new ArrayList<>()));
+				data.addHome(new HomeCore(serverData.id(), serverData.owner(), location, serverData.name(), new ArrayList<>(), new HomeSettings(), new ArrayList<>(), new ArrayList<>(), TimeRangeEnum.LAST_HOUR));
 			}
 
 			data.setDirty();

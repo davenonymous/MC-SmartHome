@@ -38,6 +38,7 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 			var mc = Minecraft.getInstance();
 			if(mc.screen instanceof DashboardScreen dashboardScreen) {
 				var home = payload.home();
+
 				dashboardScreen.getMenu().ownedHomes.removeIf(h -> h.id().equals(home.id()));
 				dashboardScreen.getMenu().ownedHomes.add(home);
 
@@ -45,7 +46,6 @@ public record HomeInfoPayload(HomeCore home, HomeWorldInfo worldInfo) implements
 					dashboardScreen.selectedHome = home;
 				}
 
-				WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
 
 				dashboardScreen.getOrCreateGui().fireEvent(new GuiDataUpdatedEvent());
 			}

@@ -32,7 +32,6 @@ public class ProjectorBlockEntityRenderer implements BlockEntityRenderer<Project
 		UUID homeId = projector.home();
 		var optHome = ClientCache.getHome(homeId);
 		if(optHome.isEmpty()) {
-			// TODO: Request home info
 			return;
 		}
 

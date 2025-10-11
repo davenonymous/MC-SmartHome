@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.commands.duckdb;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.watcher.ActionDatabaseTask;
 import com.davenonymous.smarthome.watcher.WorldWatcherPool;
 import com.mojang.brigadier.Command;
@@ -30,6 +31,11 @@ public class StartWebUICommand implements Command<CommandSourceStack> {
 
 	@Override
 	public int run(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
+		if(SmartHome.uiRunning) {
+			context.getSource().sendFailure(Component.literal("UI is already running"));
+			return 0;
+		}
+
 		if(WorldWatcherPool.taskQueue == null) {
 			context.getSource().sendFailure(Component.literal("No database connection"));
 			return 0;
@@ -57,6 +63,8 @@ public class StartWebUICommand implements Command<CommandSourceStack> {
 				stmt.execute("SET ui_local_port = "+finalPort+"; CALL " + (finalOpenBrowser ? "start_ui()" : "start_ui_server()"));
 				stmt.close();
 				context.getSource().sendSuccess(() -> Component.literal("UI started"), true);
+				SmartHome.LOGGER.info("DuckDB UI started on port {} by {}", finalPort, context.getSource().getTextName());
+				SmartHome.uiRunning = true;
 			} catch (SQLException e) {
 				context.getSource().sendFailure(Component.literal("SQL Error: " + e.getMessage()));
 			}

@@ -1,11 +1,16 @@
 package com.davenonymous.smarthome.gui.home;
 
+import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.gui.DashboardScreen;
+import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
+import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
+import com.davenonymous.smarthome.networking.actions.SetTimeRangePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class HeaderWidget extends WidgetHBox {
 	WidgetTextBox titleText;
@@ -25,8 +30,13 @@ public class HeaderWidget extends WidgetHBox {
 
 		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
 
-		this.timeRangeWidget = new TimeRangeWidget();
-		this.addFlexBox(this.timeRangeWidget, FlexAlign.CENTER, 1);
+		this.timeRangeWidget = new TimeRangeWidget(dashboardScreen.selectedHome.timeRange());
+		this.timeRangeWidget.addListener(
+			ValueChangedEvent.class, (event, widget) -> {
+			PacketDistributor.sendToServer(new SetTimeRangePayload(dashboardScreen.selectedHome.id(), (TimeRangeEnum) event.newValue));
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+		this.addContentBox(this.timeRangeWidget, FlexAlign.CENTER);
 
 		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
 

@@ -1,10 +1,10 @@
 package com.davenonymous.smarthome.api.sensor;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.data.TimeRange;
+import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import org.duckdb.DuckDBConnection;
@@ -13,7 +13,10 @@ import org.slf4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -62,7 +65,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 		};
 	}
 
-	public Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> getValues(UUID deviceId, TimeRange timeRange) {
+	public Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> getValues(UUID deviceId, TimeRangeEnum timeRange) {
 		return connection -> {
 			String numericColumns = sensor.getColumns().stream()
 				.filter(sensorColumn -> sensorColumn.type().isNumeric())

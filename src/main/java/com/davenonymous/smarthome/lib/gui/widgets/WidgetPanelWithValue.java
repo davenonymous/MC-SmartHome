@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.lib.gui.widgets;
 
 
+import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import net.minecraft.resources.ResourceLocation;
 
 public abstract class WidgetPanelWithValue<T> extends WidgetPanel implements IValueProvider<T> {
@@ -28,8 +29,10 @@ public abstract class WidgetPanelWithValue<T> extends WidgetPanel implements IVa
 	}
 
 	@Override
-	public void setValue(T value) {
-		this.value = value;
+	public void setValue(T newValue) {
+		T tmpVal = this.value;
+		this.value = newValue;
+		this.fireEvent(new ValueChangedEvent<T>(tmpVal, this.value));
 	}
 
 	public boolean hasValue() {

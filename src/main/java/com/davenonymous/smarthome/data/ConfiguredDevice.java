@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.data;
 
 import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -28,6 +29,16 @@ public record ConfiguredDevice(UUID id, BlockPos pos, String name, ResourceLocat
 
 	public Optional<SensorSettings> getSettings(ResourceLocation sensorId) {
 		return Optional.ofNullable(sensors.get(sensorId));
+	}
+
+	public boolean genericSensorsOnly() {
+		for(var sensorId : sensors.keySet()) {
+			var sensor = ModSensors.getById(sensorId);
+			if(sensor != null && !sensor.isGeneric()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean matches(Block block) {

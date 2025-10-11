@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.commands.duckdb;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.watcher.ActionDatabaseTask;
 import com.davenonymous.smarthome.watcher.WorldWatcherPool;
 import com.mojang.brigadier.Command;
@@ -37,6 +38,7 @@ public class StopWebUICommand implements Command<CommandSourceStack> {
 				stmt.execute("CALL stop_ui_server()");
 				stmt.close();
 				context.getSource().sendSuccess(() -> Component.literal("UI stopped"), true);
+				SmartHome.uiRunning = false;
 			} catch (SQLException e) {
 				context.getSource().sendFailure(Component.literal("SQL Error: " + e.getMessage()));
 			}

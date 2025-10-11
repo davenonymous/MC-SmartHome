@@ -5,7 +5,7 @@ import com.davenonymous.smarthome.api.sensor.ISensorData;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
-import com.davenonymous.smarthome.data.TimeRange;
+import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.networking.data.VisualizationDataPayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -27,14 +27,14 @@ import java.util.LinkedHashMap;
 import java.util.function.Function;
 
 @Packet
-public record RequestVisualizationDataPayload(ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationSettings settings, TimeRange timeRange)  implements LibPacketPayload {
+public record RequestVisualizationDataPayload(ConfiguredDevice device, ResourceLocation sensorId, ResourceLocation vizId, IVisualizationSettings settings, TimeRangeEnum timeRange)  implements LibPacketPayload {
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, RequestVisualizationDataPayload> CODEC = StreamCodec.composite(
 		ConfiguredDevice.STREAM_CODEC, RequestVisualizationDataPayload::device,
 		ResourceLocation.STREAM_CODEC, RequestVisualizationDataPayload::sensorId,
 		ResourceLocation.STREAM_CODEC, RequestVisualizationDataPayload::vizId,
 		IVisualizationSettings.STREAM_CODEC, RequestVisualizationDataPayload::settings,
-		TimeRange.STREAM_CODEC, RequestVisualizationDataPayload::timeRange,
+		TimeRangeEnum.STREAM_CODEC, RequestVisualizationDataPayload::timeRange,
 		RequestVisualizationDataPayload::new
 	);
 

@@ -23,6 +23,7 @@ public class SmartHome {
 
 	public static ModContainer CONTAINER;
 	public static GuiTheme theme = new Vanilla();
+	public static boolean uiRunning = false;
 
 	public SmartHome(IEventBus modEventBus, ModContainer modContainer){
 		CONTAINER = modContainer;

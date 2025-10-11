@@ -5,6 +5,7 @@ import com.davenonymous.smarthome.lib.gui.WidgetBlockEntityContainer;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.davenonymous.smarthome.setup.content.ModContainers;
+import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,6 +29,10 @@ public class DashboardContainer extends WidgetBlockEntityContainer<DashboardBloc
 		var data = OpenHomeScreenPayload.CODEC.decode(buf);
 		ownedHomes = data.homes();
 		homeWorldInfo = data.worldInfo();
+
+		for(var home : ownedHomes) {
+			WorldWatcherUtil.autoIgnoreGenericOnlyDevices(home);
+		}
 	}
 
 }

@@ -38,16 +38,17 @@ public class HomeCore {
 	HomeSettings settings;
 	List<HomeCard> cards;
 	List<HomeDashboard> dashboards;
+	TimeRangeEnum timeRange;
 
 	// internal values, not serialized
 	AABB bounds;
 	VoxelShape shape;
 
 	public HomeCore(String name, UUID owner, DimPos serverLocation) {
-		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>(), new HomeSettings(), new ArrayList<>(), new ArrayList<>());
+		this(UUID.randomUUID(), owner, serverLocation, name, new ArrayList<>(), new HomeSettings(), new ArrayList<>(), new ArrayList<>(), TimeRangeEnum.LAST_HOUR);
 	}
 
-	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones, HomeSettings settings, List<HomeCard> cards, List<HomeDashboard> dashboards) {
+	public HomeCore(UUID id, UUID owner, DimPos serverLocation, String name, List<HomeZone> zones, HomeSettings settings, List<HomeCard> cards, List<HomeDashboard> dashboards, TimeRangeEnum timeRange) {
 		this.name = name;
 		this.id = id;
 		this.owner = owner;
@@ -57,6 +58,7 @@ public class HomeCore {
 		this.settings = settings;
 		this.cards = new ArrayList<>(cards);
 		this.dashboards = new ArrayList<>(dashboards);
+		this.timeRange = timeRange;
 		updateBounds();
 	}
 
@@ -72,6 +74,7 @@ public class HomeCore {
 			this.settings = core.settings;
 			this.cards = new ArrayList<>(core.cards);
 			this.dashboards = new ArrayList<>(core.dashboards);
+			this.timeRange = core.timeRange;
 		} else {
 			this.name = "invalid";
 			this.zones = new ArrayList<>();
@@ -208,6 +211,11 @@ public class HomeCore {
 		}
 	}
 
+	public HomeCore setTimeRange(TimeRangeEnum timeRange) {
+		this.timeRange = timeRange;
+		return this;
+	}
+
 	public CompoundTag writeToNBT(CompoundTag nbt) {
 		Optional<Tag> encoded = CODEC.codec().encodeStart(NbtOps.INSTANCE, this).result();
 		encoded.ifPresent(tag -> nbt.put("home", tag));
@@ -302,6 +310,10 @@ public class HomeCore {
 		return serverLocation;
 	}
 
+	public TimeRangeEnum timeRange() {
+		return timeRange;
+	}
+
 	public static final MapCodec<HomeCore> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
 			UUIDUtil.STRING_CODEC.fieldOf("id").forGetter(HomeCore::id),
 			UUIDUtil.STRING_CODEC.fieldOf("owner").forGetter(HomeCore::owner),
@@ -310,7 +322,8 @@ public class HomeCore {
 			HomeZone.CODEC.codec().listOf().fieldOf("zones").forGetter(HomeCore::zones),
 			HomeSettings.CODEC.codec().optionalFieldOf("settings", new HomeSettings()).forGetter(HomeCore::settings),
 			HomeCard.CODEC.codec().listOf().optionalFieldOf("cards", new ArrayList<>()).forGetter(HomeCore::cards),
-			HomeDashboard.CODEC.codec().listOf().optionalFieldOf("dashboards", new ArrayList<>()).forGetter(HomeCore::dashboards)
+			HomeDashboard.CODEC.codec().listOf().optionalFieldOf("dashboards", new ArrayList<>()).forGetter(HomeCore::dashboards),
+			TimeRangeEnum.CODEC.optionalFieldOf("time_range", TimeRangeEnum.LAST_HOUR).forGetter(HomeCore::timeRange)
 	).apply(instance, HomeCore::new));
 
 	public static final StreamCodec<RegistryFriendlyByteBuf, HomeCore> STREAM_CODEC = BiggerStreamCodec.composite(
@@ -322,6 +335,7 @@ public class HomeCore {
 		HomeSettings.STREAM_CODEC, HomeCore::settings,
 		HomeCard.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::cards,
 		HomeDashboard.STREAM_CODEC.apply(ByteBufCodecs.list()), HomeCore::dashboards,
+		TimeRangeEnum.STREAM_CODEC, HomeCore::timeRange,
 		HomeCore::new
 	);
 

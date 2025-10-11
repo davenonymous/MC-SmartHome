@@ -31,7 +31,6 @@ import java.util.*;
 
 public class ProjectorBlockEntity extends HomeBlockEntity {
 	private UUID selectedCard;
-	private TimeRange timeRange;
 
 	// These are client-side only!
 	private static Map<UUID, Widget> cardWidgets = new HashMap<>();
@@ -58,30 +57,11 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 		return this;
 	}
 
-	public ProjectorBlockEntity setTimeRange(TimeRange timeRange) {
-		if(this.timeRange != null && this.timeRange.equals(timeRange)) {
-			return this;
-		}
-
-		this.timeRange = timeRange;
-		this.setChanged();
-		return this;
-	}
-
-	public TimeRange timeRange() {
-		return timeRange;
-	}
-
 	@Override
 	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
 		super.loadAdditional(tag, registries);
 		if(tag.contains("card")) {
 			selectedCard = tag.getUUID("card");
-		}
-		if(tag.contains("timeRange")) {
-			timeRange = new TimeRange(tag.getCompound("timeRange"));
-		} else {
-			timeRange = new TimeRange(TimeRangeEnum.LAST_6_HOURS);
 		}
 	}
 
@@ -90,9 +70,6 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 		super.saveAdditional(tag, registries);
 		if(selectedCard != null) {
 			tag.putUUID("card", selectedCard);
-		}
-		if(timeRange != null) {
-			tag.put("timeRange", timeRange.writeToNBT());
 		}
 	}
 
@@ -164,11 +141,6 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 			this.setSelectedCard(cardId);
 		}
 
-		if(timeRange == null) {
-			timeRange = new TimeRange(TimeRangeEnum.LAST_6_HOURS);
-			this.setChanged();
-		}
-
 		var optCard = home.getCard(cardId);
 		if(optCard.isEmpty()) {
 			return;
@@ -195,11 +167,11 @@ public class ProjectorBlockEntity extends HomeBlockEntity {
 				continue;
 			}
 
-			PacketDistributor.sendToPlayersNear(level, null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 64, new HomeInfoPayload(home, new HomeWorldInfo(Map.of())));
+			PacketDistributor.sendToPlayersNear(level, null, blockPos.getX(), blockPos.getY(), blockPos.getZ(), 24, new HomeInfoPayload(home, new HomeWorldInfo(Map.of())));
 
 			var dbHandler = ModSensors.DB_HANDLERS.get(sensor.id());
 
-			var dbFunction = dbHandler.getValues(deviceId, timeRange);
+			var dbFunction = dbHandler.getValues(deviceId, home.timeRange());
 			for(var vizCardElement : vizElements) {
 
 				var vizId = vizCardElement.vizId();

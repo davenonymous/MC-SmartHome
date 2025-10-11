@@ -15,10 +15,6 @@ public record TimeRange(TimeRangeEnum mode, Instant customFrom, Instant customTo
 		this(mode, Instant.EPOCH, Instant.EPOCH);
 	}
 
-	public TimeRange(Instant customFrom, Instant customTo) {
-		this(TimeRangeEnum.CUSTOM, customFrom, customTo);
-	}
-
 	public TimeRange(CompoundTag nbt) {
 		this(
 			TimeRangeEnum.byId(nbt.getInt("Mode")),
@@ -28,16 +24,10 @@ public record TimeRange(TimeRangeEnum mode, Instant customFrom, Instant customTo
 	}
 
 	public Instant from() {
-		if(mode == TimeRangeEnum.CUSTOM) {
-			return customFrom;
-		}
 		return mode.from();
 	}
 
 	public Instant to() {
-		if(mode == TimeRangeEnum.CUSTOM) {
-			return customTo;
-		}
 		return Instant.now();
 	}
 
@@ -49,10 +39,6 @@ public record TimeRange(TimeRangeEnum mode, Instant customFrom, Instant customTo
 	public CompoundTag writeToNBT() {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putInt("Mode", mode.id());
-		if(mode == TimeRangeEnum.CUSTOM) {
-			nbt.putLong("CustomFrom", customFrom.toEpochMilli());
-			nbt.putLong("CustomTo", customTo.toEpochMilli());
-		}
 		return nbt;
 	}
 

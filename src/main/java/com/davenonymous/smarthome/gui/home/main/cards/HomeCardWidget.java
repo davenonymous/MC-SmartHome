@@ -1,12 +1,9 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
-import com.davenonymous.smarthome.blocks.projector.ProjectorBlockEntity;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
-import com.davenonymous.smarthome.data.TimeRange;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.CardElementSelectedEvent;
@@ -41,7 +38,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -152,7 +148,7 @@ public class HomeCardWidget extends WidgetPanel {
 				var position = element.getFirst();
 				var elementWidget = element.getSecond().createWidget();
 				if(elementWidget != null) {
-					elementWidget.setPosition((int)position.x, (int)position.y);
+					elementWidget.setPosition((int) position.x, (int) position.y);
 
 					if(element.getSecond() instanceof VisualizationCardElement vizCardElement) {
 						for(UUID deviceId : vizCardElement.devices()) {
@@ -162,30 +158,25 @@ public class HomeCardWidget extends WidgetPanel {
 							}
 
 							if(Minecraft.getInstance().screen != null && DashboardScreen.get() != null) {
-								TimeRange timeRange = new TimeRange(TimeRangeEnum.LAST_6_HOURS);
-								BlockEntity openingEntity = DashboardScreen.get().blockEntity;
-								if(openingEntity instanceof DashboardBlockEntity dashy) {
-									timeRange = dashy.timeRange();
-								}
-								if(openingEntity instanceof ProjectorBlockEntity projector) {
-									timeRange = projector.timeRange();
-								}
-								var payload = new RequestVisualizationDataPayload(optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings(), timeRange);
+								var home = DashboardScreen.get().selectedHome;
+								var payload = new RequestVisualizationDataPayload(optDevice.get().getSecond(), vizCardElement.sensorId(), vizCardElement.vizId(), vizCardElement.vizSettings(), home.timeRange());
 								PacketDistributor.sendToServer(payload);
 							}
 						}
 
 						if(editMode) {
 							var scaleHandler = new ScaleHandle(elementWidget);
-							scaleHandler.addListener(ScaleHandleResizedEvent.class, (event, widget) -> {
-								PacketDistributor.sendToServer(new SetCardElementSizePayload(
-									DashboardScreen.get().selectedHome.id(),
-									this.homeCard.id(),
-									elementId,
-									new Vec2(event.attachedTo().width, event.attachedTo().height)
-								));
-								return WidgetEventResult.HANDLED;
-							});
+							scaleHandler.addListener(
+								ScaleHandleResizedEvent.class, (event, widget) -> {
+									PacketDistributor.sendToServer(new SetCardElementSizePayload(
+										DashboardScreen.get().selectedHome.id(),
+										this.homeCard.id(),
+										elementId,
+										new Vec2(event.attachedTo().width, event.attachedTo().height)
+									));
+									return WidgetEventResult.HANDLED;
+								}
+							);
 							contentArea.add(scaleHandler);
 							scaleHandler.updateWidgetSizes();
 
@@ -196,17 +187,19 @@ public class HomeCardWidget extends WidgetPanel {
 					if(editMode) {
 						String elementIdString = elementId.toString();
 
-						elementWidget.addListener(MouseClickEvent.class, (event, widget) -> {
-							if(!elementWidget.isHovered()) {
+						elementWidget.addListener(
+							MouseClickEvent.class, (event, widget) -> {
+								if(!elementWidget.isHovered()) {
+									return WidgetEventResult.CONTINUE_PROCESSING;
+								}
+
+								this.relativeClickX = getMouseX() - contentArea.x - elementWidget.x;
+								this.relativeClickY = getMouseY() - contentArea.y - elementWidget.y;
+
+								this.fireEvent(new CardElementSelectedEvent(elementWidget, elementId));
 								return WidgetEventResult.CONTINUE_PROCESSING;
 							}
-
-							this.relativeClickX = getMouseX() - contentArea.x - elementWidget.x;
-							this.relativeClickY = getMouseY() - contentArea.y - elementWidget.y;
-
-							this.fireEvent(new CardElementSelectedEvent(elementWidget, elementId));
-							return WidgetEventResult.CONTINUE_PROCESSING;
-						});
+						);
 
 						elementWidget.addListener(
 							MouseDraggedEvent.class, (event, widget) -> {
@@ -223,7 +216,8 @@ public class HomeCardWidget extends WidgetPanel {
 									newScaleHandleY
 								);
 								return WidgetEventResult.CONTINUE_PROCESSING;
-							});
+							}
+						);
 
 						elementWidget.addListener(
 							MouseReleasedEvent.class, (event, widget) -> {
@@ -233,7 +227,8 @@ public class HomeCardWidget extends WidgetPanel {
 
 								this.fireEvent(new WidgetMovedEvent(elementWidget, elementId));
 								return WidgetEventResult.HANDLED;
-							});
+							}
+						);
 					}
 
 					contentArea.add(elementWidget);
@@ -276,7 +271,7 @@ public class HomeCardWidget extends WidgetPanel {
 		if(Minecraft.getInstance().screen == null) {
 			guiGraphics.pose().translate(0, 0, -2);
 		}
-		guiGraphics.fill(3, 3, width()-3, height()-3, 0x88000000);
+		guiGraphics.fill(3, 3, width() - 3, height() - 3, 0x88000000);
 
 		if(Minecraft.getInstance().screen == null) {
 			guiGraphics.pose().translate(0, 0, -2);

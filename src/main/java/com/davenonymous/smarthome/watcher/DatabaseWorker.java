@@ -1,14 +1,19 @@
 package com.davenonymous.smarthome.watcher;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.chat.Component;
 import org.duckdb.DuckDBConnection;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CompletableFuture;
 
 public class DatabaseWorker extends Thread {
 	public static final Logger LOGGER = LogUtils.getLogger();
@@ -22,6 +27,7 @@ public class DatabaseWorker extends Thread {
 		super("SmartHome DuckDB Worker");
 		this.dbPath = dbPath;
 		this.taskQueue = taskQueue;
+		this.setDaemon(true);
 	}
 
 	private void establishConnection() {
@@ -65,22 +71,57 @@ public class DatabaseWorker extends Thread {
 		if(connection != null) {
 			try {
 				connection.close();
+				connection = null;
 			} catch (SQLException e) {
 				LOGGER.error("Error closing DuckDB connection", e);
 			}
 		}
 	}
 
+	private void runRemainingNow() {
+		if(taskQueue == null) {
+			return;
+		}
+
+		List<DatabaseTask<?>> drained = new LinkedList();
+		taskQueue.drainTo(drained);
+		CompletableFuture<?>[] futures = new CompletableFuture[drained.size()];
+		// Run all remaining tasks in the current thread
+		// This is important to ensure that all tasks are completed before the server exits
+		int i = 0;
+		for(var remainingTask : drained) {
+			remainingTask.setConnection(connection);
+			futures[i++] = remainingTask.call();
+		}
+
+		CompletableFuture.allOf(futures).join();
+	}
+
 	@Override
 	public void run() {
 		establishConnection();
 
-		LOGGER.info("Entering world watcher loop");
+		LOGGER.info("Started Database Worker thread, entering main loop");
 		try {
 			while(isRunning) {
 				DatabaseTask task = taskQueue.take();
 				if(task == WorldWatcherPool.POISON_PILL) {
-					LOGGER.info("Received poison pill, exiting world watcher loop");
+					if(SmartHome.uiRunning) {
+						var stopUiTask = new ActionDatabaseTask(connection -> {
+							try {
+								var stmt = connection.createStatement();
+								stmt.execute("CALL stop_ui_server()");
+								stmt.close();
+								SmartHome.uiRunning = false;
+								LOGGER.info("UI server stopped");
+							} catch (SQLException e) {
+								LOGGER.error("Failed to stop UI server on shutdown", e);
+							}
+						});
+						stopUiTask.enqueue(taskQueue);
+					}
+					LOGGER.info("Received poison pill, running remaining {} tasks before exiting thread", taskQueue.size());
+					runRemainingNow();
 					break;
 				}
 				task.setConnection(connection);
@@ -88,13 +129,15 @@ public class DatabaseWorker extends Thread {
 				task.setConnection(null);
 			}
 		} catch (InterruptedException e) {
+			LOGGER.info("Database worker thread interrupted, running remaining {} tasks before exiting thread", taskQueue.size());
+			runRemainingNow();
 			Thread.currentThread().interrupt();
 		}
 
-		LOGGER.info("Exiting world watcher loop, closing DuckDB connection");
+		LOGGER.info("Exiting database worker thread, closing DuckDB connection");
 		closeConnection();
 
-		LOGGER.info("Stopping world watcher thread");
+		LOGGER.info("Stopped database worker");
 	}
 
 	public void close() {

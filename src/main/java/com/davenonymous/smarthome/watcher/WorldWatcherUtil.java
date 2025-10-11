@@ -83,6 +83,28 @@ public class WorldWatcherUtil {
 			result.put(zone, foundDevices);
 		}
 
+		for(var zone : home.zones()) {
+			List<ConfiguredDevice> toRemove = new ArrayList<>();
+			for(var device : zone.devices()) {
+				if(!device.ignored()) {
+					continue;
+				}
+
+				var state = level.getBlockState(device.pos());
+				if(device.matches(state)) {
+					continue;
+				}
+
+				if(!device.genericSensorsOnly()) {
+					continue;
+				}
+
+				toRemove.add(device);
+			}
+
+			toRemove.forEach(zone::removeDevice);
+		}
+
 		home.setFoundDevices(result);
 	}
 

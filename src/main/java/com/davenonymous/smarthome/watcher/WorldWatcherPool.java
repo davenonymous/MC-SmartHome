@@ -8,6 +8,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
@@ -56,6 +57,7 @@ public class WorldWatcherPool {
 		databaseWorker = new DatabaseWorker(path, taskQueue);
 		databaseWorker.setUncaughtExceptionHandler((thread, throwable) -> {
 			SmartHome.LOGGER.error("Uncaught exception in database worker thread", throwable);
+			throw new RuntimeException(throwable);
 		});
 		databaseWorker.start();
 	}
@@ -104,6 +106,7 @@ public class WorldWatcherPool {
 	@SubscribeEvent
 	public static void onServerStopped(ServerStoppedEvent event) {
 		taskQueue = null;
+		databaseWorker.close();
 	}
 
 }
