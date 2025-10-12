@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.HomeZone;
+import com.davenonymous.smarthome.gui.general.TrashButton;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
@@ -92,18 +93,8 @@ public class ZoneDetailWidget extends WidgetVBox {
 		devicesList.setSpacing(2);
 		this.addContentBox(devicesList, FlexAlign.FILL);
 
-		deleteIcon = new WidgetSprite(HackerNoon.Solid.trash);
+		deleteIcon = new TrashButton(DELETE_ZONE);
 		deleteIcon.setPosition(this.width() - 10, this.height() - 10);
-		deleteIcon.setColor(0xFFAAAAAA);
-		deleteIcon.setScale(0.5f);
-		deleteIcon.addListener(MouseEnterEvent.class, (event, widget) -> {
-			deleteIcon.setColor(0xFF904444);
-			return WidgetEventResult.CONTINUE_PROCESSING;
-		});
-		deleteIcon.addListener(MouseExitEvent.class, (event, widget) -> {
-			deleteIcon.setColor(0xFFAAAAAA);
-			return WidgetEventResult.CONTINUE_PROCESSING;
-		});
 		deleteIcon.addListener(MouseClickEvent.class, (event, widget) -> {
 			if(selectedZone == null) {
 				return WidgetEventResult.CONTINUE_PROCESSING;
@@ -118,7 +109,6 @@ public class ZoneDetailWidget extends WidgetVBox {
 			PacketDistributor.sendToServer(new MarkZoneAsDeletedPayload(homeId, zoneId, false));
 			return WidgetEventResult.HANDLED;
 		});
-		deleteIcon.setTooltipElements(WrappedStringTooltipComponent.orange(DELETE_ZONE.get()));
 		this.add(deleteIcon);
 	}
 

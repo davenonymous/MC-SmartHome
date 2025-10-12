@@ -4,11 +4,17 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.DashboardScreen;
+import com.davenonymous.smarthome.gui.events.ElementRemovedEvent;
 import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;
+import com.davenonymous.smarthome.gui.general.TrashButton;
+import com.davenonymous.smarthome.lib.HackerNoon;
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
+import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -36,6 +42,10 @@ public class ElementSettingsWidget extends WidgetVBox {
 	@I18DataGen(lang = "en_us", string = "Element Settings")
 	@I18DataGen(lang = "de_de", string = "Element Einstellungen")
 	public static final I18String ELEMENT_SETTINGS_TITLE = I18String.gui("home.cards.element_settings", "title");
+
+	@I18DataGen(lang = "en_us", string = "Hold Ctrl + Shift and click to remove this element")
+	@I18DataGen(lang = "de_de", string = "Halte Strg + Shift und klicke, um dieses Element zu entfernen")
+	public static final I18String DELETE_ELEMENT_TOOLTIP = I18String.gui("home.card.element_settings", "delete.tooltip");
 
 	HomeCardElement<?> element = null;
 
@@ -96,6 +106,18 @@ public class ElementSettingsWidget extends WidgetVBox {
 					this.addContentBox(w, FlexAlign.START);
 				}
 			}
+
+			var trashButton = new TrashButton(DELETE_ELEMENT_TOOLTIP);
+			trashButton.addListener(MouseClickEvent.class, (event, widget) -> {
+				if(!getGUI().isCtrlDown() || !getGUI().isShiftDown()) {
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				}
+
+				this.fireEvent(new ElementRemovedEvent(element.id()));
+				this.setElement(null);
+				return WidgetEventResult.HANDLED;
+			});
+			this.addContentBox(trashButton, FlexAlign.END);
 		} else {
 			var label = new WidgetTextBox(NO_ELEMENT_SELECTED.get(), 0xFFAAAAAA);
 			label.setWordWrap(true);

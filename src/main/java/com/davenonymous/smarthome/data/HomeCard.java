@@ -99,9 +99,9 @@ public record HomeCard(UUID id, String label, ResourceLocation icon, Vec2 size, 
 		return new HomeCard(id, label, icon, size, newElements, entities);
 	}
 
-	public HomeCard withoutElement(HomeCardElement<?> element) {
+	public HomeCard withoutElement(UUID elementId) {
 		var newElements = new HashMap<>(this.elements);
-		newElements.remove(element.id());
+		newElements.remove(elementId);
 		return new HomeCard(id, label, icon, size, newElements, entities);
 	}
 

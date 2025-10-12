@@ -93,6 +93,7 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 
 	@Override
 	public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+		gui.keyUp(scanCode);
 		if(gui.fireEvent(new KeyReleasedEvent(keyCode, scanCode, modifiers)) == WidgetEventResult.CONTINUE_PROCESSING) {
 			return super.keyReleased(keyCode, scanCode, modifiers);
 		}
@@ -109,6 +110,7 @@ public abstract class WidgetContainerScreen<T extends WidgetContainer> extends A
 
 	@Override
 	public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+		gui.keyDown(scanCode);
 		if(gui.fireEvent(new KeyPressedEvent(keyCode, scanCode, modifiers)) == WidgetEventResult.CONTINUE_PROCESSING) {
 			InputConstants.Key mouseKey = InputConstants.getKey(keyCode, scanCode);
 			if(Minecraft.getInstance().options.keyInventory.isActiveAndMatches(mouseKey)) {

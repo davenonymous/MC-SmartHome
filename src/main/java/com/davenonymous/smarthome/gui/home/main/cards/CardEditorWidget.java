@@ -56,6 +56,21 @@ public class CardEditorWidget extends WidgetPanel {
 			));
 			return WidgetEventResult.HANDLED;
 		});
+		elementSettingsWidget.addListener(ElementRemovedEvent.class, (event, widget) -> {
+			var elementId = event.id();
+			PacketDistributor.sendToServer(new RemoveCardElementPayload(
+				DashboardScreen.get().selectedHome.id(),
+				card().id(),
+				elementId
+			));
+
+			if(selectedElementId != null && selectedElementId.equals(elementId)) {
+				selectedElementId = null;
+				selectedElementWidget = null;
+			}
+
+			return WidgetEventResult.HANDLED;
+		});
 		this.add(elementSettingsWidget);
 
 		cardElementsContainer = new CardElementsContainer();
@@ -90,6 +105,19 @@ public class CardEditorWidget extends WidgetPanel {
 
 			setCardWidget(optCurrentCard.get().createWidget(true));
 			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+
+		this.addListener(MouseClickEvent.class, (event, widget) -> {
+			var hoveredChild = getHoveredWidget((int)event.x, (int)event.y);
+			if(hoveredChild != null) {
+				return WidgetEventResult.CONTINUE_PROCESSING;
+			}
+			if(selectedElementWidget != null) {
+				selectedElementWidget = null;
+				selectedElementId = null;
+				elementSettingsWidget.setElement(null);
+			}
+			return WidgetEventResult.HANDLED;
 		});
 	}
 

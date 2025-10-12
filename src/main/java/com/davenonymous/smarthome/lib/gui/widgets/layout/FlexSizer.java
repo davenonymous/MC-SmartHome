@@ -305,7 +305,7 @@ public abstract class FlexSizer extends WidgetPanel {
 							box.setWidth(this.width - paddingHorizontal*2);
 							break;
 						case END:
-							box.setX(paddingHorizontal + this.width - box.width);
+							box.setX(this.width - box.width - paddingHorizontal);
 							break;
 					}
 				}

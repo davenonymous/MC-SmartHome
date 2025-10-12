@@ -76,6 +76,7 @@
   "smarthome.gui.devices.add.ignore_device.hint": "Ignorierte Geräte können später über das Einstellungsmenü hinzugefügt werden.",
   "smarthome.gui.devices.add.renameable": "Klicken zum Umbenennen",
   "smarthome.gui.devices.add.sensors.count": "%d Sensoren",
+  "smarthome.gui.home.card.element_settings.delete.tooltip": "Halte Strg + Shift und klicke, um dieses Element zu entfernen",
   "smarthome.gui.home.cards.add_cards.hint": "Name eingeben",
   "smarthome.gui.home.cards.element_settings.no_element_selected": "Kein Element ausgewählt",
   "smarthome.gui.home.cards.element_settings.no_settings_available": "Keine Einstellungen für dieses Element verfügbar",
