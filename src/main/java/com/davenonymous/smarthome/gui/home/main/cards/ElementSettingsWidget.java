@@ -3,18 +3,14 @@ package com.davenonymous.smarthome.gui.home.main.cards;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
-import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.ElementRemovedEvent;
 import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;
 import com.davenonymous.smarthome.gui.general.TrashButton;
-import com.davenonymous.smarthome.lib.HackerNoon;
-import com.davenonymous.smarthome.lib.gui.ColorHelper;
-import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
 import com.davenonymous.smarthome.lib.gui.event.MouseClickEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
-import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -24,6 +20,9 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.phys.Vec2;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ElementSettingsWidget extends WidgetVBox {
 
@@ -48,6 +47,7 @@ public class ElementSettingsWidget extends WidgetVBox {
 	public static final I18String DELETE_ELEMENT_TOOLTIP = I18String.gui("home.card.element_settings", "delete.tooltip");
 
 	HomeCardElement<?> element = null;
+	List<Widget> settingsWidgets = new ArrayList<>();
 
 	public ElementSettingsWidget() {
 		super();
@@ -63,6 +63,10 @@ public class ElementSettingsWidget extends WidgetVBox {
 			return this;
 		}
 
+		if(this.element.preventsReloadOnGuiUpdate(settingsWidgets)) {
+			return this;
+		}
+
 		Pair<Vec2, HomeCardElement<?>> newElement = card.elements().get(this.element.id());
 		if(newElement == null || newElement.getSecond() == null) {
 			setElement(null);
@@ -74,6 +78,7 @@ public class ElementSettingsWidget extends WidgetVBox {
 
 	public ElementSettingsWidget setElement(HomeCardElement<?> element) {
 		this.element = element;
+		this.settingsWidgets.clear();
 		this.clear();
 
 		var title = new WidgetTextBox(ELEMENT_SETTINGS_TITLE.get(), 0xFFFFFFFF);
@@ -84,7 +89,7 @@ public class ElementSettingsWidget extends WidgetVBox {
 		this.addContentBox(title, FlexAlign.CENTER);
 
 		if(element != null) {
-			var settingsWidgets = element.createSettingWidgets();
+			settingsWidgets = new ArrayList<>(element.createSettingWidgets());
 			if(settingsWidgets.isEmpty()) {
 				var label = new WidgetTextBox(NO_SETTINGS_AVAILABLE.get(), 0xFFAAAAAA);
 				label.setWordWrap(true);

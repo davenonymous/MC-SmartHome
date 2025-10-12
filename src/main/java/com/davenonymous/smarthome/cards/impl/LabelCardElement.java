@@ -94,6 +94,12 @@ public record LabelCardElement(UUID id, String text, int color, boolean dropShad
 	}
 
 	@Override
+	public boolean preventsReloadOnGuiUpdate(List<Widget> settingsWidgets) {
+		var labelInput = (StringInputWidget)settingsWidgets.get(1);
+		return labelInput.nativeWidget().isFocused();
+	}
+
+	@Override
 	public LabelCardElement loadSettings(List<Widget> settingsWidgets) {
 		var labelInput = (StringInputWidget)settingsWidgets.get(1);
 		return new LabelCardElement(id, labelInput.getValue(), color, false);

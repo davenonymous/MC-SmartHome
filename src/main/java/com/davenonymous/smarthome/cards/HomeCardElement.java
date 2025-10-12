@@ -38,6 +38,10 @@ public interface HomeCardElement<T extends Widget> {
 		return List.of();
 	}
 
+	default boolean preventsReloadOnGuiUpdate(List<Widget> settingsWidgets) {
+		return false;
+	}
+
 	UUID id();
 
 	T createWidget();
