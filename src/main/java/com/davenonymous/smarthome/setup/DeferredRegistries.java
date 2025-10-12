@@ -1,10 +1,10 @@
 package com.davenonymous.smarthome.setup;
 
-import com.davenonymous.smarthome.cards.HomeCardElementCodecRegistry;
-import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
-import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
+import com.davenonymous.smarthome.content.cards.HomeCardElementCodecRegistry;
+import com.davenonymous.smarthome.content.sensor.SensorDataCodecRegistry;
+import com.davenonymous.smarthome.content.sensor.SensorSettingsCodecRegistry;
 import com.davenonymous.smarthome.setup.content.*;
-import com.davenonymous.smarthome.visualization.VisualizationSettingsCodecRegistry;
+import com.davenonymous.smarthome.content.visualization.VisualizationSettingsCodecRegistry;
 import net.neoforged.bus.api.IEventBus;
 
 public class DeferredRegistries {

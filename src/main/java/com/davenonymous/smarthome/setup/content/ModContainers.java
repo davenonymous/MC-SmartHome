@@ -1,12 +1,12 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardContainer;
-import com.davenonymous.smarthome.blocks.minirack.MiniRackContainer;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardContainer;
+import com.davenonymous.smarthome.content.blocks.minirack.MiniRackContainer;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.MiniRackScreen;
 import com.davenonymous.smarthome.gui.ServerScreen;
-import com.davenonymous.smarthome.items.ServerContainer;
+import com.davenonymous.smarthome.content.items.ServerContainer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.inventory.MenuType;
 import net.neoforged.bus.api.SubscribeEvent;

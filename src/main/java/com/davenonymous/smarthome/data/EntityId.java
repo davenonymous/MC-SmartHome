@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.data;
 
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

@@ -1,10 +1,10 @@
 package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.cards.SmartHomeCardElement;
-import com.davenonymous.smarthome.cards.HomeCardElementCodecRegistry;
-import com.davenonymous.smarthome.cards.HomeCardElement;
-import com.davenonymous.smarthome.cards.annotations.*;
+import com.davenonymous.smarthome.content.cards.SmartHomeCardElement;
+import com.davenonymous.smarthome.content.cards.HomeCardElementCodecRegistry;
+import com.davenonymous.smarthome.content.cards.HomeCardElement;
+import com.davenonymous.smarthome.content.cards.annotations.*;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
 import com.mojang.datafixers.util.Pair;

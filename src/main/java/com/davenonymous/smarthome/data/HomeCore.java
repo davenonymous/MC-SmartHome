@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.data;
 
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.lib.DimPos;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;

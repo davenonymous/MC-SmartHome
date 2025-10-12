@@ -1,12 +1,12 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.minirack.MiniRackBlock;
-import com.davenonymous.smarthome.blocks.minirack.MiniRackBlockEntity;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlock;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
-import com.davenonymous.smarthome.blocks.projector.ProjectorBlock;
-import com.davenonymous.smarthome.blocks.projector.ProjectorBlockEntity;
+import com.davenonymous.smarthome.content.blocks.minirack.MiniRackBlock;
+import com.davenonymous.smarthome.content.blocks.minirack.MiniRackBlockEntity;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlock;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.content.blocks.projector.ProjectorBlock;
+import com.davenonymous.smarthome.content.blocks.projector.ProjectorBlockEntity;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;

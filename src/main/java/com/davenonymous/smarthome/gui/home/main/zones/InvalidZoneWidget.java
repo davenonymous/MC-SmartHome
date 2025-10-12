@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.zones;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.items.RangerFinderDataComponent;
+import com.davenonymous.smarthome.content.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;

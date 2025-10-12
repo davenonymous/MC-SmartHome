@@ -1,12 +1,12 @@
 package com.davenonymous.smarthome.gui.home.main.zones;
 
-import com.davenonymous.smarthome.client.BoxRenderer;
+import com.davenonymous.smarthome.util.client.BoxRenderer;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.DashboardScreen;
-import com.davenonymous.smarthome.items.RangerFinderDataComponent;
+import com.davenonymous.smarthome.content.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
-import com.davenonymous.smarthome.particles.util.BoxLineCache;
+import com.davenonymous.smarthome.util.particles.util.BoxLineCache;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.math.Axis;

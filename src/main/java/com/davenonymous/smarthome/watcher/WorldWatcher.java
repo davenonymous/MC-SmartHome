@@ -1,17 +1,17 @@
 package com.davenonymous.smarthome.watcher;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.config.ServerConfig;
 import com.davenonymous.smarthome.data.EntityId;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
-import com.davenonymous.smarthome.api.sensor.sensortypes.BlockSensor;
-import com.davenonymous.smarthome.api.sensor.sensortypes.EntitySensor;
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.api.sensor.sensortypes.ZoneSensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.BlockSensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.EntitySensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.ZoneSensor;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;

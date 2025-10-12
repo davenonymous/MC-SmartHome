@@ -1,17 +1,16 @@
 package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.DBHandler;
-import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.SensorColumn;
-import com.davenonymous.smarthome.api.sensor.SensorColumnType;
-import com.davenonymous.smarthome.api.sensor.annotations.*;
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.watcher.db.DBHandler;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.SensorColumn;
+import com.davenonymous.smarthome.content.sensor.SensorColumnType;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.content.sensor.annotation.*;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
-import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
-import com.davenonymous.smarthome.sensor.annotation.SensorDataColumnLabel;
+import com.davenonymous.smarthome.content.sensor.SensorDataCodecRegistry;
+import com.davenonymous.smarthome.content.sensor.SensorSettingsCodecRegistry;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
 import com.davenonymous.smarthome.watcher.GroupBy;
 import com.mojang.serialization.MapCodec;

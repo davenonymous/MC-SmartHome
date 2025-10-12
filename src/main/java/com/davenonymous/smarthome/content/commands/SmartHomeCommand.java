@@ -1,0 +1,51 @@
+package com.davenonymous.smarthome.content.commands;
+
+import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.content.commands.debug.BuildDemoHouse;
+import com.davenonymous.smarthome.content.commands.debug.PacketsCommand;
+import com.davenonymous.smarthome.content.commands.debug.QueriesCommand;
+import com.davenonymous.smarthome.content.commands.debug.WindowCommand;
+import com.davenonymous.smarthome.content.commands.duckdb.ExecuteStatementCommand;
+import com.davenonymous.smarthome.content.commands.duckdb.RunQueryCommand;
+import com.davenonymous.smarthome.content.commands.duckdb.StartWebUICommand;
+import com.davenonymous.smarthome.content.commands.duckdb.StopWebUICommand;
+import com.davenonymous.smarthome.content.commands.home.DeleteHomeCommand;
+import com.davenonymous.smarthome.content.commands.home.ListHomesCommand;
+import com.davenonymous.smarthome.content.commands.home.ShowHomeCommand;
+import com.davenonymous.smarthome.content.commands.zone.CreateZoneCommand;
+import com.davenonymous.smarthome.content.commands.zone.DeleteZoneCommand;
+import com.davenonymous.smarthome.content.commands.zone.ListZonesCommand;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+
+public class SmartHomeCommand {
+
+	public static LiteralArgumentBuilder<CommandSourceStack> register(CommandDispatcher<CommandSourceStack> dispatcher) {
+		return Commands.literal(SmartHome.MODID).then(
+			Commands.literal("home")
+				.then(ListHomesCommand.registerCommand(dispatcher))
+				.then(ShowHomeCommand.registerCommand(dispatcher))
+				.then(DeleteHomeCommand.registerCommand(dispatcher))
+				.then(Commands.literal("zone").then(Commands.argument("home", StringArgumentType.string())
+					.then(CreateZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
+					.then(ListZonesCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
+					.then(DeleteZoneCommand.registerCommand(dispatcher).requires(CommandSourceStack::isPlayer))
+				))
+		).then(Commands.literal("duckdb").requires(PermissionLevel.isAdmin())
+			.then(RunQueryCommand.registerCommand(dispatcher))
+			.then(ExecuteStatementCommand.registerCommand(dispatcher))
+			.then(Commands.literal("webui")
+				.then(StartWebUICommand.registerCommand(dispatcher))
+				.then(StopWebUICommand.registerCommand(dispatcher))
+			)
+		).then(Commands.literal("debug").requires(PermissionLevel.isGameMaster())
+			.then(WindowCommand.registerCommand(dispatcher))
+			.then(BuildDemoHouse.registerCommand(dispatcher))
+			.then(PacketsCommand.registerCommand(dispatcher))
+			.then(QueriesCommand.registerCommand(dispatcher))
+		);
+	}
+}

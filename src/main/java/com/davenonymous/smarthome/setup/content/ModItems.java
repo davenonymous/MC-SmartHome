@@ -1,12 +1,12 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.minirack.MiniRackitem;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardItem;
-import com.davenonymous.smarthome.blocks.projector.ProjectorItem;
-import com.davenonymous.smarthome.items.IrdaTransceiverItem;
-import com.davenonymous.smarthome.items.RangeFinderItem;
-import com.davenonymous.smarthome.items.ServerItem;
+import com.davenonymous.smarthome.content.blocks.minirack.MiniRackitem;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardItem;
+import com.davenonymous.smarthome.content.blocks.projector.ProjectorItem;
+import com.davenonymous.smarthome.content.items.IrdaTransceiverItem;
+import com.davenonymous.smarthome.content.items.RangeFinderItem;
+import com.davenonymous.smarthome.content.items.ServerItem;
 import net.minecraft.world.item.BlockItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;

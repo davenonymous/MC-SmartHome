@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home.main.cards;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.content.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.HomeCard;
 import com.davenonymous.smarthome.gui.events.ElementRemovedEvent;
 import com.davenonymous.smarthome.gui.events.ElementSettingsChangedEvent;

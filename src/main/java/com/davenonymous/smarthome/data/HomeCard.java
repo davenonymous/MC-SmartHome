@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.data;
 
-import com.davenonymous.smarthome.cards.HomeCardElement;
-import com.davenonymous.smarthome.cards.impl.VisualizationCardElement;
+import com.davenonymous.smarthome.content.cards.HomeCardElement;
+import com.davenonymous.smarthome.content.cards.impl.VisualizationCardElement;
 import com.davenonymous.smarthome.gui.home.main.cards.HomeCardWidget;
 import com.davenonymous.smarthome.lib.HackerNoon;
 import com.davenonymous.smarthome.util.MoreCodecs;

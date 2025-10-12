@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.home.main.cards.vizsettings;
 
-import com.davenonymous.smarthome.api.visualization.IVisualization;
+import com.davenonymous.smarthome.content.visualization.IVisualization;
 import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;

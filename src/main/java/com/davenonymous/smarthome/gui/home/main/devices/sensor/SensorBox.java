@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.gui.home.main.devices.sensor;
 
-import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
-import com.davenonymous.smarthome.api.visualization.IVisualization;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.content.visualization.IVisualization;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
@@ -17,7 +17,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.actions.devices.SetSensorStatePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;

@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.events;
 
-import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.content.cards.HomeCardElement;
 import com.davenonymous.smarthome.lib.gui.event.IEvent;
 
 import java.util.UUID;

@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.items.ServerDataComponent;
-import com.davenonymous.smarthome.items.ServerItem;
+import com.davenonymous.smarthome.content.items.ServerDataComponent;
+import com.davenonymous.smarthome.content.items.ServerItem;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;

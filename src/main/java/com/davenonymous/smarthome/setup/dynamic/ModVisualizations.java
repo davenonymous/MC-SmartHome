@@ -1,16 +1,13 @@
 package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.visualization.IVisualization;
-import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
-import com.davenonymous.smarthome.cards.HomeCardElement;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementId;
-import com.davenonymous.smarthome.cards.annotations.HomeCardElementName;
+import com.davenonymous.smarthome.content.visualization.IVisualization;
+import com.davenonymous.smarthome.content.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
-import com.davenonymous.smarthome.visualization.annotations.VisualizationDescription;
-import com.davenonymous.smarthome.visualization.annotations.VisualizationId;
-import com.davenonymous.smarthome.visualization.annotations.VisualizationName;
+import com.davenonymous.smarthome.content.visualization.annotations.VisualizationDescription;
+import com.davenonymous.smarthome.content.visualization.annotations.VisualizationId;
+import com.davenonymous.smarthome.content.visualization.annotations.VisualizationName;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;

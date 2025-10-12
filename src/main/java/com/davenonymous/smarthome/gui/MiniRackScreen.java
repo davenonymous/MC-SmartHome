@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.blocks.minirack.MiniRackContainer;
+import com.davenonymous.smarthome.content.blocks.minirack.MiniRackContainer;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetContainerScreen;
 import net.minecraft.network.chat.Component;

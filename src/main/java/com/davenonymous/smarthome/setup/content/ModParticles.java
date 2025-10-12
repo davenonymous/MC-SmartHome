@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.particles.ModelParticleType;
+import com.davenonymous.smarthome.util.particles.ModelParticleType;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.neoforged.neoforge.registries.DeferredHolder;

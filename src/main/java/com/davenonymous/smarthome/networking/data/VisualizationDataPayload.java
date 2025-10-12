@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.networking.data;
 
-import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;

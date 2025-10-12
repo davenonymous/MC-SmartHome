@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardContainer;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardContainer;
 import com.davenonymous.smarthome.data.FoundDevice;
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.data.HomeZone;

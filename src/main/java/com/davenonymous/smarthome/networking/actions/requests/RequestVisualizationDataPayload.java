@@ -1,9 +1,9 @@
 package com.davenonymous.smarthome.networking.actions.requests;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.networking.data.VisualizationDataPayload;
@@ -12,7 +12,7 @@ import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
-import com.davenonymous.smarthome.watcher.VizQueryDatabaseTask;
+import com.davenonymous.smarthome.watcher.db.task.VizQueryDatabaseTask;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

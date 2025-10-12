@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlockEntity;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;

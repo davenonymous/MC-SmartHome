@@ -7,7 +7,7 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanelWithChoiceValue;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
-import com.davenonymous.smarthome.visualization.VizLegendStyle;
+import com.davenonymous.smarthome.content.visualization.VizLegendStyle;
 
 public class LegendStyleSelector extends WidgetPanelWithChoiceValue<VizLegendStyle> {
 	WidgetSprite icon;

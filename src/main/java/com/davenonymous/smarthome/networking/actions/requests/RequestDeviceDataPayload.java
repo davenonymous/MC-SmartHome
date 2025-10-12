@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.networking.actions.requests;
 
-import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.data.DeviceDataPayload;

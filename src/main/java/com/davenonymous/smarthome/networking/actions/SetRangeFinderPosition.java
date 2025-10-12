@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.networking.actions;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.items.RangeFinderItem;
-import com.davenonymous.smarthome.items.RangerFinderDataComponent;
+import com.davenonymous.smarthome.content.items.RangeFinderItem;
+import com.davenonymous.smarthome.content.items.RangerFinderDataComponent;
 import com.davenonymous.smarthome.setup.content.ModDataComponents;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;

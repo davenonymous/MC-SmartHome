@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.gui;
 
-import com.davenonymous.smarthome.items.ServerContainer;
-import com.davenonymous.smarthome.items.ServerDataComponent;
-import com.davenonymous.smarthome.items.ServerItem;
+import com.davenonymous.smarthome.content.items.ServerContainer;
+import com.davenonymous.smarthome.content.items.ServerDataComponent;
+import com.davenonymous.smarthome.content.items.ServerItem;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.WidgetContainerScreen;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;

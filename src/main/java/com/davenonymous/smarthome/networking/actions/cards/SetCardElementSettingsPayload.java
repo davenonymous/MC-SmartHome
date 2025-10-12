@@ -1,17 +1,13 @@
 package com.davenonymous.smarthome.networking.actions.cards;
 
-import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.cards.HomeCardElement;
+import com.davenonymous.smarthome.content.cards.HomeCardElement;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
-import com.davenonymous.smarthome.util.MoreCodecs;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlockEntity;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorContainer;

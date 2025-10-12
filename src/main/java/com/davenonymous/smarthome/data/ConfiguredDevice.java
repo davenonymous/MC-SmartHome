@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.data;
 
-import com.davenonymous.smarthome.api.sensor.settings.SensorSettings;
+import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.serialization.Codec;

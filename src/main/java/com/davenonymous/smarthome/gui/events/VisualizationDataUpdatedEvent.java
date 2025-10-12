@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.events;
 
-import com.davenonymous.smarthome.api.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.ISensorData;
 import com.davenonymous.smarthome.lib.gui.event.IEvent;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.resources.ResourceLocation;

@@ -1,8 +1,8 @@
 package com.davenonymous.smarthome.setup.content;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.items.RangerFinderDataComponent;
-import com.davenonymous.smarthome.items.ServerDataComponent;
+import com.davenonymous.smarthome.content.items.RangerFinderDataComponent;
+import com.davenonymous.smarthome.content.items.ServerDataComponent;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredHolder;

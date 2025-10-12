@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.blocks.dashboard.DashboardBlockEntity;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
@@ -8,7 +7,6 @@ import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
 import com.davenonymous.smarthome.setup.dynamic.base.LibPacketPayload;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;

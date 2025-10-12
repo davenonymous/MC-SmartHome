@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.gui.home.main.cards.vizsettings;
 
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.DashboardScreen;

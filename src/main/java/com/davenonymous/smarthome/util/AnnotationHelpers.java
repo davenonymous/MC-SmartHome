@@ -1,7 +1,7 @@
 package com.davenonymous.smarthome.util;
 
-import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
-import com.davenonymous.smarthome.api.sensor.SensorLoadException;
+import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
+import com.davenonymous.smarthome.content.sensor.SensorLoadException;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 

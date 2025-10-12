@@ -1,14 +1,13 @@
 package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
-import com.davenonymous.smarthome.api.visualization.SmartHomeVisualizationSettings;
+import com.davenonymous.smarthome.content.visualization.IVisualizationSettings;
+import com.davenonymous.smarthome.content.visualization.SmartHomeVisualizationSettings;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
-import com.davenonymous.smarthome.visualization.VisualizationSettingsCodecRegistry;
-import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsCodec;
-import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsId;
-import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsStreamCodec;
-import com.mojang.serialization.Codec;
+import com.davenonymous.smarthome.content.visualization.VisualizationSettingsCodecRegistry;
+import com.davenonymous.smarthome.content.visualization.annotations.VisualizationSettingsCodec;
+import com.davenonymous.smarthome.content.visualization.annotations.VisualizationSettingsId;
+import com.davenonymous.smarthome.content.visualization.annotations.VisualizationSettingsStreamCodec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
