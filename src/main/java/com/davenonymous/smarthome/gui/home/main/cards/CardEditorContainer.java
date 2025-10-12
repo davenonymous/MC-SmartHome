@@ -6,26 +6,20 @@ import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 public class CardEditorContainer extends WidgetPanel {
 	private CardListWidget existingCardButtons;
 	private AddNewCardButtonWidget addNewCardButton;
 	private int padding = 6;
 
-	private Map<UUID, CardEditorWidget> cardEditors;
 	private CardEditorWidget activeEditor = null;
 
 	public CardEditorContainer() {
 		super();
 
-		cardEditors = new HashMap<>();
 		existingCardButtons = new CardListWidget();
 		existingCardButtons.setPosition(padding, padding);
 		existingCardButtons.addListener(CardSelectedEvent.class, (event, widget) -> {
-			var editor = cardEditors.computeIfAbsent(event.card().id(), id -> new CardEditorWidget(event.card().createWidget(true)));
+			var editor = new CardEditorWidget(event.card().createWidget(true));
 			this.setActiveEditor(editor);
 			return WidgetEventResult.HANDLED;
 		});
@@ -47,7 +41,7 @@ public class CardEditorContainer extends WidgetPanel {
 
 	private CardEditorContainer setActiveEditor(CardEditorWidget editor) {
 		if(this.activeEditor != null) {
-			this.activeEditor.setVisible(false);
+			this.remove(activeEditor);
 		}
 
 		this.activeEditor = editor;

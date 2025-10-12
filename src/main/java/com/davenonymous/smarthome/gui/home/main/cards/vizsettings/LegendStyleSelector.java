@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.gui.home.main.cards.vizsettings;
 
+import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanelWithChoiceValue;
@@ -22,7 +23,7 @@ public class LegendStyleSelector extends WidgetPanelWithChoiceValue<VizLegendSty
 		legendLabel.autoWidth();
 		this.add(legendLabel);
 
-		icon = new WidgetSprite(VizLegendStyle.BOTTOM.icon());
+		icon = new WidgetSprite(VizLegendStyle.BOTTOM.icon(), 0xFFAAAAAA, ColorHelper.COLOR_ORANGE);
 		icon.setPosition(legendLabel.width + 4, 0);
 		this.add(icon);
 
