@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.commands;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.commands.debug.BuildDemoHouse;
 import com.davenonymous.smarthome.commands.debug.WindowCommand;
 import com.davenonymous.smarthome.commands.duckdb.ExecuteStatementCommand;
 import com.davenonymous.smarthome.commands.duckdb.RunQueryCommand;
@@ -39,6 +40,8 @@ public class SmartHomeCommand {
 				.then(StopWebUICommand.registerCommand(dispatcher))
 			)
 		).then(Commands.literal("debug").requires(PermissionLevel.isGameMaster())
-			.then(WindowCommand.registerCommand(dispatcher)));
+			.then(WindowCommand.registerCommand(dispatcher))
+			.then(BuildDemoHouse.registerCommand(dispatcher))
+		);
 	}
 }
