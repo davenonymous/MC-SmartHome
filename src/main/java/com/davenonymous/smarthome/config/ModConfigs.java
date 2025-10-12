@@ -27,6 +27,10 @@ public class ModConfigs {
 
 	@SubscribeEvent
 	static void onLoad(final ModConfigEvent event) {
+		if(event instanceof ModConfigEvent.Unloading) {
+			return;
+		}
+
 		if(event.getConfig().getSpec() == SERVER_SPEC) {
 			ServerConfig.load();
 		} else if(event.getConfig().getSpec() == CLIENT_SPEC) {

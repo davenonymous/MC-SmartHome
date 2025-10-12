@@ -7,11 +7,11 @@ import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.api.sensor.DBHandler;
-import com.davenonymous.smarthome.sensor.energy.EnergyStorageData;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.api.sensor.SensorColumn;
+import com.davenonymous.smarthome.visualization.VizLegendStyle;
 import com.davenonymous.smarthome.visualization.line.LineViz;
-import com.davenonymous.smarthome.visualization.line.LineVizSeriesSettings;
+import com.davenonymous.smarthome.visualization.line.LineVizColumnSettings;
 import com.davenonymous.smarthome.visualization.line.LineVizSettings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -34,25 +34,25 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 
 	default IVisualizationSettings getDefaultVisualizationSettings(ConfiguredDevice device) {
 		var colors = IVisualizationSettings.defaultColors();
-		Map<String, LineVizSeriesSettings> result = new HashMap<>();
+		Map<String, LineVizColumnSettings> result = new HashMap<>();
 
 		for(var column : getColumns()) {
 			if(!column.type().isNumeric()) {
 				continue;
 			}
 
-			var series = new LineVizSeriesSettings(true, colors.next(), column.label().get());
+			var series = new LineVizColumnSettings(true, colors.next(), column.label().get());
 			result.put(column.name(), series);
 		}
 
-		return new LineVizSettings(Map.of(device.id(), result));
+		return new LineVizSettings(Map.of(device.id(), result), VizLegendStyle.BOTTOM);
 	}
 
 	default boolean isGeneric() {
 		return false;
 	}
 
-	default boolean isMultiRow() {
+	default boolean isMultiSeries() {
 		return false;
 	}
 

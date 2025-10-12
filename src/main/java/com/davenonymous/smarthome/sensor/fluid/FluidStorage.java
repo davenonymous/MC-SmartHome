@@ -52,6 +52,11 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	}
 
 	@Override
+	public boolean isMultiSeries() {
+		return true;
+	}
+
+	@Override
 	public boolean isValid(Level level, BlockPos pos, BlockState state) {
 		return level.getCapability(FLUID, pos, null) != null;
 	}

@@ -13,6 +13,7 @@ import com.davenonymous.smarthome.sensor.SensorDataCodecRegistry;
 import com.davenonymous.smarthome.sensor.SensorSettingsCodecRegistry;
 import com.davenonymous.smarthome.sensor.annotation.SensorDataColumnLabel;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
+import com.davenonymous.smarthome.watcher.GroupBy;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
@@ -128,8 +129,10 @@ public class ModSensors {
 					throw new RuntimeException("Sensor class " + annotationData.clazz().getClassName() + " has data class with field without @SensorDataColumnLabel: " + field.getName() + " " + field.getType().getName());
 				}
 
+				boolean isGroupingColumn = field.isAnnotationPresent(GroupBy.class);
+
 				var snakeCaseName = snakeCase(field.getName());
-				var column = new SensorColumn(colIndex++, snakeCaseName, columnLabel, columnType);
+				var column = new SensorColumn(colIndex++, snakeCaseName, columnLabel, columnType, isGroupingColumn);
 				columns.add(column);
 			}
 

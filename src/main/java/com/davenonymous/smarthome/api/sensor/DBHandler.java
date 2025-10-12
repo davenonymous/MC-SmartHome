@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 	public static final Logger LOGGER = LogUtils.getLogger();
 
+	public static boolean DEBUG_DB_QUERIES = false;
+
 	T sensor;
 
 	public DBHandler(T sensor) {
@@ -67,13 +69,22 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 	public Function<DuckDBConnection, LinkedHashMap<Pair<Instant, Long>, ?>> getValues(UUID deviceId, TimeRangeEnum timeRange) {
 		return connection -> {
+			String groupingColumns = sensor.getColumns().stream()
+				.filter(SensorColumn::isGroupingColumn)
+				.map(SensorColumn::name)
+				.collect(Collectors.joining(", "));
+
+			if(!groupingColumns.isEmpty()) {
+				groupingColumns = ", " + groupingColumns;
+			}
+
 			String numericColumns = sensor.getColumns().stream()
 				.filter(sensorColumn -> sensorColumn.type().isNumeric())
 				.map(column -> "avg(" + column.name() + ") AS " + column.name())
 				.collect(Collectors.joining(", "));
 
 			String otherColumns = sensor.getColumns().stream()
-				.filter(sensorColumn -> !sensorColumn.type().isNumeric())
+				.filter(sensorColumn -> !sensorColumn.type().isNumeric() && !sensorColumn.isGroupingColumn())
 				.map(column -> "last(" + column.name() + ") AS " + column.name())
 				.collect(Collectors.joining(", "));
 
@@ -82,13 +93,16 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 			String optComma = numericColumns.isEmpty() || otherColumns.isEmpty() ? "" : ", ";
 			var newStatement = String.format(
-				"select time_bucket(INTERVAL 1 MINUTE, instant, INTERVAL 0 MINUTE) as bucket, max(instant) as instant, max(tick) as tick, device, %s%s%s from %s  " +
-					"WHERE instant > make_timestamp_ms(%d) AND instant <= make_timestamp_ms(%d) AND device = '%s' GROUP BY ALL ORDER BY 1",
-				numericColumns, optComma, otherColumns, getTableName(),
-				startTime.toEpochSecond(ZoneOffset.UTC)*1000, endTime.toEpochSecond(ZoneOffset.UTC)*1000, deviceId
+				"select time_bucket(INTERVAL 1 MINUTE, instant, INTERVAL 0 MINUTE) as bucket, last(instant) as instant, last(tick) as tick, last(device) as device, %s%s%s%s from %s  " +
+					"WHERE instant > make_timestamp_ms(%d) AND instant <= make_timestamp_ms(%d) AND device = '%s' GROUP BY bucket%s ORDER BY 1",
+				numericColumns, optComma, otherColumns, groupingColumns, getTableName(),
+				startTime.toEpochSecond(ZoneOffset.UTC)*1000, endTime.toEpochSecond(ZoneOffset.UTC)*1000, deviceId,
+				groupingColumns
 			);
 
-			SmartHome.LOGGER.trace("Executing sensor data query: {}", newStatement);
+			if(DEBUG_DB_QUERIES) {
+				SmartHome.LOGGER.debug("Executing sensor data query: {}", newStatement);
+			}
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {
 				PreparedStatement prepped = connection.prepareStatement(newStatement);
@@ -159,6 +173,10 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 		sb.append("(").append(columnSpecs).append(");");
 
 		sb.append("CREATE INDEX IF NOT EXISTS ixDeviceId ON ").append(tableName).append(" (device);");
+
+		if(DEBUG_DB_QUERIES) {
+			SmartHome.LOGGER.debug("Creating DB table: {}\n{}", tableName, sb);
+		}
 
 		stmt.execute(sb.toString());
 		stmt.close();

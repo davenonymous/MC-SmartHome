@@ -8,11 +8,13 @@ import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.gui.WidgetChart;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
+import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetColorDisplay;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
+import com.davenonymous.smarthome.visualization.VizLegendStyle;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationDescription;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationId;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationName;
@@ -21,8 +23,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec2;
+import net.neoforged.fml.earlydisplay.RenderElement;
 import org.jetbrains.annotations.NotNull;
-import org.knowm.xchart.AnnotationText;
+import org.joml.Vector3f;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.style.Styler;
@@ -55,22 +58,22 @@ public class LineViz implements IVisualization<LineVizSettings> {
 
 	@Override
 	public LineVizSettings getDefaultSettings() {
-		return new LineVizSettings(Map.of());
+		return new LineVizSettings(Map.of(), VizLegendStyle.BOTTOM);
 	}
 
 	@Override
 	public Widget getWidget(int texId, Map<UUID, LinkedHashMap<Pair<Instant, Long>, ISensorData>> dataByDevice, HomeSensor<?, ?> sensor, LineVizSettings settings, Vec2 size) {
 		if(dataByDevice.isEmpty()) {
-			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize((int)size.x, (int)size.y);
+			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize((int) size.x, (int) size.y);
 		}
 
-		int width = Math.max((int)size.x, 120);
-		int height = Math.max((int)size.y, 70);
+		int width = Math.max((int) size.x, 120);
+		int height = Math.max((int) size.y, 70);
 		double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
 		XYChart chart = new XYChartBuilder()
-			.width(width * (int)guiScale)
-			.height(height * (int)guiScale)
+			.width(width * (int) guiScale)
+			.height(height * (int) guiScale)
 			.title("Line")
 			.build();
 
@@ -86,8 +89,18 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			.setAxisTicksLineVisible(false)
 			.setPlotGridLinesVisible(false);
 
+		Set<String> seriesNameSet = new HashSet<>();
 		var allTheData = new ArrayList<ISensorData>();
-		dataByDevice.values().forEach(map -> allTheData.addAll(map.values()));
+		for(var deviceData : dataByDevice.values()) {
+			allTheData.addAll(deviceData.values());
+
+			for(var data : deviceData.values()) {
+				seriesNameSet.add(data.seriesName());
+			}
+		}
+
+		List<String> seriesNames = new ArrayList<>(seriesNameSet).stream().sorted(Comparator.naturalOrder()).toList();
+
 		SensorRange range = sensor.getRange();
 		if(range.hasMin()) {
 			styler.setYAxisMin(range.min(sensor, allTheData));
@@ -100,20 +113,18 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		Font myFont = null;
 		try {
 			var fonts = Font.createFonts(Path.of("../assets/fonts/samsung-gt-e1270-bold.otf").toFile());
-			myFont = fonts[0].deriveFont(13.0f * (float)guiScale * 0.5f);
+			myFont = fonts[0].deriveFont(13.0f * (float) guiScale * 0.5f);
 		} catch (FontFormatException e) {
 		} catch (IOException e) {
 		}
 
 
 		styler
-			.setSeriesMarkers(new Marker[] {new None()})
+			.setSeriesMarkers(new Marker[]{new None()})
 			.setChartTitleVisible(false)
 			.setPlotBorderVisible(false)
 			.setLegendVisible(true)
 			.setLegendBackgroundColor(new Color(1, 1, 1, 0))
-			.setLegendLayout(Styler.LegendLayout.Horizontal)
-			.setLegendPosition(Styler.LegendPosition.OutsideS)
 			.setLegendBorderColor(new Color(1, 1, 1, 0))
 			.setLegendSeriesLineLength(10)
 			.setLegendPadding(20)
@@ -122,6 +133,12 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			.setChartFontColor(new Color(ChatFormatting.WHITE.getColor(), false))
 			.setChartPadding(0);
 
+		var legendStyle = settings.legendStyle();
+		if(legendStyle == null || legendStyle == VizLegendStyle.OFF) {
+			styler.setLegendVisible(false);
+		} else {
+			styler.setLegendLayout(legendStyle.layout()).setLegendPosition(legendStyle.position());
+		}
 
 		if(myFont != null) {
 			styler.setAnnotationTextFont(myFont);
@@ -129,23 +146,30 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			styler.setAxisTickLabelsFont(myFont);
 		}
 
-		Map<UUID, Map<String, LineVizSeriesSettings>> seriesSettingsList = settings.series();
+		// Device -> Column -> Settings
+		Map<UUID, Map<String, LineVizColumnSettings>> columnSettingsList = settings.series();
 
 		int seriesCount = 0;
-		for(UUID deviceId : seriesSettingsList.keySet()) {
-			var data = dataByDevice.get(deviceId);
-			var deviceSeriesSettings = seriesSettingsList.get(deviceId);
+		for(UUID deviceId : columnSettingsList.keySet()) {
+			LinkedHashMap<Pair<Instant, Long>, ISensorData> data = dataByDevice.get(deviceId);
+			Map<String, LineVizColumnSettings> columnSettings = columnSettingsList.get(deviceId);
 			if(data == null || data.isEmpty()) {
 				continue;
 			}
 
-			List<Long> xData = new ArrayList<>();
-			Map<String, List<Double>> yData = new HashMap<>();
-			data.forEach((date, sensorData) ->{
+			// Series -> Timestamps
+			Map<String, List<Long>> seriesToTimestamps = new HashMap<>();
+
+			// Series -> Column -> Values
+			Map<String, Map<String, List<Double>>> seriesToColumnToValues = new HashMap<>();
+			for(var entry : data.sequencedEntrySet()) {
+				var date = entry.getKey();
+				var sensorData = entry.getValue();
+				var xData = seriesToTimestamps.computeIfAbsent(sensorData.seriesName(), k -> new ArrayList<>());
 				xData.add(date.getFirst().toEpochMilli());
 
-				for(var columnName : deviceSeriesSettings.keySet()) {
-					var vizSettings = deviceSeriesSettings.get(columnName);
+				for(var columnName : columnSettings.keySet()) {
+					LineVizColumnSettings vizSettings = columnSettings.get(columnName);
 					if(!vizSettings.enabled()) {
 						continue;
 					}
@@ -158,27 +182,45 @@ public class LineViz implements IVisualization<LineVizSettings> {
 						continue;
 					}
 
-
-					var list = yData.computeIfAbsent(columnName, k -> new ArrayList<>());
-					var value = sensor.valueFromData(HomeSensor.cast(sensorData), column);
-					list.add(value);
+					Map<String, List<Double>> columnToValues = seriesToColumnToValues.computeIfAbsent(sensorData.seriesName(), k -> new HashMap<>());
+					List<Double> values = columnToValues.computeIfAbsent(columnName, k -> new ArrayList<>());
+					double value = sensor.valueFromData(HomeSensor.cast(sensorData), column);
+					values.add(value);
 				}
-			});
+			}
 
-			for(String columnName : yData.keySet()) {
-				LineVizSeriesSettings seriesSetting = deviceSeriesSettings.get(columnName);
+			int seriesIndex = 0;
+			for(String seriesName : seriesToColumnToValues.keySet()) {
+				Map<String, List<Double>> columnToValues = seriesToColumnToValues.get(seriesName);
+				for(String columnName : columnToValues.keySet()) {
+					LineVizColumnSettings columnSetting = columnSettings.get(columnName);
+					int columnColorRGB = columnSetting.color();
+					Vector3f columnColorHSV = GUIHelper.RGBtoHSV(columnColorRGB);
 
-				var latestValue = yData.get(columnName).getLast();
-				var latestDate = xData.getLast();
-				var screenX = chart.getScreenXFromChart(latestDate);
-				var screenY = chart.getScreenYFromChart(latestValue);
-				var series = chart.addSeries(seriesSetting.label(), xData, yData.get(columnName))
-					.setLineColor(new Color(seriesSetting.color(), false));
+					// Shift color hue based on series index, so that multiple series from same device are still distinguishable
+					float hueShift = (seriesIndex * 0.06f) % 1.0f;
+					int shiftedColor = RenderElement.hsvToRGB(
+						Math.abs((columnColorHSV.x() + hueShift) % 1.0f),
+						columnColorHSV.y(),
+						columnColorHSV.z()
+					);
 
-				series.setLineStyle(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{3.0f, 3.0f}, 0));
+					//				var latestValue = yData.get(columnName).getLast();
+					//				var latestDate = xData.getLast();
+					//				var screenX = chart.getScreenXFromChart(latestDate);
+					//				var screenY = chart.getScreenYFromChart(latestValue);
+					String fullSeriesName = seriesName.isBlank() ? columnSetting.label() : seriesName + " - " + columnSetting.label();
+					var timestamps = seriesToTimestamps.get(seriesName);
+					var series = chart
+						.addSeries(fullSeriesName, timestamps, columnToValues.get(columnName))
+						.setLineColor(new Color(shiftedColor, false));
 
-				chart.addAnnotation(new AnnotationText("Hello", chart.getWidth() * 0.5f, chart.getHeight() * 0.5, false));
-				seriesCount++;
+					series.setLineStyle(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{3.0f, 3.0f}, 0));
+
+					seriesCount++;
+				}
+
+				seriesIndex++;
 			}
 		}
 
@@ -206,7 +248,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 
 	@Override
 	public LineVizSettings loadSettings(List<Widget> settingsWidgets) {
-		Map<UUID, Map<String, LineVizSeriesSettings>> series = new HashMap<>();
+		Map<UUID, Map<String, LineVizColumnSettings>> series = new HashMap<>();
 		for(var widget : settingsWidgets) {
 			if(!(widget instanceof SeriesSettingsWidget seriesWidget)) {
 				continue;
@@ -216,6 +258,6 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			series.put(device.id(), seriesWidget.currentSettings());
 		}
 
-		return new LineVizSettings(series);
+		return new LineVizSettings(series, VizLegendStyle.BOTTOM);
 	}
 }

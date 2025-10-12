@@ -39,7 +39,7 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor", "occupancy_description");
 
 	@Override
-	public boolean isMultiRow() {
+	public boolean isMultiSeries() {
 		return true;
 	}
 

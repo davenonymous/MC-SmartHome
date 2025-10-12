@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL11;
 
@@ -156,6 +157,38 @@ public class GUIHelper {
 		float b = (color & 0xFF) / 255.0F;
 		float a = ((color >> 24) & 0xFF) / 255.0F;
 		RenderSystem.setShaderColor(r, g, b, a);
+	}
+
+	public static Vector3f RGBtoHSV(int rgb) {
+		int r = rgb >> 16 & 255;
+		int g = rgb >> 8 & 255;
+		int b = rgb & 255;
+		int max = Math.max(r, Math.max(g, b));
+		int min = Math.min(r, Math.min(g, b));
+		float v = (float)max;
+		float delta = (float)(max - min);
+		if (max != 0) {
+			float s = delta / (float)max;
+			float h;
+			if (r == max) {
+				h = (float)(g - b) / delta;
+			} else if (g == max) {
+				h = 2.0F + (float)(b - r) / delta;
+			} else {
+				h = 4.0F + (float)(r - g) / delta;
+			}
+
+			h /= 6.0F;
+			if (h < 0.0F) {
+				++h;
+			}
+
+			return new Vector3f(h, s, v / 255.0F);
+		} else {
+			float s = 0.0F;
+			float h = -1.0F;
+			return new Vector3f(h, s, 0.0F);
+		}
 	}
 
 	public static int brighten(int color, float factor) {

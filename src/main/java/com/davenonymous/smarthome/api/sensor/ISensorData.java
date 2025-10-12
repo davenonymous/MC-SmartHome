@@ -20,6 +20,10 @@ public interface ISensorData {
 
 	String displayString();
 
+	default String seriesName() {
+		return "";
+	}
+
 	StreamCodec<RegistryFriendlyByteBuf, ISensorData> STREAM_CODEC = ByteBufCodecs.registry(SensorDataCodecRegistry.SENSOR_DATA_DISPATCHER_KEY)
 		.dispatch(
 			ISensorData::streamCodec,

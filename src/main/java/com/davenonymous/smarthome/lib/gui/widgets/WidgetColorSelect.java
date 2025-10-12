@@ -24,6 +24,9 @@ public class WidgetColorSelect extends WidgetWithChoiceValue<Integer> {
 		this.setWidth(10);
 
 		for(var color : DyeColor.values()) {
+			if(color == DyeColor.BLACK) {
+				continue;
+			}
 			this.addChoice(color.getTextColor() | 0xFF000000);
 		}
 

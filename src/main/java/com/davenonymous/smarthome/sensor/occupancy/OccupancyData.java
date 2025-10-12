@@ -1,11 +1,12 @@
 package com.davenonymous.smarthome.sensor.occupancy;
 
 import com.davenonymous.smarthome.api.sensor.ISensorData;
-import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
+import com.davenonymous.smarthome.lib.BiggerStreamCodec;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.sensor.annotation.SensorDataColumnLabel;
+import com.davenonymous.smarthome.watcher.GroupBy;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -13,7 +14,7 @@ import net.minecraft.network.codec.StreamCodec;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public record OccupancyData(int id, String name, String type, String category, double x, double y, double z) implements ISensorData {
+public record OccupancyData(@GroupBy int id, @GroupBy String name, String type, String category, double x, double y, double z) implements ISensorData {
 
 	@SensorDataColumnLabel("id")
 	@I18DataGen(lang = "en_us", string = "ID")
@@ -66,6 +67,11 @@ public record OccupancyData(int id, String name, String type, String category, d
 		ByteBufCodecs.DOUBLE, OccupancyData::z,
 		OccupancyData::new
 	);
+
+	@Override
+	public String seriesName() {
+		return name;
+	}
 
 	@Override
 	public String displayString() {

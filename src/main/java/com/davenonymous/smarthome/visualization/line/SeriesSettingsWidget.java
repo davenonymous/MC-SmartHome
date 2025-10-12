@@ -28,7 +28,7 @@ public class SeriesSettingsWidget extends WidgetVBox {
 	WidgetTable seriesTable;
 
 	Map<Integer, SensorColumn> columnByRow = new HashMap<>();
-	public SeriesSettingsWidget(ConfiguredDevice device, HomeSensor<?,?> sensor, Map<String, LineVizSeriesSettings> series) {
+	public SeriesSettingsWidget(ConfiguredDevice device, HomeSensor<?,?> sensor, Map<String, LineVizColumnSettings> series) {
 		super();
 		this.setSize(150, 300);
 		this.device = device;
@@ -55,9 +55,9 @@ public class SeriesSettingsWidget extends WidgetVBox {
 
 
 			String columnDisplayName = column.label().get(); //I18n.get(column.translationKey());
-			LineVizSeriesSettings seriesSettings;
+			LineVizColumnSettings seriesSettings;
 			if(series == null || series.get(column.name()) == null) {
-				seriesSettings = new LineVizSeriesSettings(false, ColorHelper.COLOR_CYAN, columnDisplayName);
+				seriesSettings = new LineVizColumnSettings(false, ColorHelper.COLOR_CYAN, columnDisplayName);
 			} else {
 				seriesSettings = series.get(column.name());
 			}
@@ -108,8 +108,8 @@ public class SeriesSettingsWidget extends WidgetVBox {
 		return sensor;
 	}
 
-	public Map<String, LineVizSeriesSettings> currentSettings() {
-		Map<String, LineVizSeriesSettings> result = new HashMap<>();
+	public Map<String, LineVizColumnSettings> currentSettings() {
+		Map<String, LineVizColumnSettings> result = new HashMap<>();
 		for(int row = 0; row < seriesTable.getRowCount(); row++) {
 			var labelCell = seriesTable.get(0, row);
 			var toggleCell = seriesTable.get(1, row);
@@ -126,7 +126,7 @@ public class SeriesSettingsWidget extends WidgetVBox {
 			String columnName = labelWidget.getValue();
 			boolean enabled = toggleWidget.getValue();
 
-			result.put(column.name(), new LineVizSeriesSettings(enabled, colorWidget.getValue(), columnName));
+			result.put(column.name(), new LineVizColumnSettings(enabled, colorWidget.getValue(), columnName));
 		}
 		return result;
 	}

@@ -5,6 +5,8 @@ import com.davenonymous.smarthome.api.sensor.annotations.SensorDataStreamCodec;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.sensor.annotation.SensorDataColumnLabel;
+import com.davenonymous.smarthome.watcher.GroupBy;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -12,7 +14,7 @@ import net.minecraft.network.codec.StreamCodec;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public record FluidStorageData(String fluidId, long stored, long capacity) implements ISensorData {
+public record FluidStorageData(@GroupBy String fluidId, long stored, long capacity) implements ISensorData {
 
 	@SensorDataColumnLabel("fluidId")
 	@I18DataGen(lang = "en_us", string = "Fluid")
@@ -37,6 +39,11 @@ public record FluidStorageData(String fluidId, long stored, long capacity) imple
 	@Override
 	public String displayString() {
 		return fluidId() + ": " + stored + " / " + capacity + " FE";
+	}
+
+	@Override
+	public String seriesName() {
+		return I18n.get(fluidId);
 	}
 
 	@Override
