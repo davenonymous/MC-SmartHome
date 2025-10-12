@@ -1,9 +1,11 @@
 package com.davenonymous.smarthome.config;
 
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
+@EventBusSubscriber
 public class ModConfigs {
 	public static final ModConfigSpec SERVER_SPEC;
 	public static final ModConfigSpec CLIENT_SPEC;

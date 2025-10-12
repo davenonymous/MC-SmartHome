@@ -69,32 +69,29 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 		return connection -> {
 			String numericColumns = sensor.getColumns().stream()
 				.filter(sensorColumn -> sensorColumn.type().isNumeric())
-				.map(column -> "'" + column.name() + "'")
+				.map(column -> "avg(" + column.name() + ") AS " + column.name())
 				.collect(Collectors.joining(", "));
 
 			String otherColumns = sensor.getColumns().stream()
 				.filter(sensorColumn -> !sensorColumn.type().isNumeric())
-				.map(column -> "'" + column.name() + "'")
+				.map(column -> "last(" + column.name() + ") AS " + column.name())
 				.collect(Collectors.joining(", "));
 
 			LocalDateTime startTime = LocalDateTime.ofInstant(timeRange.from(), ZoneId.systemDefault());
 			LocalDateTime endTime = LocalDateTime.ofInstant(timeRange.to(), ZoneId.systemDefault());
 
-			String statement = "select * from avgVizData(" +
-				"tblName := '"+getTableName()+"', " +
-			  	"deviceId := '"+deviceId+"', " +
-			  	"numericCols := ["+numericColumns+"]," +
-				"otherCols := ["+otherColumns+"]," +
-				"startTime := "+startTime.toEpochSecond(ZoneOffset.UTC)*1000+", " +
-				"endTime := "+endTime.toEpochSecond(ZoneOffset.UTC)*1000+", " +
-				"groupBySeconds := 5, maxResults := 200" +
-			");";
+			String optComma = numericColumns.isEmpty() || otherColumns.isEmpty() ? "" : ", ";
+			var newStatement = String.format(
+				"select time_bucket(INTERVAL 1 MINUTE, instant, INTERVAL 0 MINUTE) as bucket, max(instant) as instant, max(tick) as tick, device, %s%s%s from %s  " +
+					"WHERE instant > make_timestamp_ms(%d) AND instant <= make_timestamp_ms(%d) AND device = '%s' GROUP BY ALL ORDER BY 1",
+				numericColumns, optComma, otherColumns, getTableName(),
+				startTime.toEpochSecond(ZoneOffset.UTC)*1000, endTime.toEpochSecond(ZoneOffset.UTC)*1000, deviceId
+			);
 
-			SmartHome.LOGGER.trace("Executing sensor data query: {}", statement);
+			SmartHome.LOGGER.trace("Executing sensor data query: {}", newStatement);
 			LinkedHashMap<Pair<Instant, Long>, D> values = new LinkedHashMap<>();
 			try {
-				// TODO: Caching the prepared statement would shave ~33% off the query time
-				PreparedStatement prepped = connection.prepareStatement(statement);
+				PreparedStatement prepped = connection.prepareStatement(newStatement);
 				var resultSet = prepped.executeQuery();
 				while(resultSet.next()) {
 					Instant instant = resultSet.getTimestamp("instant").toInstant();
@@ -104,16 +101,14 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 
 					values.put(Pair.of(instant, tick), data);
 				}
-				// SmartHome.LOGGER.info("Queried {} sensor data points for device {}", values.size(), deviceId);
 			} catch (SQLException e) {
-				SmartHome.LOGGER.error("Failed to query sensor data for device {}, query was >> {}", deviceId, statement, e);
+				SmartHome.LOGGER.error("Failed to query sensor data for device {}, query was >> {}", deviceId, newStatement, e);
 			}
 
 			return values;
 		};
 	}
 
-	// TODO: Add query methods
 	public Consumer<DuckDBConnection> insertValues(long ticks, UUID homeId, UUID zoneId, UUID deviceId, ISensorData data) {
 		return db -> {
 			try {
@@ -141,7 +136,6 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 		};
 	}
 
-	// TODO: add indexes
 	public void createTable(DuckDBConnection db) throws SQLException {
 		Statement stmt = db.createStatement();
 
