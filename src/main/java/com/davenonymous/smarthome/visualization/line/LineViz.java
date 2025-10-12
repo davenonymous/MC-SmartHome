@@ -7,6 +7,7 @@ import com.davenonymous.smarthome.api.sensor.SensorRange;
 import com.davenonymous.smarthome.api.visualization.IVisualization;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.gui.WidgetChart;
+import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.LegendStyleSelector;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GUIHelper;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
@@ -249,7 +250,14 @@ public class LineViz implements IVisualization<LineVizSettings> {
 	@Override
 	public LineVizSettings loadSettings(List<Widget> settingsWidgets) {
 		Map<UUID, Map<String, LineVizColumnSettings>> series = new HashMap<>();
+		var legendStyle = VizLegendStyle.BOTTOM;
 		for(var widget : settingsWidgets) {
+
+			if(widget instanceof LegendStyleSelector legendWidget) {
+				legendStyle = legendWidget.getValue();
+				continue;
+			}
+
 			if(!(widget instanceof SeriesSettingsWidget seriesWidget)) {
 				continue;
 			}
@@ -258,6 +266,6 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			series.put(device.id(), seriesWidget.currentSettings());
 		}
 
-		return new LineVizSettings(series, VizLegendStyle.BOTTOM);
+		return new LineVizSettings(series, legendStyle);
 	}
 }

@@ -1,8 +1,10 @@
 package com.davenonymous.smarthome.visualization;
 
+import com.davenonymous.smarthome.lib.HackerNoon;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import org.knowm.xchart.style.Styler;
@@ -11,9 +13,9 @@ import java.util.UUID;
 import java.util.function.IntFunction;
 
 public enum VizLegendStyle implements StringRepresentable {
-	OFF(0, "off", null, null),
-	RIGHT(1, "right", Styler.LegendLayout.Vertical, Styler.LegendPosition.OutsideE),
-	BOTTOM(2, "bottom", Styler.LegendLayout.Horizontal, Styler.LegendPosition.OutsideS),
+	OFF(0, "off", null, null, HackerNoon.Regular.timesCircle),
+	RIGHT(1, "right", Styler.LegendLayout.Vertical, Styler.LegendPosition.OutsideE, HackerNoon.Regular.arrowCircleRight),
+	BOTTOM(2, "bottom", Styler.LegendLayout.Horizontal, Styler.LegendPosition.OutsideS, HackerNoon.Regular.arrowCircleDown),
 	;
 
 
@@ -21,6 +23,7 @@ public enum VizLegendStyle implements StringRepresentable {
 	private final String key;
 	private final Styler.LegendLayout layout;
 	private final Styler.LegendPosition position;
+	private final ResourceLocation icon;
 
 	public int id() {
 		return id;
@@ -38,6 +41,10 @@ public enum VizLegendStyle implements StringRepresentable {
 		return position;
 	}
 
+	public ResourceLocation icon() {
+		return icon;
+	}
+
 	public static final IntFunction<VizLegendStyle> BY_ID = ByIdMap.continuous(
 		VizLegendStyle::id,
 		VizLegendStyle.values(),
@@ -51,11 +58,12 @@ public enum VizLegendStyle implements StringRepresentable {
 		ByteBufCodecs.idMapper(VizLegendStyle.BY_ID, VizLegendStyle::id);
 
 
-	VizLegendStyle(int id, String key, Styler.LegendLayout layout, Styler.LegendPosition position) {
+	VizLegendStyle(int id, String key, Styler.LegendLayout layout, Styler.LegendPosition position, ResourceLocation icon) {
 		this.id = id;
 		this.key = key;
 		this.layout = layout;
 		this.position = position;
+		this.icon = icon;
 	}
 
 	public static VizLegendStyle byId(int id) {

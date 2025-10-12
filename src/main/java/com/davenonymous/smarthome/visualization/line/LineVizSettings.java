@@ -5,7 +5,12 @@ import com.davenonymous.smarthome.api.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.api.visualization.IVisualizationSettings;
 import com.davenonymous.smarthome.api.visualization.SmartHomeVisualizationSettings;
 import com.davenonymous.smarthome.gui.DashboardScreen;
+import com.davenonymous.smarthome.gui.home.main.cards.vizsettings.LegendStyleSelector;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
+import com.davenonymous.smarthome.lib.gui.widgets.layout.FlexSizer;
+import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.visualization.VizLegendStyle;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsCodec;
 import com.davenonymous.smarthome.visualization.annotations.VisualizationSettingsId;
@@ -43,7 +48,9 @@ public record LineVizSettings(Map<UUID, Map<String, LineVizColumnSettings>> seri
 	public List<Widget> createSettingsWidgets(HomeSensor<?, ?> sensor, List<UUID> devices) {
 		List<Widget> result = new ArrayList<>();
 
-		// TODO: Make legend style configurable
+		var legendStyleWidget = new LegendStyleSelector();
+		legendStyleWidget.setValue(legendStyle);
+		result.add(legendStyleWidget);
 
 		for(UUID deviceId : devices) {
 			var optDevice = DashboardScreen.get().selectedHome.getDevice(deviceId);
@@ -56,8 +63,8 @@ public record LineVizSettings(Map<UUID, Map<String, LineVizColumnSettings>> seri
 
 			var settingsWidget = new SeriesSettingsWidget(device, sensor, series.get(deviceId));
 			result.add(settingsWidget);
-
 		}
+
 		return result;
 	}
 }
