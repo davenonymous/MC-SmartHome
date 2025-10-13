@@ -93,7 +93,7 @@ public class WorldWatcher {
 						}
 					}
 
-					ISensorData data = null;
+					List<? extends ISensorData> data = null;
 					switch(sensor) {
 						case ZoneSensor<?, ?> zoneSensor -> {
 							data = zoneSensor.visitZone(homeLevel, zone, device, HomeSensor.cast(settings));
@@ -127,9 +127,11 @@ public class WorldWatcher {
 						}
 
 						var handler = ModSensors.DB_HANDLERS.get(sensor.id());
-						homeConsumers.add(handler.insertValues(gameTime, home.id(), zone.id(), device.id(), data));
-						entityLastSeenData.put(entityId, data);
-						entityLastUpdated.put(entityId, gameTime);
+						for(var dataEntry : data) {
+							homeConsumers.add(handler.insertValues(gameTime, home.id(), zone.id(), device.id(), dataEntry));
+							entityLastSeenData.put(entityId, dataEntry);
+							entityLastUpdated.put(entityId, gameTime);
+						}
 					}
 				}
 
@@ -144,10 +146,16 @@ public class WorldWatcher {
 								settings = sensor.getDefaultSettings();
 							}
 
-							ISensorData result = sensor.visitZoneBlock(homeLevel, zone, device, HomeSensor.cast(settings), sensorCheckPos, sensorCheckState, sensorCheckEntity);
+							List<? extends ISensorData> result = sensor.visitZoneBlock(homeLevel, zone, device, HomeSensor.cast(settings), sensorCheckPos, sensorCheckState, sensorCheckEntity);
 							if(result != null) {
 								var handler = ModSensors.DB_HANDLERS.get(sensor.id());
-								homeConsumers.add(handler.insertValues(homeLevel.getGameTime(), home.id(), zone.id(), device.id(), result));
+								for(var dataEntry : result) {
+									homeConsumers.add(handler.insertValues(homeLevel.getGameTime(), home.id(), zone.id(), device.id(), dataEntry));
+									var entityId = new EntityId(device.id(), sensor.id());
+									var gameTime = homeLevel.getGameTime();
+									entityLastSeenData.put(entityId, dataEntry);
+									entityLastUpdated.put(entityId, gameTime);
+								}
 							}
 						}
 					}

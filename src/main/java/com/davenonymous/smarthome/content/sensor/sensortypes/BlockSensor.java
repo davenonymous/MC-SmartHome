@@ -9,9 +9,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
+
 public interface BlockSensor<D extends ISensorData, T extends SensorSettings> extends HomeSensor<D, T> {
 
-	D visitZoneBlock(ServerLevel server, HomeZone zone, ConfiguredDevice device, T settings, BlockPos pos, BlockState state, BlockEntity blockEntity);
+	List<D> visitZoneBlock(ServerLevel server, HomeZone zone, ConfiguredDevice device, T settings, BlockPos pos, BlockState state, BlockEntity blockEntity);
 
 	default boolean shouldVisitAllBlocksInZone() {
 		return false;

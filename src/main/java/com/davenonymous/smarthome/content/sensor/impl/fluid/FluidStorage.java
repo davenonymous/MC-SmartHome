@@ -28,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 @SmartHomeSensor(modid = "minecraft", data = FluidStorageData.class, settings = SidedOnOffSettings.class)
@@ -72,7 +73,7 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 	}
 
 	@Override
-	public FluidStorageData visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, SidedOnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+	public List<FluidStorageData> visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, SidedOnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
 		IFluidHandler cap = level.getCapability(FLUID, pos, settings.side().orElse(null));
 		if(cap == null) {
 			return null;
@@ -90,7 +91,7 @@ public class FluidStorage implements BlockSensor<FluidStorageData, SidedOnOffSet
 
 		var fluid = fluidInTank.getFluid();
 		var fluidName = fluid.getFluidType().getDescriptionId(fluidInTank);
-		return new FluidStorageData(fluidName, fluidInTank.getAmount(), cap.getTankCapacity(0));
+		return List.of(new FluidStorageData(fluidName, fluidInTank.getAmount(), cap.getTankCapacity(0)));
 	}
 
 	@Override

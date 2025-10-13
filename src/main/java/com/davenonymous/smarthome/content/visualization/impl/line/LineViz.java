@@ -4,6 +4,7 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.content.sensor.ISensorData;
 import com.davenonymous.smarthome.content.sensor.SensorColumn;
 import com.davenonymous.smarthome.content.sensor.SensorRange;
+import com.davenonymous.smarthome.content.sensor.VisualizationCustomizer;
 import com.davenonymous.smarthome.content.visualization.IVisualization;
 import com.davenonymous.smarthome.content.visualization.SmartHomeVisualization;
 import com.davenonymous.smarthome.gui.WidgetChart;
@@ -89,17 +90,10 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			.setAxisTicksLineVisible(false)
 			.setPlotGridLinesVisible(false);
 
-		Set<String> seriesNameSet = new HashSet<>();
 		var allTheData = new ArrayList<ISensorData>();
 		for(var deviceData : dataByDevice.values()) {
 			allTheData.addAll(deviceData.values());
-
-			for(var data : deviceData.values()) {
-				seriesNameSet.add(data.seriesName());
-			}
 		}
-
-		List<String> seriesNames = new ArrayList<>(seriesNameSet).stream().sorted(Comparator.naturalOrder()).toList();
 
 		SensorRange range = sensor.getRange();
 		if(range.hasMin()) {
@@ -149,6 +143,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		// Device -> Column -> Settings
 		Map<UUID, Map<String, LineVizColumnSettings>> columnSettingsList = settings.series();
 
+		Map<String, String> seriesNamesToColumnNames = new HashMap<>();
 		int seriesCount = 0;
 		for(UUID deviceId : columnSettingsList.keySet()) {
 			LinkedHashMap<Pair<Instant, Long>, ISensorData> data = dataByDevice.get(deviceId);
@@ -198,7 +193,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 					Vector3f columnColorHSV = GUIHelper.RGBtoHSV(columnColorRGB);
 
 					// Shift color hue based on series index, so that multiple series from same device are still distinguishable
-					float hueShift = (seriesIndex * 0.06f) % 1.0f;
+					float hueShift = (seriesIndex * 0.03f) % 1.0f;
 					int shiftedColor = RenderElement.hsvToRGB(
 						Math.abs((columnColorHSV.x() + hueShift) % 1.0f),
 						columnColorHSV.y(),
@@ -217,6 +212,8 @@ public class LineViz implements IVisualization<LineVizSettings> {
 
 					series.setLineStyle(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{3.0f, 3.0f}, 0));
 
+					seriesNamesToColumnNames.put(fullSeriesName, columnName);
+
 					seriesCount++;
 				}
 
@@ -224,9 +221,15 @@ public class LineViz implements IVisualization<LineVizSettings> {
 			}
 		}
 
+
 		if(seriesCount == 0) {
 			return new WidgetColorDisplay(ColorHelper.COLOR_ORANGE).setSize(width, height);
 		}
+
+		if(sensor instanceof VisualizationCustomizer customizer) {
+			customizer.customizeVisualization(chart, seriesNamesToColumnNames);
+		}
+
 		WidgetChart<XYChart> wigget = new WidgetChart<>(texId, chart);
 		wigget.setSize(width, height);
 		return wigget;

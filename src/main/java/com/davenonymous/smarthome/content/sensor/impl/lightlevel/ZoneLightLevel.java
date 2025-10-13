@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @SmartHomeSensor(modid = SmartHome.MODID, data = ZoneLightLevelData.class, settings = OnOffSettings.class)
 public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSettings> {
@@ -54,7 +55,12 @@ public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSetti
 	}
 
 	@Override
-	public ZoneLightLevelData visitZone(ServerLevel server, HomeZone zone, ConfiguredDevice device, OnOffSettings settings) {
+	public int lowestAllowedTickRate() {
+		return 100;
+	}
+
+	@Override
+	public List<ZoneLightLevelData> visitZone(ServerLevel server, HomeZone zone, ConfiguredDevice device, OnOffSettings settings) {
 		var bounds = zone.bounds();
 		int yMax = (int) bounds.maxY;
 		int xMin = (int) bounds.minX;
@@ -87,11 +93,11 @@ public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSetti
 		}
 
 		if(totalBlocks == 0 || totalLight == 0) {
-			return new ZoneLightLevelData(0, 0, 0);
+			return List.of(new ZoneLightLevelData(0, 0, 0));
 		}
 
 		double avgLight = (double) totalLight / (double) totalBlocks;
-		return new ZoneLightLevelData(minLight, maxLight, avgLight);
+		return List.of(new ZoneLightLevelData(minLight, maxLight, avgLight));
 	}
 
 	@Override

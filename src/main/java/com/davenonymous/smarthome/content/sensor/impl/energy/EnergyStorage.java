@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @SmartHomeSensor(modid = "minecraft", data = EnergyStorageData.class, settings = SidedOnOffSettings.class)
 public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffSettings> {
@@ -60,7 +61,7 @@ public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffS
 	}
 
 	@Override
-	public EnergyStorageData visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, SidedOnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+	public List<EnergyStorageData> visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, SidedOnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
 		IEnergyStorage cap = level.getCapability(ENERGY, pos, settings.side().orElse(null));
 		if(cap == null) {
 			return null;
@@ -69,7 +70,7 @@ public class EnergyStorage implements BlockSensor<EnergyStorageData, SidedOnOffS
 		long stored = cap.getEnergyStored();
 		long max = cap.getMaxEnergyStored();
 
-		return new EnergyStorageData(stored, max);
+		return List.of(new EnergyStorageData(stored, max));
 	}
 
 	@Override

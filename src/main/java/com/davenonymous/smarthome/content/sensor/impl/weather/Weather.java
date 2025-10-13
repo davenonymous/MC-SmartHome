@@ -1,13 +1,11 @@
 package com.davenonymous.smarthome.content.sensor.impl.weather;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.content.sensor.SensorRange;
+import com.davenonymous.smarthome.content.sensor.VisualizationCustomizer;
 import com.davenonymous.smarthome.content.sensor.annotation.SensorDescription;
 import com.davenonymous.smarthome.content.sensor.annotation.SensorId;
 import com.davenonymous.smarthome.content.sensor.annotation.SensorName;
 import com.davenonymous.smarthome.content.sensor.annotation.SmartHomeSensor;
-import com.davenonymous.smarthome.content.sensor.impl.redstone.RedstoneSignalData;
-import com.davenonymous.smarthome.content.sensor.sensortypes.BlockSensor;
 import com.davenonymous.smarthome.content.sensor.sensortypes.ZoneSensor;
 import com.davenonymous.smarthome.content.sensor.settings.OnOffSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
@@ -19,15 +17,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ServerLevelData;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.internal.chartpart.Chart;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
 
 @SmartHomeSensor(modid = "minecraft", data = WeatherData.class, settings = OnOffSettings.class)
-public class Weather implements ZoneSensor<WeatherData, OnOffSettings> {
+public class Weather implements ZoneSensor<WeatherData, OnOffSettings>, VisualizationCustomizer {
 	@SensorId
 	public static final ResourceLocation ID = SmartHome.resource("sensor/weather");
 
@@ -57,7 +58,7 @@ public class Weather implements ZoneSensor<WeatherData, OnOffSettings> {
 	}
 
 	@Override
-	public WeatherData visitZone(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings) {
+	public List<WeatherData> visitZone(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings) {
 		float rainLevel = level.getRainLevel(0);
 		float thunderLevel = level.getThunderLevel(0);
 		int timeToClear = ((ServerLevelData)level.getLevelData()).getClearWeatherTime();
@@ -66,7 +67,7 @@ public class Weather implements ZoneSensor<WeatherData, OnOffSettings> {
 		boolean isRaining = level.isRaining();
 		boolean isThundering = level.isThundering();
 
-		return new WeatherData(rainLevel, thunderLevel, timeToClear, timeToRain, timeToThunder, isRaining, isThundering);
+		return List.of(new WeatherData(rainLevel, thunderLevel, timeToClear, timeToRain, timeToThunder, isRaining, isThundering));
 	}
 
 	@Override
@@ -80,5 +81,30 @@ public class Weather implements ZoneSensor<WeatherData, OnOffSettings> {
 			resultSet.getBoolean(getColumn(5).name()),
 			resultSet.getBoolean(getColumn(6).name())
 		);
+	}
+
+	@Override
+	public void customizeVisualization(Chart<?, ?> chart, Map<String, String> seriesNamesToColumnNames) {
+		if(chart instanceof XYChart xyChart) {
+			var seriesMap = xyChart.getSeriesMap();
+			var seriesNames = seriesMap.keySet();
+			if(seriesNames.size() <= 0) {
+				return;
+			}
+
+			boolean onlyTimeSeries = true;
+			for(var seriesName : seriesNames) {
+				var columnName = seriesNamesToColumnNames.get(seriesName);
+				if(!columnName.equals("time_to_clear") && !columnName.equals("time_to_rain") && !columnName.equals("time_to_thunder")) {
+					onlyTimeSeries = false;
+					break;
+				}
+			}
+			if(!onlyTimeSeries) {
+				return;
+			}
+
+			xyChart.getStyler().setyAxisTickLabelsFormattingFunction(val -> String.format("%d min", Math.round(val / (20 * 60))));
+		}
 	}
 }

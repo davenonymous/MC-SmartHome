@@ -264,15 +264,15 @@ public class HomeCardWidget extends WidgetPanel {
 	@Override
 	public void draw(GuiGraphics guiGraphics, Window window) {
 
-
+		guiGraphics.pose().pushPose();
 		if(isInWorld()) {
-			guiGraphics.pose().pushPose();
 			guiGraphics.pose().translate(0, 0, 2);
 			RenderSystem.setShaderColor(0.6f, 0.8f, 1, .8f);
 		}
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
 		if(isInWorld()) {
+			RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 			guiGraphics.pose().translate(0, 0, -2);
 		}
 		guiGraphics.fill(3, 3, width() - 3, height() - 3, 0x88000000);
@@ -280,16 +280,14 @@ public class HomeCardWidget extends WidgetPanel {
 
 		if(isInWorld()) {
 			guiGraphics.pose().translate(0, 0, -2);
-			RenderSystem.setShaderColor(1, 1, 1, 1f);
 		} else {
 			guiGraphics.pose().translate(0, 0, 4);
 		}
 
 		super.draw(guiGraphics, window);
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
-		if(isInWorld()) {
-			guiGraphics.pose().popPose();
-		}
+		guiGraphics.pose().popPose();
 		if(editMode) {
 			var font = Minecraft.getInstance().font;
 			var widthText = FormattedCharSequence.forward(this.width() + "px", Style.EMPTY.withFont(ModFonts.SAMSUNG.id()));

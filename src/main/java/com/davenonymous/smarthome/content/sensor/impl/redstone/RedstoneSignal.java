@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @SmartHomeSensor(modid = "minecraft", data = RedstoneSignalData.class, settings = OnOffSettings.class)
 public class RedstoneSignal implements BlockSensor<RedstoneSignalData, OnOffSettings> {
@@ -58,14 +59,14 @@ public class RedstoneSignal implements BlockSensor<RedstoneSignalData, OnOffSett
 	}
 
 	@Override
-	public RedstoneSignalData visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+	public List<RedstoneSignalData> visitZoneBlock(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings, BlockPos pos, BlockState state, BlockEntity blockEntity) {
 		int outputSignal = 0;
 		if(state.hasAnalogOutputSignal()) {
 			outputSignal = state.getAnalogOutputSignal(level, pos);
 		}
 
 		int neighborSignal = level.getBestNeighborSignal(pos);
-		return new RedstoneSignalData(outputSignal, neighborSignal);
+		return List.of(new RedstoneSignalData(outputSignal, neighborSignal));
 	}
 
 	@Override

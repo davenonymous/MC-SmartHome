@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 @SmartHomeSensor(modid = "minecraft", data = OccupancyData.class, settings = OnOffSettings.class)
 public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
@@ -54,7 +55,7 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 	}
 
 	@Override
-	public OccupancyData visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings, Entity entity) {
+	public List<OccupancyData> visitZoneEntity(ServerLevel level, HomeZone zone, ConfiguredDevice device, OnOffSettings settings, Entity entity) {
 		if(!(entity instanceof LivingEntity livingEntity)) {
 			return null;
 		}
@@ -63,7 +64,7 @@ public class Occupancy implements EntitySensor<OccupancyData, OnOffSettings> {
 		var type = livingEntity.getType().getDescriptionId();
 		var category = livingEntity.getClassification(false).getName();
 		var entityId = livingEntity.getId();
-		return new OccupancyData(entityId, name, type, category, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ());
+		return List.of(new OccupancyData(entityId, name, type, category, livingEntity.getX(), livingEntity.getY(), livingEntity.getZ()));
 	}
 
 	@Override

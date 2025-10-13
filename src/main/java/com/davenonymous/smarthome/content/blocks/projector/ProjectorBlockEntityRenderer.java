@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.neoforged.neoforge.client.GlStateBackup;
 
 import java.util.UUID;
 
