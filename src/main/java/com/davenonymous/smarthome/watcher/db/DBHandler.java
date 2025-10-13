@@ -98,7 +98,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 			String optComma = numericColumns.isEmpty() || otherColumns.isEmpty() ? "" : ", ";
 			var newStatement = String.format(
 				"select time_bucket(INTERVAL 1 MINUTE, instant, INTERVAL 0 MINUTE) as bucket, last(instant) as instant, last(tick) as tick, last(device) as device, %s%s%s%s from %s  " +
-					"WHERE instant > make_timestamp_ms(%d) AND instant <= make_timestamp_ms(%d) AND device = '%s' GROUP BY bucket%s ORDER BY 1",
+					"WHERE instant > make_timestamp_ms(%d) AND instant <= make_timestamp_ms(%d) AND device = '%s' GROUP BY bucket%s ORDER BY 1 DESC",
 				numericColumns, optComma, otherColumns, groupingColumns, getTableName(),
 				startTime.toEpochSecond(ZoneOffset.UTC)*1000, endTime.toEpochSecond(ZoneOffset.UTC)*1000, deviceId,
 				groupingColumns

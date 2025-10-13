@@ -3,6 +3,8 @@ package com.davenonymous.smarthome.lib.gui.widgets;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GUI;
 import com.davenonymous.smarthome.lib.gui.ISelectable;
+import com.davenonymous.smarthome.lib.gui.WidgetContainerScreen;
+import com.davenonymous.smarthome.lib.gui.WidgetScreen;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.datafixers.util.Either;
@@ -544,6 +546,15 @@ public class Widget implements ISelectable {
 			}
 		}
 		pGuiGraphics.pose().popPose();
+	}
+
+	public static boolean isInGUI() {
+		var screen = Minecraft.getInstance().screen;
+		return screen instanceof WidgetScreen || screen instanceof WidgetContainerScreen<?>;
+	}
+
+	public static boolean isInWorld() {
+		return !isInGUI();
 	}
 
 	public int getMouseX() {

@@ -11,6 +11,8 @@ import com.davenonymous.smarthome.gui.events.WidgetScaledEvent;
 import com.davenonymous.smarthome.gui.home.main.devices.NewDeviceEntryWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
+import com.davenonymous.smarthome.lib.gui.WidgetContainerScreen;
+import com.davenonymous.smarthome.lib.gui.WidgetScreen;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
 import com.davenonymous.smarthome.lib.gui.event.*;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
@@ -103,7 +105,7 @@ public class HomeCardWidget extends WidgetPanel {
 
 
 		this.add(topBar);
-		if(Minecraft.getInstance().screen == null) {
+		if(isInWorld()) {
 			topBar.zLevel -= 2;
 			icon.zLevel -= 2;
 		}
@@ -261,20 +263,22 @@ public class HomeCardWidget extends WidgetPanel {
 
 	@Override
 	public void draw(GuiGraphics guiGraphics, Window window) {
-		if(Minecraft.getInstance().screen == null) {
+
+
+		if(isInWorld()) {
 			guiGraphics.pose().pushPose();
 			guiGraphics.pose().translate(0, 0, 2);
 			RenderSystem.setShaderColor(0.6f, 0.8f, 1, .8f);
 		}
 		RenderSystem.enableBlend();
 		guiGraphics.blitSprite(SmartHome.sprite(GuiTheme.SpriteComponent.WINDOW_PUSHED_BACKGROUND), 0, 0, this.width, this.height);
-		if(Minecraft.getInstance().screen == null) {
+		if(isInWorld()) {
 			guiGraphics.pose().translate(0, 0, -2);
 		}
 		guiGraphics.fill(3, 3, width() - 3, height() - 3, 0x88000000);
 
 
-		if(Minecraft.getInstance().screen == null) {
+		if(isInWorld()) {
 			guiGraphics.pose().translate(0, 0, -2);
 			RenderSystem.setShaderColor(1, 1, 1, 1f);
 		} else {
@@ -283,7 +287,7 @@ public class HomeCardWidget extends WidgetPanel {
 
 		super.draw(guiGraphics, window);
 
-		if(Minecraft.getInstance().screen == null) {
+		if(isInWorld()) {
 			guiGraphics.pose().popPose();
 		}
 		if(editMode) {
