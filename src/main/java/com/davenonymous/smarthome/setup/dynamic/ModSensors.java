@@ -1,18 +1,14 @@
 package com.davenonymous.smarthome.setup.dynamic;
 
 import com.davenonymous.smarthome.SmartHome;
-import com.davenonymous.smarthome.watcher.db.DBHandler;
-import com.davenonymous.smarthome.content.sensor.ISensorData;
-import com.davenonymous.smarthome.content.sensor.SensorColumn;
-import com.davenonymous.smarthome.content.sensor.SensorColumnType;
+import com.davenonymous.smarthome.content.sensor.*;
+import com.davenonymous.smarthome.content.sensor.annotation.*;
 import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
-import com.davenonymous.smarthome.content.sensor.annotation.*;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.content.sensor.SensorDataCodecRegistry;
-import com.davenonymous.smarthome.content.sensor.SensorSettingsCodecRegistry;
 import com.davenonymous.smarthome.util.AnnotationHelpers;
 import com.davenonymous.smarthome.watcher.GroupBy;
+import com.davenonymous.smarthome.watcher.db.DBHandler;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.codec.StreamCodec;
@@ -175,7 +171,8 @@ public class ModSensors {
 
 				SmartHome.LOGGER.info("Found sensor: {} (mod: {})", sensorId, modid);
 				for(var col : columns) {
-					SmartHome.LOGGER.info("  Column: {} Type: {}", col.name(), col.type().sqlType());
+					String groupingMark = col.isGroupingColumn() ? " [group by]" : "";
+					SmartHome.LOGGER.info("  Column: {} Type: {}{}", col.name(), col.type().sqlType(), groupingMark);
 				}
 				SENSOR_COLUMNS.put(sensorId, columns);
 			} catch (Exception e) {

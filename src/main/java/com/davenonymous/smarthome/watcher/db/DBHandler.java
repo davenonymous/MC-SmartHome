@@ -3,6 +3,7 @@ package com.davenonymous.smarthome.watcher.db;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.content.sensor.ISensorData;
 import com.davenonymous.smarthome.content.sensor.SensorColumn;
+import com.davenonymous.smarthome.content.sensor.annotation.SensorDataColumnLabel;
 import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
@@ -81,7 +83,7 @@ public class DBHandler<D extends ISensorData, T extends HomeSensor<D, ?>> {
 			}
 
 			String numericColumns = sensor.getColumns().stream()
-				.filter(sensorColumn -> sensorColumn.type().isNumeric())
+				.filter(sensorColumn -> sensorColumn.type().isNumeric() && !sensorColumn.isGroupingColumn())
 				.map(column -> "avg(" + column.name() + ") AS " + column.name())
 				.collect(Collectors.joining(", "));
 

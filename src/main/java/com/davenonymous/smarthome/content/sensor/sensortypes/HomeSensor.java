@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.content.sensor.sensortypes;
 
+import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.content.sensor.ISensorData;
 import com.davenonymous.smarthome.content.sensor.SensorRange;
 import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
@@ -54,6 +55,10 @@ public interface HomeSensor<D extends ISensorData, T extends SensorSettings> {
 
 	default boolean isMultiSeries() {
 		return false;
+	}
+
+	default int lowestAllowedTickRate() {
+		return 1;
 	}
 
 	default SensorRange getRange() {

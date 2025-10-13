@@ -1,10 +1,10 @@
 package com.davenonymous.smarthome.content.sensor.impl.fluid;
 
 import com.davenonymous.smarthome.content.sensor.ISensorData;
+import com.davenonymous.smarthome.content.sensor.annotation.SensorDataColumnLabel;
 import com.davenonymous.smarthome.content.sensor.annotation.SensorDataStreamCodec;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.content.sensor.annotation.SensorDataColumnLabel;
 import com.davenonymous.smarthome.watcher.GroupBy;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.RegistryFriendlyByteBuf;

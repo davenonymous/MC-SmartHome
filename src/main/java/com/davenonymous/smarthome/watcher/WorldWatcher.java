@@ -82,6 +82,17 @@ public class WorldWatcher {
 						continue;
 					}
 
+					var entityId = new EntityId(device.id(), sensor.id());
+					var gameTime = homeLevel.getGameTime();
+					int minimumTickRate = sensor.lowestAllowedTickRate();
+					if(entityLastSeenData.containsKey(entityId)) {
+						var lastUpdate = entityLastUpdated.get(entityId);
+						if(gameTime - lastUpdate < minimumTickRate) {
+							// Too soon to update again
+							continue;
+						}
+					}
+
 					ISensorData data = null;
 					switch(sensor) {
 						case ZoneSensor<?, ?> zoneSensor -> {
@@ -107,8 +118,6 @@ public class WorldWatcher {
 					}
 
 					if(data != null) {
-						var entityId = new EntityId(device.id(), sensor.id());
-						var gameTime = homeLevel.getGameTime();
 						if(ServerConfig.insertSparse && entityLastSeenData.containsKey(entityId)) {
 							var oldData = entityLastSeenData.get(entityId);
 							if(oldData.equals(data) && (gameTime - entityLastUpdated.get(entityId) < ServerConfig.sparseTickRate)) {
