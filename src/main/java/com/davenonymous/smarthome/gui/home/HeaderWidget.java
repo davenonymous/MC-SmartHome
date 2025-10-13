@@ -40,7 +40,7 @@ public class HeaderWidget extends WidgetHBox {
 
 		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
 
-		this.homeSelect = new HomeSelectWidget();
+		this.homeSelect = new HomeSelectWidget(dashboardScreen.getMenu().ownedHomes, dashboardScreen.selectedHome);
 		this.addFlexBox(this.homeSelect, FlexAlign.CENTER, 1);
 
 	}

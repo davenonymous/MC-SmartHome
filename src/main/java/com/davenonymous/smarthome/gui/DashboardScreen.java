@@ -110,7 +110,7 @@ public class DashboardScreen extends WidgetContainerFullScreen<DashboardContaine
 		mainLayout.addContentBox(contentLayout);
 		mainLayout.addContentBox(footerLayout);
 
-		noHomesWidget = new NoHomesWidget(this);
+		noHomesWidget = new NoHomesWidget();
 		sidebarWidget = new SidebarWidget(this);
 
 		gui.add(mainLayout);

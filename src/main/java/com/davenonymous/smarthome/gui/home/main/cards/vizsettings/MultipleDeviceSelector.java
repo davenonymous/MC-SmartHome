@@ -4,7 +4,7 @@ import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.gui.DashboardScreen;
-import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
+import com.davenonymous.smarthome.gui.general.VerticalSelectorPopupWidget;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
@@ -22,7 +22,7 @@ public class MultipleDeviceSelector extends WidgetPanel {
 
 	List<Widget> deviceChoices;
 	WidgetTextBox deviceLabel;
-	VerticalSelectorWidget selector;
+	VerticalSelectorPopupWidget selector;
 
 	public MultipleDeviceSelector(List<UUID> selectedDevices, HomeSensor<?, ?> sensor) {
 		super();
@@ -96,7 +96,7 @@ public class MultipleDeviceSelector extends WidgetPanel {
 					return WidgetEventResult.CONTINUE_PROCESSING;
 				}
 
-				selector = VerticalSelectorWidget.openAt(parent.getMouseX(), parent.getMouseY(), ContentAlignment.TOP_LEFT, deviceChoices.toArray(new Widget[0]));
+				selector = VerticalSelectorPopupWidget.openAt(parent.getMouseX(), parent.getMouseY(), ContentAlignment.TOP_LEFT, deviceChoices.toArray(new Widget[0]));
 				selector.zLevel += 20;
 				parent.add(selector);
 				return WidgetEventResult.HANDLED;

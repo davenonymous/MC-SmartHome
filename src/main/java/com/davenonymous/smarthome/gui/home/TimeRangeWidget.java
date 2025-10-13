@@ -2,7 +2,7 @@ package com.davenonymous.smarthome.gui.home;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.data.TimeRangeEnum;
-import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
+import com.davenonymous.smarthome.gui.general.VerticalSelectorPopupWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
@@ -18,7 +18,7 @@ import net.minecraft.client.gui.GuiGraphics;
 
 public class TimeRangeWidget extends WidgetPanelWithValue<TimeRangeEnum> {
 
-	VerticalSelectorWidget selector;
+	VerticalSelectorPopupWidget selector;
 
 	public TimeRangeWidget() {
 		this(TimeRangeEnum.LAST_6_HOURS);
@@ -61,7 +61,7 @@ public class TimeRangeWidget extends WidgetPanelWithValue<TimeRangeEnum> {
 				selector = null;
 			}
 
-			selector = VerticalSelectorWidget.openAt(getActualX() + getMouseX(), getActualY() + getMouseY() + 32, ContentAlignment.BOTTOM_CENTER,
+			selector = VerticalSelectorPopupWidget.openAt(getActualX() + getMouseX(), getActualY() + getMouseY() + 32, ContentAlignment.BOTTOM_CENTER,
 				createChoiceWidget(TimeRangeEnum.LAST_15_MINUTES),
 				createChoiceWidget(TimeRangeEnum.LAST_30_MINUTES),
 				createChoiceWidget(TimeRangeEnum.LAST_HOUR),

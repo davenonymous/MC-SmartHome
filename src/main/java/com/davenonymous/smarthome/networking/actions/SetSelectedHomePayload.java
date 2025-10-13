@@ -1,6 +1,6 @@
 package com.davenonymous.smarthome.networking.actions;
 
-import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlockEntity;
+import com.davenonymous.smarthome.content.blocks.base.HomeBlockEntity;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketCodec;
 import com.davenonymous.smarthome.setup.dynamic.annotations.PacketHandler;
@@ -14,10 +14,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.UUID;
 
 @Packet
-public record SetSelectedHomePayload(BlockPos dashboardPos, UUID homeId) implements LibPacketPayload {
+public record SetSelectedHomePayload(BlockPos homeEntityPos, UUID homeId) implements LibPacketPayload {
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetSelectedHomePayload> CODEC = StreamCodec.composite(
-		BlockPos.STREAM_CODEC, SetSelectedHomePayload::dashboardPos,
+		BlockPos.STREAM_CODEC, SetSelectedHomePayload::homeEntityPos,
 		UUIDUtil.STREAM_CODEC, SetSelectedHomePayload::homeId,
 		SetSelectedHomePayload::new
 	);
@@ -26,14 +26,14 @@ public record SetSelectedHomePayload(BlockPos dashboardPos, UUID homeId) impleme
 	public static void handleOnServer(SetSelectedHomePayload payload, IPayloadContext context) {
 		var player = context.player();
 		var level = player.level();
-		var blockEntity = level.getBlockEntity(payload.dashboardPos());
-		if(!(blockEntity instanceof DashboardBlockEntity dashboard)) {
+		var blockEntity = level.getBlockEntity(payload.homeEntityPos());
+		if(!(blockEntity instanceof HomeBlockEntity homeEntity)) {
 			return;
 		}
-		if(!dashboard.isOwner(player)) {
+		if(!homeEntity.isOwner(player)) {
 			return;
 		}
-		dashboard.setHome(payload.homeId());
-		dashboard.setChanged();
+		homeEntity.setHome(payload.homeId());
+		homeEntity.setChanged();
 	}
 }

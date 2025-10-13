@@ -22,7 +22,7 @@ public class NoHomesWidget extends WidgetPanel {
 	@I18DataGen(lang = "de_de", string = "Baue einen Mini-Rack und platzieren einen Smart Home-Server darin, um loszulegen.")
 	public static final I18String NO_HOMES_HINT = I18String.gui("home", "no_homes.hint");
 
-	public NoHomesWidget(DashboardScreen dashboardScreen) {
+	public NoHomesWidget() {
 		this.setWidth(150);
 		this.setHeight(300);
 

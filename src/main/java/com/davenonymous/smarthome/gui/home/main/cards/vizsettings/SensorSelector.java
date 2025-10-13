@@ -2,7 +2,7 @@ package com.davenonymous.smarthome.gui.home.main.cards.vizsettings;
 
 import com.davenonymous.smarthome.content.sensor.sensortypes.HomeSensor;
 import com.davenonymous.smarthome.gui.DashboardScreen;
-import com.davenonymous.smarthome.gui.general.VerticalSelectorWidget;
+import com.davenonymous.smarthome.gui.general.VerticalSelectorPopupWidget;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorWidget;
 import com.davenonymous.smarthome.lib.gui.ColorHelper;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
@@ -19,7 +19,7 @@ public class SensorSelector extends WidgetPanel {
 
 	Widget[] sensorChoices;
 	WidgetTextBox sensorLabel;
-	VerticalSelectorWidget selector;
+	VerticalSelectorPopupWidget selector;
 
 	public SensorSelector(HomeSensor<?, ?> selectedSensor) {
 		super();
@@ -37,7 +37,7 @@ public class SensorSelector extends WidgetPanel {
 					return WidgetEventResult.CONTINUE_PROCESSING;
 				}
 
-				selector = VerticalSelectorWidget.openAt(parent.getMouseX(), parent.getMouseY(), ContentAlignment.TOP_LEFT, sensorChoices);
+				selector = VerticalSelectorPopupWidget.openAt(parent.getMouseX(), parent.getMouseY(), ContentAlignment.TOP_LEFT, sensorChoices);
 				selector.zLevel += 20;
 				parent.add(selector);
 				return WidgetEventResult.HANDLED;

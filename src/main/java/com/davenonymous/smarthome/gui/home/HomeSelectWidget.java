@@ -1,5 +1,6 @@
 package com.davenonymous.smarthome.gui.home;
 
+import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
@@ -13,12 +14,14 @@ import com.davenonymous.smarthome.setup.content.ModFonts;
 import net.minecraft.ChatFormatting;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.List;
+
 public class HomeSelectWidget extends WidgetHBox {
 	WidgetSprite prevButton;
 	WidgetSprite nextButton;
 	WidgetTextBox homeNameText;
 
-	public HomeSelectWidget() {
+	public HomeSelectWidget(List<HomeCore> ownedHomes, HomeCore selectedHome) {
 		this.setSpacing(8);
 		this.setPadding(0);
 		this.setHeight(20);

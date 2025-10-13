@@ -3,8 +3,10 @@ package com.davenonymous.smarthome.setup.content;
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.content.blocks.dashboard.DashboardContainer;
 import com.davenonymous.smarthome.content.blocks.minirack.MiniRackContainer;
+import com.davenonymous.smarthome.content.blocks.projector.ProjectorContainer;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.MiniRackScreen;
+import com.davenonymous.smarthome.gui.ProjectorScreen;
 import com.davenonymous.smarthome.gui.ServerScreen;
 import com.davenonymous.smarthome.content.items.ServerContainer;
 import net.minecraft.core.registries.Registries;
@@ -31,6 +33,10 @@ public class ModContainers {
 		"dashboard", resourceLocation -> IMenuTypeExtension.create(DashboardContainer::new)
 	);
 
+	public static final Supplier<MenuType<ProjectorContainer>> PROJECTOR_CONTAINER = CONTAINERS.register(
+		"projector", resourceLocation -> IMenuTypeExtension.create(ProjectorContainer::new)
+	);
+
 	public static final Supplier<MenuType<ServerContainer>> SERVER_CONTAINER = CONTAINERS.register(
 		"server", resourceLocation -> IMenuTypeExtension.create(
 			(i, inventory, registryFriendlyByteBuf) -> new ServerContainer(i, inventory, inventory.player)
@@ -42,5 +48,6 @@ public class ModContainers {
 		event.register(DASHBOARD_CONTAINER.get(), DashboardScreen::new);
 		event.register(MINI_RACK_CONTAINER.get(), MiniRackScreen::new);
 		event.register(SERVER_CONTAINER.get(), ServerScreen::new);
+		event.register(PROJECTOR_CONTAINER.get(), ProjectorScreen::new);
 	}
 }

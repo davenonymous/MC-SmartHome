@@ -18,6 +18,9 @@ public class WidgetTextBox extends Widget {
 	private String text;
 	private int textColor = 0xFFFFFFF;
 	private int hoverColor = 0xFFFFFFF;
+	private int dropShadowColor = 0x000000;
+	private int dropShadowHoverColor = 0x000000;
+	private boolean dropShadowOnHover = false;
 	private boolean dropShadow = false;
 	private boolean wordWrap = false;
 	protected Style style = Style.EMPTY;
@@ -75,6 +78,33 @@ public class WidgetTextBox extends Widget {
 	public WidgetTextBox setFont(ModFonts.FontSpec font) {
 		this.font = font;
 		this.setStyle(style -> style.withFont(font.id()));
+		return this;
+	}
+
+	public int dropShadowColor() {
+		return dropShadowColor;
+	}
+
+	public WidgetTextBox setDropShadowColor(int dropShadowColor) {
+		this.dropShadowColor = dropShadowColor;
+		return this;
+	}
+
+	public int dropShadowHoverColor() {
+		return dropShadowHoverColor;
+	}
+
+	public WidgetTextBox setDropShadowHoverColor(int dropShadowHoverColor) {
+		this.dropShadowHoverColor = dropShadowHoverColor;
+		return this;
+	}
+
+	public boolean dropShadowOnHover() {
+		return dropShadowOnHover;
+	}
+
+	public WidgetTextBox setDropShadowOnHover(boolean dropShadowOnHover) {
+		this.dropShadowOnHover = dropShadowOnHover;
 		return this;
 	}
 
@@ -156,13 +186,25 @@ public class WidgetTextBox extends Widget {
 			color = hoverColor;
 		}
 
+		int shadowColor = dropShadowColor;
+		if(isHovered()) {
+			shadowColor = dropShadowHoverColor;
+		}
+
 		int lineWidth = wordWrap ? Math.round(width / scale) : Integer.MAX_VALUE;
 		if(Minecraft.getInstance().screen != null) {
 			pGuiGraphics.enableScissor(getActualX(), getActualY(), getActualX() + (int)(width / scale), getActualY() + (int)(height / scale));
 		} else {
 			pGuiGraphics.pose().translate(0, 0, -2);
 		}
-		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, color, dropShadow);
+		if(dropShadow || (dropShadowOnHover && isHovered())) {
+			pGuiGraphics.pose().pushPose();
+			pGuiGraphics.pose().translate(1, 1, 0);
+			GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, shadowColor, false);
+			pGuiGraphics.pose().popPose();
+		}
+
+		GUIHelper.drawWordWrap(pGuiGraphics, Minecraft.getInstance().font, FormattedText.of(text, style), style, 0, -yOffset, lineWidth, lineHeight, color, false);
 		if(Minecraft.getInstance().screen != null) {
 			pGuiGraphics.disableScissor();
 		}
