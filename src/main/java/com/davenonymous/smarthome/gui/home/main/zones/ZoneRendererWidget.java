@@ -75,11 +75,15 @@ public class ZoneRendererWidget extends WidgetPanel {
 			boxLineCache.addShape(shape);
 
 			var deviceLineCache = new BoxLineCache();
-			for(var device : zone.devices()) {
+			for(var device : zone.devices().values()) {
 				if(device.ignored() || !device.enabled()) {
 					continue;
 				}
 				var deviceBlockState = DashboardScreen.get().getMenu().homeWorldInfo.blockStates().get(device.pos());
+				if(deviceBlockState == null) {
+					continue;
+				}
+
 				var deviceShape = deviceBlockState.getShape(Minecraft.getInstance().level, device.pos());
 				if(deviceShape.isEmpty()) {
 					continue;

@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.networking.actions.devices;
 
 import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
+import com.davenonymous.smarthome.data.HomeZone;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
@@ -23,6 +24,11 @@ import java.util.UUID;
 
 @Packet
 public record AddDevicePayload(UUID homeId, UUID zone, ConfiguredDevice device) implements LibPacketPayload {
+
+	public AddDevicePayload(HomeZone zone, ConfiguredDevice device) {
+		this(zone.home().id(), zone.id(), device);
+	}
+
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, AddDevicePayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, AddDevicePayload::homeId,

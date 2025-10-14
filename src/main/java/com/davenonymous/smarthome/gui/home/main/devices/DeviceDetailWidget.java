@@ -14,7 +14,7 @@ import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
-import com.davenonymous.smarthome.networking.actions.devices.SetDeviceNamePayload;
+import com.davenonymous.smarthome.networking.actions.devices.AddDevicePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.blaze3d.platform.Window;
@@ -41,7 +41,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 		deviceRenameInput.nativeWidget().setTextColor(ChatFormatting.WHITE.getColor());
 		deviceRenameInput.addListener(
 			ValueChangedEvent.class, (event, widget) -> {
-				var payload = new SetDeviceNamePayload(zone().home().id(), zone().id(), device(), deviceRenameInput.getValue());
+				var payload = new AddDevicePayload(zone(), device().withName(deviceRenameInput.getValue()));
 				PacketDistributor.sendToServer(payload);
 				updateWidgetSizes();
 				return WidgetEventResult.HANDLED;

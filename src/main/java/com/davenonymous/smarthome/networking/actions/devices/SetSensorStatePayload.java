@@ -1,6 +1,5 @@
 package com.davenonymous.smarthome.networking.actions.devices;
 
-import com.davenonymous.smarthome.data.ConfiguredDevice;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.HomeInfoPayload;
 import com.davenonymous.smarthome.setup.dynamic.annotations.Packet;
@@ -19,12 +18,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.UUID;
 
 @Packet
-public record SetSensorStatePayload(UUID homeId, UUID zoneId, ConfiguredDevice device, ResourceLocation sensorId, boolean enabled) implements LibPacketPayload {
+public record SetSensorStatePayload(UUID homeId, UUID zoneId, UUID deviceId, ResourceLocation sensorId, boolean enabled) implements LibPacketPayload {
 	@PacketCodec
 	public static final StreamCodec<RegistryFriendlyByteBuf, SetSensorStatePayload> CODEC = StreamCodec.composite(
 		UUIDUtil.STREAM_CODEC, SetSensorStatePayload::homeId,
 		UUIDUtil.STREAM_CODEC, SetSensorStatePayload::zoneId,
-		ConfiguredDevice.STREAM_CODEC, SetSensorStatePayload::device,
+		UUIDUtil.STREAM_CODEC, SetSensorStatePayload::deviceId,
 		ResourceLocation.STREAM_CODEC, SetSensorStatePayload::sensorId,
 		ByteBufCodecs.BOOL, SetSensorStatePayload::enabled,
 		SetSensorStatePayload::new
@@ -52,7 +51,7 @@ public record SetSensorStatePayload(UUID homeId, UUID zoneId, ConfiguredDevice d
 		}
 
 		var zone = optZone.get();
-		zone.setSensorState(payload.device(), payload.sensorId(), payload.enabled());
+		zone.setSensorState(payload.deviceId(), payload.sensorId(), payload.enabled());
 
 		homes.setDirty();
 		context.reply(HomeInfoPayload.get(player.getServer(), home));

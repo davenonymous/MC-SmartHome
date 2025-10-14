@@ -30,13 +30,15 @@ public class HeaderWidget extends WidgetHBox {
 
 		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
 
-		this.timeRangeWidget = new TimeRangeWidget(dashboardScreen.selectedHome.timeRange());
-		this.timeRangeWidget.addListener(
-			ValueChangedEvent.class, (event, widget) -> {
-			PacketDistributor.sendToServer(new SetTimeRangePayload(dashboardScreen.selectedHome.id(), (TimeRangeEnum) event.newValue));
-			return WidgetEventResult.CONTINUE_PROCESSING;
-		});
-		this.addContentBox(this.timeRangeWidget, FlexAlign.CENTER);
+		if(dashboardScreen.selectedHome != null) {
+			this.timeRangeWidget = new TimeRangeWidget(dashboardScreen.selectedHome.timeRange());
+			this.timeRangeWidget.addListener(
+				ValueChangedEvent.class, (event, widget) -> {
+					PacketDistributor.sendToServer(new SetTimeRangePayload(dashboardScreen.selectedHome.id(), (TimeRangeEnum) event.newValue));
+					return WidgetEventResult.CONTINUE_PROCESSING;
+				});
+			this.addContentBox(this.timeRangeWidget, FlexAlign.CENTER);
+		}
 
 		this.addFlexBox(new Spacer(1, 1), FlexAlign.CENTER, 1);
 

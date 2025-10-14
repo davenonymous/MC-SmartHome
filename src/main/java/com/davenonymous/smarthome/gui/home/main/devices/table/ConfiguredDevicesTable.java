@@ -20,9 +20,9 @@ import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.networking.actions.devices.SetDeviceStatePayload;
-import com.davenonymous.smarthome.setup.dynamic.ModSensors;
+import com.davenonymous.smarthome.networking.actions.devices.AddDevicePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
+import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -141,7 +141,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 		}
 
 		List<Pair<HomeZone, ConfiguredDevice>> allDevices = home.getAllConfiguredDevices().entrySet().stream()
-			.flatMap(entry -> entry.getValue().stream().map(device -> Pair.of(entry.getKey(), device)))
+			.flatMap(entry -> entry.getValue().values().stream().map(device -> Pair.of(entry.getKey(), device)))
 			.sorted(Comparator.comparing(pair -> I18n.get(pair.getSecond().name()), Comparator.naturalOrder()))
 			.toList();
 
@@ -183,7 +183,7 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 
 			var statusToggle = new WidgetToggle(device.enabled());
 			statusToggle.addListener(ValueChangedEvent.class, (event, widget) -> {
-				PacketDistributor.sendToServer(new SetDeviceStatePayload(zone.home().id(), zone.id(), device, statusToggle.getValue()));
+				PacketDistributor.sendToServer(new AddDevicePayload(zone, device.withEnabled(statusToggle.getValue())));
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			});
 			this.add(3, row, statusToggle);

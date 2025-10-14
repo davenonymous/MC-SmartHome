@@ -95,8 +95,7 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 			var home = optHome.get();
 			WorldWatcherUtil.updateDevicesInHome(level.getServer(), home);
 			for(var zone : home.zones()) {
-				List<ConfiguredDevice> newDeviceList = new ArrayList<>();
-				for(var device : zone.devices()) {
+				for(var device : zone.devices().values()) {
 					// Update the device's sensors with any new sensors that might be available
 					// This can happen when new sensors are added by other mods, or when the block
 					// at the device's position has changed to a different block that supports
@@ -110,11 +109,8 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 						foundSensors.put(sensor.id(), settings);
 					}
 
-					device = device.withSensors(foundSensors);
-					newDeviceList.add(device);
+					zone.addDevice(device.withSensors(foundSensors));
 				}
-
-				zone.updateDevices(newDeviceList);
 			}
 
 			data.setDirty();

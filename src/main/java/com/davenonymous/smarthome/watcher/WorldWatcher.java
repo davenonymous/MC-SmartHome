@@ -59,7 +59,7 @@ public class WorldWatcher {
 		List<Consumer<DuckDBConnection>> homeConsumers = new ArrayList<>();
 		for(var entry : home.getAllConfiguredDevices().entrySet()) {
 			var zone = entry.getKey();
-			for(var device : entry.getValue()) {
+			for(var device : entry.getValue().values()) {
 				if(!device.enabled()) {
 					continue;
 				}
@@ -118,7 +118,7 @@ public class WorldWatcher {
 						if(ServerConfig.insertSparse && entityLastSeenData.containsKey(entityId)) {
 							var oldData = entityLastSeenData.get(entityId);
 							var newHash = Objects.hash(data);
-							if(oldData == newHash && (gameTime - entityLastUpdated.get(entityId) < ServerConfig.sparseTickRate)) {
+							if(entityLastUpdated.containsKey(entityId) && oldData == newHash && (gameTime - entityLastUpdated.get(entityId) < ServerConfig.sparseTickRate)) {
 								// No change in data, skip
 								continue;
 							}

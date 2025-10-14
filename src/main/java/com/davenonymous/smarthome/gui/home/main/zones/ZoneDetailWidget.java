@@ -137,7 +137,7 @@ public class ZoneDetailWidget extends WidgetVBox {
 				devicesList.addContentBox(deviceWidget, FlexAlign.FILL);
 			}
 
-			for(var device : selectedZone.devices()) {
+			for(var device : selectedZone.devices().values()) {
 				if(device.ignored()) {
 					continue;
 				}

@@ -37,7 +37,7 @@ public class MultipleDeviceSelector extends WidgetPanel {
 			this.selectedDevices.put(deviceId, device.get().getSecond());
 		}
 
-		Map<HomeZone, List<ConfiguredDevice>> availableDevices = DashboardScreen.get().selectedHome.getDevicesWithSensor(sensor);
+		Map<HomeZone, Map<UUID, ConfiguredDevice>> availableDevices = DashboardScreen.get().selectedHome.getDevicesWithSensor(sensor);
 		this.deviceChoices = new ArrayList<>();
 
 		List<HomeZone> sortedZones = new ArrayList<>(availableDevices.keySet());
@@ -53,9 +53,10 @@ public class MultipleDeviceSelector extends WidgetPanel {
 			zoneLabel.autoHeight();
 			this.deviceChoices.add(zoneLabel);
 
-			List<ConfiguredDevice> devicesInZone = new ArrayList<>(availableDevices.get(zone));
-			devicesInZone.sort(Comparator.comparing(ConfiguredDevice::name, Comparator.naturalOrder()));
-			for(var device : devicesInZone) {
+			Map<UUID, ConfiguredDevice> devicesInZone = new HashMap<>(availableDevices.get(zone));
+			List<ConfiguredDevice> devicesInZoneList = new ArrayList<>(devicesInZone.values());
+			devicesInZoneList.sort(Comparator.comparing(ConfiguredDevice::name, Comparator.naturalOrder()));
+			for(var device : devicesInZoneList) {
 				var deviceWidget = new WidgetTextBox(device.name(), 0xFFFFFFFF);
 				if(this.selectedDevices.containsKey(device.id())) {
 					deviceWidget.setTextColor(ColorHelper.COLOR_ORANGE);

@@ -17,24 +17,21 @@ import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetSprite;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTable;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
-import com.davenonymous.smarthome.lib.gui.widgets.layout.Spacer;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetHBox;
 import com.davenonymous.smarthome.lib.i18n.I18DataGen;
 import com.davenonymous.smarthome.lib.i18n.I18String;
-import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.actions.devices.AddDevicePayload;
-import com.davenonymous.smarthome.networking.actions.devices.SetDeviceIgnorePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class IgnoredDevicesTable extends WidgetTable {
@@ -63,10 +60,10 @@ public class IgnoredDevicesTable extends WidgetTable {
 	@I18DataGen(lang = "de_de", string = "Nur spezifische Sensoren anzeigen")
 	public static final I18String TOOLTIP_SHOW_SPECIFIC_ONLY = I18String.gui("settings.ignored_devices.header", "show_specific_only");
 
-	private Map<HomeZone, List<ConfiguredDevice>> allConfiguredDevices;
+	private Map<HomeZone, Map<UUID, ConfiguredDevice>> allConfiguredDevices;
 	private boolean hideGenericDevices = true;
 
-	public IgnoredDevicesTable(Map<HomeZone, List<ConfiguredDevice>> allConfiguredDevices) {
+	public IgnoredDevicesTable(Map<HomeZone, Map<UUID, ConfiguredDevice>> allConfiguredDevices) {
 		super();
 		this.setCellPaddingHorizontal(20);
 		this.setCellPaddingVertical(5);
@@ -139,7 +136,8 @@ public class IgnoredDevicesTable extends WidgetTable {
 		int row = 1;
 		for(var zone : zones) {
 			var devices = allConfiguredDevices.get(zone);
-			for(var device : devices) {
+			for(var deviceEntry : devices.entrySet()) {
+				var device = deviceEntry.getValue();
 				if(!device.ignored()) {
 					continue;
 				}
@@ -188,7 +186,7 @@ public class IgnoredDevicesTable extends WidgetTable {
 				restoreButton.setColor(0xFFAAAAAA, ColorHelper.COLOR_ORANGE);
 				restoreButton.setScale(0.5f);
 				restoreButton.addListener(MouseClickEvent.class, (event, widget) -> {
-					PacketDistributor.sendToServer(new SetDeviceIgnorePayload(zone.home().id(), zone.id(), device, false));
+					PacketDistributor.sendToServer(new AddDevicePayload(zone, device.withIgnored(false)));
 					return WidgetEventResult.HANDLED;
 				});
 				this.add(4, row, new CellData(restoreButton, ContentAlignment.MIDDLE_CENTER));

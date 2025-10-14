@@ -67,7 +67,7 @@ public class WorldWatcherUtil {
 			List<FoundDevice> foundDevices = new ArrayList<>();
 			for(var pos : getBlocksInAABBStream(zone.bounds())) {
 				var state = level.getBlockState(pos);
-				if(zone.devices().stream().anyMatch(d -> d.pos().equals(pos) && d.matches(state))) {
+				if(zone.devices().values().stream().anyMatch(d -> d.pos().equals(pos) && d.matches(state))) {
 					continue;
 				}
 
@@ -83,7 +83,7 @@ public class WorldWatcherUtil {
 
 		for(var zone : home.zones()) {
 			List<ConfiguredDevice> toRemove = new ArrayList<>();
-			for(var device : zone.devices()) {
+			for(var device : zone.devices().values()) {
 				if(!device.ignored()) {
 					continue;
 				}

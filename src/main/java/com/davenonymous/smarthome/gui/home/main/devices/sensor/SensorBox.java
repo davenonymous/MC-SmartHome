@@ -68,7 +68,7 @@ public class SensorBox extends WidgetVBox {
 			var toggle = new WidgetToggle(settings.enabled());
 			toggle.addListener(
 				ValueChangedEvent.class, (event, widget) -> {
-					PacketDistributor.sendToServer(new SetSensorStatePayload(zone.home().id(), zone.id(), device, sensor.id(), toggle.getValue()));
+					PacketDistributor.sendToServer(new SetSensorStatePayload(zone.home().id(), zone.id(), device.id(), sensor.id(), toggle.getValue()));
 					return WidgetEventResult.CONTINUE_PROCESSING;
 				});
 			headerBox.addContentBox(toggle, FlexAlign.CENTER);

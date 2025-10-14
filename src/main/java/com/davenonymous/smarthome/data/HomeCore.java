@@ -26,7 +26,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class HomeCore {
@@ -119,26 +118,29 @@ public class HomeCore {
 		return Optional.empty();
 	}
 
-	public Map<HomeZone, List<ConfiguredDevice>> getAllDevices() {
-		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
+	public Map<HomeZone, Map<UUID, ConfiguredDevice>> getAllDevices() {
+		Map<HomeZone, Map<UUID, ConfiguredDevice>> configuredDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
 			configuredDevices.put(zone, zone.devices());
 		}
 		return configuredDevices;
 	}
 
-	public Map<HomeZone, List<ConfiguredDevice>> getDevicesWithSensor(HomeSensor<?, ?> sensor) {
-		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
+	public Map<HomeZone, Map<UUID, ConfiguredDevice>> getDevicesWithSensor(HomeSensor<?, ?> sensor) {
+		Map<HomeZone, Map<UUID, ConfiguredDevice>> configuredDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
 			configuredDevices.put(zone, zone.getDevicesWithSensor(sensor));
 		}
 		return configuredDevices;
 	}
 
-	public Map<HomeZone, List<ConfiguredDevice>> getAllConfiguredDevices() {
-		Map<HomeZone, List<ConfiguredDevice>> configuredDevices = new HashMap<>();
+	public Map<HomeZone, Map<UUID, ConfiguredDevice>> getAllConfiguredDevices() {
+		Map<HomeZone, Map<UUID, ConfiguredDevice>> configuredDevices = new HashMap<>();
 		for(HomeZone zone : zones) {
-			configuredDevices.put(zone, zone.devices().stream().filter(Predicate.not(ConfiguredDevice::ignored)).toList());
+			Map<UUID, ConfiguredDevice> zoneDevices = zone.devices().entrySet().stream()
+				.filter(entry -> !entry.getValue().ignored())
+				.collect(HashMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), HashMap::putAll);
+			configuredDevices.put(zone, zoneDevices);
 		}
 		return configuredDevices;
 	}
