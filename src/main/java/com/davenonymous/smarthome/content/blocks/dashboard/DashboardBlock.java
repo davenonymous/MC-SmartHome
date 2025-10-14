@@ -1,14 +1,14 @@
 package com.davenonymous.smarthome.content.blocks.dashboard;
 
-import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.content.blocks.base.FacingBaseBlock;
 import com.davenonymous.smarthome.content.blocks.base.HomeBlockEntity;
-import com.davenonymous.smarthome.data.ConfiguredDevice;
+import com.davenonymous.smarthome.content.sensor.settings.SensorSettings;
 import com.davenonymous.smarthome.data.WorldSavedHomes;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
 import com.davenonymous.smarthome.watcher.WorldWatcherUtil;
+import com.google.common.collect.Table;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -32,10 +32,14 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
-	private static Map<Direction, VoxelShape> SHAPES = Map.of(
+	private static Table<AttachFace, Direction, VoxelShape> SHAPES = calculateShapes(Shapes.box(0.1875, 0.1875, 0, 0.8125, 0.8125, 0.3125));
+
+	private static Map<Direction, VoxelShape> SHAPES_OLD = Map.of(
 		Direction.NORTH, Shapes.box(0.1875, 0.0625, 0, 0.8125, 0.6875, 0.3125),
 		Direction.SOUTH, Shapes.box(0.1875, 0.0625, 1-0.3125, 0.8125, 0.6875, 1),
 		Direction.EAST,  Shapes.box(1-0.3125, 0.0625, 0.1875, 1, 0.6875, 0.8125),
@@ -128,13 +132,7 @@ public class DashboardBlock extends FacingBaseBlock implements EntityBlock {
 
 	@Override
 	public VoxelShape getShape(Direction facing, AttachFace attachFace) {
-		Direction direction = facing;
-		if(attachFace== AttachFace.CEILING) {
-			direction = Direction.DOWN;
-		} else if(attachFace== AttachFace.FLOOR) {
-			direction = Direction.UP;
-		}
-		return SHAPES.get(direction);
+		return SHAPES.get(attachFace, facing);
 	}
 
 	@Override

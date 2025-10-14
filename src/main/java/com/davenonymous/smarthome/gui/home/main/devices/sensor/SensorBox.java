@@ -73,7 +73,7 @@ public class SensorBox extends WidgetVBox {
 				});
 			headerBox.addContentBox(toggle, FlexAlign.CENTER);
 		}
-		headerBox.adjustSizeToContent();
+		headerBox.adjustSizeToContent(false);
 
 
 
@@ -113,6 +113,7 @@ public class SensorBox extends WidgetVBox {
 				value.autoHeight();
 				value.setTextColor(0xFFFFFFAA);
 				this.sensorWidget = value;
+				this.setHeight(40);
 				this.addContentBox(value, FlexAlign.CENTER);
 				hasPlacedViz = true;
 			}
@@ -129,7 +130,7 @@ public class SensorBox extends WidgetVBox {
 		}
 
 		this.update(null);
-		this.adjustSizeToContent();
+		this.adjustSizeToContent(false);
 
 		// scale 1 -> 460x400
 		// scale 2 -> 230x200

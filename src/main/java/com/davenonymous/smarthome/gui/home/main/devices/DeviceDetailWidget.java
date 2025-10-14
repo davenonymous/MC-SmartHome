@@ -8,12 +8,16 @@ import com.davenonymous.smarthome.gui.events.VisualizationDataUpdatedEvent;
 import com.davenonymous.smarthome.gui.general.ScissorScrollWrap;
 import com.davenonymous.smarthome.gui.general.WidgetFlowBox;
 import com.davenonymous.smarthome.gui.home.main.devices.sensor.SensorBox;
+import com.davenonymous.smarthome.gui.home.main.devices.sensor.SensorTable;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.configurable.StringInputWidget;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
+import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.lib.gui.widgets.layout.WidgetVBox;
+import com.davenonymous.smarthome.lib.i18n.I18DataGen;
+import com.davenonymous.smarthome.lib.i18n.I18String;
 import com.davenonymous.smarthome.networking.actions.devices.AddDevicePayload;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.davenonymous.smarthome.setup.dynamic.ModSensors;
@@ -23,16 +27,21 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class DeviceDetailWidget extends WidgetVBox {
+	@I18DataGen(lang = "en_us", string = "Sensors")
+	@I18DataGen(lang = "de_de", string = "Sensoren")
+	public static final I18String SENSOR_STATES_LABEL = I18String.gui("devices.detail", "sensor_states");
+
 	private HomeZone zone;
 	private ConfiguredDevice device;
 
 	private StringInputWidget deviceRenameInput;
-	private WidgetFlowBox sensorsList;
+	private WidgetFlowBox sensorsBoxList;
+	private SensorTable sensorStateTable;
 	private ScissorScrollWrap scrollPanel;
 
 	public DeviceDetailWidget() {
 		this.setPaddingHorizontal(6);
-		this.setPaddingVertical(4);
+		this.setPaddingVertical(2);
 		this.setSpacing(10);
 
 		deviceRenameInput = new StringInputWidget("", ModFonts.SAFE_FONT_CHARS);
@@ -49,11 +58,23 @@ public class DeviceDetailWidget extends WidgetVBox {
 		deviceRenameInput.setTooltipElements(WrappedStringTooltipComponent.orange(NewDeviceEntryWidget.CLICK_TO_RENAME.get()));
 		this.addContentBox(deviceRenameInput, FlexAlign.CENTER);
 
-		sensorsList = new WidgetFlowBox();
-		sensorsList.setPadding(0);
-		sensorsList.setSpacing(2);
+		WidgetTextBox sensorStateLabel = new WidgetTextBox(SENSOR_STATES_LABEL.get());
+		sensorStateLabel.setFont(ModFonts.PIXEL);
+		sensorStateLabel.autoWidth();
+		sensorStateLabel.autoHeight();
+		sensorStateLabel.setTextColor(0xFFFFFFFF);
+		this.addContentBox(sensorStateLabel, FlexAlign.START);
 
-		scrollPanel = new ScissorScrollWrap(sensorsList);
+
+		sensorStateTable = new SensorTable();
+		sensorStateTable.setSize(this.width - this.paddingHorizontal*2, 50);
+		this.addContentBox(sensorStateTable, FlexAlign.START);
+
+		sensorsBoxList = new WidgetFlowBox();
+		sensorsBoxList.setPadding(0);
+		sensorsBoxList.setSpacing(2);
+
+		scrollPanel = new ScissorScrollWrap(sensorsBoxList);
 		this.addContentBox(scrollPanel, FlexAlign.START);
 
 		this.addListener(SensorDataUpdatedEvent.class, (event, widget) -> {
@@ -61,7 +82,7 @@ public class DeviceDetailWidget extends WidgetVBox {
 				return WidgetEventResult.CONTINUE_PROCESSING;
 			}
 
-			//updateSensorList();
+			sensorStateTable.populate(zone, device);
 			return WidgetEventResult.HANDLED;
 		});
 
@@ -109,21 +130,30 @@ public class DeviceDetailWidget extends WidgetVBox {
 			return;
 		}
 
-		sensorsList.clear();
-		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
+		sensorStateTable.populate(zone, device);
+		sensorStateTable.adjustSizeToContent(false);
+		sensorStateTable.setWidth(this.width - this.paddingHorizontal*2);
+		sensorStateTable.setHeight(sensorStateTable.height() + 18);
+		sensorsBoxList.clear();
+		sensorsBoxList.setWidth(this.width - this.paddingHorizontal*2);
 		scrollPanel.setWidth(this.width - this.paddingHorizontal*2);
 		scrollPanel.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
 		for(var sensorEntry : device.sensors().entrySet()) {
 			var sensorId = sensorEntry.getKey();
+			var sensorSettings = sensorEntry.getValue();
+			if(!sensorSettings.enabled()) {
+				continue;
+			}
+
 			var sensor = ModSensors.getById(sensorId);
 			if(sensor == null) {
 				continue;
 			}
 
 			var box = new SensorBox(zone, device, sensor);
-			sensorsList.add(box);
+			sensorsBoxList.add(box);
 		}
-		sensorsList.updateWidgetSizes();
+		sensorsBoxList.updateWidgetSizes();
 	}
 
 	@Override
@@ -131,17 +161,21 @@ public class DeviceDetailWidget extends WidgetVBox {
 		super.updateWidgetSizes();
 		deviceRenameInput.autoWidth();
 		deviceRenameInput.setHeight(12);
-		this.update(null);
+
 
 		if(this.width <= this.paddingHorizontal*2) {
 			return;
 		}
-		sensorsList.setWidth(this.width - this.paddingHorizontal*2);
-		sensorsList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
-		sensorsList.updateWidgetSizes();
+		sensorStateTable.setWidth(this.width - this.paddingHorizontal*2);
+		sensorStateTable.updateWidgetSizes();
+
+		sensorsBoxList.setWidth(this.width - this.paddingHorizontal*2);
+		sensorsBoxList.setHeight(this.height - deviceRenameInput.height - this.paddingVertical*2 - this.spacing);
+		sensorsBoxList.updateWidgetSizes();
 		scrollPanel.updateWidgetSizes();
 		//sensorsList.spreadBoxes();
 
+		this.update(null);
 	}
 
 
