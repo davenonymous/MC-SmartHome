@@ -2,7 +2,9 @@ package com.davenonymous.smarthome.gui.home.main.settings;
 
 import com.davenonymous.smarthome.data.HomeSettings;
 import com.davenonymous.smarthome.gui.DashboardScreen;
+import com.davenonymous.smarthome.gui.general.ScissorScrollWrap;
 import com.davenonymous.smarthome.gui.general.WidgetToggle;
+import com.davenonymous.smarthome.lib.gui.event.GuiDataUpdatedEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.tooltip.WrappedStringTooltipComponent;
@@ -13,14 +15,19 @@ import com.davenonymous.smarthome.networking.actions.SetHomeSettingsPayload;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class SettingsContainer extends WidgetPanel {
-	SettingsBox generalBox;
+	SettingsBox<SettingsTable> generalBox;
+	SettingsBox<IgnoredDevicesTable> ignoredDevicesBox;
 	WidgetToggle autoEnableNewDevicesToggle;
 	WidgetToggle autoIgnoreGenericOnlyDevicesToggle;
 	WidgetToggle renameBlocksToDeviceNamesToggle;
 
-	@I18DataGen(lang = "en_us", string = "General")
-	@I18DataGen(lang = "de_de", string = "Allgemein")
-	public static final I18String BOX_TITLE = I18String.gui("settings", "general");
+	@I18DataGen(lang = "en_us", string = "General settings for this home")
+	@I18DataGen(lang = "de_de", string = "Allgemeine Einstellungen für dieses Zuhause")
+	public static final I18String GENERAL_BOX_TITLE = I18String.gui("settings", "general"); // Yes, Major Barnacles!
+
+	@I18DataGen(lang = "en_us", string = "Ignored devices")
+	@I18DataGen(lang = "de_de", string = "Ignorierte Geräte")
+	public static final I18String IGNORED_DEVICES_BOX_TITLE = I18String.gui("settings", "ignored_devices");
 
 	@I18DataGen(lang = "en_us", string = "Automatically enable new devices")
 	@I18DataGen(lang = "de_de", string = "Neue Geräte automatisch aktivieren")
@@ -47,16 +54,32 @@ public class SettingsContainer extends WidgetPanel {
 	public static final I18String RENAME_BLOCKS_TO_DEVICE_NAMES_DESCRIPTION = I18String.gui("settings", "rename_blocks_to_device_names_description");
 
 	public SettingsContainer() {
-		generalBox = new SettingsBox(BOX_TITLE.get());
-		generalBox.setPosition(5, 5);
-		this.add(generalBox);
+		populate();
+
+		this.addListener(GuiDataUpdatedEvent.class, (event, widget) -> {
+			populate();
+			return WidgetEventResult.CONTINUE_PROCESSING;
+		});
+	}
+
+	private void populate() {
+		this.clear();
 
 		var home = DashboardScreen.get().selectedHome;
 		if(home == null) {
 			return;
 		}
 
-		var table = generalBox.getSettingsTable();
+		generalBox = new SettingsBox<>(GENERAL_BOX_TITLE.get(), new SettingsTable());
+		generalBox.setPosition(5, 5);
+		this.add(generalBox);
+
+		ignoredDevicesBox = new SettingsBox<>(IGNORED_DEVICES_BOX_TITLE.get(), new IgnoredDevicesTable(home.getAllDevices()));
+		ignoredDevicesBox.setPosition(5, generalBox.y() + generalBox.height() + 5);
+		this.add(ignoredDevicesBox);
+
+
+		var table = generalBox.getSettingsWidget();
 		table.addListener(ValueChangedEvent.class, (event, widget) -> {
 			var newHomeSettings = new HomeSettings(
 				renameBlocksToDeviceNamesToggle.getValue(),
@@ -96,5 +119,9 @@ public class SettingsContainer extends WidgetPanel {
 		super.updateWidgetSizes();
 		generalBox.setSize(this.width - 10, this.height - 10);
 		generalBox.updateWidgetSizes();
+
+		ignoredDevicesBox.setSize(this.width - 10, this.height - 10);
+		ignoredDevicesBox.setPosition(5, generalBox.y() + generalBox.height() + 5);
+		ignoredDevicesBox.updateWidgetSizes();
 	}
 }

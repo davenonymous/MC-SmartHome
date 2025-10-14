@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.content.blocks.dashboard;
 
 import com.davenonymous.smarthome.data.HomeCore;
 import com.davenonymous.smarthome.lib.gui.WidgetBlockEntityContainer;
+import com.davenonymous.smarthome.networking.ClientCache;
 import com.davenonymous.smarthome.networking.OpenHomeScreenPayload;
 import com.davenonymous.smarthome.networking.data.HomeWorldInfo;
 import com.davenonymous.smarthome.setup.content.ModContainers;
@@ -17,6 +18,7 @@ import java.util.List;
 public class DashboardContainer extends WidgetBlockEntityContainer<DashboardBlockEntity> {
 
 	public List<HomeCore> ownedHomes;
+	// TODO: This needs to be a map of home ID to world info
 	public HomeWorldInfo homeWorldInfo;
 
 	public DashboardContainer(int id, BlockPos pos, Inventory inv, @NotNull Player player) {

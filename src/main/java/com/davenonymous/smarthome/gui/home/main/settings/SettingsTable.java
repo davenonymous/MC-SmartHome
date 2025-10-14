@@ -2,6 +2,7 @@ package com.davenonymous.smarthome.gui.home.main.settings;
 
 import com.davenonymous.smarthome.lib.gui.CellData;
 import com.davenonymous.smarthome.lib.gui.ContentAlignment;
+import com.davenonymous.smarthome.lib.gui.event.MouseScrollEvent;
 import com.davenonymous.smarthome.lib.gui.event.ValueChangedEvent;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
 import com.davenonymous.smarthome.lib.gui.widgets.Widget;
@@ -20,6 +21,7 @@ public class SettingsTable extends WidgetTable {
 		this.setCellPaddingVertical(5);
 		this.alwaysShowFirstColumn = false;
 		this.alwaysShowFirstRow = false;
+		this.removeEventListeners(MouseScrollEvent.class);
 	}
 
 
@@ -59,16 +61,25 @@ public class SettingsTable extends WidgetTable {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
+		int yPos = 0;
 		for(int row = 0; row < this.getRowCount(); row++) {
 			int labelMaxWidths = this.width() - this.getColumnWidth(1) - 2 * this.paddingHorizontal() - 40;
+			int rowHeight = 0;
 			if(this.get(0, row).widget() instanceof WidgetTextBox desc) {
 				desc.autoWidth(Math.max(150, labelMaxWidths / 2));
 				desc.autoHeight();
+				rowHeight = Math.max(rowHeight, desc.getHeight());
 			}
 			if(this.get(2, row).widget() instanceof WidgetTextBox desc) {
 				desc.autoWidth(Math.max(150, labelMaxWidths / 2));
 				desc.autoHeight();
+				rowHeight = Math.max(rowHeight, desc.getHeight());
 			}
+			yPos += rowHeight + this.paddingVertical();
 		}
+
+		this.setHeight(yPos + 2*this.paddingVertical());
+
+
 	}
 }

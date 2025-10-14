@@ -1,6 +1,7 @@
 package com.davenonymous.smarthome.content.sensor.impl.lightlevel;
 
 import com.davenonymous.smarthome.SmartHome;
+import com.davenonymous.smarthome.content.sensor.SensorColumn;
 import com.davenonymous.smarthome.content.sensor.SensorRange;
 import com.davenonymous.smarthome.content.sensor.annotation.SensorDescription;
 import com.davenonymous.smarthome.data.ConfiguredDevice;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 @SmartHomeSensor(modid = SmartHome.MODID, data = ZoneLightLevelData.class, settings = OnOffSettings.class)
 public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSettings> {
@@ -38,6 +40,11 @@ public class ZoneLightLevel implements ZoneSensor<ZoneLightLevelData, OnOffSetti
 	@I18DataGen(lang = "en_us", string = "Measures the light level in a zone.")
 	@I18DataGen(lang = "de_de", string = "Misst die Lichtstärke in einer Zone.")
 	public static final I18String SENSOR_DESCRIPTION = I18String.data("sensor", "block_light_description");
+
+	@Override
+	public Optional<SensorColumn> getDefaultColumn() {
+		return Optional.of(getColumns().get(1));
+	}
 
 	@Override
 	public OnOffSettings getDefaultSettings() {

@@ -18,10 +18,7 @@ import net.minecraft.world.entity.Entity;
 import org.duckdb.DuckDBConnection;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class WorldWatcher {
@@ -30,7 +27,7 @@ public class WorldWatcher {
 	private ServerLevel overworld;
 	protected long lastUpdateTick = 0;
 
-	private Map<EntityId, ISensorData> entityLastSeenData;
+	private Map<EntityId, Integer> entityLastSeenData;
 	private Map<EntityId, Long> entityLastUpdated = new HashMap<>();
 
 	public WorldWatcher(MinecraftServer server) {
@@ -85,7 +82,7 @@ public class WorldWatcher {
 					var entityId = new EntityId(device.id(), sensor.id());
 					var gameTime = homeLevel.getGameTime();
 					int minimumTickRate = sensor.lowestAllowedTickRate();
-					if(entityLastSeenData.containsKey(entityId)) {
+					if(entityLastUpdated.containsKey(entityId)) {
 						var lastUpdate = entityLastUpdated.get(entityId);
 						if(gameTime - lastUpdate < minimumTickRate) {
 							// Too soon to update again
@@ -120,7 +117,8 @@ public class WorldWatcher {
 					if(data != null) {
 						if(ServerConfig.insertSparse && entityLastSeenData.containsKey(entityId)) {
 							var oldData = entityLastSeenData.get(entityId);
-							if(oldData.equals(data) && (gameTime - entityLastUpdated.get(entityId) < ServerConfig.sparseTickRate)) {
+							var newHash = Objects.hash(data);
+							if(oldData == newHash && (gameTime - entityLastUpdated.get(entityId) < ServerConfig.sparseTickRate)) {
 								// No change in data, skip
 								continue;
 							}
@@ -129,9 +127,9 @@ public class WorldWatcher {
 						var handler = ModSensors.DB_HANDLERS.get(sensor.id());
 						for(var dataEntry : data) {
 							homeConsumers.add(handler.insertValues(gameTime, home.id(), zone.id(), device.id(), dataEntry));
-							entityLastSeenData.put(entityId, dataEntry);
 							entityLastUpdated.put(entityId, gameTime);
 						}
+						entityLastSeenData.put(entityId, Objects.hash(data));
 					}
 				}
 
@@ -149,13 +147,13 @@ public class WorldWatcher {
 							List<? extends ISensorData> result = sensor.visitZoneBlock(homeLevel, zone, device, HomeSensor.cast(settings), sensorCheckPos, sensorCheckState, sensorCheckEntity);
 							if(result != null) {
 								var handler = ModSensors.DB_HANDLERS.get(sensor.id());
+								var entityId = new EntityId(device.id(), sensor.id());
+								var gameTime = homeLevel.getGameTime();
 								for(var dataEntry : result) {
 									homeConsumers.add(handler.insertValues(homeLevel.getGameTime(), home.id(), zone.id(), device.id(), dataEntry));
-									var entityId = new EntityId(device.id(), sensor.id());
-									var gameTime = homeLevel.getGameTime();
-									entityLastSeenData.put(entityId, dataEntry);
 									entityLastUpdated.put(entityId, gameTime);
 								}
+								entityLastSeenData.put(entityId, Objects.hash(result));
 							}
 						}
 					}

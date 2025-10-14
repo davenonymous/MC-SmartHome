@@ -165,13 +165,13 @@ public class ConfiguredDevicesTable extends HoverableWidgetTable {
 					WrappedStringTooltipComponent.red(MISSING_DEVICE_TOOLTIP.get())
 				);
 
-				var deviceNameCell = new TextCell(device.name());
+				var deviceNameCell = new TextCell(device.name(), device.id().toString());
 				this.add(1, row, new CellData(deviceNameCell, ContentAlignment.MIDDLE_LEFT, true));
 				this.add(0, row, new CellData(sprite, ContentAlignment.MIDDLE_CENTER));
 			} else {
 				var blockName = I18n.get(deviceBlockState.getBlock().getDescriptionId());
 
-				var deviceNameCell = new TextCell(blockName, device.name().equals(blockName) ? "" : device.name());
+				var deviceNameCell = new TextCell(blockName, device.name().equals(blockName) ? device.id().toString() : device.name());
 				this.add(1, row, new CellData(deviceNameCell, ContentAlignment.MIDDLE_LEFT, true));
 
 				var blockStateWidget = new BlockStateWidget(deviceBlockState);

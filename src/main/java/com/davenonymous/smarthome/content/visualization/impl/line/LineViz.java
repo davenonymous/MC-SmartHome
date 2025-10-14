@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.internal.series.Series;
 import org.knowm.xchart.style.markers.Marker;
 import org.knowm.xchart.style.markers.None;
 
@@ -143,7 +144,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		// Device -> Column -> Settings
 		Map<UUID, Map<String, LineVizColumnSettings>> columnSettingsList = settings.series();
 
-		Map<String, String> seriesNamesToColumnNames = new HashMap<>();
+		Map<String, Series> columnToSeries = new HashMap<>();
 		int seriesCount = 0;
 		for(UUID deviceId : columnSettingsList.keySet()) {
 			LinkedHashMap<Pair<Instant, Long>, ISensorData> data = dataByDevice.get(deviceId);
@@ -212,7 +213,7 @@ public class LineViz implements IVisualization<LineVizSettings> {
 
 					series.setLineStyle(new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{3.0f, 3.0f}, 0));
 
-					seriesNamesToColumnNames.put(fullSeriesName, columnName);
+					columnToSeries.put(columnName, series);
 
 					seriesCount++;
 				}
@@ -227,7 +228,8 @@ public class LineViz implements IVisualization<LineVizSettings> {
 		}
 
 		if(sensor instanceof VisualizationCustomizer customizer) {
-			customizer.customizeVisualization(chart, seriesNamesToColumnNames);
+			//noinspection unchecked
+			customizer.customizeVisualization(chart.getClass(), chart, (Map)columnToSeries);
 		}
 
 		WidgetChart<XYChart> wigget = new WidgetChart<>(texId, chart);

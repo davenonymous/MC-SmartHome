@@ -2,17 +2,18 @@ package com.davenonymous.smarthome.gui.home.main.settings;
 
 import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
+import com.davenonymous.smarthome.lib.gui.widgets.Widget;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetPanel;
 import com.davenonymous.smarthome.lib.gui.widgets.WidgetTextBox;
 import com.davenonymous.smarthome.setup.content.ModFonts;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.gui.GuiGraphics;
 
-public class SettingsBox extends WidgetPanel {
+public class SettingsBox<W extends Widget> extends WidgetPanel {
 	WidgetTextBox label;
-	SettingsTable settingsTable;
+	W settingsWidget;
 
-	public SettingsBox(String labelText) {
+	public SettingsBox(String labelText, W settingsWidget) {
 		super();
 
 		label = new WidgetTextBox(labelText);
@@ -23,13 +24,13 @@ public class SettingsBox extends WidgetPanel {
 		label.setTextColor(0xFFFFFFFF);
 		this.add(label);
 
-		settingsTable = new SettingsTable();
-		settingsTable.setPosition(8, label.y() + label.height() + 13);
-		this.add(this.settingsTable);
+		this.settingsWidget = settingsWidget;
+		this.settingsWidget.setPosition(8, label.y() + label.height() + 13);
+		this.add(this.settingsWidget);
 	}
 
-	public SettingsTable getSettingsTable() {
-		return settingsTable;
+	public W getSettingsWidget() {
+		return settingsWidget;
 	}
 
 	@Override
@@ -46,8 +47,8 @@ public class SettingsBox extends WidgetPanel {
 	public void updateWidgetSizes() {
 		super.updateWidgetSizes();
 
-		settingsTable.setSize(this.width - 16, this.height - (label.height() + 18));
-		settingsTable.updateWidgetSizes();
+		settingsWidget.setSize(this.width - 16, this.height - (label.height() + 18));
+		settingsWidget.updateWidgetSizes();
 		this.adjustSizeToContent(false);
 	}
 }

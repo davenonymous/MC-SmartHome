@@ -34,21 +34,22 @@ public class ScissorScrollWrap extends WidgetPanel {
 					return WidgetEventResult.CONTINUE_PROCESSING;
 				}
 
+				float scrollDivider = 32f;
 				if(widget.isPosInside(event.mouseX, event.mouseY)) {
 					var gui = getGUI();
 					var horizontal = gui.isCtrlDown();
 					var scrollValue = Math.abs((int) Math.ceil(event.rawScrollValue));
 					if(event.up) {
 						if(horizontal) {
-							this.horizontalScroll = Math.max(0, this.horizontalScroll - scrollValue / 32f);
+							this.horizontalScroll = Math.max(0, this.horizontalScroll - scrollValue / scrollDivider);
 						} else {
-							this.verticalScroll = Math.max(0, this.verticalScroll - scrollValue / 32f);
+							this.verticalScroll = Math.max(0, this.verticalScroll - scrollValue / scrollDivider);
 						}
 					} else {
 						if(horizontal) {
-							this.horizontalScroll = Math.min(1, this.horizontalScroll + scrollValue / 32f);
+							this.horizontalScroll = Math.min(1, this.horizontalScroll + scrollValue / scrollDivider);
 						} else {
-							this.verticalScroll = Math.min(1, this.verticalScroll + scrollValue / 32f);
+							this.verticalScroll = Math.min(1, this.verticalScroll + scrollValue / scrollDivider);
 						}
 					}
 

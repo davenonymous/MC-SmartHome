@@ -21,6 +21,7 @@ public class HomeZone {
 	String name;
 	boolean deleted;
 
+	// TODO: This has to be a map!
 	List<ConfiguredDevice> devices;
 	List<FoundDevice> foundDevices;
 
@@ -119,6 +120,16 @@ public class HomeZone {
 			var d = devices.get(i);
 			if(d.id().equals(device.id())) {
 				devices.set(i, devices.get(i).withEnabled(enabled));
+				return;
+			}
+		}
+	}
+
+	public void setDeviceIgnored(ConfiguredDevice device, boolean ignored) {
+		for(int i = 0; i < devices.size(); i++) {
+			var d = devices.get(i);
+			if(d.id().equals(device.id())) {
+				devices.set(i, devices.get(i).withIgnored(ignored));
 				return;
 			}
 		}

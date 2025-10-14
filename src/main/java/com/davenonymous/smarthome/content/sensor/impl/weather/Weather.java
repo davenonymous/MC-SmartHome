@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ServerLevelData;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.internal.chartpart.Chart;
+import org.knowm.xchart.internal.series.Series;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -84,17 +85,15 @@ public class Weather implements ZoneSensor<WeatherData, OnOffSettings>, Visualiz
 	}
 
 	@Override
-	public void customizeVisualization(Chart<?, ?> chart, Map<String, String> seriesNamesToColumnNames) {
+	public <C extends Chart<?, S>, S extends Series> void customizeVisualization(Class<C> chartType, Chart<?, S> chart, Map<String, S> series) {
 		if(chart instanceof XYChart xyChart) {
-			var seriesMap = xyChart.getSeriesMap();
-			var seriesNames = seriesMap.keySet();
-			if(seriesNames.size() <= 0) {
+			var columnNames = series.keySet();
+			if(columnNames.isEmpty()) {
 				return;
 			}
 
 			boolean onlyTimeSeries = true;
-			for(var seriesName : seriesNames) {
-				var columnName = seriesNamesToColumnNames.get(seriesName);
+			for(var columnName : columnNames) {
 				if(!columnName.equals("time_to_clear") && !columnName.equals("time_to_rain") && !columnName.equals("time_to_thunder")) {
 					onlyTimeSeries = false;
 					break;
@@ -107,4 +106,5 @@ public class Weather implements ZoneSensor<WeatherData, OnOffSettings>, Visualiz
 			xyChart.getStyler().setyAxisTickLabelsFormattingFunction(val -> String.format("%d min", Math.round(val / (20 * 60))));
 		}
 	}
+
 }

@@ -4,10 +4,12 @@ import com.davenonymous.smarthome.SmartHome;
 import com.davenonymous.smarthome.content.blocks.dashboard.DashboardBlockEntity;
 import com.davenonymous.smarthome.gui.DashboardScreen;
 import com.davenonymous.smarthome.gui.events.ContentSelectionEvent;
+import com.davenonymous.smarthome.gui.general.ScissorScrollWrap;
 import com.davenonymous.smarthome.gui.home.main.cards.CardEditorContainer;
 import com.davenonymous.smarthome.gui.home.main.dashboard.DashboardContainer;
 import com.davenonymous.smarthome.gui.home.main.devices.DevicesContainer;
 import com.davenonymous.smarthome.gui.home.main.settings.SettingsContainer;
+import com.davenonymous.smarthome.gui.home.main.settings.SettingsScrollWrapper;
 import com.davenonymous.smarthome.gui.home.main.zones.ZonesContainer;
 import com.davenonymous.smarthome.lib.gui.GuiTheme;
 import com.davenonymous.smarthome.lib.gui.event.WidgetEventResult;
@@ -35,7 +37,7 @@ public class ContentContainerWidget extends WidgetPanel {
 
 		registerContentWidget(ContentIDs.ZONES, ZonesContainer::new);
 		registerContentWidget(ContentIDs.DEVICES, DevicesContainer::new);
-		registerContentWidget(ContentIDs.SETTINGS, SettingsContainer::new);
+		registerContentWidget(ContentIDs.SETTINGS, SettingsScrollWrapper::new);
 		registerContentWidget(ContentIDs.DASHBOARDS, DashboardContainer::new);
 		registerContentWidget(ContentIDs.CARDS, CardEditorContainer::new);
 
